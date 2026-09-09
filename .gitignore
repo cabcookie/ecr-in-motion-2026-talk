@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Runtime / lokale Datenbanken
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.swp
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Große Produktfotos – liegen lokal, nicht im Git (siehe README)
+packages/docs/demo/product-catalog/pictures/

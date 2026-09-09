@@ -1,0 +1,31 @@
+{
+  "name": "aldi-supply-chain-simulation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ALDI SUED Supply Chain Simulation – SQLite + MCP-Server + React Frontend",
+  "type": "module",
+  "workspaces": [
+    "packages/db",
+    "packages/shared",
+    "packages/agents",
+    "packages/mcp-outlook",
+    "packages/mcp-teams",
+    "packages/mcp-sap",
+    "packages/mcp-wms",
+    "packages/api",
+    "packages/frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently --kill-others --handle-input --prefix-colors blue,green,magenta,cyan,yellow,white,red -n soul,vite,outlook,teams,sap,wms,agents \"npm run dev -w packages/api\" \"npm run dev -w packages/frontend\" \"npm run dev -w packages/mcp-outlook\" \"npm run dev -w packages/mcp-teams\" \"npm run dev -w packages/mcp-sap\" \"npm run dev -w packages/mcp-wms\" \"npm run dev -w packages/agents\"",
+    "dev:minimal": "concurrently --kill-others --handle-input --prefix-colors blue,green,magenta -n soul,vite,outlook \"npm run dev -w packages/api\" \"npm run dev -w packages/frontend\" \"npm run dev -w packages/mcp-outlook\"",
+    "test": "vitest run",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3",
+    "fast-check": "^3.23.2",
+    "tsx": "^4.22.4",
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.4"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "product-catalog-generator",
+  "version": "1.0.0",
+  "description": "Automated product catalog generation from ALDI SUED store shelf photos using Kiro CLI",
+  "type": "module",
+  "main": "generate-catalog.mjs",
+  "scripts": {
+    "start": "node generate-catalog.mjs",
+    "test": "node --experimental-vm-modules node_modules/.bin/vitest run"
+  },
+  "dependencies": {
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "fast-check": "^3.23.2",
+    "vitest": "^3.1.4"
+  }
+}
