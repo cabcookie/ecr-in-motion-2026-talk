@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "description": "Material und Demos für den ECR in Motion 2026 Talk",
-  "packageManager": "pnpm@10.29.3",
+  "packageManager": "pnpm@12.3.4",
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   }
 }

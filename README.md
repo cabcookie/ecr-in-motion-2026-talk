@@ -13,7 +13,10 @@ Weitere Packages kommen dazu, sobald wir das Material sortiert haben.
 
 ## Setup
 
+Node 24 (LTS „Krypton", siehe `.nvmrc`) und pnpm 12:
+
 ```bash
+nvm use          # nimmt 24.21.0 aus .nvmrc
 pnpm install
 ```
 
