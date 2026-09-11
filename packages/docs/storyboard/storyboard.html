@@ -509,12 +509,15 @@ const SLIDES = [
   open:"Für die echte Folie fehlt die Zeitreihe (Destatis / BA). Die Ausschläge — Weimar, Nachkriegszeit, Wiedervereinigung — sind das eigentliche Argument und lassen sich aus den vier Eckwerten allein nicht zeigen.",
 },
 
-{ b:2, kind:"Historie", headline:"Die Propheten lagen falsch.",
+{ b:2, kind:"Historie", headline:"Die Propheten lagen falsch. Zwei von drei.",
+  sub:"Drei Warnungen aus drei Epochen. Zwei sind entschieden — eine läuft noch.",
   mock:{t:"list", ordered:false, items:[
-    ["Jeremy Rifkin, 1995","warnte vor dem „Ende der Arbeit“ — danach fiel die US-Arbeitslosigkeit unter 4 %"],
     ["John von Neumann, 1949","prognostizierte ein „Jahrzehnt des Ruins“ — die Beschäftigung stieg in sechs Jahren um vier Millionen"],
+    ["Jeremy Rifkin, 1995","warnte vor dem „Ende der Arbeit“ — danach fiel die US-Arbeitslosigkeit unter 4 %"],
+    ["Dario Amodei, Mai 2025","KI könne die Hälfte aller Einstiegsjobs im Bürobereich vernichten und die Arbeitslosigkeit binnen ein bis fünf Jahren auf 10–20 % treiben. Im Februar 2026 bekräftigt — offen."],
   ]},
-  say:"Zwei Namen reichen. Nicht zur Liste ausbauen.",
+  say:"Die ersten beiden schnell. Bei Amodei anhalten: Das ist der CEO von Anthropic — der Firma, deren KI ihren eigenen Code schreibt. Er verkauft das Produkt und warnt trotzdem. Und er meint genau unsere Gruppe von vorhin: Wissensarbeiter.",
+  note:"Quelle: Interview mit Jim VandeHei und Mike Allen, Axios, 28. Mai 2025. Die Formulierung „white-collar bloodbath“ stammt von Axios, nicht von Amodei — nicht als sein Zitat wiedergeben.",
 },
 
 { b:2, kind:"Beleg", headline:"Und das Muster wiederholt sich gerade in Echtzeit.",
@@ -522,15 +525,22 @@ const SLIDES = [
     {handle:"@user · 14. Feb. 2026", text:"Claude Code is writing 100% of Claude code now. But Anthropic has 100+ open dev positions on their jobs page. ?"},
     {handle:"@bcherny · Erfinder von Claude Code, Anthropic", reply:true, text:"Someone has to prompt the Claudes, talk to customers, coordinate with other teams, decide what to build next. Engineering is changing and great engineers are more important than ever."},
   ]},
-  say:"Die Firma, deren KI den gesamten eigenen Code schreibt, stellt gleichzeitig 100+ Entwickler ein.",
+  say:"Der Clou: Das ist dieselbe Firma. Der CEO warnt vor dem Verschwinden der Einstiegsjobs — der Erfinder von Claude Code sagt, gute Entwickler seien wichtiger denn je. Das ist kein Widerspruch, den man auflösen muss. Beide haben recht: Die Ausführung verschwindet, das Urteil wird wertvoller. Genau das ist die Botschaft des Abends.",
   app:"Screenshot liegt vor: tweet-on-claude.png. Für die Folie den Screenshot nehmen — er beglaubigt stärker als gesetzter Text.",
+},
+
+{ b:2, kind:"Daten", headline:"Und was sagen die Daten, ein Jahr später?",
+  sub:"Stanford, Juli 2026: Wer stark KI-exponiert arbeitet, wurde seit 2022 nicht häufiger arbeitslos als der Rest — eher seltener.",
+  mock:{t:"chart", which:"exposure"},
+  say:"Die ehrliche Zwischenbilanz. Zwei Befunde nennen: Erstens — Firmen, die KI einführten, beschäftigten zwei Jahre später 10 % MEHR Menschen. Zweitens — eine Ausnahme gibt es: Berufseinsteiger. Deren Arbeitslosigkeit stieg in drei Jahren um 1,6 Punkte auf 5,6 %. Da passiert etwas Reales.",
+  note:"Quelle: Neale Mahoney, Erika McEntarfer, Karsen Wahal, SIEPR Policy Brief, Stanford, Juli 2026. Die Autoren schränken selbst ein: Zinswende und Überstellung nach der Pandemie kommen als Ursachen infrage, die Zuordnung zur KI ist nicht eindeutig. Diese Einschränkung mitnennen — sie macht die Aussage stärker, nicht schwächer.",
 },
 
 { b:2, kind:"Kernsatz", headline:"Coding war nie das eigentliche Problem.",
   sub:"Die Arbeit verschiebt sich — von der Ausführung zur Steuerung, zur Urteilsfähigkeit, zur Entscheidung, was überhaupt gebaut werden soll.",
   mock:{t:"statement", text:"Aber die Phase der Transformation ist herausfordernd.", after:"Jobs fallen weg. Neue entstehen. Nicht über Nacht — und nicht automatisch für dieselben Menschen."},
   say:"Hier ehrlich bleiben. Wer jetzt zu optimistisch wird, verliert den Raum.",
-  inter:"Handzeichen + 1–2 Erfahrungsberichte: „Wer von Ihnen hat in den letzten 12 Monaten eine Aufgabe an KI abgegeben, die Sie vorher selbst gemacht haben?“",
+  inter:"Offene Frage, 2–3 Antworten sammeln: „Welche Aufgaben haben Sie heute schon an KI abgegeben, die Sie früher selbst gemacht haben?“",
 },
 
 /* ═══ BLOCK 3 ═══ */
@@ -797,7 +807,7 @@ const RENDER = {
     h += '</div></div>';
     return h;
   },
-  chart(m){ return m.which === "agriculture" ? chartAgriculture() : chartUnemployment(); },
+  chart(m){ return ({agriculture:chartAgriculture, unemployment:chartUnemployment, exposure:chartExposure}[m.which])(); },
 };
 
 function chartAgriculture(){
@@ -820,6 +830,30 @@ function chartAgriculture(){
     + '<text x="12" y="20" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" fill="var(--faint)">ANTEIL AN DEN US-BESCHÄFTIGTEN</text>'
     + '</svg>'
     + '<p class="chart-cap">Zwei Belegwerte aus dem Vortragsverlauf. Der Verlauf dazwischen ist bewusst nicht gezeichnet.</p>'
+    + '</div></div>';
+}
+
+function chartExposure(){
+  const x0 = 148, maxW = 168, maxV = 1.0;
+  const rows = [
+    {label:"Stark KI-exponiert", v:0.77, fill:"var(--accent)"},
+    {label:"Kaum KI-exponiert",  v:0.85, fill:"var(--faint)"},
+  ];
+  let bs = "";
+  rows.forEach((r,i) => {
+    const y = 56 + i*44, w = (r.v/maxV)*maxW;
+    bs += '<text x="138" y="'+(y+18)+'" text-anchor="end" font-family="IBM Plex Sans, sans-serif" font-size="12" fill="var(--ink-2)">'+r.label+'</text>';
+    bs += '<rect x="'+x0+'" y="'+y+'" width="'+w+'" height="26" fill="'+r.fill+'" rx="1"></rect>';
+    bs += '<text x="'+(x0+w+8)+'" y="'+(y+18)+'" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="var(--ink)">+'+String(r.v).replace(".",",")+'</text>';
+  });
+  return '<div class="mock"><div class="chartbox">'
+    + '<svg viewBox="0 0 340 156" role="img" aria-label="Anstieg der Arbeitslosigkeit seit 2022 in Prozentpunkten: stark KI-exponierte Berufe plus 0,77, kaum KI-exponierte Berufe plus 0,85">'
+    + '<text x="8" y="22" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" fill="var(--faint)">ANSTIEG DER ARBEITSLOSIGKEIT SEIT 2022</text>'
+    + '<text x="8" y="38" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" fill="var(--faint)">IN PROZENTPUNKTEN</text>'
+    + bs
+    + '<line x1="'+x0+'" y1="48" x2="'+x0+'" y2="140" stroke="var(--rule)" stroke-width="1"></line>'
+    + '</svg>'
+    + '<p class="chart-cap">Die exponierte Gruppe schnitt leicht BESSER ab. Dazu: Firmen mit KI-Einführung beschäftigten zwei Jahre später 10 % mehr Menschen. Ausnahme: Berufseinsteiger, 5,6 % Arbeitslosigkeit (+1,6 Punkte in drei Jahren).</p>'
     + '</div></div>';
 }
 
