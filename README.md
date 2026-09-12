@@ -25,6 +25,42 @@ Beide Fenster halten sich über einen `BroadcastChannel` synchron — kein Serve
 nötig, solange beide im selben Browser laufen. Wer klickt, ist egal: die
 Navigation geht in beide Richtungen.
 
+### Steuerung von einem anderen Gerät
+
+Für die Steuerung vom Handy reicht der BroadcastChannel nicht — dafür gibt es
+einen zweiten Transport über **AWS Blocks Realtime**. Er wird mit `?remote`
+eingeschaltet:
+
+```bash
+pnpm --filter @ecr-talk/presentation dev:blocks    # Blocks-Dev-Server, Port 3000
+```
+
+| Fenster | Adresse |
+|---|---|
+| Live-View | `localhost:3000/?remote` |
+| Operator-View | `localhost:3000/?operator&remote&token=…` |
+
+Lokal ist das ein WebSocket-Server im Prozess, in AWS sind es AppSync Events.
+Ein Gerät, das sich mitten im Vortrag verbindet, holt sich den aktuellen Stand
+und springt sofort auf die richtige Folie.
+
+**Der Standardweg bleibt der BroadcastChannel.** Er braucht kein Netz und kein
+Backend und kann am Vortragsabend nicht ausfallen. `?remote` ist die Zugabe,
+nicht die Grundlage.
+
+## Deployment
+
+```bash
+pnpm --filter @ecr-talk/presentation sandbox      # nur Backend, Hot-Swap
+DECK_TOKEN="..." pnpm --filter @ecr-talk/presentation deploy
+```
+
+`deploy` stellt CloudFront + S3 für die App und AppSync Events für die
+Fernsteuerung bereit. **`DECK_TOKEN` nicht vergessen** — ohne das Geheimnis
+kann jeder mit der Adresse die Folien weiterklicken. Die CDK-Schicht warnt
+beim Synthetisieren, wenn es fehlt, und die Operator-View zeigt im Kopf an,
+ob die Steuerung geschützt ist.
+
 Steuerung in beiden Fenstern: `→` / `Leertaste` / `Bild ab` vor, `←` / `Bild auf`
 zurück, `Pos1` / `Ende` an die Ränder. Bild-auf und Bild-ab bedeutet, dass
 handelsübliche Presenter-Clicker funktionieren. In der Live-View schaltet `F`

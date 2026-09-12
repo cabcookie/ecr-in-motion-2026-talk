@@ -4,3 +4,12 @@ packages:
 # pnpm führt Postinstall-Skripte nur für ausdrücklich freigegebene Pakete aus.
 allowBuilds:
   esbuild: true
+  "@aws-blocks/blocks": true
+
+# AWS Blocks erzeugt Client-Code, der auf Unterpakete des eigenen Scopes
+# verweist (z. B. @aws-blocks/bb-realtime/mock-middleware). Die sind nur
+# transitiv installiert und für Vite sonst nicht auflösbar — deshalb wird
+# der ganze Scope ins Wurzel-node_modules gehoben. Einzeln nachzuziehen
+# würde bei jedem neuen Block erneut brechen.
+publicHoistPattern:
+  - '@aws-blocks/*'

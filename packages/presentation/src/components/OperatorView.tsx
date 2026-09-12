@@ -17,7 +17,7 @@ function Note({ label, tone, children }: { label: string; tone: string; children
 }
 
 export function OperatorView() {
-  const { index, next, prev, goto, connected } = useNavigation(TOTAL);
+  const { index, next, prev, goto, connected, transport } = useNavigation(TOTAL);
   const slide = SLIDES[index];
   const block = blockOf(slide.b);
   const upcoming = SLIDES[index + 1];
@@ -53,7 +53,11 @@ export function OperatorView() {
               </div>
               <div className="font-mono text-[10px] tracking-[0.1em] uppercase">
                 <span className={connected ? "text-b4" : "text-b1"}>
-                  {connected ? "● Live gekoppelt" : "● nicht gekoppelt"}
+                  {connected
+                    ? transport === "realtime"
+                      ? "● Fernsteuerung (AWS)"
+                      : "● gekoppelt (dieser Browser)"
+                    : "● nicht gekoppelt"}
                 </span>
               </div>
             </div>

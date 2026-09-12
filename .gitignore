@@ -36,3 +36,9 @@ packages/docs/demo/product-catalog/pictures/
 
 # Screenshots der Live-View — werden per pnpm shots erzeugt
 packages/presentation/shots/
+
+# AWS Blocks: lokale Daten, Sandbox-Zustand, CDK-Synthese
+.bb-data/
+.blocks/
+.blocks-sandbox/
+cdk.out/

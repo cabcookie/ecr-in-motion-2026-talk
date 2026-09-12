@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createBroadcastTransport, BROADCAST_SUPPORTED } from "@/sync/broadcast";
+import { chooseTransport, type TransportKind } from "@/sync";
 import type { SyncTransport } from "@/sync/types";
 
 export interface Navigation {
@@ -10,6 +10,8 @@ export interface Navigation {
   goto: (i: number) => void;
   /** true, wenn die Fernsteuerung angebunden ist */
   connected: boolean;
+  /** welcher Transport gerade trägt — für die Anzeige in der Operator-View */
+  transport: TransportKind;
 }
 
 export interface NavigationOptions {
@@ -37,41 +39,58 @@ export function useNavigation(
 ): Navigation {
   const [index, setIndex] = useState(0);
   const [connected, setConnected] = useState(false);
+  const [{ kind, create }] = useState(chooseTransport);
 
   const transport = useRef<SyncTransport | null>(null);
-  /** unterdrückt das Zurücksenden einer gerade empfangenen Änderung */
-  const fromRemote = useRef(false);
-  /** beim Mount nicht senden — dafür ist "hello" da */
-  const mounted = useRef(false);
   const indexRef = useRef(0);
   indexRef.current = index;
 
-  const goto = useCallback(
-    (i: number) => setIndex(Math.min(total - 1, Math.max(0, i))),
+  /**
+   * Einzige Stelle, an der sich die Folie ändert.
+   *
+   * `broadcast` trennt eigene Befehle von übernommenen Änderungen. Früher hing
+   * das Senden an einem Effekt auf `index` — der lief im StrictMode beim
+   * zweiten Mount erneut und überschrieb den Serverstand mit der Startfolie.
+   * Senden gehört an den Befehl, nicht an den Zustand.
+   */
+  const apply = useCallback(
+    (i: number, broadcast: boolean) => {
+      const clamped = Math.min(total - 1, Math.max(0, i));
+      setIndex(clamped);
+      const t = transport.current;
+      if (broadcast && t) {
+        t.send({ type: "goto", index: clamped, from: t.id, at: Date.now() });
+      }
+    },
     [total],
   );
-  const next = useCallback(() => setIndex((i) => Math.min(total - 1, i + 1)), [total]);
-  const prev = useCallback(() => setIndex((i) => Math.max(0, i - 1)), []);
+
+  const goto = useCallback((i: number) => apply(i, true), [apply]);
+  const next = useCallback(() => apply(indexRef.current + 1, true), [apply]);
+  const prev = useCallback(() => apply(indexRef.current - 1, true), [apply]);
 
   // Transport aufbauen und Fremdänderungen übernehmen
   useEffect(() => {
-    if (!sync || !BROADCAST_SUPPORTED) return;
+    if (!sync) return;
 
-    const t = createBroadcastTransport();
+    const t = create();
+    if (!t) return;
     transport.current = t;
     setConnected(true);
 
     const off = t.subscribe((msg) => {
       if (msg.type === "goto") {
-        fromRemote.current = true;
-        setIndex(msg.index);
+        apply(msg.index, false);
       } else if (msg.type === "hello") {
         // Wer den Stand kennt, teilt ihn dem neuen Fenster mit
         t.send({ type: "goto", index: indexRef.current, from: t.id, at: Date.now() });
       }
     });
 
-    t.send({ type: "hello", from: t.id, at: Date.now() });
+    // Der Realtime-Transport holt den Stand selbst über currentSlide()
+    if (kind === "broadcast") {
+      t.send({ type: "hello", from: t.id, at: Date.now() });
+    }
 
     return () => {
       off();
@@ -79,25 +98,7 @@ export function useNavigation(
       transport.current = null;
       setConnected(false);
     };
-  }, [sync]);
-
-  // Eigene Änderungen verteilen
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
-    if (fromRemote.current) {
-      fromRemote.current = false;
-      return;
-    }
-    transport.current?.send({
-      type: "goto",
-      index,
-      from: transport.current.id,
-      at: Date.now(),
-    });
-  }, [index]);
+  }, [sync, create, kind, apply]);
 
   useEffect(() => {
     if (!keyboard) return;
@@ -129,5 +130,5 @@ export function useNavigation(
     return () => window.removeEventListener("keydown", onKey);
   }, [keyboard, next, prev, goto, total]);
 
-  return { index, total, next, prev, goto, connected };
+  return { index, total, next, prev, goto, connected, transport: kind };
 }
