@@ -9,17 +9,18 @@ import { useLayoutEffect, useRef, type ReactNode } from "react";
  * Inhalte nicht pro Folie von Hand auf die Bühne passen.
  *
  * Greift direkt aufs DOM zu statt über State, damit kein Mess-Render-Kreis
- * entsteht.
+ * entsteht. Der gemessene Faktor landet in data-fit, damit der
+ * Screenshot-Lauf melden kann, welche Folien zu voll sind.
  */
 export function FitBox({
   children,
   slideKey,
-  origin = "top center",
+  centered = false,
 }: {
   children: ReactNode;
   /** löst die Neumessung beim Folienwechsel aus */
   slideKey: number;
-  origin?: "top center" | "top left";
+  centered?: boolean;
 }) {
   const outer = useRef<HTMLDivElement>(null);
   const inner = useRef<HTMLDivElement>(null);
@@ -35,20 +36,22 @@ export function FitBox({
       const w = i.offsetWidth;
       if (!h || !w) return;
       const s = Math.min(1, o.clientHeight / h, o.clientWidth / w);
-      i.style.transformOrigin = origin;
+      i.style.transformOrigin = centered ? "top center" : "top left";
       i.style.transform = s < 0.999 ? `scale(${s})` : "none";
-      // Für die Diagnose: welche Folien müssen geschrumpft werden?
       o.dataset.fit = s.toFixed(2);
     };
 
     apply();
     // Webfonts kommen nach dem ersten Layout an und ändern die Höhe
     document.fonts.ready.then(apply).catch(() => {});
-  }, [slideKey, origin]);
+  }, [slideKey, centered]);
 
   return (
-    <div className="fit-outer" ref={outer}>
-      <div className="fit-inner" ref={inner}>
+    <div
+      ref={outer}
+      className={`flex h-full w-full items-start ${centered ? "justify-center" : "justify-start"}`}
+    >
+      <div ref={inner} className={centered ? "max-w-full" : "w-full"}>
         {children}
       </div>
     </div>

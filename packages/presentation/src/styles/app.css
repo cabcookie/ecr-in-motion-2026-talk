@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/*
+  Live-View: dunkle Bühne, helle Applikationsfenster.
+
+  Alle Maße gelten für die Design-Größe 1920 × 1080 und werden per
+  transform: scale() auf den Projektor gerechnet. Deshalb sind die
+  Schriftgrade hier absolute Pixel und keine rem — sie sollen sich
+  ausdrücklich NICHT an die Browsereinstellung anpassen.
+*/
+@theme {
+  /* Bühne */
+  --color-stage: #0b0e13;
+  --color-stage-2: #131822;
+  --color-stage-3: #1b2130;
+  --color-hair: #232a38;
+
+  --color-fg: #f2f4f8;
+  --color-fg-2: #b4bdcb;
+  --color-fg-3: #78828f;
+
+  /* Blockfarben — für Projektion aufgehellt */
+  --color-b1: #ff6b57;
+  --color-b2: #e8b660;
+  --color-b3: #63a8e0;
+  --color-b4: #4fc79e;
+
+  /* Applikationsfenster */
+  --color-win: #ffffff;
+  --color-win-2: #f4f6f8;
+  --color-win-3: #eaedf1;
+  --color-win-ink: #171a20;
+  --color-win-ink-2: #454c58;
+  --color-win-muted: #6a7381;
+  --color-win-faint: #98a1ae;
+  --color-win-rule: #dce0e6;
+
+  /* Systemfarben in den Fenstern */
+  --color-sys-mail: #1f5c8b;
+  --color-sys-chat: #5b4b8a;
+  --color-sys-agent: #1f7a5e;
+
+  /* Hervorgehobener Schritt im Arbeitsprotokoll — die Entdeckung */
+  --color-key-bg: #fff6ed;
+  --color-key-ink: #a8540e;
+  --color-key-chip: #ffe4cc;
+  --color-key-num: #c2610f;
+
+  /* Chat */
+  --color-user-bg: #e8f0f8;
+  --color-user-rule: #c3d6e8;
+  --color-tool-bg: #e9f6f1;
+  --color-tool-rule: #b6dbcc;
+
+  --font-display: "Bricolage Grotesque", "IBM Plex Sans", sans-serif;
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/*
+  Die Blockfarbe wird als --accent an der Bühne gesetzt und von allen
+  Folienelementen geerbt. So muss keine Komponente wissen, in welchem
+  Block sie steht.
+*/
+[data-block="1"] { --accent: var(--color-b1); }
+[data-block="2"] { --accent: var(--color-b2); }
+[data-block="3"] { --accent: var(--color-b3); }
+[data-block="4"] { --accent: var(--color-b4); }
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-stage);
+  font-family: var(--font-sans);
+  color: var(--color-fg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { height: 100%; }
+
+/*
+  Mocks liefern Text mit <b> aus den Foliendaten. Welche Farbe die
+  Hervorhebung bekommt, hängt vom Untergrund ab — der Container setzt
+  --rich-strong, damit dieselbe Regel auf der Bühne und im Fenster passt.
+*/
+.rich b {
+  color: var(--rich-strong, inherit);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

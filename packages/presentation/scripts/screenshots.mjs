@@ -19,9 +19,8 @@ await page.goto(`${BASE}/?clean=1`, { waitUntil: "networkidle" });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(600);
 
-const total = await page.evaluate(() =>
-  Number(document.querySelector(".slideno")?.textContent ?? 0) ? 35 : 35,
-);
+await page.waitForSelector("[data-slideno]");
+const total = Number(process.env.SLIDES ?? 35);
 
 await rm(OUT, { recursive: true, force: true });
 await mkdir(OUT, { recursive: true });
@@ -29,11 +28,11 @@ await mkdir(OUT, { recursive: true });
 const tight = [];
 
 for (let i = 1; i <= total; i++) {
-  const n = await page.textContent(".slideno");
-  const fit = await page.getAttribute(".fit-outer", "data-fit").catch(() => null);
+  const n = await page.getAttribute("[data-slideno]", "data-slideno");
+  const fit = await page.getAttribute("[data-fit]", "data-fit").catch(() => null);
   await page.screenshot({ path: `${OUT}/${String(i).padStart(2, "0")}.png` });
-  if (fit && Number(fit) < 0.95) tight.push(`${n}: ${fit}`);
-  process.stdout.write(`${n} `);
+  if (fit && Number(fit) < 0.95) tight.push(`${String(n).padStart(2, "0")}: ${fit}`);
+  process.stdout.write(`${String(n).padStart(2, "0")} `);
   if (i < total) {
     await page.keyboard.press("ArrowRight");
     await page.waitForTimeout(320);
