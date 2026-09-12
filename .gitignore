@@ -33,3 +33,6 @@ Thumbs.db
 
 # Große Produktfotos – liegen lokal, nicht im Git (siehe README)
 packages/docs/demo/product-catalog/pictures/
+
+# Screenshots der Live-View — werden per pnpm shots erzeugt
+packages/presentation/shots/

@@ -1,2 +1,6 @@
 packages:
   - 'packages/*'
+
+# pnpm führt Postinstall-Skripte nur für ausdrücklich freigegebene Pakete aus.
+allowBuilds:
+  esbuild: true
