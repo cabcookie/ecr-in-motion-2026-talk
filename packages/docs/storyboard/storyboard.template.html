@@ -524,6 +524,29 @@ const RENDER = {
       + m.stations.map(x=>'<li><span class="n">—</span><span class="t">'+esc(x)+'</span></li>').join('')
       + '</ul><p class="chart-cap" style="text-align:left;padding:0 15px 12px">'+esc(m.line)+'</p></div>';
   },
+  tshape(m){
+    const human = m.variant === "human";
+    const grown = m.variant === "grown";
+    const bar = human ? {x:150,y:34,w:420,h:46} : {x:40,y:26,w:590,h:64};
+    const stem = {x: bar.x + bar.w/2 - 26, y: bar.y + bar.h, w:52, h: human ? 120 : 104};
+    const stemFill = human ? "var(--muted)" : "var(--ok)";
+    let g = '<rect x="'+bar.x+'" y="'+bar.y+'" width="'+bar.w+'" height="'+bar.h+'" rx="6" fill="'+(human?"var(--muted)":"var(--accent)")+'"></rect>'
+      + '<text x="'+(bar.x+16)+'" y="'+(bar.y+bar.h/2+6)+'" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="700" fill="var(--panel)">Allgemeinwissen</text>';
+    if (human || grown) {
+      g += '<rect x="'+stem.x+'" y="'+stem.y+'" width="'+stem.w+'" height="'+stem.h+'" rx="6" fill="'+stemFill+'"></rect>';
+    } else {
+      g += '<rect x="'+stem.x+'" y="'+stem.y+'" width="'+stem.w+'" height="'+stem.h+'" rx="6" fill="none" stroke="var(--rule)" stroke-width="2" stroke-dasharray="6 5"></rect>';
+    }
+    g += '<text x="'+(stem.x+stem.w+16)+'" y="'+(stem.y+26)+'" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="700" fill="'+((human||grown)?"var(--ink)":"var(--faint)")+'">Spezialwissen</text>';
+    if (!human && !grown) g += '<text x="'+(stem.x+stem.w+16)+'" y="'+(stem.y+48)+'" font-size="13" fill="var(--faint)">fehlt</text>';
+    (grown && m.capabilities ? m.capabilities : []).forEach((c,i)=>{
+      g += '<text x="'+(stem.x+stem.w+16)+'" y="'+(stem.y+52+i*24)+'" font-size="13" fill="var(--ink-2)">• '+esc(c)+'</text>';
+    });
+    return '<div class="mock"><div class="chartbox">'
+      + '<svg viewBox="0 0 680 200" role="img" aria-label="'+esc(m.alt)+'">'+g+'</svg>'
+      + (m.caption ? '<p class="chart-cap">'+esc(m.caption)+'</p>' : '')
+      + '</div></div>';
+  },
   results(m){
     return '<div class="mock">'+mockBar("Live-Auswertung — "+(m.as==="matrix"?"Matrix":"Antworten"),"var(--sys-agent)")
       + '<div class="chartbox"><p class="chart-cap">Antworten der Teilnehmer zu „'+esc(m.of)+'“'
@@ -658,7 +681,15 @@ function renderStage(){
        + (p.at ? '<span class="sep">◆</span><span class="clock">'+esc(p.at)+'</span>' : '')
        + '</div></div>';
     h += '<div class="slide-body">';
-    if(p.mock) h += RENDER[p.mock.t](p.mock);
+    // Ein unbekannter Mock-Typ darf den Abschnitt nicht verschlucken: vorher
+    // warf der Aufruf, renderStage brach vor dem Schreiben ab, und der alte
+    // Abschnitt blieb stehen — der Klick zählte hoch, das Bild nicht.
+    if(p.mock){
+      const render = RENDER[p.mock.t];
+      h += render
+        ? render(p.mock)
+        : '<div class="mock"><div class="chartbox"><p class="chart-cap">Kein Renderer für Mock-Typ „'+esc(p.mock.t)+'“ — die Folie existiert, nur die Vorschau fehlt hier.</p></div></div>';
+    }
     if(p.inter) h += '<div class="inter"><span class="lbl">Interaktion</span><span class="q">'+esc(p.inter)+'</span></div>';
     h += '</div>';
 
