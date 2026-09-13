@@ -100,7 +100,7 @@ export const SECTIONS: Section[] = [
         "app": "Outlook-Oberfläche, aus 15 Metern lesbar."
       },
       {
-        "at": "18:04",
+        "at": "18:03",
         "mock": {
           "t": "mail",
           "app": "Microsoft Outlook — Gesendet",
@@ -136,7 +136,7 @@ export const SECTIONS: Section[] = [
         "say": "Keine sieben Minuten später geht diese Antwort raus. Wir können listen — aber nicht zum 15. Oktober, sondern eine Woche später, am 22. Der Grund: In zwölf Märkten im Raum Hamburg werden an diesem Tag Zweitplatzierungsflächen frei, die sich für eine Einführungsaktion nutzen lassen. Bedingung: fünfzehn Prozent Einführungsrabatt für die ersten vier Wochen. Und jetzt das Besondere: Kein Mensch war beteiligt. Ein KI-Agent hat die E-Mail analysiert, sich einen Plan gemacht, Daten aus den Systemen geholt, sie gegeneinandergestellt, ausgewertet, Entscheidungen getroffen, die Antwort formuliert und abgeschickt. Alles in sieben Minuten."
       },
       {
-        "at": "18:06",
+        "at": "18:04",
         "mock": {
           "t": "fan",
           "cells": [
@@ -174,7 +174,7 @@ export const SECTIONS: Section[] = [
     "title": "Lisa Berger, Category Managerin",
     "panels": [
       {
-        "at": "18:08",
+        "at": "18:05",
         "mock": {
           "t": "list",
           "ordered": false,
@@ -196,7 +196,7 @@ export const SECTIONS: Section[] = [
         "say": "Kurz zu Lisa, denn um ihre Arbeit geht es hier. Lisa Berger ist Category Managerin bei einem großen Lebensmittelhändler und verantwortet die Kategorie Schokolade und Pralinen. Listungsentscheidungen, Auslistungen, Konditionen, Regalplatz, Aktionsplanung — das ist ihr Tagesgeschäft. Und der Agent, den Sie gerade gesehen haben, hat genau das getan, wofür sie bezahlt wird."
       },
       {
-        "at": "18:10",
+        "at": "18:06",
         "mock": {
           "t": "list",
           "ordered": true,
@@ -252,11 +252,11 @@ export const SECTIONS: Section[] = [
     "hero": true,
     "panels": [
       {
-        "at": "18:12",
+        "at": "18:07",
         "say": "Kein Mensch wurde gefragt. Alle wurden nur informiert."
       },
       {
-        "at": "18:13",
+        "at": "18:07",
         "mock": {
           "t": "statement",
           "text": "Braucht man uns dann noch?",
@@ -273,7 +273,7 @@ export const SECTIONS: Section[] = [
     "title": "Ich bin Carsten Koch.",
     "panels": [
       {
-        "at": "18:14",
+        "at": "18:08",
         "mock": {
           "t": "bio",
           "stations": [
@@ -293,7 +293,7 @@ export const SECTIONS: Section[] = [
         }
       },
       {
-        "at": "18:16",
+        "at": "18:08",
         "mock": {
           "t": "qr",
           "caption": "Das hier ist keine PowerPoint.",
@@ -307,7 +307,7 @@ export const SECTIONS: Section[] = [
         }
       },
       {
-        "at": "18:18",
+        "at": "18:09",
         "mock": {
           "t": "results",
           "of": "sorge",
@@ -364,7 +364,7 @@ export const SECTIONS: Section[] = [
         "app": "Live-Matrix aus den Antworten. Beide Fragen laufen gleichzeitig, die Matrix füllt sich sukzessive."
       },
       {
-        "at": "18:21",
+        "at": "18:09",
         "mock": {
           "t": "qr",
           "caption": "Schreiben Sie Lisa selbst.",
@@ -394,7 +394,7 @@ export const SECTIONS: Section[] = [
     "title": "Ich bin damit nicht allein.",
     "panels": [
       {
-        "at": "18:25",
+        "at": "18:11",
         "mock": {
           "t": "quote",
           "text": "KI könnte die Hälfte aller Einstiegsjobs im Bürobereich vernichten und die Arbeitslosigkeit binnen ein bis fünf Jahren auf 10 bis 20 Prozent treiben.",
@@ -412,7 +412,7 @@ export const SECTIONS: Section[] = [
     "title": "Aus demselben Haus kommt das Gegenteil.",
     "panels": [
       {
-        "at": "18:27",
+        "at": "18:12",
         "mock": {
           "t": "tweets",
           "items": [
@@ -439,7 +439,7 @@ export const SECTIONS: Section[] = [
     "title": "Die Propheten vor ihm lagen falsch.",
     "panels": [
       {
-        "at": "18:29",
+        "at": "18:13",
         "mock": {
           "t": "list",
           "ordered": false,
@@ -466,7 +466,7 @@ export const SECTIONS: Section[] = [
     "sub": "Millionen Arbeitsplätze verschwanden tatsächlich.",
     "panels": [
       {
-        "at": "18:31",
+        "at": "18:13",
         "mock": {
           "t": "chart",
           "which": "agriculture"
@@ -484,7 +484,7 @@ export const SECTIONS: Section[] = [
     "sub": "David Frederick Schloss prägte 1891 den Begriff der „Lump of Labor Fallacy\".",
     "panels": [
       {
-        "at": "18:33",
+        "at": "18:14",
         "mock": {
           "t": "list",
           "ordered": false,
@@ -514,7 +514,7 @@ export const SECTIONS: Section[] = [
     "title": "Welche Aufgaben haben Sie heute schon an KI abgegeben?",
     "panels": [
       {
-        "at": "18:36",
+        "at": "18:15",
         "mock": {
           "t": "results",
           "of": "abgegeben",
@@ -548,7 +548,7 @@ export const SECTIONS: Section[] = [
     "sub": "Und warum ist das noch nicht die Regel?",
     "panels": [
       {
-        "at": "18:41",
+        "at": "18:16",
         "mock": {
           "t": "mail",
           "app": "Microsoft Outlook — Gesendet",
@@ -588,176 +588,228 @@ export const SECTIONS: Section[] = [
   },
   {
     "b": 3,
-    "kind": "Überleitung",
-    "title": "Es liegt nicht am Modell. Es liegt am Kontext.",
-    "sub": "Genug Theorie. Wir bauen den Agenten jetzt in vier Stufen auf — von nutzlos bis autonom. Jede Stufe fügt genau einen Baustein hinzu.",
+    "kind": "Konzept",
+    "title": "Wie arbeitet so ein Modell überhaupt?",
     "panels": [
       {
-        "at": "18:42",
+        "at": "18:17",
         "mock": {
-          "t": "list",
-          "ordered": false,
-          "items": [
-            [
-              "Stufe a",
-              "Ein nacktes Modell · nur Trainingsdaten"
-            ],
-            [
-              "Stufe b",
-              "+ Systemprompt und Gesprächsverlauf"
-            ],
-            [
-              "Stufe c",
-              "+ Tools"
-            ],
-            [
-              "Stufe d",
-              "+ Autonomie"
-            ]
-          ]
+          "t": "tshape",
+          "variant": "human",
+          "alt": "T-Form: ein breiter Balken für Allgemeinwissen, darunter ein tiefer Stamm für Spezialwissen",
+          "caption": "Vereinfacht — aber so sieht Wissensarbeit aus: breit genug, um mit anderen Disziplinen zu reden, tief genug, um die eigene Aufgabe zu lösen."
         },
-        "say": "Die Stufenübersicht bleibt als Orientierung während des ganzen Blocks abrufbar."
+        "say": "Dafür müssen wir kurz verstehen, wie ein Modell arbeitet. Als Wissensarbeiter bringen wir in der Regel zweierlei mit. Erstens ein breites Allgemeinwissen — auch über die Disziplinen, mit denen wir zusammenarbeiten. Lisa weiß ungefähr, wie Logistik tickt und was eine Zweitplatzierung ist, auch wenn sie beides nicht selbst macht. Und zweitens das Spezialwissen, das sie braucht, um ihre eigene Aufgabe überhaupt bewältigen zu können. Hier etwas vereinfacht dargestellt."
+      },
+      {
+        "at": "18:19",
+        "mock": {
+          "t": "tshape",
+          "variant": "llm",
+          "alt": "Das Modell hat einen viel breiteren und dickeren Balken an Allgemeinwissen, aber keinen Stamm an Spezialwissen",
+          "caption": "Breiter und tiefer als bei uns — aber ohne Stamm."
+        },
+        "say": "Dieses Allgemeinwissen ist in der Regel gut dokumentiert und über das Internet abrufbar. Es ist also gut möglich, dass es bei heutigen KI-Modellen in den Trainingsdaten enthalten war. Und die Modelle haben davon mehr als wir: breiter und tiefer. Was ihnen fehlt, ist der Stamm. Das Spezialwissen, um die Aufgabe eines Category Managers wirklich auszuführen."
       }
     ],
     "n": 13
   },
   {
     "b": 3,
-    "kind": "Chat · Stufe a",
-    "title": "Stufe a) Ein nacktes Modell",
-    "sub": "Dieselbe E-Mail. Kein Kontext. Die Aufgabe: „Bearbeite diesen Vorgang.“",
+    "kind": "Interaktiv · Publikum",
+    "title": "Machen wir die Probe.",
     "panels": [
       {
-        "at": "18:43",
+        "at": "18:21",
+        "mock": {
+          "t": "qr",
+          "caption": "Schicken Sie die Mail — diesmal unverändert.",
+          "hint": "Der erste, der eine Antwort bekommt, meldet sich bitte."
+        },
+        "say": "Machen wir die Probe. Auf Ihrem Handy liegt wieder ein Link. Schicken Sie die Mail bitte ab — diesmal können Sie den Text so lassen, wie er ist. Antworten wird ein Agent, der ausschließlich auf seine Trainingsdaten zugreifen kann. Keine Systeme, keine Daten. Der erste, der eine Antwort bekommt, meldet sich bitte.",
+        "audience": {
+          "kind": "mailto",
+          "id": "lisa-blank",
+          "persist": true,
+          "until": "20:00",
+          "label": "Mail abschicken (Text unverändert)",
+          "to": "lisa.berger@example-retail.de",
+          "subject": "Listungsanfrage",
+          "body": "Guten Tag Frau Berger,\n\nwir möchten ein neues Produkt bei Ihnen listen und schlagen einen Start zum kommenden Quartalswechsel vor. Über eine Rückmeldung würden wir uns freuen.\n\nMit freundlichen Grüßen",
+          "hint": "Diesmal bitte nichts ändern — wir wollen sehen, was ein Agent ohne Systemzugriff daraus macht.",
+          "privacy": "Ich speichere Ihre E-Mail-Adresse nur, bis die Antwort versendet ist. Ich hebe sie nicht auf."
+        },
+        "app": "Agent ohne Tools und ohne Systemprompt-Kontext. Die Antwort enthält nur das Ergebnis plus die Schrittfolge, wie er dorthin kam."
+      },
+      {
+        "at": "18:23",
+        "mock": {
+          "t": "statement",
+          "text": "Wie ein hochmotivierter Abiturient.",
+          "after": "Er will unbedingt antworten. Er kann es nur nicht."
+        },
+        "say": "Das dauert jetzt ein paar Minuten — die Mail muss verarbeitet und zurückgeschickt werden. Nutzen wir die Zeit für ein Bild: Stellen Sie sich einen Abiturienten vor. Hochmotiviert, klug, liest schnell. Aber er war noch nie in Ihrem Unternehmen. Er kennt Ihre Kategorievorgaben nicht, Ihre Lieferanten nicht, Ihren Regalplatz nicht. Und trotzdem will er unbedingt eine Antwort geben."
+      },
+      {
+        "at": "18:25",
         "mock": {
           "t": "chat",
-          "app": "Agent — ohne Kontext",
+          "app": "Agent — nur Trainingsdaten",
           "msgs": [
             {
-              "who": "Lisa",
+              "who": "Hersteller",
               "role": "user",
-              "text": "Bearbeite diesen Vorgang. [E-Mail von Hallbach angehängt]"
+              "text": "Wir möchten ein neues Produkt listen. Start zum Quartalswechsel."
             },
             {
               "who": "Agent",
               "role": "agent",
               "flat": true,
-              "text": "Vielen Dank für Ihren Listungsantrag. Wir werden Ihr Anliegen prüfen und uns zeitnah bei Ihnen melden."
+              "text": "Vielen Dank für Ihre Anfrage. Eine Listung zum Quartalswechsel ist grundsätzlich möglich. Üblicherweise liegt die Marge in dieser Kategorie bei etwa 35 Prozent, und ein Vorlauf von sechs Wochen ist ausreichend. Wir melden uns mit den Konditionen."
             }
           ]
         },
-        "say": "Die Enttäuschung ausspielen. „So endet für die meisten das KI-Experiment.“",
-        "app": "Ein Chatfenster ohne jede Anbindung. Bewusst nackt — kein Branding, keine Tools."
+        "say": "Schauen wir uns die Antworten an. Wer hat eine bekommen? — Und jetzt der interessante Teil: Vergleichen Sie sie miteinander. Wenn mehrere von Ihnen sehr unterschiedliche Zahlen bekommen haben, dann haben Sie gerade eine Halluzination gesehen. Das Modell hat keine Marge geprüft. Es hat eine plausibel klingende erfunden, weil Antworten seine Aufgabe ist.",
+        "inter": "Antworten vergleichen lassen: „Wer hat eine bekommen? Was steht bei Ihnen für eine Marge drin?“"
       }
     ],
     "n": 14
   },
   {
     "b": 3,
-    "kind": "Technik · Stufe a",
-    "title": "Trainingsdaten",
-    "sub": "Jedes große Sprachmodell wurde auf riesigen Textmengen trainiert. Das ist sein Allgemeinwissen — aber es kennt weder Ihre Firma noch Ihre Produkte noch Ihre Kunden.",
+    "kind": "Konzept",
+    "title": "Was dem Agenten fehlt.",
     "panels": [
       {
-        "at": "18:44",
+        "at": "18:28",
         "mock": {
-          "t": "statement",
-          "text": "Wie ein neuer Mitarbeiter am ersten Tag: intelligent, aber ahnungslos."
+          "t": "tshape",
+          "variant": "grown",
+          "capabilities": [
+            "Systemprompt — wer bin ich, was gilt hier",
+            "Tools und Memory — woher kommen die Daten",
+            "Autonomie — was darf ich selbst tun"
+          ],
+          "alt": "Derselbe breite Balken, und der Stamm wächst zurück: Systemprompt, Tools und Memory, Autonomie",
+          "caption": "Drei Wege, auf denen das Spezialwissen hereinkommt."
         },
-        "say": "Das Bild vom neuen Mitarbeiter trägt durch den ganzen Block — später wieder aufgreifen."
+        "say": "Was braucht er also? Drei Dinge. Erstens einen Systemprompt: wer bin ich, für wen arbeite ich, welche Regeln gelten hier. Zweitens Tools und Memory: einen Weg, an die Daten zu kommen — und einen Weg, sich zu merken, was er dabei gelernt hat. Und drittens Autonomie: die Berechtigung, Dinge nicht nur vorzuschlagen, sondern zu tun. Aus dem Rechteck wird wieder ein T. Die drei gehen wir jetzt einzeln durch."
       }
     ],
     "n": 15
   },
   {
     "b": 3,
-    "kind": "Chat · Stufe b",
-    "title": "Stufe b) „Da ist eine E-Mail für Dich“",
-    "sub": "Dieselbe E-Mail — aber der Agent hat jetzt ein Briefing und einen aufgebauten Gesprächsverlauf.",
+    "kind": "Stufe 1 · Systemprompt",
+    "title": "Der Systemprompt",
     "panels": [
       {
-        "at": "18:45",
+        "at": "18:31",
         "mock": {
-          "t": "chat",
-          "app": "Agent — mit Systemprompt",
-          "msgs": [
-            {
-              "who": "Lisa",
-              "role": "user",
-              "text": "Was liegt an?"
-            },
-            {
-              "who": "Agent",
-              "role": "agent",
-              "text": "Lisa, du hast einen Listungsantrag von Hallbach erhalten. Neues Produkt: Hallbach Crispy Bites. EK 2,89 €, empf. VK 4,49 €, Mindestabnahme 500 VE, gewünschter Start 15. Oktober. Es handelt sich um eine Exklusiveinführung."
-            }
+          "t": "list",
+          "ordered": false,
+          "items": [
+            [
+              "Wer bin ich",
+              "Assistent von Lisa Berger, Category Management Schokolade & Pralinen"
+            ],
+            [
+              "Was gilt hier",
+              "Marge mindestens 30 %, Regalplatz knapp, Aktionsflächen vier Wochen Vorlauf"
+            ],
+            [
+              "Wie arbeite ich",
+              "Zusammenfassen, prüfen, empfehlen — und nachfragen statt raten"
+            ],
+            [
+              "Was ich nicht habe",
+              "Keinen Zugriff auf die Systeme. Das sage ich auch."
+            ]
           ]
         },
-        "say": "Noch keine Handlung — aber schon Zeitersparnis. Zusammenfassung und Einordnung.",
-        "app": "Derselbe Chat, jetzt mit Systemprompt. Der Systemprompt sollte einblendbar sein — das Publikum will sehen, was drinsteht."
+        "say": "Der Systemprompt ist die Einarbeitung. Er kommt vor der ersten Nachricht und bleibt bei jeder weiteren dabei. Hier steht, wer der Agent ist, für wen er arbeitet und welche Regeln in diesem Haus gelten. Und — das ist der wichtigste Teil — hier steht auch, was er nicht weiß. Ein Agent, der sagt „diese Zahl habe ich nicht, sie steht in der Warenwirtschaft“, ist deutlich nützlicher als einer, der sie erfindet."
+      },
+      {
+        "at": "18:33",
+        "mock": {
+          "t": "qr",
+          "caption": "Starten Sie den Chat.",
+          "hint": "Der Agent hat jetzt den Systemprompt — aber immer noch keine Systeme. Sie sind seine Tools."
+        },
+        "say": "Jetzt Sie. Auf Ihrem Handy können Sie einen Chat starten. Wir simulieren, dass Sie die Mail von Hallbach bekommen haben. Der Agent fasst nicht nur zusammen, er gibt eine Handlungsempfehlung — und er deutet an, was er tun würde, wenn er die Tools selbst hätte. Hat er aber nicht. Also fragt er Sie. Bitte antworten Sie ihm. Und schauen Sie sich den Systemprompt an, er ist in der App einsehbar.",
+        "audience": {
+          "kind": "chat",
+          "id": "systemprompt-chat",
+          "persist": true,
+          "label": "Chat starten",
+          "hint": "Sie bekommen die Mail von Hallbach. Der Agent fragt Sie nach den Daten, die ihm fehlen — Sie sind seine Tools.",
+          "systemPrompt": "Du bist der Assistent von Lisa Berger, Category Managerin für Schokolade & Pralinen bei einem Lebensmittelhändler.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und Lisa eine Handlungsempfehlung geben.\n\nKontext, den du kennst:\n- Kategorievorgabe Marge: mindestens 30 %\n- Regalplatz ist knapp. Eine Neulistung setzt in der Regel eine Auslistung voraus.\n- Aktionsflächen werden über den Aktionskalender vergeben, Vorlauf mindestens vier Wochen.\n- Exklusivzusagen brauchen die Freigabe der Einkaufsleitung.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Nenne, was du prüfen würdest, und in welchem System es steht.\n3. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt.\n4. Wenn dir Daten fehlen, frage Lisa gezielt danach. Rate nicht.\n\nDu hast KEINEN Zugriff auf Warenwirtschaft, Marktdaten, Regalplanung oder\nAktionskalender. Sag klar, welche Zahl du bräuchtest und wo sie steht.",
+          "suggestions": [
+            "Die Kategorie wächst um 3,2 %",
+            "Underperformer ist Nocturne Mini mit −12 %",
+            "Regalplatz gibt es nur, wenn etwas ausgelistet wird",
+            "Die Marge läge bei 34,2 %"
+          ]
+        },
+        "app": "Chat mit Systemprompt, ohne Tools. Antwortvorschläge, damit niemand lange tippen muss. Der Systemprompt ist einsehbar.",
+        "open": "Der Chat-Client ist noch nicht gebaut — nur der Systemprompt steht."
       }
     ],
     "n": 16
   },
   {
     "b": 3,
-    "kind": "Technik · Stufe b",
-    "title": "Systemprompt und Gesprächsverlauf",
+    "kind": "Technik",
+    "title": "Jede Nachricht schickt das ganze Gespräch mit.",
     "panels": [
       {
-        "at": "18:46",
+        "at": "18:36",
         "mock": {
           "t": "list",
           "ordered": false,
           "items": [
             [
-              "Der Systemprompt",
-              "Das Briefing vor der ersten Nachricht: wer der Agent ist, welche Rolle er hat, welche Regeln gelten. Seine Einarbeitung."
+              "Turn 1",
+              "Systemprompt + Ihre Frage"
             ],
             [
-              "Der Gesprächsverlauf",
-              "Jede Nachricht geht nicht allein ans Modell — der gesamte bisherige Verlauf wird mitgeschickt. Jeder Turn trägt zum Wissen bei."
+              "Turn 2",
+              "Systemprompt + Ihre Frage + seine Antwort + Ihre nächste Frage"
+            ],
+            [
+              "Turn 3",
+              "…und so weiter. Der Verlauf wächst mit jeder Nachricht."
             ]
           ]
         },
-        "say": "Das ist der Baustein, den fast niemand im Raum kennt. Zeit dafür nehmen."
+        "say": "Eine Sache, die kaum jemand weiß: Wenn Sie mit einem Modell sprechen, geht nicht nur Ihre letzte Nachricht hin. Der gesamte bisherige Verlauf wird jedes Mal mitgeschickt — Systemprompt, alle Fragen, alle Antworten. Das Modell hat kein Gedächtnis. Es bekommt bei jedem Aufruf das ganze Gespräch neu vorgelegt."
+      },
+      {
+        "at": "18:38",
+        "mock": {
+          "t": "diff",
+          "before": {
+            "h": "Frage für Frage — 6 Turns",
+            "p": "Der Verlauf wird sechsmal übertragen und wächst dabei. Die Rechnung steigt überproportional."
+          },
+          "after": {
+            "h": "Alles in einer Nachricht",
+            "p": "Ein Turn, ein Verlauf. Dieselbe Antwort, ein Bruchteil der Kosten."
+          }
+        },
+        "say": "Und das hat direkte Folgen für die Kosten. Wir haben beides einmal durchgerechnet: dasselbe Ergebnis über sechs Frage-Antwort-Runden, und dasselbe Ergebnis, wenn man dem Agenten alles gleich mitgibt. Weniger Turns heißt nicht nur schneller — es heißt vor allem billiger.",
+        "open": "Die beiden Kostenwerte fehlen noch. Einmal lokal durchrechnen und die Zahlen hier eintragen; live vorführen müssen wir das nicht."
       }
     ],
     "n": 17
   },
   {
     "b": 3,
-    "kind": "Demo · Stufe b",
-    "title": "Wir nehmen eine Nachricht aus dem Verlauf heraus.",
-    "sub": "Dieselbe Frage, ein Turn weniger — und die Antwort ändert sich komplett.",
+    "kind": "Stufe 2 · Tools",
+    "title": "Tools",
     "panels": [
       {
-        "at": "18:47",
-        "mock": {
-          "t": "diff",
-          "before": {
-            "h": "Mit dem Turn",
-            "p": "„Nocturne Mini läuft seit drei Quartalen rückläufig — das wäre der Kandidat für die Auslistung.“"
-          },
-          "after": {
-            "h": "Ohne den Turn",
-            "p": "„Für eine Aussage zur Auslistung fehlen mir die Abverkaufszahlen der Kategorie.“"
-          }
-        },
-        "say": "Der stärkste Aha-Moment des Blocks. Erst die Antwort zeigen, dann den Turn löschen, dann dieselbe Frage nochmal.",
-        "app": "Der Gesprächsverlauf muss editierbar sein — einzelne Turns sichtbar löschen und die Anfrage erneut absenden."
-      }
-    ],
-    "n": 18
-  },
-  {
-    "b": 3,
-    "kind": "Chat · Stufe c",
-    "title": "Stufe c) „…und hier ist ein Antwortentwurf“",
-    "sub": "Dieselbe E-Mail — aber jetzt mit Zugriff auf die Systeme.",
-    "panels": [
-      {
-        "at": "18:48",
+        "at": "18:41",
         "mock": {
           "t": "chat",
           "app": "Agent — mit Tools",
@@ -771,212 +823,187 @@ export const SECTIONS: Section[] = [
               "who": "Agent",
               "role": "agent",
               "tools": [
+                "outlook.lies_mails",
                 "warenwirtschaft.kategorie",
                 "marktdaten.segment",
                 "regalplanung.platz",
                 "aktionskalender.zeitraum"
               ],
-              "text": "Kategorie wächst +3,2 %. Underperformer: Nocturne Mini (−12 %). Regalplatz frei, wenn Nocturne Mini geht. Marge 34,2 % — über Vorgabe. Und: Am 22. Oktober werden in 12 Hamburger Märkten Aufsteller frei. Hier ist ein Antwortentwurf."
+              "text": "Kategorie wächst +3,2 %. Underperformer: Nocturne Mini (−12 %). Regalplatz frei, wenn Nocturne Mini geht. Marge 34,2 % — über Vorgabe. Und: Am 22. Oktober werden in 12 Hamburger Märkten Aufsteller frei. Der Entwurf liegt in deinem E-Mail-Postfach."
             }
           ]
         },
-        "say": "Die Tool-Aufrufe müssen sichtbar durchlaufen. Das ist der Beweis, dass er wirklich nachgeschaut hat.",
-        "app": "Tool-Aufrufe live und einzeln sichtbar — mit Name und Rückgabewert. Am Ende ein Antwortentwurf, den Lisa prüft und absendet."
+        "say": "Jetzt bekommt er Werkzeuge. Und ehrlich gesagt hatte er von Anfang an eines: das Lesen Ihrer E-Mails. Ohne das hätte er die Mail von Hallbach gar nicht gesehen. Jetzt kommen die Systeme dazu — Warenwirtschaft, Marktdaten, Regalplanung, Aktionskalender. Er fragt nicht mehr Sie. Er schaut selbst nach. Und am Ende sagt er den Satz, auf den es ankommt: Der Entwurf liegt in deinem E-Mail-Postfach."
+      },
+      {
+        "at": "18:44",
+        "mock": {
+          "t": "list",
+          "ordered": false,
+          "items": [
+            [
+              "Ein Tool ist eine Beschreibung",
+              "Name, wozu es gut ist, welche Angaben es braucht — in Worten, nicht in Code"
+            ],
+            [
+              "Die Beschreibung wandert in die Instruktionen",
+              "Das Modell liest sie wie einen Teil seines Auftrags und entscheidet selbst, wann es zugreift"
+            ],
+            [
+              "MCP ist die Steckdose dafür",
+              "Ein gemeinsames Format, damit jedes System seine Werkzeuge anbieten kann, ohne dass der Agent umgebaut wird"
+            ]
+          ]
+        },
+        "say": "Wie funktioniert das technisch? Ein Tool ist zunächst nichts weiter als eine Beschreibung: wie heißt es, wozu ist es gut, welche Angaben braucht es. Diese Beschreibung wird Teil der Instruktionen, die das Modell bei jedem Aufruf bekommt. Es liest sie und entscheidet selbst, wann ein Zugriff sinnvoll ist. Und MCP — das Model Context Protocol — ist die Steckdose dafür: ein gemeinsames Format, damit jedes System seine Werkzeuge anbieten kann, ohne dass wir den Agenten jedes Mal umbauen."
+      }
+    ],
+    "n": 18
+  },
+  {
+    "b": 3,
+    "kind": "Stufe 3 · Autonomie",
+    "title": "Autonomie",
+    "panels": [
+      {
+        "at": "18:47",
+        "mock": {
+          "t": "fan",
+          "cells": [
+            {
+              "sys": "SAP",
+              "act": "Bestellung angelegt",
+              "qty": "Schreibrecht statt Leserecht"
+            },
+            {
+              "sys": "Regalplanung",
+              "act": "Planogramm geändert",
+              "qty": "Auslistung inklusive"
+            },
+            {
+              "sys": "Outlook",
+              "act": "Mail versendet",
+              "qty": "ohne Freigabe"
+            },
+            {
+              "sys": "Teams",
+              "act": "12 Marktleiter informiert",
+              "qty": "ohne Rückfrage"
+            }
+          ]
+        },
+        "say": "Die letzte Stufe ist keine neue Technik. Es sind dieselben Tools — nur mit Schreibberechtigung. Bestellungen dürfen ausgesprochen werden. Aufträge dürfen angelegt werden. E-Mails dürfen raus. Das ist keine Frage des Modells mehr, das ist eine Frage der Handlungsvollmacht. Und damit sind wir wieder bei dem Szenario vom Anfang."
+      },
+      {
+        "at": "18:49",
+        "mock": {
+          "t": "statement",
+          "text": "Hat jemand eine Antwort bekommen, die falsch war?",
+          "after": "Eine Empfehlung, bei der Sie gesagt hätten: so nicht."
+        },
+        "say": "Und damit die Frage, auf die es jetzt ankommt: Hat jemand von Ihnen eine Antwort bekommen, bei der Sie gesagt hätten — so nicht? Wo der Agent daneben lag? Genau da fängt die eigentliche Arbeit an.",
+        "inter": "Antworten sammeln. Wenn niemand etwas hat: nach der Halluzination von vorhin fragen."
       }
     ],
     "n": 19
   },
   {
     "b": 3,
-    "kind": "Technik · Stufe c",
-    "title": "Tools",
-    "sub": "Bisher konnte der Agent nur reden. Durch Tools kann er Daten abrufen, Systeme abfragen und Entwürfe produzieren.",
+    "kind": "Memory · Vorgehen",
+    "title": "Wie wird der Agent besser?",
     "panels": [
       {
-        "at": "18:48",
+        "at": "18:51",
         "mock": {
-          "t": "statement",
-          "text": "Er bereitet die Arbeit vor. Der Mensch entscheidet und klickt „Senden“."
+          "t": "list",
+          "ordered": true,
+          "items": [
+            [
+              "Jede Mail durch den Agenten schicken",
+              "Auch die, die Sie selbst beantworten würden. Sonst lernt er nur die Hälfte."
+            ],
+            [
+              "Seinen Vorschlag nicht einfach annehmen",
+              "Rückfragen stellen, korrigieren, anders formulieren"
+            ],
+            [
+              "Das ist die Rückkopplung",
+              "Aus jeder Korrektur wird Wissen, das beim nächsten Mal schon da ist"
+            ]
+          ]
         },
-        "say": "Hier ist die Grenze zwischen c und d: Wer klickt „Senden“?"
+        "say": "Der Weg dahin ist unspektakulär, und genau deshalb funktioniert er. Sie schicken ab sofort jede eingehende Mail durch den Agenten — auch die, die Sie in dreißig Sekunden selbst beantwortet hätten. Und Sie antworten nicht mehr selbst. Sie lassen ihn einen Vorschlag machen. Und dann nehmen Sie den nicht einfach an: Sie fragen zurück, Sie korrigieren, Sie formulieren um. Das ist die Rückkopplung."
+      },
+      {
+        "at": "18:53",
+        "mock": {
+          "t": "tshape",
+          "variant": "grown",
+          "capabilities": [
+            "Systemprompt — bleibt gleich",
+            "Tools — bleiben gleich",
+            "Memory — wächst mit jeder Korrektur"
+          ],
+          "alt": "Der Stamm des T wächst weiter: Memory kommt neben Systemprompt und Tools dazu",
+          "caption": "Memory ist der Teil, der nicht von Ihnen geschrieben wird, sondern entsteht."
+        },
+        "say": "Hier kommt Memory ins Spiel. Neben dem Systemprompt, den Sie schreiben, und den Tools, die Sie anschließen, sammelt der Agent zusätzliches Wissen: was Sie korrigiert haben, worauf Sie Wert legen, welche Formulierung durchgeht und welche nicht. Der Systemprompt ist das, was Sie ihm sagen. Memory ist das, was er aus der Zusammenarbeit mitnimmt."
+      },
+      {
+        "at": "18:55",
+        "mock": {
+          "t": "list",
+          "ordered": true,
+          "items": [
+            [
+              "Bis die Vorschläge stimmen",
+              "Irgendwann ist die Mail, die er schicken will, die, die Sie geschickt hätten"
+            ],
+            [
+              "Dann in Software überführen",
+              "Mit einer Bestätigungshürde: er darf, aber Sie klicken"
+            ],
+            [
+              "Und irgendwann die Hürde weglassen",
+              "Aber nur für diese eine Klasse von Mails. Dann die nächste."
+            ]
+          ]
+        },
+        "say": "Und irgendwann kommen Sie an den Punkt, an dem die Mail, die der Agent schicken will, die ist, die Sie geschickt hätten. Dann überführen Sie das in Software — erst mit einer Bestätigungshürde: Er darf handeln, aber Sie klicken. Und wenn das eine Weile gut geht, nehmen Sie die Hürde weg. Wichtig: Das gilt immer nur für eine Klasse von Mails. Listungsanfragen zum Beispiel. Dann nehmen Sie sich die nächste Klasse vor. So wächst das, Stück für Stück."
       }
     ],
     "n": 20
   },
   {
     "b": 3,
-    "kind": "Agent · Stufe d",
-    "title": "Stufe d) Jetzt öffnen wir die Box.",
-    "sub": "Dieselbe E-Mail, dieselben sieben Minuten wie zu Beginn — diesmal sehen wir zu.",
+    "kind": "Rahmen",
+    "title": "Und was sagt der EU AI Act dazu?",
     "panels": [
       {
-        "at": "18:49",
+        "at": "18:57",
         "mock": {
-          "t": "run",
-          "steps": [
-            {
-              "sys": "Outlook",
-              "txt": "E-Mail gelesen und eingeordnet",
-              "out": "Listungsantrag · Exklusiveinführung · Wunschstart <b>15. Okt.</b>"
-            },
-            {
-              "sys": "Warenwirtschaft",
-              "txt": "Kategorie Schokolade & Pralinen geprüft",
-              "out": "Wachstum <b>+3,2 % YoY</b> · Underperformer: Nocturne Mini <b>−12 %</b>"
-            },
-            {
-              "sys": "Marktdaten",
-              "txt": "Segment Bites / Snacking geprüft",
-              "out": "Aufwärtstrend — das Produkt passt ins Portfolio"
-            },
-            {
-              "sys": "Kalkulation",
-              "txt": "Marge gerechnet",
-              "out": "<b>34,2 %</b> bei EK 2,89 € / VK 4,49 € — Vorgabe 30 %"
-            }
+          "t": "list",
+          "ordered": false,
+          "items": [
+            [
+              "Risikobasiert",
+              "Nicht jede KI ist gleich reguliert. Entscheidend ist, wofür sie eingesetzt wird."
+            ],
+            [
+              "Transparenz",
+              "Wo ein Agent nach außen kommuniziert, muss erkennbar sein, dass eine Maschine beteiligt ist."
+            ],
+            [
+              "Nachvollziehbarkeit",
+              "Was der Agent getan hat und warum, muss dokumentiert sein — genau das, was wir eben Schrittfolge genannt haben."
+            ]
           ]
         },
-        "say": "Jetzt darf es langsam sein. In Block 1 war es ein Schock, hier ist es eine Erklärung. Vier Systeme — dieselben vier, die auf Lisas Tagesliste standen.",
-        "app": "Schrittweise steuerbar: nach jedem Tool-Aufruf anhaltbar, damit erklärt werden kann. Das ist der einzige Ablauf, der diese Steuerung wirklich braucht."
+        "say": "Ein Punkt, den Sie im Haus früh klären sollten: der EU AI Act. Er reguliert risikobasiert — es kommt also nicht auf die Technik an, sondern darauf, wofür Sie sie einsetzen. Zwei Dinge sind für unser Beispiel relevant. Erstens Transparenz: Wenn ein Agent nach außen kommuniziert, sollte erkennbar sein, dass eine Maschine beteiligt war. Und zweitens Nachvollziehbarkeit — was hat er getan und warum. Das ist genau die Schrittfolge, die Sie heute in der Antwort-Mail bekommen haben. Ich bin kein Jurist; holen Sie sich das früh ins Haus statt am Ende.",
+        "open": "Vor dem Vortrag juristisch gegenprüfen lassen. Die Aussagen sind bewusst allgemein gehalten — keine Rechtsberatung."
       }
     ],
     "n": 21
-  },
-  {
-    "b": 3,
-    "kind": "Auflösung · Stufe d",
-    "title": "Und das ist die Antwort auf die Frage von vorhin.",
-    "sub": "Niemand hat den Agenten gebeten, im Aktionskalender nachzusehen. Er hat es getan, weil ein Termin im Raum stand.",
-    "panels": [
-      {
-        "at": "18:50",
-        "mock": {
-          "t": "run",
-          "steps": [
-            {
-              "sys": "Aktionskalender",
-              "txt": "Kampagnen im Umfeld des Wunschtermins geprüft",
-              "out": "Kampagne „Herbstwochen“ endet am <b>22. Oktober</b>",
-              "key": true
-            },
-            {
-              "sys": "Regalplanung",
-              "txt": "Freiwerdende Flächen ermittelt",
-              "out": "<b>12 Märkte</b> im Raum Hamburg · Zweitplatzierung Aufsteller",
-              "key": true
-            },
-            {
-              "sys": "Business Case",
-              "txt": "Verschiebung um eine Woche durchgerechnet",
-              "out": "Erwarteter Uplift durch Zweitplatzierung — <b>positiv</b>",
-              "key": true
-            }
-          ]
-        },
-        "say": "Der Höhepunkt des Vortrags. Explizit zurückverweisen: „Das war die Frage von vor 40 Minuten — woher wusste er von den freien Flächen?“ Hier wird der Agent von einem schnellen Werkzeug zu etwas anderem.",
-        "app": "Aktionskalender mit auslaufenden Kampagnen und Display-/Regalplatzbestand je Markt. Beides fehlt heute im Datenmodell — das sind die beiden Tabellen, die diese Folie erzwingt."
-      }
-    ],
-    "n": 22
-  },
-  {
-    "b": 3,
-    "kind": "Agent · Stufe d",
-    "title": "Den Rest haben Sie schon gesehen.",
-    "sub": "Gegenvorschlag, Bestätigung, vier Systeme. Genau wie am Anfang — nur wissen Sie jetzt, was davor passiert ist.",
-    "panels": [
-      {
-        "at": "18:51",
-        "mock": {
-          "t": "fan",
-          "cells": [
-            {
-              "sys": "Outlook",
-              "act": "Gegenvorschlag gesendet",
-              "qty": "Start 22. Okt. · 15 % Rabatt"
-            },
-            {
-              "sys": "Outlook",
-              "act": "Bestätigung empfangen",
-              "qty": "Hallbach stimmt zu"
-            },
-            {
-              "sys": "SAP · Regal · Logistik",
-              "act": "Umgesetzt",
-              "qty": "Bestellung · Planogramm · Lieferrhythmus"
-            },
-            {
-              "sys": "Teams",
-              "act": "Informiert",
-              "qty": "12 Marktleiter — ohne Rückfrage"
-            }
-          ]
-        },
-        "say": "Schnell durchgehen. Die Wiederholung ist beabsichtigt, aber sie darf keine Zeit kosten."
-      }
-    ],
-    "n": 23
-  },
-  {
-    "b": 3,
-    "kind": "Kernsatz",
-    "title": "Der Kreis schließt sich.",
-    "panels": [
-      {
-        "at": "18:52",
-        "mock": {
-          "t": "statement",
-          "text": "Das ist das Szenario vom Anfang.",
-          "after": "Der Mensch kommt erst hinterher ins Spiel — zur Kontrolle, nicht zur Ausführung."
-        },
-        "say": "Kurz zurück auf Block 1 verweisen. Das Publikum soll die Klammer merken."
-      }
-    ],
-    "n": 24
-  },
-  {
-    "b": 3,
-    "kind": "Frage",
-    "title": "Kann er das? Darf er das? Sollte er das?",
-    "sub": "Das kennen wir eigentlich schon — es heißt automatische Disposition. Aber hier trifft der Agent komplexe Geschäftsentscheidungen: was gelistet wird, was weichen muss, wann der beste Zeitpunkt ist, welche Konditionen verhandelt werden.",
-    "panels": [
-      {
-        "at": "18:53",
-        "mock": {
-          "t": "statement",
-          "text": "Drei Fragen. Wir beantworten sie nicht — das Publikum tut es."
-        },
-        "say": "Bewusst offen lassen und ins Publikum geben. Das ist der Übergang in Block 4.",
-        "inter": "„Was hat sich von Stufe zu Stufe verändert?“ · „Welche Aufgabe in Ihrem Alltag könnte so aussehen?“"
-      }
-    ],
-    "n": 25
-  },
-  {
-    "b": 3,
-    "kind": "Interaktiv",
-    "title": "Jetzt Sie.",
-    "sub": "Die Teilnehmer schreiben an ein vorbereitetes Postfach. Dahinter wartet ein Agent, der die Nachricht verarbeitet und antwortet.",
-    "panels": [
-      {
-        "at": "18:54",
-        "mock": {
-          "t": "mail",
-          "app": "Ihr Telefon — Neue Nachricht",
-          "sent": true,
-          "from": "Sie",
-          "to": "agent@…",
-          "time": "jetzt",
-          "subject": "(worüber Sie wollen)",
-          "body": [
-            "Schreiben Sie dem Agenten eine Aufgabe aus Ihrem eigenen Alltag. Sie bekommen zwei Antworten: eine ohne Kontext, eine mit."
-          ]
-        },
-        "say": "Am eigenen Beispiel erleben, was die vier Stufen bedeuten.",
-        "open": "Zwei offene Punkte: Das Postfach ist technisch noch nicht vorbereitet, und die Platzierung im Block steht nicht fest — nach Stufe b oder als Abschluss nach Stufe d."
-      }
-    ],
-    "n": 26
   },
   {
     "b": 4,
@@ -984,7 +1011,7 @@ export const SECTIONS: Section[] = [
     "title": "Braucht man uns dann noch?",
     "panels": [
       {
-        "at": "18:55",
+        "at": "18:58",
         "mock": {
           "t": "statement",
           "text": "Ja. Aber anders als heute."
@@ -992,7 +1019,7 @@ export const SECTIONS: Section[] = [
         "say": "Wörtlich die Frage aus Block 1 wiederholen — „uns“, gleiche Betonung. Wenn das Publikum sie wiedererkennt, hat der Bogen getragen."
       }
     ],
-    "n": 27
+    "n": 22
   },
   {
     "b": 4,
@@ -1001,7 +1028,7 @@ export const SECTIONS: Section[] = [
     "sub": "KI kann gewaltig viel — wenn man ihr die richtigen Rahmenbedingungen gibt. Und genau das ist die neue Aufgabe.",
     "panels": [
       {
-        "at": "18:56",
+        "at": "18:59",
         "mock": {
           "t": "statement",
           "text": "Der operative Mitarbeiter wird zum Manager von KI-Agenten."
@@ -1009,7 +1036,7 @@ export const SECTIONS: Section[] = [
         "say": "Das ist die eigentliche Botschaft des Vortrags. Alles davor führt hierhin."
       }
     ],
-    "n": 28
+    "n": 23
   },
   {
     "b": 4,
@@ -1017,7 +1044,7 @@ export const SECTIONS: Section[] = [
     "title": "Und die Latte wird sofort höher gelegt.",
     "panels": [
       {
-        "at": "18:57",
+        "at": "18:59",
         "mock": {
           "t": "quote",
           "text": "Customers are always beautifully, wonderfully dissatisfied. Even if they report being happy.",
@@ -1026,7 +1053,7 @@ export const SECTIONS: Section[] = [
         "say": "Kunden gewöhnen sich schnell. Sie werden wissen, dass KI im Hintergrund arbeitet — und mehr erwarten."
       }
     ],
-    "n": 29
+    "n": 24
   },
   {
     "b": 4,
@@ -1035,7 +1062,7 @@ export const SECTIONS: Section[] = [
     "sub": "Die Rahmenbedingungen aufzubauen ist kein Wochenendprojekt. Es ist eine Aufgabe, die uns Jahre beschäftigen wird.",
     "panels": [
       {
-        "at": "18:58",
+        "at": "19:00",
         "mock": {
           "t": "statement",
           "text": "Wer jetzt anfängt zu lernen, lernt schneller.",
@@ -1044,7 +1071,7 @@ export const SECTIONS: Section[] = [
         "say": "Der Grund, warum sie heute Abend hier sind. Das explizit sagen."
       }
     ],
-    "n": 30
+    "n": 25
   },
   {
     "b": 4,
@@ -1052,7 +1079,7 @@ export const SECTIONS: Section[] = [
     "title": "Drei Dinge, die Sie morgen tun können.",
     "panels": [
       {
-        "at": "18:58",
+        "at": "19:00",
         "mock": {
           "t": "list",
           "ordered": true,
@@ -1074,7 +1101,7 @@ export const SECTIONS: Section[] = [
         "say": "Konkret bleiben. Punkt 3 ist die Brücke zur Folgeveranstaltung."
       }
     ],
-    "n": 31
+    "n": 26
   },
   {
     "b": 4,
@@ -1083,7 +1110,7 @@ export const SECTIONS: Section[] = [
     "sub": "„Was funktioniert, was nicht — KI-Erfahrungen unter Entscheidern“ · 17. September, 8:00–8:45 Uhr",
     "panels": [
       {
-        "at": "18:59",
+        "at": "19:00",
         "mock": {
           "t": "statement",
           "text": "Wer das Gespräch vertiefen will, ist herzlich eingeladen."
@@ -1092,7 +1119,7 @@ export const SECTIONS: Section[] = [
         "inter": "Offene Diskussion: „Was nehmen Sie von heute mit?“ · „Was wäre Ihr erster Schritt morgen?“"
       }
     ],
-    "n": 32
+    "n": 27
   }
 ] as Section[];
 

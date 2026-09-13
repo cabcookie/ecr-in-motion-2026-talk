@@ -13,6 +13,7 @@ import {
   TweetsView,
 } from "./PlainMocks";
 import { BioView, MailThreadView, QrView, ResultsView, RevealView } from "./StepMocks";
+import { TShapeView } from "./TShape";
 
 export function MockView({
   mock,
@@ -57,6 +58,8 @@ export function MockView({
       return <QrView m={mock} />;
     case "results":
       return <ResultsView m={mock} />;
+    case "tshape":
+      return <TShapeView m={mock} />;
     case "stepped":
       // Jeder Klick-Schritt hat einen eigenen Inhalt — der letzte bleibt stehen,
       // falls jemand über das Ende hinausklickt.

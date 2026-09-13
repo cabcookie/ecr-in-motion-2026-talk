@@ -129,6 +129,56 @@ function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "ma
   );
 }
 
+/**
+ * Gespräch mit dem Agenten.
+ *
+ * Der Systemprompt ist einsehbar — er ist auf dieser Stufe der eigentliche
+ * Lerninhalt. Der Chat selbst ist noch nicht gebaut; der Knopf sagt das
+ * ehrlich, statt ins Leere zu führen.
+ */
+function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat" }> }) {
+  return (
+    <div className={CARD}>
+      <p className="m-0 mb-4 text-lg leading-relaxed text-fg-2">{interaction.hint}</p>
+
+      <button
+        type="button"
+        disabled
+        className="w-full rounded-xl border border-hair bg-stage px-5 py-4 text-lg font-semibold text-fg-3"
+      >
+        {interaction.label} — kommt noch
+      </button>
+
+      <details className="mt-4 rounded-xl border border-hair bg-stage p-4">
+        <summary className="cursor-pointer font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
+          Systemprompt ansehen
+        </summary>
+        <pre className="mt-3 overflow-x-auto font-mono text-[13px] leading-relaxed whitespace-pre-wrap text-fg-2">
+          {interaction.systemPrompt}
+        </pre>
+      </details>
+
+      {interaction.suggestions && (
+        <div className="mt-4">
+          <p className="m-0 mb-2 font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
+            Antwortvorschläge
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {interaction.suggestions.map((sug) => (
+              <span
+                key={sug}
+                className="rounded-full border border-hair bg-stage px-3 py-1.5 text-sm text-fg-3"
+              >
+                {sug}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Zwischen den Interaktionen: nur ein Hinweis, damit niemand wegklickt. */
 function Wait({ interaction }: { interaction: Extract<Interaction, { kind: "wait" }> }) {
   return (
@@ -160,6 +210,8 @@ export function InteractionView({
       );
     case "mailto":
       return <MailTo interaction={interaction} />;
+    case "chat":
+      return <Chat interaction={interaction} />;
     case "wait":
       return <Wait interaction={interaction} />;
   }

@@ -100,6 +100,23 @@ export interface ChartMock {
   which: "agriculture" | "unemployment" | "exposure";
 }
 
+/**
+ * Wissen als T-Form.
+ *
+ * `human` — mäßig breiter Balken, tiefer Stamm.
+ * `llm` — deutlich breiterer und dickerer Balken, aber kein Stamm.
+ * `grown` — derselbe Balken, und der Stamm wächst zurück, beschriftet mit den
+ * Wegen, über die das Spezialwissen hereinkommt.
+ */
+export interface TShapeMock {
+  t: "tshape";
+  variant: "human" | "llm" | "grown";
+  capabilities?: string[];
+  caption?: string;
+  /** Beschreibung für Screenreader */
+  alt: string;
+}
+
 /** Zwei E-Mails nebeneinander — die zweite erscheint erst beim nächsten Klick. */
 export interface MailThreadMock {
   t: "mailthread";
@@ -142,6 +159,7 @@ export interface ResultsMock {
 }
 
 export type Mock =
+  | TShapeMock
   | MailThreadMock
   | RevealMock
   | SteppedMock
@@ -200,6 +218,20 @@ export type Interaction =
       persist?: boolean;
       /** Bis wann der Knopf angeboten wird, als HH:MM Ortszeit. */
       until?: string;
+    }
+  /**
+   * Gespräch mit dem Agenten auf dem Handy. Der Systemprompt ist einsehbar —
+   * er ist der eigentliche Lerninhalt dieser Stufe.
+   */
+  | {
+      kind: "chat";
+      id: string;
+      label: string;
+      hint: string;
+      systemPrompt: string;
+      /** Vorgeschlagene Antworten, damit niemand lange tippen muss */
+      suggestions?: string[];
+      persist?: boolean;
     }
   | { kind: "wait"; id: string; message: string; persist?: boolean };
 
