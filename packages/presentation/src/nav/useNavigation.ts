@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { chooseTransport, type TransportKind } from "@/sync";
 import type { SyncTransport } from "@/sync/types";
-import { stepsOf } from "@/slides/data";
+import { panelsOf } from "@/slides/data";
 
 export interface Navigation {
   index: number;
-  /** Klick-Schritt innerhalb der Folie, 0-basiert */
+  /** Panel innerhalb des Abschnitts, 0-basiert */
   step: number;
   total: number;
   next: () => void;
@@ -55,7 +55,7 @@ export function useNavigation(
   const apply = useCallback(
     (i: number, s: number, broadcast: boolean) => {
       const clampedIndex = Math.min(total - 1, Math.max(0, i));
-      const clampedStep = Math.min(stepsOf(clampedIndex) - 1, Math.max(0, s));
+      const clampedStep = Math.min(panelsOf(clampedIndex) - 1, Math.max(0, s));
       cursorRef.current = { index: clampedIndex, step: clampedStep };
       setCursor(cursorRef.current);
       const t = transport.current;
@@ -76,14 +76,14 @@ export function useNavigation(
 
   const next = useCallback(() => {
     const { index: i, step: s } = cursorRef.current;
-    if (s + 1 < stepsOf(i)) apply(i, s + 1, true);
+    if (s + 1 < panelsOf(i)) apply(i, s + 1, true);
     else apply(i + 1, 0, true);
   }, [apply]);
 
   const prev = useCallback(() => {
     const { index: i, step: s } = cursorRef.current;
     if (s > 0) apply(i, s - 1, true);
-    else apply(i - 1, stepsOf(Math.max(0, i - 1)) - 1, true);
+    else apply(i - 1, panelsOf(Math.max(0, i - 1)) - 1, true);
   }, [apply]);
 
   // Transport aufbauen und Fremdänderungen übernehmen

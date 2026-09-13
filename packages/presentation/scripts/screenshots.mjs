@@ -20,7 +20,9 @@ await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(600);
 
 await page.waitForSelector("[data-slideno]");
-const total = Number(process.env.SLIDES ?? 35);
+// Jedes Panel ist ein eigener Klick — die Gesamtzahl steht im Datenmodell
+const total = await page.evaluate(() => Number(document.body.dataset.panels ?? 0)) ||
+  Number(process.env.PANELS ?? 40);
 
 await rm(OUT, { recursive: true, force: true });
 await mkdir(OUT, { recursive: true });
@@ -29,13 +31,14 @@ const tight = [];
 
 for (let i = 1; i <= total; i++) {
   const n = await page.getAttribute("[data-slideno]", "data-slideno");
+  const pn = await page.getAttribute("[data-slideno]", "data-panel");
   const fit = await page.getAttribute("[data-fit]", "data-fit").catch(() => null);
-  await page.screenshot({ path: `${OUT}/${String(i).padStart(2, "0")}.png` });
+  await page.screenshot({ path: `${OUT}/${String(i).padStart(2, "0")}-s${String(n).padStart(2,"0")}p${Number(pn)+1}.png` });
   if (fit && Number(fit) < 0.95) tight.push(`${String(n).padStart(2, "0")}: ${fit}`);
   process.stdout.write(`${String(n).padStart(2, "0")} `);
   if (i < total) {
     await page.keyboard.press("ArrowRight");
-    await page.waitForTimeout(320);
+    await page.waitForTimeout(950);
   }
 }
 

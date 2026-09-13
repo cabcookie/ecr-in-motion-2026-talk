@@ -166,6 +166,17 @@ h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;text-wrap:
 .slide-body{padding:20px 22px 24px}
 .slide-body:empty{display:none}
 
+.panelcard{margin-top:10px}
+.clock{
+  font-family:"IBM Plex Mono",monospace;color:var(--accent);
+  background:var(--accent-wash);border-radius:2px;padding:2px 7px;letter-spacing:.06em;
+}
+.tagp{
+  display:inline-block;margin-left:6px;font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ok);
+  border:1px solid var(--ok);border-radius:2px;padding:1px 5px;
+}
+
 /* ── notes ──────────────────────────────────────── */
 .notes{display:grid;gap:1px;background:var(--rule-soft);border:1px solid var(--rule);border-top:none;border-radius:0 0 3px 3px;overflow:hidden}
 .note{background:var(--panel-2);padding:13px 22px;display:grid;grid-template-columns:106px 1fr;gap:14px;align-items:start}
@@ -383,8 +394,8 @@ ul.plist,ol.plist{margin:0;padding:0}
 <script>
 /*__DATA__*/
 
-SLIDES.forEach((s,i)=>{ s.n = i+1; });
-const TOTAL = SLIDES.length;
+SECTIONS.forEach((s,i)=>{ s.n = i+1; });
+const TOTAL = SECTIONS.length;
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
 /* ────────────────────────────────────────────────────────────
@@ -613,8 +624,8 @@ function applyAccent(b){
 
 function renderTabs(){
   tabsEl.innerHTML = BLOCKS.map(b => {
-    const firstIdx = SLIDES.findIndex(s => s.b === b.n);
-    const on = mode === "stage" && SLIDES[cur].b === b.n;
+    const firstIdx = SECTIONS.findIndex(s => s.b === b.n);
+    const on = mode === "stage" && SECTIONS[cur].b === b.n;
     return '<button class="tab" role="tab" aria-selected="'+on+'" data-go="'+firstIdx+'" '
       + 'style="--tc:var(--b'+b.n+');--tw:var(--b'+b.n+'-wash)">'
       + '<span class="dot"></span>'+b.n+' · '+esc(b.tab)+'</button>';
@@ -622,8 +633,8 @@ function renderTabs(){
 }
 
 function renderStage(){
-  const s = SLIDES[cur], b = blockOf(s.b);
-  applyAccent(s.b);
+  const sec = SECTIONS[cur], b = blockOf(sec.b);
+  applyAccent(sec.b);
 
   let h = '';
   h += '<div class="blockbar"><div class="blocknum">'+b.n+'</div><div class="blockmeta">'
@@ -631,39 +642,47 @@ function renderStage(){
      + '<span class="budget">'+esc(b.budget)+'</span></div></div>';
 
   h += '<article class="slide"><div class="slide-head">';
-  h += '<div class="eyebrow"><span>Folie '+String(s.n).padStart(2,"0")+'</span><span class="sep">◆</span><span class="kind">'+esc(s.kind)+'</span>'
-   + (s.steps>1 ? '<span class="sep">◆</span><span>'+s.steps+' Klicks</span>' : '') + '</div>';
-  h += '<h2 class="headline">'+esc(s.headline)+'</h2>';
-  if(s.sub) h += '<p class="subline">'+esc(s.sub)+'</p>';
-  h += '</div><div class="slide-body">';
-  if(s.mock) h += RENDER[s.mock.t](s.mock);
-  if(s.inter) h += '<div class="inter"><span class="lbl">Interaktion</span><span class="q">'+esc(s.inter)+'</span></div>';
+  h += '<div class="eyebrow"><span>Abschnitt '+String(sec.n).padStart(2,"0")+'</span>'
+     + '<span class="sep">◆</span><span class="kind">'+esc(sec.kind)+'</span>'
+     + (sec.panels.length>1 ? '<span class="sep">◆</span><span>'+sec.panels.length+' Panels</span>' : '')
+     + (sec.hero ? '<span class="sep">◆</span><span class="kind">Titel zuerst mittig</span>' : '')
+     + '</div>';
+  h += '<h2 class="headline">'+esc(sec.title)+'</h2>';
+  if(sec.sub) h += '<p class="subline">'+esc(sec.sub)+'</p>';
   h += '</div></article>';
 
-  h += '<dl class="notes">';
-  if(s.say)  h += '<div class="note"><dt>Gesagt</dt><dd>'+esc(s.say)+'</dd></div>';
-  if(s.sayByStep) s.sayByStep.forEach((t,i) => {
-    h += '<div class="note"><dt>Gesagt '+(i+1)+'</dt><dd>'+esc(t)+'</dd></div>';
-  });
-  if(s.audience){
-    const parts = s.audience.map((a,i) => {
-      if(!a) return '';
-      const was = a.kind === "poll" ? a.question.text
+  sec.panels.forEach((p, i) => {
+    h += '<article class="slide panelcard">';
+    h += '<div class="slide-head"><div class="eyebrow">'
+       + '<span>Panel '+(i+1)+' / '+sec.panels.length+'</span>'
+       + (p.at ? '<span class="sep">◆</span><span class="clock">'+esc(p.at)+'</span>' : '')
+       + '</div></div>';
+    h += '<div class="slide-body">';
+    if(p.mock) h += RENDER[p.mock.t](p.mock);
+    if(p.inter) h += '<div class="inter"><span class="lbl">Interaktion</span><span class="q">'+esc(p.inter)+'</span></div>';
+    h += '</div>';
+
+    h += '<dl class="notes">';
+    if(p.say)  h += '<div class="note"><dt>Gesagt</dt><dd>'+esc(p.say)+'</dd></div>';
+    if(p.audience){
+      const a = p.audience;
+      const was = a.kind === "poll" ? a.questions.map(q=>q.text).join(" · ")
                 : a.kind === "text" ? a.prompt
-                : a.kind === "mailto" ? a.label
+                : a.kind === "mailto" ? a.label + (a.privacy ? " — " + a.privacy : "")
                 : a.message;
-      return '<div class="ai"><b>Schritt '+(i+1)+' · '+a.kind+'</b>'+esc(was)+'</div>';
-    }).join('');
-    h += '<div class="note app"><dt>Auf dem Handy</dt><dd><div class="audience">'+parts+'</div></dd></div>';
-  }
-  if(s.app)  h += '<div class="note app"><dt>App liefert</dt><dd>'+esc(s.app)+'</dd></div>';
-  if(s.note) h += '<div class="note"><dt>Hinweis</dt><dd>'+esc(s.note)+'</dd></div>';
-  if(s.open) h += '<div class="note open"><dt>Offen</dt><dd>'+esc(s.open)+'</dd></div>';
-  h += '</dl>';
+      h += '<div class="note app"><dt>Auf dem Handy</dt><dd>'+esc(was)
+         + (a.persist ? ' <span class="tagp">bleibt offen'+(a.until?" bis "+esc(a.until):"")+'</span>' : '')
+         + '</dd></div>';
+    }
+    if(p.app)  h += '<div class="note app"><dt>App liefert</dt><dd>'+esc(p.app)+'</dd></div>';
+    if(p.note) h += '<div class="note"><dt>Hinweis</dt><dd>'+esc(p.note)+'</dd></div>';
+    if(p.open) h += '<div class="note open"><dt>Offen</dt><dd>'+esc(p.open)+'</dd></div>';
+    h += '</dl></article>';
+  });
 
   h += '<div class="nav">'
      + '<button type="button" id="prev"'+(cur===0?" disabled":"")+'>← Zurück</button>'
-     + '<span class="counter">'+String(s.n).padStart(2,"0")+' / '+TOTAL+'</span>'
+     + '<span class="counter">'+String(sec.n).padStart(2,"0")+' / '+TOTAL+'</span>'
      + '<button type="button" id="next"'+(cur===TOTAL-1?" disabled":"")+'>Weiter →</button>'
      + '</div>';
 
@@ -676,14 +695,14 @@ function renderStage(){
 function renderOverview(){
   let h = '<div class="ov">';
   BLOCKS.forEach(b => {
-    const list = SLIDES.filter(s => s.b === b.n);
+    const list = SECTIONS.filter(s => s.b === b.n);
     h += '<section class="ov-group" style="--accent:var(--b'+b.n+');--accent-wash:var(--b'+b.n+'-wash)">';
-    h += '<h3>Block '+b.n+' · '+esc(b.tab)+' · '+esc(b.budget.split(" · ")[0])+' · '+list.length+' Folien</h3>';
+    h += '<h3>Block '+b.n+' · '+esc(b.tab)+' · '+list.length+' Abschnitte</h3>';
     h += '<p class="gt">'+esc(b.title)+'</p><div class="ov-grid">';
     list.forEach(s => {
       h += '<button type="button" class="ov-card'+(s.n-1===cur?" is-current":"")+'" data-go="'+(s.n-1)+'">'
-        + '<span class="num"><span>'+String(s.n).padStart(2,"0")+'</span><span class="kind">'+esc(s.kind)+'</span></span>'
-        + '<span class="h">'+esc(s.headline)+'</span></button>';
+        + '<span class="num"><span>'+String(s.n).padStart(2,"0")+'</span><span class="kind">'+esc(s.panels[0]?.at ?? s.kind)+'</span></span>'
+        + '<span class="h">'+esc(s.title)+'</span></button>';
     });
     h += '</div></section>';
   });
@@ -733,7 +752,7 @@ document.addEventListener("touchend", e => {
 }, {passive:true});
 
 document.getElementById("topmeta").textContent =
-  "16. September 2026 · 18:00–19:00 · " + TOTAL + " Folien in 4 Blöcken";
+  "16. September 2026 · 18:00–19:00 · " + TOTAL + " Abschnitte in 4 Blöcken";
 
 renderStage();
 </script>

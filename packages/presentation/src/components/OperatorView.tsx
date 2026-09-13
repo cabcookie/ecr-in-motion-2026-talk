@@ -1,4 +1,4 @@
-import { BLOCKS, SLIDES, TOTAL, blockOf } from "@/slides/data";
+import { BLOCKS, SECTIONS, TOTAL, blockOf } from "@/slides/data";
 import { useNavigation } from "@/nav/useNavigation";
 import { StagePreview } from "./StagePreview";
 import { Timer } from "./Timer";
@@ -17,15 +17,18 @@ function Note({ label, tone, children }: { label: string; tone: string; children
 }
 
 export function OperatorView() {
-  const { index, next, prev, goto, connected, transport } = useNavigation(TOTAL);
-  const slide = SLIDES[index];
-  const block = blockOf(slide.b);
-  const upcoming = SLIDES[index + 1];
+  const { index, step, next, prev, goto, connected, transport } = useNavigation(TOTAL);
+  const section = SECTIONS[index];
+  const block = blockOf(section.b);
+  const panel = section.panels[step];
+  /** Nächstes Panel — im selben Abschnitt oder das erste des nächsten. */
+  const nextSection = step + 1 < section.panels.length ? section : SECTIONS[index + 1];
+  const nextPanel = step + 1 < section.panels.length ? step + 1 : 0;
 
   return (
     <div
       className="h-full overflow-y-auto bg-stage text-fg"
-      style={{ ["--accent" as string]: ACCENT[slide.b] }}
+      style={{ ["--accent" as string]: ACCENT[section.b] }}
     >
       <div className="mx-auto flex max-w-[1400px] flex-col gap-5 px-5 py-5">
         {/* Kopf */}
@@ -38,7 +41,8 @@ export function OperatorView() {
             />
             <div>
               <div className="font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
-                Block {block.n} · {block.tab} · {block.budget}
+                Block {block.n} · {block.tab}
+                {panel?.at && <span className="ml-2 text-[color:var(--accent)]">geplant {panel.at}</span>}
               </div>
               <div className="font-display text-lg font-bold">{block.title}</div>
             </div>
@@ -48,7 +52,10 @@ export function OperatorView() {
             <Timer />
             <div className="text-right">
               <div className="font-mono text-2xl tabular-nums">
-                {String(slide.n).padStart(2, "0")}
+                {String(section.n).padStart(2, "0")}
+                {section.panels.length > 1 && (
+                  <span className="text-fg-3">.{step + 1}</span>
+                )}
                 <span className="text-fg-3">/{TOTAL}</span>
               </div>
               <div className="font-mono text-[10px] tracking-[0.1em] uppercase">
@@ -74,15 +81,15 @@ export function OperatorView() {
                   — Vollbild zum Bedienen eingebetteter Anwendungen
                 </span>
               </h2>
-              <StagePreview slide={slide} width={560} expandable />
+              <StagePreview section={section} panel={step} width={560} expandable />
             </div>
 
             <div>
               <h2 className="mb-2 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
                 Als Nächstes
               </h2>
-              {upcoming ? (
-                <StagePreview slide={upcoming} width={320} />
+              {nextSection ? (
+                <StagePreview section={nextSection} panel={nextPanel} width={320} />
               ) : (
                 <p className="text-sm text-fg-3">Letzte Folie.</p>
               )}
@@ -92,36 +99,36 @@ export function OperatorView() {
           {/* Notizen */}
           <div className="min-w-0">
             <h2 className="mb-1 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
-              {slide.kind}
+              {section.kind}
             </h2>
             <h3 className="mb-4 font-display text-2xl leading-tight font-bold text-balance">
-              {slide.headline}
+              {section.title}
             </h3>
 
             <dl className="m-0">
-              {slide.say && (
+              {panel?.say && (
                 <Note label="Gesagt" tone="text-fg-3">
-                  {slide.say}
+                  {panel?.say!}
                 </Note>
               )}
-              {slide.inter && (
+              {panel?.inter && (
                 <Note label="Interaktion" tone="text-[color:var(--accent)]">
-                  {slide.inter}
+                  {panel?.inter!}
                 </Note>
               )}
-              {slide.app && (
+              {panel?.app && (
                 <Note label="App liefert" tone="text-b3">
-                  {slide.app}
+                  {panel?.app!}
                 </Note>
               )}
-              {slide.note && (
+              {panel?.note && (
                 <Note label="Hinweis" tone="text-fg-3">
-                  {slide.note}
+                  {panel?.note!}
                 </Note>
               )}
-              {slide.open && (
+              {panel?.open && (
                 <Note label="Offen" tone="text-b2">
-                  {slide.open}
+                  {panel?.open!}
                 </Note>
               )}
             </dl>
@@ -162,14 +169,14 @@ export function OperatorView() {
                 {b.n} · {b.tab}
               </span>
               <div className="flex flex-wrap gap-1">
-                {SLIDES.filter((s) => s.b === b.n).map((s) => {
-                  const current = s.n === slide.n;
+                {SECTIONS.filter((s) => s.b === b.n).map((s) => {
+                  const current = s.n === section.n;
                   return (
                     <button
                       key={s.n}
                       type="button"
                       onClick={() => goto(s.n - 1)}
-                      title={s.headline}
+                      title={`${s.panels[0]?.at ?? ""} ${s.title}`}
                       className={`h-7 w-9 rounded font-mono text-[11px] tabular-nums transition-colors ${
                         current ? "text-stage" : "border border-hair text-fg-3 hover:text-fg"
                       }`}

@@ -44,12 +44,20 @@ export function FitBox({
     apply();
     // Webfonts kommen nach dem ersten Layout an und ändern die Höhe
     document.fonts.ready.then(apply).catch(() => {});
+    /*
+      Und noch einmal, wenn die Bewegung durch ist: Beim ersten Panel eines
+      Abschnitts wandert die Überschrift gerade erst nach oben. Wer währenddessen
+      misst, sieht den Platz, den sie noch einnimmt — und verkleinert den Inhalt
+      auf die Hälfte.
+    */
+    const after = setTimeout(apply, 820);
+    return () => clearTimeout(after);
   }, [slideKey, centered]);
 
   return (
     <div
       ref={outer}
-      className={`flex h-full w-full items-start ${centered ? "justify-center" : "justify-start"}`}
+      className={`flex h-full w-full items-center ${centered ? "justify-center" : "justify-start"}`}
     >
       <div ref={inner} className={centered ? "max-w-full" : "w-full"}>
         {children}

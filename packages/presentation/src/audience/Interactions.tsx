@@ -2,44 +2,50 @@ import { useEffect, useState } from "react";
 import type { Interaction } from "@/slides/types";
 
 const CARD = "rounded-2xl border border-hair bg-stage-2 p-5";
-const LABEL = "font-mono text-[11px] tracking-[0.14em] uppercase text-fg-3";
 
-/** Eine Frage mit festen Antwortmöglichkeiten. Die Wahl ist jederzeit änderbar. */
+/**
+ * Alle Fragen einer Umfrage auf einmal — der Vortragende klickt dazwischen
+ * nicht weiter, die Auswertung auf der Leinwand füllt sich nach und nach.
+ */
 function Poll({
   interaction,
-  value,
+  answers,
   onAnswer,
 }: {
   interaction: Extract<Interaction, { kind: "poll" }>;
-  value?: string;
-  onAnswer: (v: string) => void;
+  answers: Record<string, string>;
+  onAnswer: (key: string, v: string) => void;
 }) {
   return (
-    <div className={CARD}>
-      <p className="m-0 mb-5 text-xl leading-snug font-medium text-balance text-fg">
-        {interaction.question.text}
-      </p>
-      <div className="grid gap-3">
-        {interaction.question.options.map((o) => {
-          const chosen = value === o.value;
-          return (
-            <button
-              key={o.value}
-              type="button"
-              onClick={() => onAnswer(o.value)}
-              aria-pressed={chosen}
-              className={`rounded-xl border px-5 py-4 text-left text-lg transition-colors ${
-                chosen
-                  ? "border-[color:var(--accent)] bg-[color:var(--accent)]/15 text-fg"
-                  : "border-hair bg-stage text-fg-2 active:bg-stage-3"
-              }`}
-            >
-              {o.label}
-            </button>
-          );
-        })}
-      </div>
-      {value && <p className="m-0 mt-4 text-sm text-fg-3">Gespeichert. Sie können ändern.</p>}
+    <div className="grid gap-4">
+      {interaction.questions.map((q) => {
+        const key = `${interaction.id}:${q.id}`;
+        const chosen = answers[key];
+        return (
+          <div className={CARD} key={q.id}>
+            <p className="m-0 mb-4 text-xl leading-snug font-medium text-balance text-fg">
+              {q.text}
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {q.options.map((o) => (
+                <button
+                  key={o.value}
+                  type="button"
+                  onClick={() => onAnswer(key, o.value)}
+                  aria-pressed={chosen === o.value}
+                  className={`rounded-xl border px-2 py-4 text-base transition-colors ${
+                    chosen === o.value
+                      ? "border-[color:var(--accent)] bg-[color:var(--accent)]/15 text-fg"
+                      : "border-hair bg-stage text-fg-2 active:bg-stage-3"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -63,7 +69,6 @@ function FreeText({
       <p className="m-0 mb-4 text-xl leading-snug font-medium text-balance text-fg">
         {interaction.prompt}
       </p>
-
       <div className="mb-4 flex flex-wrap gap-2">
         {interaction.examples.map((ex) => (
           <button
@@ -76,7 +81,6 @@ function FreeText({
           </button>
         ))}
       </div>
-
       <textarea
         id={`text-${interaction.id}`}
         value={draft}
@@ -85,7 +89,6 @@ function FreeText({
         rows={3}
         className="w-full resize-none rounded-xl border border-hair bg-stage px-4 py-3 text-lg text-fg placeholder:text-fg-3 focus:border-[color:var(--accent)] focus:outline-none"
       />
-
       <button
         type="button"
         disabled={!draft.trim() || !dirty}
@@ -99,11 +102,7 @@ function FreeText({
 }
 
 /** Öffnet das Mailprogramm mit vorformuliertem Text. */
-function MailTo({
-  interaction,
-}: {
-  interaction: Extract<Interaction, { kind: "mailto" }>;
-}) {
+function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "mailto" }> }) {
   const href =
     `mailto:${interaction.to}` +
     `?subject=${encodeURIComponent(interaction.subject)}` +
@@ -118,6 +117,14 @@ function MailTo({
       >
         {interaction.label}
       </a>
+      {interaction.privacy && (
+        <p className="m-0 mt-4 text-sm leading-relaxed text-fg-3">{interaction.privacy}</p>
+      )}
+      {interaction.until && (
+        <p className="m-0 mt-2 font-mono text-[11px] tracking-wider text-fg-3 uppercase">
+          Bis {interaction.until} möglich
+        </p>
+      )}
     </div>
   );
 }
@@ -133,23 +140,27 @@ function Wait({ interaction }: { interaction: Extract<Interaction, { kind: "wait
 
 export function InteractionView({
   interaction,
-  value,
+  answers,
   onAnswer,
 }: {
   interaction: Interaction;
-  value?: string;
-  onAnswer: (v: string) => void;
+  answers: Record<string, string>;
+  onAnswer: (key: string, v: string) => void;
 }) {
   switch (interaction.kind) {
     case "poll":
-      return <Poll interaction={interaction} value={value} onAnswer={onAnswer} />;
+      return <Poll interaction={interaction} answers={answers} onAnswer={onAnswer} />;
     case "text":
-      return <FreeText interaction={interaction} value={value} onAnswer={onAnswer} />;
+      return (
+        <FreeText
+          interaction={interaction}
+          value={answers[interaction.id]}
+          onAnswer={(v) => onAnswer(interaction.id, v)}
+        />
+      );
     case "mailto":
       return <MailTo interaction={interaction} />;
     case "wait":
       return <Wait interaction={interaction} />;
   }
 }
-
-export { LABEL };

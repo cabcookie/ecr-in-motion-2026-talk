@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Slide } from "@/slides/types";
-import { SlideView } from "./SlideView";
+import type { Section } from "@/slides/types";
+import { SectionView } from "./SectionView";
 import { STAGE_H, STAGE_W } from "@/nav/useStageScale";
 
 /**
@@ -13,14 +13,14 @@ import { STAGE_H, STAGE_W } from "@/nav/useStageScale";
  * Originalgröße bedienbar ist, während der Saal dasselbe auf dem Beamer sieht.
  */
 export function StagePreview({
-  slide,
+  section,
   width,
-  step = 0,
+  panel = 0,
   expandable = false,
 }: {
-  slide: Slide;
+  section: Section;
   width: number;
-  step?: number;
+  panel?: number;
   expandable?: boolean;
 }) {
   const box = useRef<HTMLDivElement>(null);
@@ -56,7 +56,7 @@ export function StagePreview({
     <div className="group relative w-fit">
       <div
         ref={box}
-        data-block={slide.b}
+        data-block={section.b}
         className={
           fullscreen
             ? "grid h-screen w-screen place-items-center overflow-hidden bg-stage"
@@ -72,7 +72,7 @@ export function StagePreview({
           className={fullscreen ? "shrink-0 origin-center" : "absolute top-0 left-0 origin-top-left"}
           style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})` }}
         >
-          <SlideView slide={slide} isTitle={slide.n === 1} step={step} />
+          <SectionView section={section} panel={panel} isTitle={section.n === 1} />
         </div>
       </div>
 

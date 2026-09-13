@@ -173,8 +173,16 @@ export interface PollQuestion {
  * dran ist.
  */
 export type Interaction =
-  | { kind: "poll"; id: string; question: PollQuestion }
-  | { kind: "text"; id: string; prompt: string; placeholder: string; examples: string[] }
+  /** Mehrere Fragen auf einmal — der Vortragende klickt dazwischen nicht weiter. */
+  | { kind: "poll"; id: string; questions: PollQuestion[]; persist?: boolean }
+  | {
+      kind: "text";
+      id: string;
+      prompt: string;
+      placeholder: string;
+      examples: string[];
+      persist?: boolean;
+    }
   | {
       kind: "mailto";
       id: string;
@@ -183,34 +191,58 @@ export type Interaction =
       subject: string;
       body: string;
       hint: string;
+      /** Hinweis, was mit der Adresse passiert — steht direkt am Knopf. */
+      privacy?: string;
+      /**
+       * Bleibt auf dem Handy erreichbar, auch wenn der Vortrag weiter ist.
+       * Die Mail an Lisa darf bis zum Ende geschrieben werden.
+       */
+      persist?: boolean;
+      /** Bis wann der Knopf angeboten wird, als HH:MM Ortszeit. */
+      until?: string;
     }
-  | { kind: "wait"; id: string; message: string };
+  | { kind: "wait"; id: string; message: string; persist?: boolean };
 
-export interface Slide {
-  /** 1-basierte Foliennummer über den ganzen Vortrag */
+/**
+ * Eine Stufe innerhalb eines Abschnitts.
+ *
+ * Panels scrollen horizontal: das vorige wandert nach links unter ein Overlay
+ * und blendet dabei aus. Ein Panel ohne Mock zeigt nur den Titel — so beginnt
+ * ein Abschnitt, dessen Aussage erst für sich stehen soll.
+ */
+export interface Panel {
+  mock?: Mock;
+  /** Gesprochener Text für genau diese Stufe */
+  say?: string;
+  /** Uhrzeit, zu der wir hier ankommen sollten */
+  at?: string;
+  /** Was das Publikum auf dem Handy sieht, solange diese Stufe läuft */
+  audience?: Interaction;
+  /** Was die Demo-Applikation liefern muss */
+  app?: string;
+  note?: string;
+  open?: string;
+  /** Interaktion mit dem Publikum, die der Vortragende moderiert */
+  inter?: string;
+}
+
+/**
+ * Ein Abschnitt der Präsentation.
+ *
+ * Abschnitte scrollen vertikal: der alte wandert nach oben weg, der neue
+ * kommt von unten und blendet ein. Der Titel eines `hero`-Abschnitts steht
+ * zuerst groß in der Mitte und wandert beim ersten Weiterklicken nach oben,
+ * wo er als Überschrift stehen bleibt.
+ */
+export interface Section {
+  /** 1-basierte Nummer über den ganzen Vortrag */
   n: number;
   b: BlockId;
-  /** Typ-Label für die Operator-View, z.B. "Outlook", "Agent · Stufe d" */
+  /** Typ-Label für die Operator-View */
   kind: string;
-  headline: string;
+  title: string;
   sub?: string;
-  mock?: Mock;
-  /**
-   * Anzahl der Klick-Schritte. 1 (oder nicht gesetzt) bedeutet: alles sofort
-   * sichtbar, ein Klick geht zur nächsten Folie.
-   */
-  steps?: number;
-  /** Sprechnotiz — nur Operator-View. Bei mehreren Schritten je Schritt eine. */
-  say?: string;
-  sayByStep?: string[];
-  /** Was das Publikum auf dem Handy sieht — Index ist der Klick-Schritt. */
-  audience?: Array<Interaction | null>;
-  /** Was die Demo-Applikation liefern muss — nur Operator-View */
-  app?: string;
-  /** Redaktioneller Hinweis — nur Operator-View */
-  note?: string;
-  /** Ungelöster Punkt — nur Operator-View */
-  open?: string;
-  /** Interaktion mit dem Publikum — nur Operator-View */
-  inter?: string;
+  /** Titel startet groß und mittig und wird dann zur klebenden Überschrift */
+  hero?: boolean;
+  panels: Panel[];
 }

@@ -38,13 +38,13 @@ function grabArray(src, name) {
 
 const ts = await readFile(DATA, "utf8");
 const BLOCKS = grabArray(ts, "BLOCKS");
-const SLIDES = grabArray(ts, "SLIDES");
+const SECTIONS = grabArray(ts, "SECTIONS");
 
 const template = await readFile(join(HERE, "storyboard.template.html"), "utf8");
 const data =
   `const BLOCKS = ${JSON.stringify(BLOCKS, null, 2)};\n\n` +
-  `const SLIDES = ${JSON.stringify(SLIDES, null, 2)};`;
+  `const SECTIONS = ${JSON.stringify(SECTIONS, null, 2)};`;
 
 await writeFile(join(HERE, "storyboard.html"), template.replace("/*__DATA__*/", data));
 
-console.log(`storyboard.html erzeugt — ${BLOCKS.length} Blöcke, ${SLIDES.length} Folien`);
+console.log(`storyboard.html erzeugt — ${BLOCKS.length} Blöcke, ${SECTIONS.length} Abschnitte, ${SECTIONS.reduce((a, s) => a + s.panels.length, 0)} Panels`);

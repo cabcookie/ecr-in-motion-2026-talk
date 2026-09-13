@@ -106,3 +106,34 @@ body:has(#root > [data-view="audience"]) #root {
     animation-duration: 0.01ms !important;
   }
 }
+
+/*
+  Die Präsentation scrollt: der alte Abschnitt wandert nach oben weg, der neue
+  kommt von unten. Der Inhalt blendet dabei verzögert ein, damit nichts lesbar
+  ist, bevor es steht.
+*/
+@keyframes section-enter-from-below {
+  from { transform: translateY(100%); opacity: 0; }
+  60%  { opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes section-leave-upward {
+  from { transform: translateY(0); opacity: 1; }
+  40%  { opacity: 0; }
+  to   { transform: translateY(-100%); opacity: 0; }
+}
+@keyframes section-enter-from-above {
+  from { transform: translateY(-100%); opacity: 0; }
+  60%  { opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes section-leave-downward {
+  from { transform: translateY(0); opacity: 1; }
+  40%  { opacity: 0; }
+  to   { transform: translateY(100%); opacity: 0; }
+}
+
+.section-enter-down { animation: section-enter-from-below 760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.section-leave-up   { animation: section-leave-upward   760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.section-enter-up   { animation: section-enter-from-above 760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.section-leave-down { animation: section-leave-downward 760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
