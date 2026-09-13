@@ -8,7 +8,8 @@
  * Lokal ist Realtime ein WebSocket-Server im Prozess, in AWS AppSync Events.
  * Derselbe Code, kein Unterschied im Frontend.
  */
-import { ApiNamespace, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
+import { Agent, ApiNamespace, BedrockModels, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
+import { SYSTEM_PROMPT } from '../src/slides/agent';
 import { z } from 'zod';
 
 const scope = new Scope('ecr-masterclass');
@@ -75,6 +76,35 @@ const rtAnswers = new Realtime(scope, 'answers-live', {
   namespaces: { answers: Realtime.namespace(answer) },
 });
 
+/**
+ * Der Agent aus Abschnitt 16.
+ *
+ * Er bekommt den Systemprompt — und bewusst keine Tools. Genau das ist der
+ * Punkt der Stufe: Er weiß, welche Angaben ihm fehlen und in welchem System
+ * sie stünden, kann sie aber nicht holen. Also fragt er die Teilnehmer.
+ * Die sind seine Werkzeuge.
+ *
+ * Der Prompt kommt aus den Foliendaten, damit der Agent mit demselben Text
+ * läuft, den das Publikum auf dem Handy aufklappen kann.
+ *
+ * Lokal läuft das ohne AWS: die Blocks-Agent-Implementierung fällt auf ihren
+ * eingebauten Canned-Provider zurück. Die Antworten sind dann Attrappen, aber
+ * Streaming, Verlauf und Wiederaufnahme lassen sich damit vollständig prüfen.
+ */
+// Kurze Kennung mit Absicht: der Name des S3-Buckets für die Sitzungsstände
+// wird aus Stack- und Blockkennung zusammengesetzt und darf 63 Zeichen nicht
+// überschreiten. 'lisa-assistant' sprengte das Limit um zwei Zeichen.
+const chatAgent = new Agent(scope, 'berater', {
+  model: { deployed: [BedrockModels.BALANCED, BedrockModels.FAST] },
+  systemPrompt: SYSTEM_PROMPT,
+  streamingMode: 'token',
+  /** Ein Saal voller Handys — der Verlauf soll nicht unbegrenzt mitwachsen. */
+  conversation: { strategy: 'sliding-window', windowSize: 20 },
+  /** Ohne Tools endet ein Zug nach einem Modellaufruf. Mehr wäre ein Fehler. */
+  maxLlmCalls: 2,
+  maxToolIterations: false,
+});
+
 export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /**
    * Liefert einen Kanal, den das Frontend direkt abonniert.
@@ -134,5 +164,40 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /** Kanal, über den neue Antworten live auf die Leinwand kommen. */
   async subscribeAnswers() {
     return rtAnswers.getChannel('answers', 'main');
+  },
+
+  // ─── Chat mit dem Agenten (Abschnitt 16) ──────────────────────────────────
+  //
+  // Die Teilnehmer melden sich nicht an. Ein Gespräch gehört dem Gerät, das
+  // seine Kennung kennt; die Kennung ist eine UUID und steht nirgends sonst.
+  // Für einen Vortragsabend ist das der richtige Schutz — fremde Gespräche
+  // müsste man raten.
+
+  /** Neues Gespräch beginnen. */
+  async chatStart(participantId: string) {
+    return { conversationId: await chatAgent.createConversationId(participantId) };
+  },
+
+  /**
+   * Nachricht abschicken. Kehrt sofort zurück — die Antwort kommt als Strom
+   * über den Kanal, nicht als Rückgabewert dieses Aufrufs.
+   */
+  async chatSend(
+    conversationId: string,
+    message: string,
+    channelId: string,
+    participantId: string,
+  ) {
+    await chatAgent.stream(message, { conversationId, channelId, userId: participantId });
+  },
+
+  /** Verlauf — damit ein gesperrtes Handy sein Gespräch wiederfindet. */
+  async chatHistory(conversationId: string) {
+    return { messages: await chatAgent.getConversation(conversationId) };
+  },
+
+  /** Kanal, über den die Antwort Stück für Stück hereinkommt. */
+  async chatChannel(channelId: string) {
+    return chatAgent.getChannel(channelId);
   },
 }));

@@ -39,6 +39,9 @@ packages/presentation/shots/
 
 # AWS Blocks: lokale Daten, Sandbox-Zustand, CDK-Synthese
 .bb-data/
-.blocks/
+# Der Stackname muss mit ins Repository — sonst legt ein Deployment von einer
+# anderen Maschine einen zweiten Stack an, statt den vorhandenen zu ersetzen.
+**/.blocks/*
+!**/.blocks/config.json
 .blocks-sandbox/
 cdk.out/

@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Interaction } from "@/slides/types";
+import { SEED_MAIL } from "@/slides/agent";
+import { useAgentChat } from "./useAgentChat";
 
 const CARD = "rounded-2xl border border-hair bg-stage-2 p-5";
 
@@ -132,22 +134,106 @@ function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "ma
 /**
  * Gespräch mit dem Agenten.
  *
- * Der Systemprompt ist einsehbar — er ist auf dieser Stufe der eigentliche
- * Lerninhalt. Der Chat selbst ist noch nicht gebaut; der Knopf sagt das
- * ehrlich, statt ins Leere zu führen.
+ * Das Gespräch beginnt nicht mit einer Frage des Teilnehmers, sondern mit der
+ * Mail von Hallbach — derselben, die in Abschnitt 2 auf der Leinwand stand.
+ * Der Agent hat den Systemprompt, aber keine Tools: er ordnet die Mail ein und
+ * fragt nach den Zahlen, die ihm fehlen. Die Teilnehmer sind seine Werkzeuge.
+ *
+ * Der Systemprompt ist aufklappbar — er ist auf dieser Stufe der eigentliche
+ * Lerninhalt, und es ist derselbe Text, mit dem der Agent tatsächlich läuft.
  */
 function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat" }> }) {
+  const { messages, loading, error, started, start, send, seed } = useAgentChat(interaction.id);
+  const [draft, setDraft] = useState("");
+  const bottom = useRef<HTMLDivElement>(null);
+
+  // Beim Nachrücken einer Antwort ans Ende springen, damit man nicht scrollen muss.
+  useEffect(() => {
+    if (started) bottom.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [messages.length, loading, started]);
+
+  const submit = (text: string) => {
+    setDraft("");
+    void send(text);
+  };
+
+  // Die erste Nachricht ist die eingegangene Mail, nicht etwas Getipptes.
+  const thread = messages.filter((m, i) => !(i === 0 && m.content === seed));
+
   return (
     <div className={CARD}>
       <p className="m-0 mb-4 text-lg leading-relaxed text-fg-2">{interaction.hint}</p>
 
-      <button
-        type="button"
-        disabled
-        className="w-full rounded-xl border border-hair bg-stage px-5 py-4 text-lg font-semibold text-fg-3"
-      >
-        {interaction.label} — kommt noch
-      </button>
+      {!started ? (
+        <button
+          type="button"
+          onClick={() => void start()}
+          className="w-full rounded-xl bg-[color:var(--accent)] px-5 py-4 text-lg font-semibold text-stage"
+        >
+          {interaction.label}
+        </button>
+      ) : (
+        <div className="grid gap-3">
+          <SeedMail />
+
+          {thread.map((m) => (
+            <div
+              key={m.id}
+              className={
+                m.role === "user"
+                  ? "justify-self-end rounded-2xl rounded-br-sm bg-[color:var(--accent)]/15 px-4 py-3 text-base leading-relaxed text-fg max-w-[85%]"
+                  : "justify-self-start rounded-2xl rounded-bl-sm border border-hair bg-stage px-4 py-3 text-base leading-relaxed whitespace-pre-wrap text-fg max-w-[92%]"
+              }
+            >
+              {m.content}
+            </div>
+          ))}
+
+          {loading && (
+            <p className="m-0 justify-self-start font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
+              Der Agent schreibt …
+            </p>
+          )}
+
+          {error && <p className="m-0 text-sm leading-relaxed text-b1">{error}</p>}
+
+          <div ref={bottom} />
+
+          {interaction.suggestions && !loading && (
+            <div className="flex flex-wrap gap-2">
+              {interaction.suggestions.map((sug) => (
+                <button
+                  key={sug}
+                  type="button"
+                  onClick={() => submit(sug)}
+                  className="rounded-full border border-hair bg-stage px-3 py-1.5 text-sm text-fg-3 active:bg-stage-3"
+                >
+                  {sug}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="flex items-end gap-2">
+            <textarea
+              id={`chat-${interaction.id}`}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="Antworten Sie ihm …"
+              rows={2}
+              className="w-full resize-none rounded-xl border border-hair bg-stage px-4 py-3 text-base text-fg placeholder:text-fg-3 focus:border-[color:var(--accent)] focus:outline-none"
+            />
+            <button
+              type="button"
+              disabled={!draft.trim() || loading}
+              onClick={() => submit(draft)}
+              className="shrink-0 rounded-xl bg-[color:var(--accent)] px-4 py-3 text-base font-semibold text-stage disabled:opacity-30"
+            >
+              Senden
+            </button>
+          </div>
+        </div>
+      )}
 
       <details className="mt-4 rounded-xl border border-hair bg-stage p-4">
         <summary className="cursor-pointer font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
@@ -157,23 +243,33 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
           {interaction.systemPrompt}
         </pre>
       </details>
+    </div>
+  );
+}
 
-      {interaction.suggestions && (
-        <div className="mt-4">
-          <p className="m-0 mb-2 font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
-            Antwortvorschläge
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {interaction.suggestions.map((sug) => (
-              <span
-                key={sug}
-                className="rounded-full border border-hair bg-stage px-3 py-1.5 text-sm text-fg-3"
-              >
-                {sug}
-              </span>
-            ))}
-          </div>
-        </div>
+/** Die eingegangene Mail als Auftakt des Gesprächs — so, wie sie auf der Folie stand. */
+function SeedMail() {
+  return (
+    <div className="rounded-2xl border border-hair bg-stage p-4">
+      <p className="m-0 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+        Posteingang · {SEED_MAIL.time}
+      </p>
+      <p className="m-0 mt-2 text-sm text-fg-3">{SEED_MAIL.from}</p>
+      <p className="m-0 mt-1 text-base font-semibold text-balance text-fg">{SEED_MAIL.subject}</p>
+      {SEED_MAIL.body.map((line) => (
+        <p key={line} className="m-0 mt-2 text-sm leading-relaxed text-fg-2">
+          {line}
+        </p>
+      ))}
+      {SEED_MAIL.facts && (
+        <dl className="m-0 mt-3 grid grid-cols-2 gap-x-3 gap-y-1">
+          {SEED_MAIL.facts.map(([k, v]) => (
+            <div key={k} className="contents">
+              <dt className="m-0 text-xs text-fg-3">{k}</dt>
+              <dd className="m-0 text-xs font-medium text-fg-2">{v}</dd>
+            </div>
+          ))}
+        </dl>
       )}
     </div>
   );
