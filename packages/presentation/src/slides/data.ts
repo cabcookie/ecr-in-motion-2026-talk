@@ -743,7 +743,7 @@ export const SECTIONS: Section[] = [
           "persist": true,
           "label": "Chat starten",
           "hint": "Sie bekommen die Mail von Hallbach. Der Agent fragt Sie nach den Daten, die ihm fehlen — Sie sind seine Tools.",
-          "systemPrompt": "Du bist der Assistent von Lisa Berger, Category Managerin für Schokolade & Pralinen bei einem Lebensmittelhändler.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und Lisa eine Handlungsempfehlung geben.\n\nKontext, den du kennst:\n- Kategorievorgabe Marge: mindestens 30 %\n- Regalplatz ist knapp. Eine Neulistung setzt in der Regel eine Auslistung voraus.\n- Aktionsflächen werden über den Aktionskalender vergeben, Vorlauf mindestens vier Wochen.\n- Exklusivzusagen brauchen die Freigabe der Einkaufsleitung.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Nenne, was du prüfen würdest, und in welchem System es steht.\n3. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt.\n4. Wenn dir Daten fehlen, frage Lisa gezielt danach. Rate nicht.\n\nDu hast KEINEN Zugriff auf Warenwirtschaft, Marktdaten, Regalplanung oder\nAktionskalender. Sag klar, welche Zahl du bräuchtest und wo sie steht.",
+          "systemPrompt": "Du bist der Assistent von Lisa Berger, Category Managerin für Schokolade & Pralinen bei einem Lebensmittelhändler.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nKontext, den du kennst:\n- Kategorievorgabe Marge: mindestens 30 %\n- Regalplatz ist knapp. Eine Neulistung setzt in der Regel eine Auslistung voraus.\n- Aktionsflächen laufen über den Aktionskalender, Vorlauf mindestens vier Wochen.\n- Exklusivzusagen brauchen die Freigabe der Einkaufsleitung.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann frage Lisa danach. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n5. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
           "suggestions": [
             "Die Kategorie wächst um 3,2 %",
             "Underperformer ist Nocturne Mini mit −12 %",
@@ -980,7 +980,7 @@ export const SECTIONS: Section[] = [
     "title": "Und was sagt der EU AI Act dazu?",
     "panels": [
       {
-        "at": "18:57",
+        "at": "18:56",
         "mock": {
           "t": "list",
           "ordered": false,
@@ -1009,14 +1009,15 @@ export const SECTIONS: Section[] = [
     "b": 4,
     "kind": "Auflösung",
     "title": "Braucht man uns dann noch?",
+    "hero": true,
     "panels": [
       {
-        "at": "18:58",
+        "at": "18:57",
         "mock": {
           "t": "statement",
-          "text": "Ja. Aber anders als heute."
+          "text": "Ja. Aber nicht so wie heute."
         },
-        "say": "Wörtlich die Frage aus Block 1 wiederholen — „uns“, gleiche Betonung. Wenn das Publikum sie wiedererkennt, hat der Bogen getragen."
+        "say": "Damit sind wir zurück bei der Frage vom Anfang. Braucht man uns dann noch? Meine Antwort ist ja. Aber nicht so wie heute."
       }
     ],
     "n": 22
@@ -1025,83 +1026,65 @@ export const SECTIONS: Section[] = [
     "b": 4,
     "kind": "Kernsatz",
     "title": "Wir sind nicht mehr die Ausführenden.",
-    "sub": "KI kann gewaltig viel — wenn man ihr die richtigen Rahmenbedingungen gibt. Und genau das ist die neue Aufgabe.",
     "panels": [
       {
-        "at": "18:59",
+        "at": "18:58",
         "mock": {
           "t": "statement",
-          "text": "Der operative Mitarbeiter wird zum Manager von KI-Agenten."
+          "text": "Wir bauen die Rahmenbedingungen, damit ausgeführt werden kann."
         },
-        "say": "Das ist die eigentliche Botschaft des Vortrags. Alles davor führt hierhin."
+        "say": "Was Sie heute Abend gesehen haben: Die KI kann erstaunlich viel — wenn man ihr die Rahmenbedingungen gibt. Und genau das ist unsere neue Aufgabe. Wir sind nicht mehr die, die ausführen. Wir sind die, die den Rahmen bauen, in dem ausgeführt werden kann. Aus dem operativ arbeitenden Mitarbeiter wird jemand, der Agenten anleitet."
+      },
+      {
+        "at": "18:58",
+        "mock": {
+          "t": "statement",
+          "text": "Die Arbeit wird nicht weniger.",
+          "after": "Sie wird anders."
+        },
+        "say": "Und machen Sie sich keine Hoffnung, dass dabei Arbeit übrig bleibt. Sobald wir mehr schaffen, wird auch mehr erwartet — von Kunden, von Kollegen, vom eigenen Haus. Die Arbeit wird nicht weniger. Sie wird anders."
       }
     ],
     "n": 23
   },
   {
     "b": 4,
-    "kind": "Zitat",
-    "title": "Und die Latte wird sofort höher gelegt.",
+    "kind": "Handlung",
+    "title": "Was Sie damit anfangen können.",
     "panels": [
       {
         "at": "18:59",
-        "mock": {
-          "t": "quote",
-          "text": "Customers are always beautifully, wonderfully dissatisfied. Even if they report being happy.",
-          "cite": "Jeff Bezos"
-        },
-        "say": "Kunden gewöhnen sich schnell. Sie werden wissen, dass KI im Hintergrund arbeitet — und mehr erwarten."
-      }
-    ],
-    "n": 24
-  },
-  {
-    "b": 4,
-    "kind": "Kernsatz",
-    "title": "Die Arbeit wird nicht weniger. Sie wird anders.",
-    "sub": "Die Rahmenbedingungen aufzubauen ist kein Wochenendprojekt. Es ist eine Aufgabe, die uns Jahre beschäftigen wird.",
-    "panels": [
-      {
-        "at": "19:00",
-        "mock": {
-          "t": "statement",
-          "text": "Wer jetzt anfängt zu lernen, lernt schneller.",
-          "after": "Wer schneller lernt, zieht schneller Nutzen — schneller als die Konkurrenz."
-        },
-        "say": "Der Grund, warum sie heute Abend hier sind. Das explizit sagen."
-      }
-    ],
-    "n": 25
-  },
-  {
-    "b": 4,
-    "kind": "Handlung",
-    "title": "Drei Dinge, die Sie morgen tun können.",
-    "panels": [
-      {
-        "at": "19:00",
         "mock": {
           "t": "list",
           "ordered": true,
           "items": [
             [
-              "Eine wiederkehrende Aufgabe nehmen",
-              "und einen KI-Agenten damit füttern — mit echtem Kontext, nicht nur einem Prompt."
+              "Schicken Sie jede E-Mail durch einen Agenten",
+              "Amazon Quick — ohne dass Sie dafür etwas bauen müssen"
             ],
             [
-              "Fragen: Welches Wissen bräuchte ein Agent",
-              "um diese Aufgabe eigenständig zu lösen? Das ist Ihre Rahmenbedingung."
+              "Schärfen Sie seine Instruktionen",
+              "Wer bin ich, für wen arbeite ich, welche Ziele verfolge ich, was gilt hier"
             ],
             [
-              "Morgen früh um 8 Uhr zum Breakfast kommen",
-              "und die Erfahrungen mit anderen Entscheidern teilen."
+              "Hängen Sie Ihre Systeme an",
+              "Tools für SAP und die anderen — über MCP, ohne den Agenten umzubauen"
+            ],
+            [
+              "Memory müssen Sie nicht bauen",
+              "Das macht Quick von allein — es lernt aus Ihren Korrekturen mit"
+            ],
+            [
+              "Überführen Sie eine Klasse in Software",
+              "Amazon Bedrock für die Modelle, Bedrock AgentCore als Infrastruktur für autonome Agenten"
             ]
           ]
         },
-        "say": "Konkret bleiben. Punkt 3 ist die Brücke zur Folgeveranstaltung."
+        "say": "Fassen wir zusammen, was Sie damit anfangen können — und womit. Erstens: Schicken Sie ab morgen jede eingehende E-Mail durch einen Agenten. Dafür müssen Sie nichts bauen, das kann Amazon Quick heute schon. Zweitens: Schärfen Sie seine Instruktionen. Wer bin ich, für wen arbeite ich, welche Ziele verfolge ich, was gilt in diesem Haus. Drittens: Hängen Sie Ihre Systeme an — Tools für SAP und alles andere, über MCP, ohne den Agenten jedes Mal umzubauen. Viertens: Memory müssen Sie gar nicht selbst bauen, das macht Quick von allein; es lernt aus Ihren Korrekturen mit. Und fünftens, wenn eine Klasse von Vorgängen sitzt: Überführen Sie sie in Software. Dafür gibt es Amazon Bedrock für die Modelle und Bedrock AgentCore als Infrastruktur für Agenten, die autonom laufen sollen.",
+        "note": "Produktnamen vor dem Vortrag gegen den aktuellen Stand prüfen — AWS benennt schnell um."
       }
     ],
-    "n": 26
+    "n": 24
   },
   {
     "b": 4,
@@ -1113,13 +1096,12 @@ export const SECTIONS: Section[] = [
         "at": "19:00",
         "mock": {
           "t": "statement",
-          "text": "Wer das Gespräch vertiefen will, ist herzlich eingeladen."
+          "text": "Kommen Sie und hören Sie, was andere schon tun."
         },
-        "say": "Ruhig ausklingen lassen.",
-        "inter": "Offene Diskussion: „Was nehmen Sie von heute mit?“ · „Was wäre Ihr erster Schritt morgen?“"
+        "say": "Und der letzte Punkt ist der einfachste: Kommen Sie morgen früh um acht zum Frühstück. Dort sitzen Entscheider aus anderen Häusern, die genau das gerade ausprobieren. Sie hören, was funktioniert — und vor allem, was nicht funktioniert. Das ist meistens der nützlichere Teil. Vielen Dank."
       }
     ],
-    "n": 27
+    "n": 25
   }
 ] as Section[];
 
