@@ -5,12 +5,19 @@
 
 > **You have already been given the index below** — all of it, or as much of it as a session start could carry. It is the same index `nxm prime` replays, which stops at the byte budget the host delivers and says so when it does (`nxm index` prints the whole of it), so there is nothing to gain by reading it again here. Underneath it stands the FULL TEXT of each memory — that is what `nxm recall <key>` serves, and it is meant to be read one memory at a time, when the index tells you a particular one matters. Reading this file end to end is the expensive way to obtain what you already have.
 
-## Index (1)
+## Index (2)
 
 - **vortrag-szenario-entscheidung**: Der Vortrag nutzt das Lisa-Berger-Listungsszenario, nicht die gebaute Markus-Weber-Supply-Chain-Simulation.
+- **blocks-email-empfang**: AWS Blocks kann E-Mails senden (EmailClient/SES), aber nicht empfangen — Empfang über SES-Regel und Lambda in der CDK-Schicht.
 
 ## Full text
 
 ### `vortrag-szenario-entscheidung`
 
 Der Vortrag folgt dem Lisa-Berger-Szenario (Category Managerin, Listungsantrag merci Crunchy Bites von Storck, Entdeckung freiwerdender Aktionsflächen am 22.10. in 12 Hamburger Märkten), NICHT dem bereits gebauten Markus-Weber-Supply-Chain-Szenario in packages/docs/demo/quick/simulation. Entscheidung von Carsten am 11.09.2026. Begründung: Die Listungsentscheidung provoziert stärker als eine Nachbestellung — der Agent trifft eine echte Geschäftsentscheidung und verhandelt, statt nur zu disponieren. Folge: Die Simulation braucht neue Datenmodelle, die heute fehlen (Aktionskalender/Kampagnen, Planogramm/Regalplatz, Kategorie-Performance, Marge). Die vorhandenen Tabellen (messages, inventory, suppliers, purchase_orders, kpi_states) decken das Szenario nicht ab.
+
+---
+
+### `blocks-email-empfang`
+
+AWS Blocks deckt E-Mail-VERSAND über den EmailClient-Block ab (lokal abgefangen, in AWS über SES). Für den EMPFANG gibt es keinen Block. Eingehende Mails laufen über eine SES-Empfangsregel nach S3 oder SNS und von dort in eine Lambda — das gehört in die CDK-Schicht aws-blocks/index.cdk.ts, nicht in die IFC-Schicht index.ts. Carsten hat einen AWS-Account mit SES-Produktionszugang (Stand 13.09.2026), die Sandbox-Beschränkung entfällt also.

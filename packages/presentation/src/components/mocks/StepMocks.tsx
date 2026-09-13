@@ -1,12 +1,6 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import type {
-  BioMock,
-  MailThreadMock,
-  QrMock,
-  ResultsMock,
-  RevealMock,
-} from "@/slides/types";
+import type { BioMock, MailThreadMock, QrMock, RevealMock } from "@/slides/types";
 import { MailMockView } from "./MailMock";
 
 /** Eingehende Mail links, Antwort rechts — die Antwort erst beim zweiten Klick. */
@@ -96,62 +90,6 @@ export function QrView({ m }: { m: QrMock }) {
         <p className="m-0 mt-[24px] text-[34px] leading-[1.35] text-fg-2">{m.hint}</p>
         <p className="m-0 mt-[28px] font-mono text-[26px] text-[color:var(--accent)]">{url}</p>
       </div>
-    </div>
-  );
-}
-
-/**
- * Platzhalter für die Live-Auswertung. Die echten Antworten kommen aus der
- * Zuschauersicht — bis die Auswertung steht, zeigt die Folie ihren Rahmen,
- * damit im Storyboard sichtbar ist, wo sie hingehört.
- */
-export function ResultsView({ m }: { m: ResultsMock }) {
-  if (m.as === "matrix" && m.axes) {
-    return (
-      <div className="w-full">
-        <div className="grid grid-cols-[auto_1fr_1fr] grid-rows-[auto_1fr_1fr] gap-[3px]">
-          <div />
-          <div className="pb-[14px] text-center font-mono text-[22px] tracking-[0.1em] text-fg-3 uppercase">
-            Ja
-          </div>
-          <div className="pb-[14px] text-center font-mono text-[22px] tracking-[0.1em] text-fg-3 uppercase">
-            Nein
-          </div>
-          {["Freut mich", "Freut mich nicht"].map((row) => (
-            <Fragment key={row}>
-              <div
-                className="flex items-center pr-[20px] text-right font-mono text-[22px] tracking-[0.08em] text-fg-3 uppercase"
-              >
-                {row}
-              </div>
-              {[0, 1].map((c) => (
-                <div
-                  key={`${row}-${c}`}
-                  className="grid h-[150px] place-items-center rounded-md border border-dashed border-hair bg-stage-2 font-mono text-[44px] tabular-nums text-fg-3"
-                >
-                  –
-                </div>
-              ))}
-            </Fragment>
-          ))}
-        </div>
-        <p className="m-0 mt-[26px] text-center font-mono text-[22px] text-fg-3">
-          {m.axes.x} × {m.axes.y} · Antworten erscheinen live
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid w-full grid-cols-3 gap-[16px]">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="grid h-[110px] place-items-center rounded-md border border-dashed border-hair bg-stage-2 font-mono text-[24px] text-fg-3"
-        >
-          Antwort {i + 1}
-        </div>
-      ))}
     </div>
   );
 }

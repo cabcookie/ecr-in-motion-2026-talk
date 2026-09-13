@@ -150,7 +150,13 @@ export interface BioMock {
   line: string;
 }
 
-/** Platzhalter für die Live-Auswertung der Publikumsantworten. */
+/**
+ * Live-Auswertung der Publikumsantworten auf der Leinwand.
+ *
+ * `of` nennt die Interaktion aus den Foliendaten. Fragen und Antwortoptionen
+ * werden von dort geholt statt hier wiederholt — sonst laufen Handy und
+ * Leinwand auseinander, sobald jemand eine Option ändert.
+ */
 export interface ResultsMock {
   t: "results";
   of: string;

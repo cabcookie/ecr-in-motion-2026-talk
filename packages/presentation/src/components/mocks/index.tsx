@@ -12,7 +12,8 @@ import {
   TimelineView,
   TweetsView,
 } from "./PlainMocks";
-import { BioView, MailThreadView, QrView, ResultsView, RevealView } from "./StepMocks";
+import { BioView, MailThreadView, QrView, RevealView } from "./StepMocks";
+import { ResultsView } from "./Results";
 import { TShapeView } from "./TShape";
 
 export function MockView({
