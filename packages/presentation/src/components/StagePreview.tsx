@@ -15,10 +15,12 @@ import { STAGE_H, STAGE_W } from "@/nav/useStageScale";
 export function StagePreview({
   slide,
   width,
+  step = 0,
   expandable = false,
 }: {
   slide: Slide;
   width: number;
+  step?: number;
   expandable?: boolean;
 }) {
   const box = useRef<HTMLDivElement>(null);
@@ -70,7 +72,7 @@ export function StagePreview({
           className={fullscreen ? "shrink-0 origin-center" : "absolute top-0 left-0 origin-top-left"}
           style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})` }}
         >
-          <SlideView slide={slide} isTitle={slide.n === 1} />
+          <SlideView slide={slide} isTitle={slide.n === 1} step={step} />
         </div>
       </div>
 

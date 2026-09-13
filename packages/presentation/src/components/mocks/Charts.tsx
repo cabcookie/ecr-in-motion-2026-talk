@@ -46,50 +46,64 @@ function Agriculture() {
   );
 }
 
-/** Spannweite der deutschen Arbeitslosenquote — Platzhalter, bis die Zeitreihe da ist. */
+/**
+ * Deutsche Arbeitslosenquote an Ankerpunkten.
+ *
+ * Bewusst keine durchgezogene Zeitreihe: über 100 Jahre brechen Gebiet
+ * (Deutsches Reich, früheres Bundesgebiet, Gesamtdeutschland) und Definition
+ * mehrfach. Die Ankerpunkte tragen das Argument — die Ausschläge kamen von
+ * Kriegen und Krisen, nicht von Technologie.
+ */
 function Unemployment() {
-  const x0 = 120;
-  const x1 = 1240;
-  const y = 210;
-  const px = (v: number) => x0 + (v / 30) * (x1 - x0);
-  const marks = [
-    { v: 3.71, label: "HEUTE", sub: "3,71 %", up: true, color: "var(--accent)" },
-    { v: 6.03, label: "LANGZEITSCHNITT", sub: "6,03 %", up: false, color: "var(--color-fg-3)" },
+  const points = [
+    { year: "1932", value: 30.0, label: "Weltwirtschaftskrise" },
+    { year: "1950", value: 11.0, label: "Nachkriegszeit" },
+    { year: "1960", value: 1.3, label: "Wirtschaftswunder" },
+    { year: "1975", value: 4.7, label: "Ölkrise" },
+    { year: "2005", value: 11.7, label: "nach der Wiedervereinigung" },
+    { year: "heute", value: 6.0, label: "" },
   ];
+  const x0 = 60;
+  const x1 = 1320;
+  const base = 400;
+  const top = 90;
+  const maxV = 32;
+  const px = (i: number) => x0 + (i / (points.length - 1)) * (x1 - x0);
+  const py = (v: number) => base - (v / maxV) * (base - top);
+  const path = points.map((p, i) => `${i ? "L" : "M"}${px(i)},${py(p.value)}`).join(" ");
+
   return (
     <>
-      <svg viewBox="0 0 1360 420" role="img"
-        aria-label="Spannweite der deutschen Arbeitslosenquote über 100 Jahre: Minimum 0,4 Prozent, Maximum 30 Prozent, Langzeitschnitt 6,03 Prozent, heute 3,71 Prozent">
-        <text x="0" y="40" fontFamily={MONO} fontSize="24" letterSpacing="3" fill="var(--color-fg-3)">
-          SPANNWEITE 1925–2025 · DEUTSCHLAND
+      <svg viewBox="0 0 1360 500" role="img"
+        aria-label="Deutsche Arbeitslosenquote an Ankerpunkten: 1932 rund 30 Prozent, 1950 11 Prozent, 1960 1,3 Prozent, 1975 4,7 Prozent, 2005 11,7 Prozent, heute rund 6 Prozent">
+        <text x="0" y="34" fontFamily={MONO} fontSize="24" letterSpacing="3" fill="var(--color-fg-3)">
+          ARBEITSLOSENQUOTE DEUTSCHLAND
         </text>
-        <rect x={x0} y={y - 24} width={x1 - x0} height="48" fill="var(--color-stage-3)" rx="6" />
-        <text x={x0} y={y + 76} textAnchor="middle" fontFamily={MONO} fontSize="26" fill="var(--color-fg-3)">
-          0,4 %
-        </text>
-        <text x={x1} y={y + 76} textAnchor="middle" fontFamily={MONO} fontSize="26" fill="var(--color-fg-3)">
-          30 %
-        </text>
-        {marks.map((m) => {
-          const X = px(m.v);
-          const ty = m.up ? y - 58 : y + 96;
-          return (
-            <g key={m.label}>
-              <line x1={X} y1={y - 44} x2={X} y2={y + 44} stroke={m.color} strokeWidth="5" />
-              <text x={X} y={ty} textAnchor="middle" fontFamily={MONO} fontSize="40"
-                fontWeight="600" fill={m.color}>
-                {m.sub}
+        <line x1="0" y1={base} x2="1360" y2={base} stroke="var(--color-hair)" strokeWidth="2" />
+        <path d={path} fill="none" stroke="var(--accent)" strokeWidth="4"
+          strokeLinejoin="round" strokeLinecap="round" />
+        {points.map((p, i) => (
+          <g key={p.year}>
+            <circle cx={px(i)} cy={py(p.value)} r="10" fill="var(--accent)" />
+            <text x={px(i)} y={py(p.value) - 26} textAnchor="middle" fontFamily={MONO}
+              fontSize="32" fontWeight="600" fill="var(--color-fg)">
+              {String(p.value).replace(".", ",")} %
+            </text>
+            <text x={px(i)} y={base + 42} textAnchor="middle" fontFamily={MONO}
+              fontSize="28" fill="var(--color-fg-2)">
+              {p.year}
+            </text>
+            {p.label && (
+              <text x={px(i)} y={base + 76} textAnchor="middle" fontFamily={SANS}
+                fontSize="22" fill="var(--color-fg-3)">
+                {p.label}
               </text>
-              <text x={X} y={m.up ? ty - 34 : ty + 34} textAnchor="middle" fontFamily={MONO}
-                fontSize="22" letterSpacing="2" fill="var(--color-fg-3)">
-                {m.label}
-              </text>
-            </g>
-          );
-        })}
+            )}
+          </g>
+        ))}
       </svg>
       <p className={CAP}>
-        Platzhalter: nur die vier belegten Eckwerte. Die Zeitreihe fehlt noch.
+        Ankerpunkte statt durchgezogener Reihe — über 100 Jahre brechen Gebiet und Definition mehrfach.
       </p>
     </>
   );

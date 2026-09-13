@@ -28,28 +28,49 @@ export function createRealtimeTransport(token: string): SyncTransport {
 
       const sub = channel.subscribe((event) => {
         if (event.from === id) return;
-        emit({ type: "goto", index: event.index, from: event.from, at: event.at });
+        emit({ type: "goto", index: event.index, step: event.step, from: event.from, at: event.at });
       });
       unsubscribe = () => sub.unsubscribe();
 
       // Stand nachholen — ersetzt das "hello" des BroadcastChannel-Transports
       const current = await api.currentSlide();
       if (!closed && current.at > 0) {
-        emit({ type: "goto", index: current.index, from: current.from, at: current.at });
+        emit({ type: "goto", index: current.index, step: current.step, from: current.from, at: current.at });
       }
     } catch (err) {
       console.error("Realtime-Verbindung fehlgeschlagen:", err);
     }
   })();
 
+  /**
+   * Schnelles Weiterklicken zusammenfassen.
+   *
+   * Jeder Klick wäre sonst ein eigener Aufruf; ein halbes Dutzend davon in
+   * einer Sekunde kann beim Server in anderer Reihenfolge ankommen, und dann
+   * bleibt der falsche Stand stehen. Gesendet wird nur der jeweils letzte —
+   * die Zwischenschritte muss niemand sehen.
+   */
+  let sendTimer: ReturnType<typeof setTimeout> | null = null;
+  let queued: { index: number; step: number } | null = null;
+
+  const flush = () => {
+    sendTimer = null;
+    const target = queued;
+    queued = null;
+    if (!target || closed) return;
+    void api.gotoSlide(target.index, target.step, id, token).catch((err) => {
+      console.error("Folienwechsel abgelehnt:", err);
+    });
+  };
+
   return {
     id,
     send(msg) {
       // "hello" wird hier über currentSlide() gelöst, nicht über den Kanal
       if (msg.type !== "goto") return;
-      void api.gotoSlide(msg.index, id, token).catch((err) => {
-        console.error("Folienwechsel abgelehnt:", err);
-      });
+      queued = { index: msg.index, step: msg.step };
+      if (sendTimer) clearTimeout(sendTimer);
+      sendTimer = setTimeout(flush, 120);
     },
     subscribe(h) {
       handler = h;
@@ -59,6 +80,7 @@ export function createRealtimeTransport(token: string): SyncTransport {
     },
     close() {
       closed = true;
+      if (sendTimer) clearTimeout(sendTimer);
       unsubscribe?.();
     },
   };

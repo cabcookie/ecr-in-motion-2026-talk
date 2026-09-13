@@ -80,6 +80,13 @@ body {
 
 #root { height: 100%; }
 
+/* Handy: die Zuschauersicht darf über die Bildschirmhöhe hinauswachsen. */
+body:has(#root > [data-view="audience"]),
+body:has(#root > [data-view="audience"]) #root {
+  height: auto;
+  overflow: auto;
+}
+
 /*
   Mocks liefern Text mit <b> aus den Foliendaten. Welche Farbe die
   Hervorhebung bekommt, hängt vom Untergrund ab — der Container setzt

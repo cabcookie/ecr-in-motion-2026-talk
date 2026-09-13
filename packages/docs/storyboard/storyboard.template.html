@@ -485,6 +485,39 @@ const RENDER = {
     return h;
   },
   chart(m){ return ({agriculture:chartAgriculture, unemployment:chartUnemployment, exposure:chartExposure}[m.which])(); },
+  mailthread(m){
+    return '<div class="thread"><div><span class="steplbl">Schritt 1</span>'+RENDER.mail(m.incoming)+'</div>'
+         + '<div><span class="steplbl">Schritt 2</span>'+RENDER.mail(m.reply)+'</div></div>';
+  },
+  reveal(m){
+    let h='<div class="mock"><div class="statement" style="display:grid;gap:14px">';
+    m.items.forEach((it,i)=>{
+      h += '<div><span class="steplbl">Schritt '+(i+1)+'</span><p'+(it.accent?'':' style="color:var(--ink)"')+'>'+esc(it.text)+'</p>'
+        + (it.sub?'<p class="after">'+esc(it.sub)+'</p>':'') + '</div>';
+    });
+    return h+'</div></div>';
+  },
+  stepped(m){
+    let h='<div class="thread" style="grid-template-columns:1fr">';
+    m.frames.forEach((f,i)=>{
+      h += '<div><span class="steplbl">Schritt '+(i+1)+'</span>'+RENDER[f.t](f)+'</div>';
+    });
+    return h+'</div>';
+  },
+  qr(m){
+    return '<div class="mock">'+mockBar("QR-Code auf die Zuschauersicht","var(--sys-mail)")
+      + '<div class="qrbox"><div class="qrsquare">QR</div><div><b>'+esc(m.caption)+'</b><br>'+esc(m.hint)+'</div></div></div>';
+  },
+  bio(m){
+    return '<div class="mock"><ul class="plist">'
+      + m.stations.map(x=>'<li><span class="n">—</span><span class="t">'+esc(x)+'</span></li>').join('')
+      + '</ul><p class="chart-cap" style="text-align:left;padding:0 15px 12px">'+esc(m.line)+'</p></div>';
+  },
+  results(m){
+    return '<div class="mock">'+mockBar("Live-Auswertung — "+(m.as==="matrix"?"Matrix":"Antworten"),"var(--sys-agent)")
+      + '<div class="chartbox"><p class="chart-cap">Antworten der Teilnehmer zu „'+esc(m.of)+'“'
+      + (m.axes?' · '+esc(m.axes.x)+' × '+esc(m.axes.y):'')+'</p></div></div>';
+  },
 };
 
 function chartAgriculture(){
@@ -598,7 +631,8 @@ function renderStage(){
      + '<span class="budget">'+esc(b.budget)+'</span></div></div>';
 
   h += '<article class="slide"><div class="slide-head">';
-  h += '<div class="eyebrow"><span>Folie '+String(s.n).padStart(2,"0")+'</span><span class="sep">◆</span><span class="kind">'+esc(s.kind)+'</span></div>';
+  h += '<div class="eyebrow"><span>Folie '+String(s.n).padStart(2,"0")+'</span><span class="sep">◆</span><span class="kind">'+esc(s.kind)+'</span>'
+   + (s.steps>1 ? '<span class="sep">◆</span><span>'+s.steps+' Klicks</span>' : '') + '</div>';
   h += '<h2 class="headline">'+esc(s.headline)+'</h2>';
   if(s.sub) h += '<p class="subline">'+esc(s.sub)+'</p>';
   h += '</div><div class="slide-body">';
@@ -608,6 +642,20 @@ function renderStage(){
 
   h += '<dl class="notes">';
   if(s.say)  h += '<div class="note"><dt>Gesagt</dt><dd>'+esc(s.say)+'</dd></div>';
+  if(s.sayByStep) s.sayByStep.forEach((t,i) => {
+    h += '<div class="note"><dt>Gesagt '+(i+1)+'</dt><dd>'+esc(t)+'</dd></div>';
+  });
+  if(s.audience){
+    const parts = s.audience.map((a,i) => {
+      if(!a) return '';
+      const was = a.kind === "poll" ? a.question.text
+                : a.kind === "text" ? a.prompt
+                : a.kind === "mailto" ? a.label
+                : a.message;
+      return '<div class="ai"><b>Schritt '+(i+1)+' · '+a.kind+'</b>'+esc(was)+'</div>';
+    }).join('');
+    h += '<div class="note app"><dt>Auf dem Handy</dt><dd><div class="audience">'+parts+'</div></dd></div>';
+  }
   if(s.app)  h += '<div class="note app"><dt>App liefert</dt><dd>'+esc(s.app)+'</dd></div>';
   if(s.note) h += '<div class="note"><dt>Hinweis</dt><dd>'+esc(s.note)+'</dd></div>';
   if(s.open) h += '<div class="note open"><dt>Offen</dt><dd>'+esc(s.open)+'</dd></div>';

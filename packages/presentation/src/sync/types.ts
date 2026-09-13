@@ -1,15 +1,20 @@
 /**
- * Transportschicht zwischen Operator-View und Live-View.
+ * Transportschicht zwischen Operator-View, Live-View und Zuschauersicht.
  *
- * Die Schnittstelle ist bewusst klein gehalten, damit neben dem
- * BroadcastChannel (gleicher Browser, kein Backend) später ein zweiter
- * Transport über den Realtime-Block von AWS Blocks danebentreten kann —
- * derselbe Vertrag, nur über API Gateway WebSocket statt im Browser.
+ * Die Schnittstelle ist bewusst klein, damit neben dem BroadcastChannel
+ * (gleicher Browser, kein Backend) der Realtime-Block von AWS Blocks
+ * danebenstehen kann — derselbe Vertrag, nur über AppSync Events.
  */
 
+/** Ein Folienstand: Folie plus Klick-Schritt innerhalb der Folie. */
+export interface Cursor {
+  index: number;
+  step: number;
+}
+
 export type SyncMessage =
-  /** Springe zu dieser Folie. Von beiden Seiten sendbar. */
-  | { type: "goto"; index: number; from: string; at: number }
+  /** Springe zu diesem Stand. Von beiden Seiten sendbar. */
+  | { type: "goto"; index: number; step: number; from: string; at: number }
   /** Neu dazugekommen — wer den Stand kennt, möge ihn schicken. */
   | { type: "hello"; from: string; at: number };
 

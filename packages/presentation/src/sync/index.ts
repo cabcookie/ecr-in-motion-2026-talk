@@ -15,7 +15,9 @@ const params = new URLSearchParams(location.search);
  * gemerkt, damit man es auf dem Handy nur einmal eintippen muss.
  */
 export function chooseTransport(): { kind: TransportKind; create: () => SyncTransport | null } {
-  if (params.has("remote")) {
+  // Die Zuschauersicht läuft auf fremden Geräten — dort hilft kein
+  // BroadcastChannel, sie braucht immer den Server.
+  if (params.has("remote") || params.has("audience")) {
     const fromUrl = params.get("token");
     if (fromUrl) sessionStorage.setItem("deck-token", fromUrl);
     const token = fromUrl ?? sessionStorage.getItem("deck-token") ?? "";

@@ -8,7 +8,7 @@ import { SlideView } from "./SlideView";
 const CLEAN = new URLSearchParams(location.search).has("clean");
 
 export function LiveView() {
-  const { index } = useNavigation(TOTAL);
+  const { index, step } = useNavigation(TOTAL);
   const scale = useStageScale();
   const slide = SLIDES[index];
   const [showHelp, setShowHelp] = useState(!CLEAN);
@@ -26,7 +26,7 @@ export function LiveView() {
         data-block={slide.b}
         style={{ transform: `scale(${scale})` }}
       >
-        <SlideView slide={slide} isTitle={index === 0} />
+        <SlideView slide={slide} isTitle={index === 0} step={step} />
         <div className="absolute inset-x-0 bottom-0 h-[9px] bg-stage-3" />
         <div
           className="absolute bottom-0 left-0 h-[9px] bg-[color:var(--accent)] transition-[width] duration-300 ease-out"

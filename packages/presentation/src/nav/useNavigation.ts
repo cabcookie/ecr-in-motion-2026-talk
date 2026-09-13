@@ -1,73 +1,90 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { chooseTransport, type TransportKind } from "@/sync";
 import type { SyncTransport } from "@/sync/types";
+import { stepsOf } from "@/slides/data";
 
 export interface Navigation {
   index: number;
+  /** Klick-Schritt innerhalb der Folie, 0-basiert */
+  step: number;
   total: number;
   next: () => void;
   prev: () => void;
-  goto: (i: number) => void;
-  /** true, wenn die Fernsteuerung angebunden ist */
+  goto: (i: number, step?: number) => void;
   connected: boolean;
-  /** welcher Transport gerade trägt — für die Anzeige in der Operator-View */
   transport: TransportKind;
 }
 
 export interface NavigationOptions {
-  /** Tastatur auswerten */
   keyboard?: boolean;
-  /** Stand an andere Fenster senden und von dort übernehmen */
   sync?: boolean;
+  /** nur zuhören — die Zuschauersicht steuert nichts */
+  readOnly?: boolean;
 }
 
 /**
- * Folien-Navigation für Live- und Operator-View.
+ * Folien-Navigation für alle drei Ansichten.
  *
- * Beide Seiten dürfen springen; die Änderung wird über den Transport
- * gespiegelt. Empfangene Sprünge werden nicht zurückgesendet, sonst
- * schaukeln sich die Fenster gegenseitig auf.
+ * Eine Folie kann mehrere Klick-Schritte haben; `next` geht erst durch die
+ * Schritte und dann zur nächsten Folie, `prev` entsprechend rückwärts auf den
+ * letzten Schritt der vorigen Folie.
  *
- * Der Transport wird im Effekt erzeugt und dort auch geschlossen — nicht in
- * einem useMemo. Sonst überlebt er den Doppel-Mount im StrictMode nicht:
- * die erste Aufräumrunde schließt den Kanal, und der zweite Mount sendet
- * in einen geschlossenen Kanal.
+ * Gesendet wird beim Befehl, nicht in einem Effekt auf den Zustand — ein
+ * Effekt lief im StrictMode beim zweiten Mount erneut und überschrieb den
+ * Serverstand mit der Startfolie.
  */
 export function useNavigation(
   total: number,
-  { keyboard = true, sync = true }: NavigationOptions = {},
+  { keyboard = true, sync = true, readOnly = false }: NavigationOptions = {},
 ): Navigation {
-  const [index, setIndex] = useState(0);
+  const [{ index, step }, setCursor] = useState({ index: 0, step: 0 });
   const [connected, setConnected] = useState(false);
   const [{ kind, create }] = useState(chooseTransport);
 
   const transport = useRef<SyncTransport | null>(null);
-  const indexRef = useRef(0);
-  indexRef.current = index;
-
   /**
-   * Einzige Stelle, an der sich die Folie ändert.
+   * Der Stand als Ref, synchron mitgeführt.
    *
-   * `broadcast` trennt eigene Befehle von übernommenen Änderungen. Früher hing
-   * das Senden an einem Effekt auf `index` — der lief im StrictMode beim
-   * zweiten Mount erneut und überschrieb den Serverstand mit der Startfolie.
-   * Senden gehört an den Befehl, nicht an den Zustand.
+   * Er darf NICHT beim Rendern gesetzt werden: Mehrere Klicks im selben Tick
+   * (schnelles Weiterklicken, gedrückt gehaltene Pfeiltaste) läsen sonst alle
+   * denselben veralteten Wert, und nur einer davon käme an.
    */
+  const cursorRef = useRef({ index: 0, step: 0 });
+
+  /** Einzige Stelle, an der sich der Stand ändert. */
   const apply = useCallback(
-    (i: number, broadcast: boolean) => {
-      const clamped = Math.min(total - 1, Math.max(0, i));
-      setIndex(clamped);
+    (i: number, s: number, broadcast: boolean) => {
+      const clampedIndex = Math.min(total - 1, Math.max(0, i));
+      const clampedStep = Math.min(stepsOf(clampedIndex) - 1, Math.max(0, s));
+      cursorRef.current = { index: clampedIndex, step: clampedStep };
+      setCursor(cursorRef.current);
       const t = transport.current;
-      if (broadcast && t) {
-        t.send({ type: "goto", index: clamped, from: t.id, at: Date.now() });
+      if (broadcast && t && !readOnly) {
+        t.send({
+          type: "goto",
+          index: clampedIndex,
+          step: clampedStep,
+          from: t.id,
+          at: Date.now(),
+        });
       }
     },
-    [total],
+    [total, readOnly],
   );
 
-  const goto = useCallback((i: number) => apply(i, true), [apply]);
-  const next = useCallback(() => apply(indexRef.current + 1, true), [apply]);
-  const prev = useCallback(() => apply(indexRef.current - 1, true), [apply]);
+  const goto = useCallback((i: number, s = 0) => apply(i, s, true), [apply]);
+
+  const next = useCallback(() => {
+    const { index: i, step: s } = cursorRef.current;
+    if (s + 1 < stepsOf(i)) apply(i, s + 1, true);
+    else apply(i + 1, 0, true);
+  }, [apply]);
+
+  const prev = useCallback(() => {
+    const { index: i, step: s } = cursorRef.current;
+    if (s > 0) apply(i, s - 1, true);
+    else apply(i - 1, stepsOf(Math.max(0, i - 1)) - 1, true);
+  }, [apply]);
 
   // Transport aufbauen und Fremdänderungen übernehmen
   useEffect(() => {
@@ -80,10 +97,10 @@ export function useNavigation(
 
     const off = t.subscribe((msg) => {
       if (msg.type === "goto") {
-        apply(msg.index, false);
-      } else if (msg.type === "hello") {
-        // Wer den Stand kennt, teilt ihn dem neuen Fenster mit
-        t.send({ type: "goto", index: indexRef.current, from: t.id, at: Date.now() });
+        apply(msg.index, msg.step ?? 0, false);
+      } else if (msg.type === "hello" && !readOnly) {
+        const { index: i, step: s } = cursorRef.current;
+        t.send({ type: "goto", index: i, step: s, from: t.id, at: Date.now() });
       }
     });
 
@@ -98,10 +115,10 @@ export function useNavigation(
       transport.current = null;
       setConnected(false);
     };
-  }, [sync, create, kind, apply]);
+  }, [sync, create, kind, apply, readOnly]);
 
   useEffect(() => {
-    if (!keyboard) return;
+    if (!keyboard || readOnly) return;
     function onKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLElement && e.target.closest("input,textarea")) return;
       switch (e.key) {
@@ -128,7 +145,7 @@ export function useNavigation(
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [keyboard, next, prev, goto, total]);
+  }, [keyboard, readOnly, next, prev, goto, total]);
 
-  return { index, total, next, prev, goto, connected, transport: kind };
+  return { index, step, total, next, prev, goto, connected, transport: kind };
 }

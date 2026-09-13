@@ -100,7 +100,54 @@ export interface ChartMock {
   which: "agriculture" | "unemployment" | "exposure";
 }
 
+/** Zwei E-Mails nebeneinander — die zweite erscheint erst beim nächsten Klick. */
+export interface MailThreadMock {
+  t: "mailthread";
+  incoming: MailMock;
+  reply: MailMock;
+}
+
+/** Blöcke, die sich mit jedem Klick aufbauen: Schritt n zeigt die Elemente 0 bis n. */
+export interface RevealMock {
+  t: "reveal";
+  items: Array<{ text: string; sub?: string; accent?: boolean }>;
+}
+
+/** Ein eigener Inhalt je Klick-Schritt — ersetzt statt ergänzt. */
+export interface SteppedMock {
+  t: "stepped";
+  frames: Mock[];
+}
+
+/** QR-Code auf die Zuschauersicht, mit kurzer Anleitung daneben. */
+export interface QrMock {
+  t: "qr";
+  caption: string;
+  hint: string;
+}
+
+/** Lebenslauf-Stationen als Zeile — für die Vorstellung. */
+export interface BioMock {
+  t: "bio";
+  stations: string[];
+  line: string;
+}
+
+/** Platzhalter für die Live-Auswertung der Publikumsantworten. */
+export interface ResultsMock {
+  t: "results";
+  of: string;
+  as: "matrix" | "list";
+  axes?: { x: string; y: string };
+}
+
 export type Mock =
+  | MailThreadMock
+  | RevealMock
+  | SteppedMock
+  | QrMock
+  | BioMock
+  | ResultsMock
   | MailMock
   | ChatMock
   | RunMock
@@ -113,6 +160,32 @@ export type Mock =
   | DiffMock
   | ChartMock;
 
+/** Eine Frage der Publikumsumfrage. */
+export interface PollQuestion {
+  id: string;
+  text: string;
+  options: Array<{ value: string; label: string }>;
+}
+
+/**
+ * Was die Teilnehmer auf dem Handy sehen und tun. Pro Klick-Schritt höchstens
+ * eine Interaktion — die Zuschauersicht zeigt immer nur die eine, die gerade
+ * dran ist.
+ */
+export type Interaction =
+  | { kind: "poll"; id: string; question: PollQuestion }
+  | { kind: "text"; id: string; prompt: string; placeholder: string; examples: string[] }
+  | {
+      kind: "mailto";
+      id: string;
+      label: string;
+      to: string;
+      subject: string;
+      body: string;
+      hint: string;
+    }
+  | { kind: "wait"; id: string; message: string };
+
 export interface Slide {
   /** 1-basierte Foliennummer über den ganzen Vortrag */
   n: number;
@@ -122,8 +195,16 @@ export interface Slide {
   headline: string;
   sub?: string;
   mock?: Mock;
-  /** Sprechnotiz — nur Operator-View */
+  /**
+   * Anzahl der Klick-Schritte. 1 (oder nicht gesetzt) bedeutet: alles sofort
+   * sichtbar, ein Klick geht zur nächsten Folie.
+   */
+  steps?: number;
+  /** Sprechnotiz — nur Operator-View. Bei mehreren Schritten je Schritt eine. */
   say?: string;
+  sayByStep?: string[];
+  /** Was das Publikum auf dem Handy sieht — Index ist der Klick-Schritt. */
+  audience?: Array<Interaction | null>;
   /** Was die Demo-Applikation liefern muss — nur Operator-View */
   app?: string;
   /** Redaktioneller Hinweis — nur Operator-View */

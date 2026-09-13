@@ -14,10 +14,18 @@ function headlineSize(text: string): string {
 /** Folien ohne Anwendungsfenster stehen mittig — die Aussage ist die Folie. */
 function isCentered(s: Slide): boolean {
   if (!s.mock) return true;
-  return s.mock.t === "statement" || s.mock.t === "quote";
+  return s.mock.t === "statement" || s.mock.t === "quote" || s.mock.t === "reveal";
 }
 
-export function SlideView({ slide, isTitle }: { slide: Slide; isTitle: boolean }) {
+export function SlideView({
+  slide,
+  isTitle,
+  step = 0,
+}: {
+  slide: Slide;
+  isTitle: boolean;
+  step?: number;
+}) {
   const block = blockOf(slide.b);
   const centered = isTitle || isCentered(slide);
 
@@ -58,8 +66,8 @@ export function SlideView({ slide, isTitle }: { slide: Slide; isTitle: boolean }
         <div
           className={`min-h-0 ${centered ? "mt-[56px] flex-none" : "mt-[48px] flex-1"}`}
         >
-          <FitBox slideKey={slide.n} centered={centered}>
-            <MockView mock={slide.mock} terse={terse} />
+          <FitBox slideKey={slide.n * 100 + step} centered={centered}>
+            <MockView mock={slide.mock} terse={terse} step={step} />
           </FitBox>
         </div>
       )}

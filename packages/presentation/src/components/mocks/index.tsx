@@ -12,8 +12,18 @@ import {
   TimelineView,
   TweetsView,
 } from "./PlainMocks";
+import { BioView, MailThreadView, QrView, ResultsView, RevealView } from "./StepMocks";
 
-export function MockView({ mock, terse = false }: { mock: Mock; terse?: boolean }) {
+export function MockView({
+  mock,
+  terse = false,
+  step = 0,
+}: {
+  mock: Mock;
+  terse?: boolean;
+  /** Klick-Schritt der Folie — nur die mehrstufigen Mocks werten ihn aus. */
+  step?: number;
+}) {
   switch (mock.t) {
     case "mail":
       return <MailMockView m={mock} />;
@@ -37,5 +47,25 @@ export function MockView({ mock, terse = false }: { mock: Mock; terse?: boolean 
       return <DiffView m={mock} />;
     case "chart":
       return <ChartView m={mock} />;
+    case "mailthread":
+      return <MailThreadView m={mock} step={step} />;
+    case "reveal":
+      return <RevealView m={mock} step={step} />;
+    case "bio":
+      return <BioView m={mock} />;
+    case "qr":
+      return <QrView m={mock} />;
+    case "results":
+      return <ResultsView m={mock} />;
+    case "stepped":
+      // Jeder Klick-Schritt hat einen eigenen Inhalt — der letzte bleibt stehen,
+      // falls jemand über das Ende hinausklickt.
+      return (
+        <MockView
+          mock={mock.frames[Math.min(step, mock.frames.length - 1)]}
+          terse={terse}
+          step={step}
+        />
+      );
   }
 }

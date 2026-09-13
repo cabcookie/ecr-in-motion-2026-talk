@@ -1,14 +1,20 @@
 import { LiveView } from "./components/LiveView";
 import { OperatorView } from "./components/OperatorView";
+import { AudienceView } from "./components/AudienceView";
 
 /**
- * Zwei Ansichten, eine Anwendung.
+ * Drei Ansichten, eine Anwendung.
  *
- * Die Auswahl läuft über einen Query-Parameter statt über Pfade, damit kein
- * Host eine SPA-Rewrite-Regel braucht: /?operator steuert, / zeigt.
+ * Die Auswahl läuft über Query-Parameter statt über Pfade, damit kein Host
+ * eine SPA-Rewrite-Regel braucht:
+ *   /              → Leinwand
+ *   /?operator     → Steuerpult des Vortragenden
+ *   /?audience     → Handy der Teilnehmer
  */
-const IS_OPERATOR = new URLSearchParams(location.search).has("operator");
+const params = new URLSearchParams(location.search);
 
 export default function App() {
-  return IS_OPERATOR ? <OperatorView /> : <LiveView />;
+  if (params.has("audience")) return <AudienceView />;
+  if (params.has("operator")) return <OperatorView />;
+  return <LiveView />;
 }
