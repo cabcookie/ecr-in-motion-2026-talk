@@ -31,8 +31,13 @@ const ROHMAIL = [
   "Andreas Walter",
 ].join("\r\n");
 
-/** Attrappe: ruft erst zwei Werkzeuge auf, dann antwortet sie. */
-function attrappe(mitWerkzeugen: boolean) {
+/**
+ * Attrappe: ruft erst Werkzeuge auf, dann antwortet sie.
+ *
+ * `mitFrageAnLisa` stellt den Fall nach, um den es in zn2m geht: Der Agent
+ * braucht etwas von Lisa. Die Frage darf den Absender nie erreichen.
+ */
+function attrappe(mitWerkzeugen: boolean, mitFrageAnLisa = false) {
   let runde = 0;
   return {
     send: async (befehl: { input: { messages: unknown[]; toolConfig?: unknown } }) => {
@@ -49,6 +54,20 @@ function attrappe(mitWerkzeugen: boolean) {
               content: [
                 { toolUse: { toolUseId: "t1", name: "warenwirtschaft_kategorie", input: {} } },
                 { toolUse: { toolUseId: "t2", name: "kalkulation_marge", input: {} } },
+                ...(mitFrageAnLisa
+                  ? [
+                      {
+                        toolUse: {
+                          toolUseId: "t3",
+                          name: "frage_lisa",
+                          input: {
+                            frage: GEHEIME_FRAGE,
+                            warum: "Für die Bewertung der Mindestabnahme.",
+                          },
+                        },
+                      },
+                    ]
+                  : []),
               ],
             },
           },
@@ -61,6 +80,16 @@ function attrappe(mitWerkzeugen: boolean) {
     },
   };
 }
+
+/**
+ * Der Wortlaut, den die Attrappe an Lisa richtet.
+ *
+ * Er ist absichtlich unverwechselbar: Taucht er oder ein Stück davon in der
+ * Mail an Andreas Walter auf, ist der Adressat vertauscht — und genau das ist
+ * der Fehler, den zn2m beseitigt.
+ */
+const GEHEIME_FRAGE =
+  "Wie hoch ist unsere interne Absatzerwartung für die Riegelzone im vierten Quartal?";
 
 function pruefe(bedingung: boolean, was: string) {
   console.log(`${bedingung ? "  ok  " : "  FEHLER  "} ${was}`);
@@ -99,6 +128,46 @@ pruefe(text.includes("github.com/cabcookie"), "Link zum Quelltext");
 pruefe(text.includes("von einem KI-Agenten"), "Kennzeichnung als Maschine");
 pruefe(text.includes("gelöscht"), "Hinweis zur Adresse");
 pruefe(!baueAntwort("probe", ohne).includes("Was ich dafür abgefragt"), "Probe ohne Systemliste");
+
+/*
+  Der Adressat (zn2m).
+
+  Der Systemprompt weist den Agenten an, Lisa zu fragen, wenn ihm etwas fehlt.
+  Die Antwort geht aber an den ABSENDER. Ohne Trennung landete jede Lisa-Frage
+  bei Hallbach — der Agent fragte den Lieferanten nach den eigenen Zahlen.
+*/
+console.log("\nAdressatentrennung");
+const mitFrage = await beantworte("assistent", eingang.text, attrappe(true, true) as any);
+const mailAnWalter = baueAntwort("assistent", mitFrage);
+
+pruefe(mitFrage.fragenAnLisa.length === 1, "Die Frage an Lisa ist im Lauf vermerkt");
+pruefe(
+  mitFrage.schritte.length === 2 && !mitFrage.schritte.includes("frage_lisa"),
+  `frage_lisa zählt nicht als abgefragtes System (${mitFrage.schritte.join(", ")})`,
+);
+pruefe(!mailAnWalter.includes(GEHEIME_FRAGE), "Der Wortlaut der Frage steht NICHT in der Mail");
+pruefe(
+  !/Absatzerwartung|Riegelzone|vierten Quartal/i.test(mailAnWalter),
+  "Auch kein Bruchstück davon steht in der Mail",
+);
+pruefe(!mailAnWalter.includes("frage_lisa"), "Der Werkzeugname steht nicht in der Mail");
+pruefe(
+  mailAnWalter.includes("interne Rückfrage"),
+  "Dass eine Rückfrage läuft, darf der Absender erfahren",
+);
+pruefe(
+  baueAntwort("assistent", mit).includes("interne Rückfrage") === false,
+  "Ohne Rückfrage steht der Satz auch nicht da",
+);
+
+/*
+  Gegenprobe: Ohne die Trennung wäre nichts aufgefallen. Dieser Test muss bei
+  einer Mail anschlagen, in der die Frage tatsächlich steht.
+*/
+pruefe(
+  `Guten Tag,\n\n${GEHEIME_FRAGE}`.includes(GEHEIME_FRAGE),
+  "Die Prüfung schlägt an, wenn der Wortlaut doch in einem Text steht",
+);
 
 const roh = baueRohmail({
   von: "ecr2026@carstenbkoch.de",

@@ -5,7 +5,7 @@ import {
   type Message,
   type Tool,
 } from "@aws-sdk/client-bedrock-runtime";
-import { WERKZEUGE } from "./werkzeuge";
+import { FRAGE_LISA, WERKZEUGE } from "./werkzeuge";
 import type { Modus } from "./konfig";
 
 /**
@@ -31,7 +31,7 @@ So arbeitest du:
 1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.
 2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.
 3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.
-4. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann frage Lisa danach. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.
+4. Deine Antwort geht an den ABSENDER der Mail — einen Außenstehenden, oft einen Lieferanten, der mit dir verhandelt. Was du von Lisa bräuchtest, hat dort nichts zu suchen: keine internen Zahlen, keine Vorgaben des Hauses, keine Rückfrage an sie. Brauchst du etwas von ihr, lege es ihr mit dem Werkzeug frage_lisa vor. Dem Absender gegenüber benennst du die offene Stelle nur so weit, wie er sie kennen darf.
 5. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.
 
 Unverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.
@@ -55,8 +55,15 @@ Antworte als E-Mail in reinem Fließtext, mit Anrede und Grußformel. Hänge dar
 export interface Lauf {
   /** Der Antworttext des Agenten. */
   readonly text: string;
-  /** Welche Werkzeuge er in welcher Reihenfolge aufgerufen hat. */
+  /** Welche Systeme er in welcher Reihenfolge abgefragt hat. */
   readonly schritte: readonly string[];
+  /**
+   * Was er Lisa vorlegen möchte.
+   *
+   * Steht getrennt, weil es der einzige Teil des Laufs ist, der NICHT in die
+   * Antwortmail darf: Die geht an den Absender, und das hier ist intern.
+   */
+  readonly fragenAnLisa: readonly { frage: string; warum: string }[];
 }
 
 /*
@@ -89,10 +96,13 @@ function textVon(inhalt: ContentBlock[] | undefined): string {
 /**
  * Lässt den Agenten die Mail beantworten.
  *
- * Die Werkzeugschleife steht hier ausgeschrieben statt in einem Framework: Es
- * sind fünf Werkzeuge mit festen Antworten, und was der Vortrag zeigen will —
- * welche Systeme der Agent in welcher Reihenfolge befragt — fällt dabei als
- * Nebenprodukt ab und geht in die Antwortmail.
+ * Die Werkzeugschleife steht hier ausgeschrieben statt in einem Framework:
+ * Was der Vortrag zeigen will — welche Systeme der Agent in welcher Reihenfolge
+ * befragt — fällt dabei als Nebenprodukt ab und geht in die Antwortmail.
+ *
+ * Zwei Dinge kommen getrennt heraus, und die Trennung ist der Punkt: die
+ * Systeme, die er abgefragt hat, und die Fragen, die er Lisa vorlegen möchte.
+ * Das eine geht an den Absender, das andere nie.
  */
 export async function beantworte(
   modus: Modus,
@@ -103,6 +113,7 @@ export async function beantworte(
   const system = [{ text: mitWerkzeugen ? SYSTEM_ASSISTENT : SYSTEM_PROBE }];
   const messages: Message[] = [{ role: "user", content: [{ text: mailtext }] }];
   const schritte: string[] = [];
+  const fragenAnLisa: { frage: string; warum: string }[] = [];
 
   for (let runde = 0; runde < MAX_RUNDEN; runde++) {
     const antwort = await client.send(
@@ -120,18 +131,27 @@ export async function beantworte(
 
     const aufrufe = inhalt.flatMap((b) => ("toolUse" in b && b.toolUse ? [b.toolUse] : []));
     if (antwort.stopReason !== "tool_use" || aufrufe.length === 0) {
-      return { text: textVon(inhalt), schritte };
+      return { text: textVon(inhalt), schritte, fragenAnLisa };
     }
 
     const ergebnisse: ContentBlock[] = aufrufe.map((a) => {
       const werkzeug = WERKZEUGE.find((w) => w.name === a.name);
-      schritte.push(a.name ?? "unbekannt");
-      /*
-        Die Argumente gehen jetzt ans Werkzeug durch. Vorher taten sie das
-        nicht, und deshalb antwortete die Kalkulation bei jedem Preis mit
-        derselben Marge — überzeugend hergeleitet und falsch.
-      */
       const args = (a.input ?? {}) as Record<string, unknown>;
+
+      /*
+        frage_lisa ist keine Systemabfrage, sondern ein Ergebnis: eine Frage,
+        die Lisa auf den Tisch bekommt. Sie gehört deshalb nicht in die Liste
+        der abgefragten Systeme — die steht in der Mail an den Absender, und
+        dort hat sie nichts verloren.
+      */
+      if (a.name === FRAGE_LISA) {
+        fragenAnLisa.push({
+          frage: typeof args.frage === "string" ? args.frage : "",
+          warum: typeof args.warum === "string" ? args.warum : "",
+        });
+      } else {
+        schritte.push(a.name ?? "unbekannt");
+      }
       return {
         toolResult: {
           toolUseId: a.toolUseId,

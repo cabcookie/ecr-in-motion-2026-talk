@@ -102,6 +102,18 @@ const chatAgent = new Agent(scope, 'berater', {
   conversation: { strategy: 'sliding-window', windowSize: 20 },
   /** Ohne Tools endet ein Zug nach einem Modellaufruf. Mehr wäre ein Fehler. */
   maxLlmCalls: 2,
+  /*
+    Keine Werkzeuge, und das ist hier keine Sparsamkeit, sondern eine Sperre.
+
+    Dieser Agent spricht mit Lisa — also mit dem Teilnehmer am Handy. Er darf
+    deshalb UNTER KEINEN UMSTÄNDEN ins Postfach schreiben können: Was zwischen
+    ihm und Lisa besprochen wird, ist intern, und der Absender einer Mail ist
+    ein Außenstehender. Der Mail-Agent trennt dieselben beiden Kanäle von der
+    anderen Seite her (frage_lisa in aws-blocks/mail/werkzeuge.ts).
+
+    Wer hier später ein Werkzeug ergänzt, muss zuerst zeigen, dass es keinen
+    Weg nach draußen öffnet.
+  */
   maxToolIterations: false,
 });
 

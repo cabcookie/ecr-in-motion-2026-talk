@@ -43,7 +43,9 @@ const SYSTEMNAMEN: Record<string, string> = {
   marktdaten_segment: "Marktdaten — Segment",
   regalplanung_platz: "Regalplanung — Platzprüfung",
   kalkulation_marge: "Kalkulation — Marge",
+  warenwirtschaft_artikel: "Warenwirtschaft — Artikelstamm",
   aktionskalender_zeitraum: "Aktionskalender — freie Flächen",
+  listung_anforderungen: "Kategorieakte — Listungsweg",
 };
 
 /**
@@ -67,6 +69,21 @@ export function baueAntwort(modus: Modus, lauf: Lauf): string {
     } else {
       teile.push("Ich habe für diese Antwort kein System abgefragt.");
     }
+
+    /*
+      Dass eine interne Rückfrage läuft, darf der Absender wissen — WAS gefragt
+      wurde, nicht. Deshalb steht hier eine Zahl und kein Wortlaut: Die Fragen
+      an Lisa sind der einzige Teil des Laufs, der diese Mail nicht verlässt.
+    */
+    if (lauf.fragenAnLisa.length > 0) {
+      teile.push(
+        "",
+        lauf.fragenAnLisa.length === 1
+          ? "Zu einem Punkt habe ich eine interne Rückfrage angestoßen."
+          : `Zu ${lauf.fragenAnLisa.length} Punkten habe ich interne Rückfragen angestoßen.`,
+      );
+    }
+
     teile.push(
       "",
       "Die Systeme dahinter sind für diesen Abend simuliert. Die Arbeit des",

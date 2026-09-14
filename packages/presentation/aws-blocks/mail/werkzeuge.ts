@@ -75,6 +75,16 @@ function ausgabe<T>(befund: Befund<T>, umbau: (daten: T) => Record<string, unkno
 
 const leer = { type: "object", properties: {}, required: [] as string[] };
 
+/**
+ * Der Name des Werkzeugs, mit dem der Agent Lisa erreicht.
+ *
+ * Es steht hier bei den anderen, ist aber keines: Es schlägt nichts nach,
+ * sondern legt eine Frage auf Lisas Tisch. Die Werkzeugschleife in agent.ts
+ * greift es deshalb gesondert ab — die Frage ist ein ERGEBNIS des Laufs, keine
+ * Auskunft eines Systems.
+ */
+export const FRAGE_LISA = "frage_lisa";
+
 export const WERKZEUGE: readonly Werkzeug[] = [
   {
     name: "warenwirtschaft_kategorie",
@@ -214,6 +224,28 @@ export const WERKZEUGE: readonly Werkzeug[] = [
         })),
         belegt: d.belegt,
       })),
+  },
+  {
+    name: FRAGE_LISA,
+    beschreibung:
+      "Legt Lisa Berger eine Rückfrage vor. Nutze das für ALLES, was du von ihr brauchst — " +
+      "interne Zahlen, Einschätzungen, Freigaben. Die Antwortmail geht an einen Außenstehenden; " +
+      "dort hat eine Frage an Lisa nichts zu suchen.",
+    schema: {
+      type: "object",
+      properties: {
+        frage: { type: "string", description: "Was du von Lisa wissen musst, als ganzer Satz" },
+        warum: { type: "string", description: "Wofür du die Angabe brauchst" },
+      },
+      required: ["frage", "warum"],
+    },
+    antwort: (args) => ({
+      vermerkt: true,
+      hinweis:
+        `Die Frage liegt Lisa Berger vor: „${text(args.frage)}". Sie beantwortet sie nicht in ` +
+        `diesem Lauf. Schreibe dem Absender ohne sie — benenne die offene Stelle nur so weit, ` +
+        `wie er sie kennen darf, und erfinde keinen Wert an ihrer Stelle.`,
+    }),
   },
   {
     name: "listung_anforderungen",
