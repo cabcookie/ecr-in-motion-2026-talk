@@ -151,11 +151,15 @@ export interface QrMock {
   hint: string;
 }
 
-/** Lebenslauf-Stationen als Zeile — für die Vorstellung. */
+/**
+ * Die Vorstellung: Bild, Name, Rolle. Mehr nicht — der Rest wird erzählt.
+ */
 export interface BioMock {
   t: "bio";
-  stations: string[];
-  line: string;
+  /** Pfad im public-Verzeichnis */
+  photo: string;
+  name: string;
+  role: string;
 }
 
 /**
@@ -170,6 +174,8 @@ export interface ResultsMock {
   of: string;
   as: "matrix" | "list";
   axes?: { x: string; y: string };
+  /** Kleiner QR-Code daneben — wer zu spät kommt, soll noch mitmachen können. */
+  qr?: boolean;
 }
 
 export type Mock =

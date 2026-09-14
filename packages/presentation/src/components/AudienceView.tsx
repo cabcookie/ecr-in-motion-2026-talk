@@ -8,14 +8,14 @@ import { InteractionView } from "@/audience/Interactions";
 const ACCENT = ["", "var(--color-b1)", "var(--color-b2)", "var(--color-b3)", "var(--color-b4)"];
 
 /**
- * Ab hier ist das Publikum dabei: Abschnitt 5, zweites Panel — dort steht der
+ * Ab hier ist das Publikum dabei: Abschnitt 6 „Mach mit" — dort steht der
  * QR-Code auf der Leinwand und die Teilnehmer kommen auf diese Seite.
  *
  * Davor soll das Handy nichts zeigen als den Hinweis, dass gleich etwas kommt.
  * Wer früh da ist, soll nicht die Überschriften des Vortrags mitlesen; die
  * stehen groß auf der Leinwand.
  */
-const START = { index: 4, step: 1 };
+const START = { index: 5, step: 0 };
 
 function vorDemStart(index: number, step: number): boolean {
   return index < START.index || (index === START.index && step < START.step);
@@ -73,7 +73,7 @@ export function AudienceView() {
       {wartet ? (
         <div className="mx-auto flex min-h-dvh max-w-lg items-center justify-center px-6">
           <p className="m-0 text-center text-lg leading-relaxed text-balance text-fg-2">
-            Gleich geht es los. Lassen Sie diese Seite offen — sie folgt dem Vortrag von allein.
+            Gleich geht es los. Lass diese Seite offen — sie folgt dem Vortrag von allein.
           </p>
         </div>
       ) : (

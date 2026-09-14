@@ -219,7 +219,7 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
               id={`chat-${interaction.id}`}
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
-              placeholder="Antworten Sie ihm …"
+              placeholder="Antworte ihm …"
               rows={2}
               className="w-full resize-none rounded-xl border border-hair bg-stage px-4 py-3 text-base text-fg placeholder:text-fg-3 focus:border-[color:var(--accent)] focus:outline-none"
             />

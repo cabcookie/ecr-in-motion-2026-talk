@@ -47,22 +47,31 @@ export function RevealView({ m, step }: { m: RevealMock; step: number }) {
 /** Lebenslauf-Stationen als Kette. */
 export function BioView({ m }: { m: BioMock }) {
   return (
-    <div className="w-full">
-      <div className="flex flex-wrap items-center gap-x-[18px] gap-y-[20px]">
-        {m.stations.map((s, i) => (
-          <span key={s} className="flex items-center gap-[18px]">
-            {i > 0 && <span className="text-[32px] text-fg-3">·</span>}
-            <span className="text-[40px] leading-[1.2] text-fg">{s}</span>
-          </span>
-        ))}
+    <div className="flex w-full items-center gap-[72px]">
+      <img
+        src={m.photo}
+        alt={m.name}
+        className="h-[480px] w-[360px] shrink-0 rounded-lg object-cover"
+      />
+      <div className="min-w-0">
+        <p className="m-0 font-display text-[76px] leading-[1.1] font-extrabold tracking-[-0.02em] text-fg">
+          {m.name}
+        </p>
+        <p className="m-0 mt-[20px] text-[42px] leading-[1.3] text-[color:var(--accent)]">
+          {m.role}
+        </p>
       </div>
-      <p className="m-0 mt-[48px] text-[36px] leading-[1.35] text-[color:var(--accent)]">{m.line}</p>
     </div>
   );
 }
 
-/** QR-Code auf die Zuschauersicht. Die Adresse ergibt sich aus dem Aufruf. */
-export function QrView({ m }: { m: QrMock }) {
+/**
+ * Der QR-Code auf die Zuschauersicht, als eigene Kachel.
+ *
+ * Er steht nicht nur auf der Einladungsfolie: Solange die Umfrage läuft, soll
+ * er sichtbar bleiben, damit auch mitmachen kann, wer später hereinkommt.
+ */
+export function QrTile({ size = 380 }: { size?: number }) {
   const [svg, setSvg] = useState("");
   const url = `${location.origin}/?audience`;
 
@@ -71,18 +80,27 @@ export function QrView({ m }: { m: QrMock }) {
       type: "svg",
       margin: 1,
       errorCorrectionLevel: "M",
-      color: { dark: "#0b0e13", light: "#ffffff" },
+      color: { dark: "#0f141a", light: "#ffffff" },
     })
       .then(setSvg)
       .catch(() => setSvg(""));
   }, [url]);
 
   return (
+    <div
+      className="shrink-0 rounded-lg bg-win p-[24px] [&_svg]:size-full"
+      style={{ width: size, height: size }}
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+}
+
+/** QR-Code auf die Zuschauersicht. Die Adresse ergibt sich aus dem Aufruf. */
+export function QrView({ m }: { m: QrMock }) {
+  const url = `${location.origin}/?audience`;
+  return (
     <div className="flex w-full items-center gap-[64px]">
-      <div
-        className="size-[380px] shrink-0 rounded-lg bg-win p-[24px] [&_svg]:size-full"
-        dangerouslySetInnerHTML={{ __html: svg }}
-      />
+      <QrTile />
       <div className="min-w-0">
         <p className="m-0 font-display text-[52px] leading-[1.15] font-bold text-balance text-fg">
           {m.caption}

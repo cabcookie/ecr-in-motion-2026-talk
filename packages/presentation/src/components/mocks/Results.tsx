@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import type { Interaction, ResultsMock } from "@/slides/types";
 import { SECTIONS } from "@/slides/data";
 import { useLiveAnswers, type LiveAnswer } from "@/audience/useLiveAnswers";
+import { QrTile } from "./StepMocks";
 
 /** Die Interaktion aus den Foliendaten holen — Fragen stehen nur dort. */
 function findInteraction(id: string): Interaction | null {
@@ -164,5 +165,22 @@ function Placeholder({ text }: { text: string }) {
 }
 
 export function ResultsView({ m }: { m: ResultsMock }) {
-  return m.as === "matrix" ? <Matrix m={m} /> : <AnswerList m={m} />;
+  const inhalt = m.as === "matrix" ? <Matrix m={m} /> : <AnswerList m={m} />;
+  if (!m.qr) return inhalt;
+
+  /*
+    Solange die Umfrage läuft, bleibt der Code stehen — wer später hereinkommt,
+    soll noch mitmachen können, ohne dass wir zurückblättern müssen.
+  */
+  return (
+    <div className="flex w-full items-center gap-[56px]">
+      <div className="min-w-0 flex-1">{inhalt}</div>
+      <div className="shrink-0 text-center">
+        <QrTile size={240} />
+        <p className="m-0 mt-[16px] font-mono text-[20px] tracking-[0.1em] text-fg-3 uppercase">
+          Noch dabei?
+        </p>
+      </div>
+    </div>
+  );
 }
