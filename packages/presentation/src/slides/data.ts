@@ -96,7 +96,7 @@ export const SECTIONS: Section[] = [
             ]
           ]
         },
-        "say": "Freitagnachmittag, kurz nach zwei. Bei Lisa Berger geht eine E-Mail ein. Andreas Walter von Hallbach Süßwaren will ein neues Produkt exklusiv einführen: Hallbach Crispy Bites. Einkaufspreis 2,89 Euro, empfohlener Verkaufspreis 4,49. Mindestabnahme 500 Verkaufseinheiten. Wunschtermin für den Start: der 15. Oktober. Rückmeldung bitte bis Ende nächster Woche.",
+        "say": "Freitagnachmittag, kurz nach zwei. Lisa Berger ist Category Managerin bei Nordkorb, einer Lebensmittelkette mit Schwerpunkt im Norden — sie entscheidet, welche Schokoladen und Pralinen ins Regal kommen und welche dafür weichen müssen. Bei ihr geht eine E-Mail ein. Andreas Walter von Hallbach Süßwaren will ein neues Produkt exklusiv einführen: Hallbach Crispy Bites. Einkaufspreis 2,89 Euro, empfohlener Verkaufspreis 4,49. Mindestabnahme 500 Verkaufseinheiten. Wunschtermin für den Start: der 15. Oktober. Rückmeldung bitte bis Ende nächster Woche.",
         "app": "Outlook-Oberfläche, aus 15 Metern lesbar."
       },
       {
@@ -193,7 +193,7 @@ export const SECTIONS: Section[] = [
             ]
           ]
         },
-        "say": "Kurz zu Lisa, denn um ihre Arbeit geht es hier. Lisa Berger ist Category Managerin bei einem großen Lebensmittelhändler und verantwortet die Kategorie Schokolade und Pralinen. Listungsentscheidungen, Auslistungen, Konditionen, Regalplatz, Aktionsplanung — das ist ihr Tagesgeschäft. Und der Agent, den Sie gerade gesehen haben, hat genau das getan, wofür sie bezahlt wird."
+        "say": "Kurz zu Lisa, denn um ihre Arbeit geht es hier. Lisa Berger ist Category Managerin bei Nordkorb und verantwortet die Kategorie Schokolade und Pralinen. Listungsentscheidungen, Auslistungen, Konditionen, Regalplatz, Aktionsplanung — das ist ihr Tagesgeschäft. Und der Agent, den Sie gerade gesehen haben, hat genau das getan, wofür sie bezahlt wird."
       },
       {
         "at": "18:06",
@@ -711,7 +711,7 @@ export const SECTIONS: Section[] = [
           "items": [
             [
               "Wer bin ich",
-              "Assistent von Lisa Berger, Category Management Schokolade & Pralinen"
+              "Assistent von Lisa Berger, Category Management Schokolade & Pralinen bei Nordkorb"
             ],
             [
               "Was gilt hier",
@@ -743,7 +743,7 @@ export const SECTIONS: Section[] = [
           "persist": true,
           "label": "Chat starten",
           "hint": "Sie bekommen die Mail von Hallbach. Der Agent fragt Sie nach den Daten, die ihm fehlen — Sie sind seine Tools.",
-          "systemPrompt": "Du bist der Assistent von Lisa Berger, Category Managerin für Schokolade & Pralinen bei einem Lebensmittelhändler.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nKontext, den du kennst:\n- Kategorievorgabe Marge: mindestens 30 %\n- Regalplatz ist knapp. Eine Neulistung setzt in der Regel eine Auslistung voraus.\n- Aktionsflächen laufen über den Aktionskalender, Vorlauf mindestens vier Wochen.\n- Exklusivzusagen brauchen die Freigabe der Einkaufsleitung.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann frage Lisa danach. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n5. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n6. Halte dich kurz. Deine Antwort wird auf einem Handy gelesen: ein kurzer Absatz, bei Bedarf drei Stichpunkte.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
+          "systemPrompt": "Du bist der Assistent von Lisa Berger, Category Managerin für Schokolade & Pralinen bei der Lebensmittelkette Nordkorb.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nKontext, den du kennst:\n- Kategorievorgabe Marge: mindestens 30 %\n- Regalplatz ist knapp. Eine Neulistung setzt in der Regel eine Auslistung voraus.\n- Aktionsflächen laufen über den Aktionskalender, Vorlauf mindestens vier Wochen.\n- Exklusivzusagen brauchen die Freigabe der Einkaufsleitung.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann frage Lisa danach. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n5. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n6. Halte dich kurz. Deine Antwort wird auf einem Handy gelesen: ein kurzer Absatz, bei Bedarf drei Stichpunkte.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
           "suggestions": [
             "Die Kategorie wächst um 3,2 %",
             "Underperformer ist Nocturne Mini mit −12 %",

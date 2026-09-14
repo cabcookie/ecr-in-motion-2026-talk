@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+/** Der Vortrag beginnt um 18:00 — darauf sind alle Zeiten in den Foliendaten bezogen. */
+const START_SOLL = 18 * 60;
+const SPEICHER = "ecr-start-offset";
 
 /** "18:36" → Minuten seit Mitternacht. */
 function toMinutes(hhmm: string): number | null {
@@ -7,8 +11,17 @@ function toMinutes(hhmm: string): number | null {
   return Number(m[1]) * 60 + Number(m[2]);
 }
 
-function clock(d: Date): string {
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+function hhmm(minuten: number): string {
+  const m = ((minuten % 1440) + 1440) % 1440;
+  return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(Math.round(m % 60)).padStart(2, "0")}`;
+}
+
+function ladeVersatz(): number {
+  try {
+    return Number(localStorage.getItem(SPEICHER)) || 0;
+  } catch {
+    return 0;
+  }
 }
 
 /**
@@ -18,41 +31,84 @@ function clock(d: Date): string {
  * wirklich ist. Die Farbe rechts ist die ganze Information: grün heißt, wir
  * sind früh dran, gelb heißt punktgenau, rot heißt wir hängen hinterher.
  *
- * Kein Timer — im Vortrag hilft die Uhrzeit, nicht die verstrichene Zeit.
+ * Der Versatz verschiebt den geplanten Beginn, damit sich der Vortrag zu jeder
+ * Tageszeit durchspielen und die Zeiten prüfen lassen. Für den Ernstfall gilt
+ * 18:00, und zwar auch dann, wenn es ein paar Minuten später losgeht: das Ende
+ * um 19:00 verschiebt sich nicht mit.
  */
 export function Schedule({ at }: { at?: string }) {
   const [now, setNow] = useState(() => new Date());
+  const [versatz, setVersatz] = useState(ladeVersatz);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
-  const geplant = at ? toMinutes(at) : null;
+  const setzen = useCallback((v: number) => {
+    setVersatz(v);
+    try {
+      if (v) localStorage.setItem(SPEICHER, String(v));
+      else localStorage.removeItem(SPEICHER);
+    } catch {
+      // dann gilt der Versatz eben nur für diese Sitzung
+    }
+  }, []);
+
   const jetzt = now.getHours() * 60 + now.getMinutes();
+  const geplant = at ? toMinutes(at) : null;
+  const soll = geplant === null ? null : geplant + versatz;
 
   /**
    * Toleranz von einer Minute in beide Richtungen. Enger wäre nervös: bei
    * 43 Panels springt die Anzeige sonst im Sekundentakt zwischen zwei Farben.
    */
-  const tone =
-    geplant === null
+  const ton =
+    soll === null
       ? "text-fg-3"
-      : jetzt < geplant - 1
+      : jetzt < soll - 1
         ? "text-b4" // früh dran
-        : jetzt > geplant + 1
+        : jetzt > soll + 1
           ? "text-b1" // hinterher
           : "text-b2"; // punktgenau
 
+  const knopf =
+    "rounded border border-hair px-2 py-1 font-mono text-[10px] tracking-[0.1em] uppercase hover:border-fg-3 hover:text-fg";
+
   return (
-    <div className="flex items-start gap-6">
+    <div className="flex items-start gap-5">
       <div>
-        <div className="font-mono text-2xl tabular-nums text-b3">{at ?? "—"}</div>
+        <div className="font-mono text-2xl tabular-nums text-b3">
+          {soll === null ? "—" : hhmm(soll)}
+        </div>
         <div className="font-mono text-[10px] tracking-[0.12em] text-fg-3 uppercase">Geplant</div>
       </div>
       <div>
-        <div className={`font-mono text-2xl tabular-nums ${tone}`}>{clock(now)}</div>
+        <div className={`font-mono text-2xl tabular-nums ${ton}`}>{hhmm(jetzt)}</div>
         <div className="font-mono text-[10px] tracking-[0.12em] text-fg-3 uppercase">Jetzt</div>
+      </div>
+      <div className="flex flex-col items-start gap-1">
+        <div className="flex gap-1">
+          <button
+            type="button"
+            onClick={() => setzen(jetzt - START_SOLL)}
+            className={`${knopf} ${versatz ? "text-fg" : "text-fg-3"}`}
+            title="Beginn auf die aktuelle Uhrzeit legen — zum Durchspielen"
+          >
+            Start jetzt
+          </button>
+          <button
+            type="button"
+            onClick={() => setzen(0)}
+            className={`${knopf} ${versatz ? "text-fg-3" : "text-fg"}`}
+            title="Zurück auf den echten Beginn um 18:00"
+          >
+            18:00
+          </button>
+        </div>
+        <span className="font-mono text-[10px] tracking-[0.1em] text-fg-3 uppercase">
+          {versatz ? `Probe · Beginn ${hhmm(START_SOLL + versatz)}` : "Ernstfall · Ende 19:00"}
+        </span>
       </div>
     </div>
   );

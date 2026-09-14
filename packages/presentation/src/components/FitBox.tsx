@@ -48,7 +48,12 @@ export function FitBox({
     const passen = (flaecheH: number, flaecheW: number) => {
       if (!natH || !natW || !flaecheH || !flaecheW) return;
       const s = Math.min(1, flaecheH / natH, flaecheW / natW);
-      i.style.transformOrigin = centered ? "top center" : "top left";
+      /*
+        Immer von der Mitte aus verkleinern. Mit "top left" klebte ein
+        geschrumpfter Inhalt am linken Rand und ließ rechts eine Lücke — auf
+        der Leinwand sieht das aus, als wäre die Folie falsch gesetzt.
+      */
+      i.style.transformOrigin = "top center";
       i.style.transform = s < 0.999 ? `scale(${s})` : "none";
       o.dataset.fit = s.toFixed(2);
     };

@@ -65,14 +65,23 @@ export function SectionView({
   */
   const kopf = useRef<HTMLDivElement>(null);
   const [hebung, setHebung] = useState(0);
+  const [kopfHoehe, setKopfHoehe] = useState<number | undefined>(undefined);
   const klein = titlePx(section.title, false) / titlePx(section.title, true);
 
   useLayoutEffect(() => {
     if (!heroAbschnitt) return;
-    const h = kopf.current?.offsetHeight ?? 0;
+    const h = kopf.current?.scrollHeight ?? 0;
     // Mitte des Kopfes auf die Bildmitte legen — offsetHeight ignoriert transform
     setHebung(Math.max(0, Math.round(STAGE_H / 2 - KOPF_OBEN - h / 2)));
-  }, [heroAbschnitt, section.n]);
+    /*
+      Der Titel steht in der großen Fassung, wird aber auf den Panels danach
+      verkleinert gezeigt. Im Layout darf er deshalb nur die verkleinerte Höhe
+      belegen — sonst fehlt dem Inhalt darunter der Platz, und die FitBox
+      schrumpft ihn. In der Bildmitte ragt der Titel über diese Höhe hinaus;
+      das stört nicht, dort steht ohnehin nichts anderes.
+    */
+    setKopfHoehe(Math.round(h * klein));
+  }, [heroAbschnitt, section.n, klein]);
 
   // Block und Foliennummer stehen bewusst nicht mehr im Bild — das Publikum
   // soll die Aussage sehen, nicht die Buchhaltung. Die Kennzeichnung bleibt
@@ -92,6 +101,7 @@ export function SectionView({
         style={
           heroAbschnitt
             ? {
+                height: kopfHoehe,
                 transform: hero ? `translateY(${hebung}px)` : `scale(${klein})`,
                 transformOrigin: "center top",
                 transition: `transform ${KOPF_MS}ms cubic-bezier(0.32, 0.72, 0, 1)`,
@@ -128,7 +138,15 @@ export function SectionView({
       {/* Karussell — die Panels laufen horizontal durch */}
       {!hero && (
         <div
-          className={`relative mt-[44px] min-h-0 flex-1 ${heroAbschnitt ? "panel-rise" : ""}`}
+          /*
+            Beschnitten an der Spaltenkante. Vorher lief das ausscheidende
+            Panel in den Seitenrand hinein und ein Verlauf im Rand sollte es
+            verdecken — der stand aber links neben dem Panel statt darauf, und
+            übrig blieb ein heller Streifen mit harter Kante.
+          */
+          className={`relative mt-[44px] min-h-0 flex-1 overflow-hidden ${
+            heroAbschnitt ? "panel-rise" : ""
+          }`}
         >
           <div
             className="flex h-full transition-transform duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -157,8 +175,6 @@ export function SectionView({
             ))}
           </div>
 
-          {/* Verlauf, unter dem das verlassene Panel nach links verschwindet */}
-          <div className="pointer-events-none absolute inset-y-0 -left-[108px] w-[108px] bg-gradient-to-r from-stage to-transparent" />
         </div>
       )}
 
