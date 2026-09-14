@@ -249,9 +249,20 @@ h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;text-wrap:
   font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
   margin:0 0 7px;font-weight:500;
 }
-.diff-col.before h4{color:var(--ok)}
-.diff-col.after h4{color:var(--b1)}
+.diff-col.before h4{color:var(--b1)}
+.diff-col.after h4{color:var(--ok)}
 .diff-col p{margin:0;font-size:13px;line-height:1.55;color:var(--ink-2)}
+.diff-col .diff-n{font-size:30px;line-height:1;font-weight:800;letter-spacing:-.02em;margin:0 0 2px;font-variant-numeric:tabular-nums}
+.diff-col.before .diff-n{color:var(--b1)}
+.diff-col.after .diff-n{color:var(--ok)}
+.diff-col .diff-sub{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.05em;
+  color:var(--faint);margin:0 0 9px;
+}
+.diff-foot{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.04em;
+  color:var(--faint);margin:0;padding:0 15px 13px;text-align:center;
+}
 
 /* agent run log */
 .run{padding:6px 0}
@@ -1177,16 +1188,21 @@ const SECTIONS = [
         "mock": {
           "t": "diff",
           "before": {
-            "h": "Frage für Frage — 6 Turns",
-            "p": "Der Verlauf wird sechsmal übertragen und wächst dabei. Die Rechnung steigt überproportional."
+            "h": "Frage für Frage · 7 Aufrufe",
+            "n": "4.687",
+            "sub": "Eingabe-Token · 2,2 Cent",
+            "p": "Sechs Rückfragen, eine Empfehlung. Der Verlauf geht siebenmal hin und wächst dabei."
           },
           "after": {
-            "h": "Alles in einer Nachricht",
-            "p": "Ein Turn, ein Verlauf. Dieselbe Antwort, ein Bruchteil der Kosten."
-          }
+            "h": "Alles in einer Nachricht · 1 Aufruf",
+            "n": "600",
+            "sub": "Eingabe-Token · 0,6 Cent",
+            "p": "Dieselben Angaben, dieselbe Empfehlung. Nur einmal übertragen."
+          },
+          "foot": "3 Runden 2,3-mal · 6 Runden 4,1-mal · 12 Runden 8,6-mal · 20 Runden 16,8-mal"
         },
-        "say": "Und das hat direkte Folgen für die Kosten. Wir haben beides einmal durchgerechnet: dasselbe Ergebnis über sechs Frage-Antwort-Runden, und dasselbe Ergebnis, wenn man dem Agenten alles gleich mitgibt. Weniger Turns heißt nicht nur schneller — es heißt vor allem billiger.",
-        "open": "Die beiden Kostenwerte fehlen noch. Einmal lokal durchrechnen und die Zahlen hier eintragen; live vorführen müssen wir das nicht."
+        "say": "Und das hat direkte Folgen. Wir haben beides einmal durchgerechnet, mit genau dem Systemprompt und genau der Mail, die Sie eben gesehen haben. Links: sechs Rückfragen, dann die Empfehlung — sieben Modellaufrufe, viertausendsiebenhundert Eingabe-Token. Rechts: alles gleich mitgegeben — ein Aufruf, sechshundert Token. Achtmal so viel für dasselbe Ergebnis. In Geld sind das zwei Cent gegen einen halben, das beeindruckt niemanden. Interessant ist die Zeile darunter: Das Verhältnis wächst schneller als die Zahl der Runden. Bei zwanzig Runden ist es das Siebzehnfache. Und wenn der Agent Unterlagen mit sich trägt — einen Kategoriebericht, ein Planogramm — dann wandern die bei jedem einzelnen Aufruf wieder mit.",
+        "note": "Zahlen aus packages/presentation/scripts/kostenrechnung.ts — pnpm --filter @ecr-talk/presentation kosten. Claude Sonnet 4.6 auf Bedrock, 3 Dollar je Million Eingabe-Token, 15 je Million Ausgabe. Ohne Prompt-Caching. Mit Anhang von 20.000 Token wird aus dem 4,1-fachen das 6,8-fache."
       }
     ],
     "n": 17
@@ -1589,9 +1605,14 @@ const RENDER = {
   },
   diff(m){
     let h = '<div class="mock">' + mockBar("Gesprächsverlauf — dieselbe Frage", "var(--sys-chat)") + '<div class="diff">';
-    h += '<div class="diff-col before"><h4>'+esc(m.before.h)+'</h4><p>'+esc(m.before.p)+'</p></div>';
-    h += '<div class="diff-col after"><h4>'+esc(m.after.h)+'</h4><p>'+esc(m.after.p)+'</p></div>';
-    h += '</div></div>';
+    const side = (s, cls) => '<div class="diff-col '+cls+'"><h4>'+esc(s.h)+'</h4>'
+      + (s.n ? '<p class="diff-n">'+esc(s.n)+'</p>' : '')
+      + (s.sub ? '<p class="diff-sub">'+esc(s.sub)+'</p>' : '')
+      + '<p>'+esc(s.p)+'</p></div>';
+    h += side(m.before, "before") + side(m.after, "after");
+    h += '</div>';
+    if (m.foot) h += '<p class="diff-foot">'+esc(m.foot)+'</p>';
+    h += '</div>';
     return h;
   },
   chart(m){ return ({agriculture:chartAgriculture, unemployment:chartUnemployment, exposure:chartExposure}[m.which])(); },

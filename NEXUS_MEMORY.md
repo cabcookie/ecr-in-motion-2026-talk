@@ -5,10 +5,11 @@
 
 > **You have already been given the index below** — all of it, or as much of it as a session start could carry. It is the same index `nxm prime` replays, which stops at the byte budget the host delivers and says so when it does (`nxm index` prints the whole of it), so there is nothing to gain by reading it again here. Underneath it stands the FULL TEXT of each memory — that is what `nxm recall <key>` serves, and it is meant to be read one memory at a time, when the index tells you a particular one matters. Reading this file end to end is the expensive way to obtain what you already have.
 
-## Index (2)
+## Index (3)
 
 - **vortrag-szenario-entscheidung**: Der Vortrag nutzt das Lisa-Berger-Listungsszenario, nicht die gebaute Markus-Weber-Supply-Chain-Simulation.
 - **blocks-email-empfang**: AWS Blocks kann E-Mails senden (EmailClient/SES), aber nicht empfangen — Empfang über SES-Regel und Lambda in der CDK-Schicht.
+- **blocks-deployment-fallen**: Vor jedem Blocks-Deployment pruefen: Bucketnamen unter 63 Zeichen, esbuild im Wurzelpaket, stackId in .blocks/config.json.
 
 ## Full text
 
@@ -21,3 +22,9 @@ Der Vortrag folgt dem Lisa-Berger-Szenario (Category Managerin, Listungsantrag m
 ### `blocks-email-empfang`
 
 AWS Blocks deckt E-Mail-VERSAND über den EmailClient-Block ab (lokal abgefangen, in AWS über SES). Für den EMPFANG gibt es keinen Block. Eingehende Mails laufen über eine SES-Empfangsregel nach S3 oder SNS und von dort in eine Lambda — das gehört in die CDK-Schicht aws-blocks/index.cdk.ts, nicht in die IFC-Schicht index.ts. Carsten hat einen AWS-Account mit SES-Produktionszugang (Stand 13.09.2026), die Sandbox-Beschränkung entfällt also.
+
+---
+
+### `blocks-deployment-fallen`
+
+Die Blocks-Bausteine bringen beim Deployment drei Stolpersteine mit, die erst beim 'cdk synth' auffallen. Erstens: FileBucket-Namen werden aus Stack- und Blockkennung zusammengesetzt und duerfen 63 Zeichen nicht ueberschreiten - lange Blockkennungen wie 'lisa-assistant' sprengen das, kurze wie 'berater' nicht. Zweitens: die CDK-Buendelung ruft 'pnpm exec -- esbuild' im Wurzelverzeichnis des Repositories auf, esbuild muss also dort eine Abhaengigkeit sein, nicht nur im Paket. Drittens: .blocks/config.json braucht einen stackId-Eintrag und gehoert ins Repository - ohne ihn bricht der synth ab, und ein Deployment von einer anderen Maschine wuerde sonst einen zweiten Stack anlegen statt den vorhandenen zu ersetzen. Der Agent-Block laeuft lokal ohne AWS: ohne model.local faellt er auf einen Canned-Provider zurueck, mit dem sich Streaming, Verlauf und Wiederaufnahme vollstaendig pruefen lassen - nur die Antwortqualitaet nicht.

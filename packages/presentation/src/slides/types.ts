@@ -89,10 +89,18 @@ export interface StatementMock {
   after?: string;
 }
 
+/**
+ * Zwei Wege zum selben Ergebnis, nebeneinander.
+ *
+ * `n` ist die große Zahl, auf die es ankommt, `sub` ihre Einheit. Beides ist
+ * freiwillig — eine Gegenüberstellung ohne Zahlen bleibt möglich.
+ */
 export interface DiffMock {
   t: "diff";
-  before: { h: string; p: string };
-  after: { h: string; p: string };
+  before: { h: string; n?: string; sub?: string; p: string };
+  after: { h: string; n?: string; sub?: string; p: string };
+  /** Eine Zeile unter beiden Spalten, z.B. wie sich das Verhältnis entwickelt */
+  foot?: string;
 }
 
 export interface ChartMock {

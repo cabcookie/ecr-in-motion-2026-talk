@@ -788,16 +788,21 @@ export const SECTIONS: Section[] = [
         "mock": {
           "t": "diff",
           "before": {
-            "h": "Frage für Frage — 6 Turns",
-            "p": "Der Verlauf wird sechsmal übertragen und wächst dabei. Die Rechnung steigt überproportional."
+            "h": "Frage für Frage · 7 Aufrufe",
+            "n": "4.687",
+            "sub": "Eingabe-Token · 2,2 Cent",
+            "p": "Sechs Rückfragen, eine Empfehlung. Der Verlauf geht siebenmal hin und wächst dabei."
           },
           "after": {
-            "h": "Alles in einer Nachricht",
-            "p": "Ein Turn, ein Verlauf. Dieselbe Antwort, ein Bruchteil der Kosten."
-          }
+            "h": "Alles in einer Nachricht · 1 Aufruf",
+            "n": "600",
+            "sub": "Eingabe-Token · 0,6 Cent",
+            "p": "Dieselben Angaben, dieselbe Empfehlung. Nur einmal übertragen."
+          },
+          "foot": "3 Runden 2,3-mal · 6 Runden 4,1-mal · 12 Runden 8,6-mal · 20 Runden 16,8-mal"
         },
-        "say": "Und das hat direkte Folgen für die Kosten. Wir haben beides einmal durchgerechnet: dasselbe Ergebnis über sechs Frage-Antwort-Runden, und dasselbe Ergebnis, wenn man dem Agenten alles gleich mitgibt. Weniger Turns heißt nicht nur schneller — es heißt vor allem billiger.",
-        "open": "Die beiden Kostenwerte fehlen noch. Einmal lokal durchrechnen und die Zahlen hier eintragen; live vorführen müssen wir das nicht."
+        "say": "Und das hat direkte Folgen. Wir haben beides einmal durchgerechnet, mit genau dem Systemprompt und genau der Mail, die Sie eben gesehen haben. Links: sechs Rückfragen, dann die Empfehlung — sieben Modellaufrufe, viertausendsiebenhundert Eingabe-Token. Rechts: alles gleich mitgegeben — ein Aufruf, sechshundert Token. Achtmal so viel für dasselbe Ergebnis. In Geld sind das zwei Cent gegen einen halben, das beeindruckt niemanden. Interessant ist die Zeile darunter: Das Verhältnis wächst schneller als die Zahl der Runden. Bei zwanzig Runden ist es das Siebzehnfache. Und wenn der Agent Unterlagen mit sich trägt — einen Kategoriebericht, ein Planogramm — dann wandern die bei jedem einzelnen Aufruf wieder mit.",
+        "note": "Zahlen aus packages/presentation/scripts/kostenrechnung.ts — pnpm --filter @ecr-talk/presentation kosten. Claude Sonnet 4.6 auf Bedrock, 3 Dollar je Million Eingabe-Token, 15 je Million Ausgabe. Ohne Prompt-Caching. Mit Anhang von 20.000 Token wird aus dem 4,1-fachen das 6,8-fache."
       }
     ],
     "n": 17

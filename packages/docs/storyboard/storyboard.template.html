@@ -249,9 +249,20 @@ h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;text-wrap:
   font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
   margin:0 0 7px;font-weight:500;
 }
-.diff-col.before h4{color:var(--ok)}
-.diff-col.after h4{color:var(--b1)}
+.diff-col.before h4{color:var(--b1)}
+.diff-col.after h4{color:var(--ok)}
 .diff-col p{margin:0;font-size:13px;line-height:1.55;color:var(--ink-2)}
+.diff-col .diff-n{font-size:30px;line-height:1;font-weight:800;letter-spacing:-.02em;margin:0 0 2px;font-variant-numeric:tabular-nums}
+.diff-col.before .diff-n{color:var(--b1)}
+.diff-col.after .diff-n{color:var(--ok)}
+.diff-col .diff-sub{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.05em;
+  color:var(--faint);margin:0 0 9px;
+}
+.diff-foot{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.04em;
+  color:var(--faint);margin:0;padding:0 15px 13px;text-align:center;
+}
 
 /* agent run log */
 .run{padding:6px 0}
@@ -490,9 +501,14 @@ const RENDER = {
   },
   diff(m){
     let h = '<div class="mock">' + mockBar("Gesprächsverlauf — dieselbe Frage", "var(--sys-chat)") + '<div class="diff">';
-    h += '<div class="diff-col before"><h4>'+esc(m.before.h)+'</h4><p>'+esc(m.before.p)+'</p></div>';
-    h += '<div class="diff-col after"><h4>'+esc(m.after.h)+'</h4><p>'+esc(m.after.p)+'</p></div>';
-    h += '</div></div>';
+    const side = (s, cls) => '<div class="diff-col '+cls+'"><h4>'+esc(s.h)+'</h4>'
+      + (s.n ? '<p class="diff-n">'+esc(s.n)+'</p>' : '')
+      + (s.sub ? '<p class="diff-sub">'+esc(s.sub)+'</p>' : '')
+      + '<p>'+esc(s.p)+'</p></div>';
+    h += side(m.before, "before") + side(m.after, "after");
+    h += '</div>';
+    if (m.foot) h += '<p class="diff-foot">'+esc(m.foot)+'</p>';
+    h += '</div>';
     return h;
   },
   chart(m){ return ({agriculture:chartAgriculture, unemployment:chartUnemployment, exposure:chartExposure}[m.which])(); },

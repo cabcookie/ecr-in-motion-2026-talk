@@ -118,16 +118,38 @@ export function DiffView({ m }: { m: DiffMock }) {
   const col = "rounded-[10px] border border-hair bg-stage-2 px-[36px] py-[34px]";
   const head = "m-0 mb-[20px] font-mono text-[23px] font-medium tracking-[0.11em] uppercase";
   const body = "m-0 text-[32px] leading-[1.42] text-fg-2";
+
+  /** Die Zahl trägt die Folie — sie muss aus der letzten Reihe lesbar sein. */
+  const side = (s: DiffMock["before"], tone: string) => (
+    <div className={col}>
+      <h4 className={`${head} ${tone}`}>{s.h}</h4>
+      {s.n && (
+        <p
+          className={`m-0 mb-[6px] font-display text-[96px] leading-none font-extrabold tracking-tight tabular-nums ${tone}`}
+        >
+          {s.n}
+        </p>
+      )}
+      {s.sub && (
+        <p className="m-0 mb-[22px] font-mono text-[24px] tracking-[0.06em] text-fg-3">{s.sub}</p>
+      )}
+      <p className={body}>{s.p}</p>
+    </div>
+  );
+
   return (
-    <div className="grid w-full grid-cols-2 gap-[32px]">
-      <div className={col}>
-        <h4 className={`${head} text-b4`}>{m.before.h}</h4>
-        <p className={body}>{m.before.p}</p>
+    <div className="grid w-full gap-[26px]">
+      {/* Der teure Weg in der Warnfarbe, der bessere in Grün — mit einer großen
+          Zahl darunter liest die umgekehrte Zuordnung sich sofort falsch. */}
+      <div className="grid grid-cols-2 gap-[32px]">
+        {side(m.before, "text-b1")}
+        {side(m.after, "text-b4")}
       </div>
-      <div className={col}>
-        <h4 className={`${head} text-b1`}>{m.after.h}</h4>
-        <p className={body}>{m.after.p}</p>
-      </div>
+      {m.foot && (
+        <p className="m-0 text-center font-mono text-[25px] leading-[1.5] tracking-[0.04em] text-fg-3">
+          {m.foot}
+        </p>
+      )}
     </div>
   );
 }
