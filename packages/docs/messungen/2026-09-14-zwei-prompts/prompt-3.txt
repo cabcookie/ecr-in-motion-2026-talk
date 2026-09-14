@@ -1,0 +1,81 @@
+Ich arbeite den Vorgang jetzt systematisch ab, bevor ich antworte.
+
+**Schritt 1 – Zusammenfassung**
+Produkt: Hallbach Crispy Bites
+EK: 2,89 EUR, empf. VK: 4,49 EUR, Mindestabnahme: 500 VE
+Wunschstart: 15. Oktober
+Besonderheit: Exklusivangebot
+
+**Schritt 2 – Was brauche ich?**
+- Marge prüfen (kann ich selbst rechnen)
+- Regalplatzsituation prüfen → Werkzeug
+- Aktionskalender prüfen → Werkzeug
+- Exklusivfreigabe → muss Lisa / Einkaufsleitung klären
+
+Ich arbeite das jetzt durch.
+
+---
+
+**Margenprüfung:**
+Marge = (VK – EK) / VK = (4,49 – 2,89) / 4,49 = 1,60 / 4,49 ≈ **35,6 %**
+→ Kategoriemindestmarge von 30 % wird erfüllt. ✓
+
+---
+
+Jetzt die Werkzeuge:
+
+<tool_call>
+{"tool": "pruefe_regalplatz", "kategorie": "Schokolade & Pralinen"}
+</tool_call>
+
+<tool_response>
+Aktuelle Regalauslastung: 98 %. Für eine Neulistung muss ein bestehendes Produkt ausgelistet werden. Vorschlag: Automatische Auslistungskandidaten können über das Sortimentsanalyse-Tool abgerufen werden.
+</tool_response>
+
+<tool_call>
+{"tool": "pruefe_aktionskalender", "zeitraum": "Oktober", "vorlauf_wochen": 4}
+</tool_call>
+
+<tool_response>
+Aktionskalender Oktober: Aktionsflächen sind für den Zeitraum 1.–15. Oktober bereits vollständig belegt. Ab 16. Oktober sind noch zwei Aktionsflächen verfügbar. Nächster freier Einführungsslot mit ausreichendem Vorlauf (mind. 4 Wochen): 16. Oktober.
+</tool_response>
+
+<tool_call>
+{"tool": "pruefe_sortimentsanalyse", "kategorie": "Schokolade & Pralinen", "kriterium": "Auslistungskandidaten"}
+</tool_call>
+
+<tool_response>
+Auslistungskandidaten (niedrigste Umschlaghäufigkeit, letzte 6 Monate):
+1. Crispo Nougat Riegel – Ø 12 VE/Woche, Listung seit 18 Monaten
+2. Süßwerk Mandel Drops – Ø 9 VE/Woche, Listung seit 24 Monaten
+3. Belmondo Dark Crisp – Ø 7 VE/Woche, Listung seit 30 Monaten
+</tool_response>
+
+<tool_call>
+{"tool": "frage_lisa", "frage": "Für die Neulistung Hallbach Crispy Bites (EK 2,89 EUR, VK 4,49 EUR, Marge 35,6 %) liegt ein Exklusivangebot vor, das die Freigabe der Einkaufsleitung benötigt. Bitte um Rückmeldung, ob diese Freigabe eingeholt werden soll. Außerdem: Regal ist zu 98 % ausgelastet – als Auslistungskandidat käme laut Sortimentsanalyse vorrangig Belmondo Dark Crisp (Ø 7 VE/Woche, 30 Monate gelistet) in Frage. Bitte bestätigen, ob diese Auslistung angestoßen werden soll. Wunschstart des Lieferanten ist 15. Oktober; frühestmöglicher Slot laut Aktionskalender ist der 16. Oktober."}
+</tool_call>
+
+<tool_response>
+Lisa Berger wurde informiert und wird sich intern kümmern. Antwort steht noch aus.
+</tool_response>
+
+Gut – ich habe alle Punkte, die ich selbst klären konnte, abgearbeitet. Die Exklusivfrage und die Auslistungsentscheidung liegen nun intern vor. Ich schreibe jetzt die Antwort an Herrn Walter.
+
+---
+
+Sehr geehrter Herr Walter,
+
+vielen Dank für Ihre Anfrage zur Listung der Hallbach Crispy Bites bei Nordkorb.
+
+Ich habe Ihre Unterlagen geprüft und kann Ihnen bereits einige Rückmeldungen geben. Die angebotenen Konditionen bewegen sich in einem für uns grundsätzlich interessanten Bereich, sodass wir das Produkt ernsthaft in Betracht ziehen.
+
+Zum gewünschten Starttermin 15. Oktober möchte ich Sie darauf hinweisen, dass unser frühestmöglicher verfügbarer Slot für eine Einführung der 16. Oktober wäre. Eine Verschiebung um einen Tag sollte auf Ihrer Seite hoffentlich handhabbar sein. Bitte bestätigen Sie mir kurz, ob dieser Termin für Sie akzeptabel ist.
+
+Hinsichtlich des von Ihnen angebotenen Exklusivcharakters der Einführung: Dieser Punkt ist für uns grundsätzlich von Interesse, erfordert jedoch auf unserer Seite eine interne Abstimmung, die ich bereits angestoßen habe. Ich bitte Sie daher um etwas Geduld in diesem Punkt.
+
+Ich melde mich bei Ihnen bis Ende nächster Woche mit einer abschließenden Einschätzung, wie Sie es erbeten haben. Sollte sich intern etwas verzögern, informiere ich Sie proaktiv.
+
+Mit freundlichen Grüßen
+
+Assistent von Lisa Berger
+Category Management Schokolade & Pralinen, Nordkorb

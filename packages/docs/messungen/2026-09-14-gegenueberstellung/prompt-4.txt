@@ -1,0 +1,50 @@
+Ich arbeite den Vorgang jetzt Schritt für Schritt ab, bevor ich antworte.
+
+**Schritt 1 – Zusammenfassung**
+Produkt: Hallbach Crispy Bites. EK 2,89 EUR, EVP 4,49 EUR, Mindestabnahme 500 VE, Wunschstart 15. Oktober, Exklusivangebot. Rückmeldung bis Ende nächster Woche erbeten.
+
+**Schritt 2 – Was brauche ich?**
+- Marge prüfen (kann ich selbst rechnen)
+- Regalplatzsituation prüfen → Werkzeug
+- Aktionskalender prüfen → Werkzeug
+- Exklusivfreigabe → muss Lisa / Einkaufsleitung entscheiden → frage_lisa
+- Fehlende Produktinfos (Artikelnummer, Gebindegröße, Lieferbedingungen) → beim Absender erfragen
+
+Ich arbeite jetzt alle Punkte ab.
+
+---
+
+**Marge:**
+Marge = (4,49 – 2,89) / 4,49 = 1,60 / 4,49 ≈ 35,6 %
+Das liegt über der Kategorievorgabe von 30 %. ✓
+
+---
+
+Jetzt rufe ich die Werkzeuge auf.
+
+pruefe_regalplatz(kategorie="Schokolade & Pralinen")
+
+pruefe_aktionskalender(zeitraum="Oktober", kategorie="Schokolade & Pralinen")
+
+frage_lisa(thema="Exklusivfreigabe Hallbach Crispy Bites", details="Hallbach Süßwaren bietet die Neulistung ihrer Crispy Bites exklusiv an. EK 2,89 EUR, EVP 4,49 EUR, Marge ca. 35,6 %, Mindestabnahme 500 VE, Wunschstart 15. Oktober. Für eine Exklusivzusage brauche ich die Freigabe der Einkaufsleitung. Bitte prüfen und Rückmeldung geben, damit wir die Frist Ende nächster Woche einhalten können.")
+
+---
+
+Da mir die Werkzeugausgaben in diesem Durchlauf nicht vorliegen, kann ich den Vorgang noch nicht vollständig abschließen. Ich verfasse die Antwort an Herrn Walter so, dass sie den Stand korrekt widerspiegelt: Margeprüfung positiv, interne Klärungen laufen, konkrete Rückmeldung folgt.
+
+---
+
+Sehr geehrter Herr Walter,
+
+vielen Dank für Ihr Angebot zu den Hallbach Crispy Bites und das Interesse an einer Listung bei Nordkorb.
+
+Ich habe Ihren Vorschlag bereits geprüft und kann Ihnen mitteilen, dass die kalkulatorische Seite grundsätzlich in Ordnung ist. Parallel dazu laufen intern noch zwei Klärungen, die ich für eine verbindliche Aussage benötige: zum einen die Verfügbarkeit von Regalplatz in der Kategorie, zum anderen die Prüfung des von Ihnen angebotenen Exklusivstatus, der auf unserer Seite einen gesonderten Abstimmungsschritt erfordert. Beides habe ich bereits angestoßen.
+
+Damit ich Ihnen bis zu Ihrer genannten Frist Ende nächster Woche eine fundierte Rückmeldung geben kann, bitte ich Sie außerdem, mir noch folgende Angaben nachzureichen, die für die Anlage im System und die weitere Planung erforderlich sind: die genaue Artikelnummer beziehungsweise EAN, die Gebindegröße je Verkaufseinheit sowie Ihre Lieferbedingungen und Lieferzeiten.
+
+Sobald mir alle internen Rückmeldungen vorliegen und Ihre Angaben eingegangen sind, melde ich mich umgehend bei Ihnen.
+
+Mit freundlichen Grüßen
+
+Assistent von Lisa Berger
+Category Management Schokolade & Pralinen, Nordkorb

@@ -72,6 +72,20 @@ function mitRundungen(wert: number): number[] {
   return [wert, Math.round(wert), Math.round(wert * 10) / 10, Math.round(wert * 100) / 100];
 }
 
+/**
+ * Systeme, deren Auskunft nach draußen darf.
+ *
+ * Der Aktionskalender liefert ANGEBOTE an den Lieferanten — freie Flächen,
+ * Termine, Marktzahlen einer Aktion. Die sollen hinaus, sonst gäbe es nichts
+ * zu verhandeln. Alles andere ist Innenleben.
+ *
+ * Dass diese Unterscheidung hier im Messskript steht und nicht am Port, ist
+ * eine Abkürzung. Richtig wäre, dass ein Befund selbst mitbringt, ob er das
+ * Haus verlassen darf — dann wäre es eine Eigenschaft der Daten und keine
+ * Bitte an das Modell.
+ */
+const DARF_NACH_AUSSEN = new Set(["aktionskalender_zeitraum"]);
+
 interface Deckung {
   readonly gesamt: number;
   readonly gedeckt: number;
@@ -82,7 +96,9 @@ function zahlendeckung(antwort: string, lauf: Lauf): Deckung {
   const quellen = new Set<number>();
   for (const wert of zahlen(MAIL)) mitRundungen(wert).forEach((w) => quellen.add(w));
   for (const beleg of lauf.belege) {
-    for (const wert of zahlen(JSON.stringify(beleg))) mitRundungen(wert).forEach((w) => quellen.add(w));
+    for (const wert of zahlen(JSON.stringify(beleg.ergebnis))) {
+      mitRundungen(wert).forEach((w) => quellen.add(w));
+    }
   }
 
   const inAntwort = [...new Set(zahlen(antwort))];
@@ -95,6 +111,40 @@ function zahlendeckung(antwort: string, lauf: Lauf): Deckung {
   return { gesamt: inAntwort.length, gedeckt: inAntwort.length - offen.length, offen };
 }
 
+/**
+ * Innenzahlen, die nach außen gingen.
+ *
+ * Eine Zahl, die aus einem System stammt und NICHT in der eingehenden Mail
+ * stand, gehört nicht in die Antwort an den Absender. Er ist ein Lieferant in
+ * einer Verhandlung.
+ *
+ * Dieser Messwert zieht bewusst gegen die Zahlendeckung: Die will, dass jede
+ * genannte Zahl aus einem System kommt. Diese will, dass keine Systemzahl
+ * genannt wird. Ein guter Agent erfüllt beides — er rechnet mit den Zahlen und
+ * nennt sie nicht.
+ */
+function innenzahlen(antwort: string, lauf: Lauf): number[] {
+  const ausDerMail = new Set(zahlen(MAIL).flatMap(mitRundungen));
+
+  const innen = new Set<number>();
+  for (const beleg of lauf.belege) {
+    if (DARF_NACH_AUSSEN.has(beleg.system)) continue;
+    for (const wert of zahlen(JSON.stringify(beleg.ergebnis))) {
+      /*
+        Was der Lieferant uns selbst geschrieben hat, ist für ihn kein
+        Geheimnis — auch wenn ein System es zurückgibt. Kleinzahlen bis 12
+        bleiben ebenfalls draußen: Aufzählungen, „vier Wochen", Monatszahlen.
+        Lieber ein Leck übersehen als eines behaupten, das keines ist.
+      */
+      if (ausDerMail.has(wert) || wert <= 12) continue;
+      innen.add(wert);
+    }
+  }
+
+  const genannt = new Set(zahlen(antwort).flatMap(mitRundungen));
+  return [...innen].filter((w) => genannt.has(w)).sort((a, b) => a - b);
+}
+
 /* ----------------------------------------------------------------- Lauf */
 
 interface Ergebnis {
@@ -104,6 +154,7 @@ interface Ergebnis {
   readonly schritte: readonly string[];
   readonly fragenAnLisa: number;
   readonly deckung: Deckung;
+  readonly innen: readonly number[];
   readonly verbrauch: { ein: number; aus: number };
   readonly kosten: number;
   readonly fehler?: string;
@@ -122,6 +173,7 @@ async function einLauf(name: string, nummer: number): Promise<Ergebnis> {
       schritte: lauf.schritte,
       fragenAnLisa: lauf.fragenAnLisa.length,
       deckung: zahlendeckung(lauf.text, lauf),
+      innen: innenzahlen(lauf.text, lauf),
       verbrauch: lauf.verbrauch,
       kosten: (lauf.verbrauch.ein * PREIS.ein + lauf.verbrauch.aus * PREIS.aus) / 1_000_000,
     };
@@ -133,6 +185,7 @@ async function einLauf(name: string, nummer: number): Promise<Ergebnis> {
       schritte: [],
       fragenAnLisa: 0,
       deckung: leer,
+      innen: [],
       verbrauch: { ein: 0, aus: 0 },
       kosten: 0,
       fehler: fehler instanceof Error ? fehler.message : String(fehler),
@@ -140,7 +193,7 @@ async function einLauf(name: string, nummer: number): Promise<Ergebnis> {
   }
 }
 
-const REIHE = ["roh", "probe", "prompt", "voll", "gestoert"] as const;
+const REIHE = ["roh", "probe", "prompt", "voll", "gehaertet", "gestoert"] as const;
 
 await mkdir(ORDNER, { recursive: true });
 const alle: Ergebnis[] = [];
@@ -160,7 +213,7 @@ for (const name of REIHE) {
 
 const schnitt = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 
-console.log(`\n${"AUSSTATTUNG".padEnd(10)} ${"ZAHLEN".padStart(7)} ${"GEDECKT".padStart(8)} ${"QUOTE".padStart(6)} ${"SYSTEME".padStart(8)} ${"AN LISA".padStart(8)} ${"TOKEN".padStart(7)} ${"CENT".padStart(6)}`);
+console.log(`\n${"AUSSTATTUNG".padEnd(10)} ${"ZAHLEN".padStart(7)} ${"GEDECKT".padStart(8)} ${"QUOTE".padStart(6)} ${"SYSTEME".padStart(8)} ${"AN LISA".padStart(8)} ${"INNEN".padStart(6)} ${"TOKEN".padStart(7)} ${"CENT".padStart(6)}`);
 for (const name of REIHE) {
   const e = alle.filter((x) => x.ausstattung === name && !x.fehler);
   if (e.length === 0) {
@@ -174,6 +227,7 @@ for (const name of REIHE) {
       `${(zahl ? (deck / zahl) * 100 : 0).toFixed(0).padStart(5)}% ` +
       `${schnitt(e.map((x) => x.schritte.length)).toFixed(1).padStart(8)} ` +
       `${schnitt(e.map((x) => x.fragenAnLisa)).toFixed(1).padStart(8)} ` +
+      `${schnitt(e.map((x) => x.innen.length)).toFixed(1).padStart(6)} ` +
       `${Math.round(schnitt(e.map((x) => x.verbrauch.ein + x.verbrauch.aus))).toString().padStart(7)} ` +
       `${(schnitt(e.map((x) => x.kosten)) * 100).toFixed(2).padStart(6)}`,
   );
@@ -201,6 +255,17 @@ for (const name of REIHE) {
   const inAllen = [...vereinigung].filter((z) => proLauf.every((s) => s.has(z)));
   console.log(
     `  ${name.padEnd(10)} ${vereinigung.size} verschiedene, davon ${inAllen.length} in jedem Lauf`,
+  );
+}
+
+console.log("\nInnenzahlen, die beim Lieferanten landeten (in wie vielen von 5 Läufen):");
+for (const name of REIHE) {
+  const e = alle.filter((x) => x.ausstattung === name && !x.fehler);
+  const sauber = e.filter((x) => x.innen.length === 0).length;
+  const welche = [...new Set(e.flatMap((x) => [...x.innen]))].sort((a, b) => a - b);
+  console.log(
+    `  ${name.padEnd(10)} ${sauber} von ${e.length} Läufen sauber` +
+      (welche.length ? `  —  ${welche.join(", ")}` : ""),
   );
 }
 

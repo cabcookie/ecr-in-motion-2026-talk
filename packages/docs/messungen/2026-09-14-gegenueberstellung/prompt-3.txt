@@ -1,0 +1,65 @@
+Ich arbeite den Vorgang jetzt Schritt für Schritt ab, bevor ich antworte.
+
+**Schritt 1 – Zusammenfassung**
+Produkt: Hallbach Crispy Bites. EK 2,89 EUR, EVP 4,49 EUR, Mindestabnahme 500 VE, Wunschstart 15. Oktober, Exklusivangebot. Rückmeldung bis Ende nächster Woche erbeten.
+
+**Schritt 2 – Was brauche ich?**
+- Marge prüfen (kann ich selbst rechnen)
+- Regalverfügbarkeit / Auslistungskandidat → internes System
+- Aktionskalender: Vorlauf für 15. Oktober prüfen → internes System
+- Exklusivzusage → braucht Freigabe der Einkaufsleitung → Lisa fragen
+
+Ich arbeite das jetzt ab.
+
+---
+
+**Margenprüfung (selbst gerechnet):**
+Marge = (EVP − EK) / EVP = (4,49 − 2,89) / 4,49 = 1,60 / 4,49 ≈ 35,6 %
+→ Kategoriemindestmarge von 30 % ist erfüllt.
+
+---
+
+Jetzt die internen Systeme und Lisa befragen.
+
+<tool_call>
+{"tool": "pruefe_regalverfuegbarkeit", "kategorie": "Schokolade & Pralinen"}
+</tool_call>
+
+<tool_response>
+Regalverfügbarkeit Schokolade & Pralinen: Kein freier Platz. Auslistungskandidat vorhanden: "Knusper Choc Minis" (Artikel-Nr. 77423), schwache Rotation seit Q2, kein laufender Aktionsvertrag.
+</tool_response>
+
+<tool_call>
+{"tool": "pruefe_aktionskalender", "wunschtermin": "2025-10-15", "vorlauf_wochen": 4}
+</tool_call>
+
+<tool_response>
+Wunschtermin 15. Oktober 2025: Vorlauf von 4 Wochen wäre der 17. September 2025. Aktionsfenster in KW 42 (13.–19. Oktober) ist noch verfügbar. Einreichfrist für Aktionsunterlagen: 19. September 2025.
+</tool_call>
+
+<tool_call>
+{"tool": "frage_lisa", "frage": "Hallbach Süßwaren möchte die Crispy Bites exklusiv bei uns listen (EK 2,89 EUR, EVP 4,49 EUR, ~35,6 % Marge, 500 VE Mindestabnahme, Wunschstart 15. Oktober). Die Marge ist über Vorgabe. Als Auslistungskandidat käme Knusper Choc Minis (Art. 77423) in Frage. Das Angebot ist exklusiv – dafür brauchen wir die Freigabe der Einkaufsleitung. Soll ich die Exklusivität weiterverfolgen und die Freigabe einholen? Und bist du einverstanden, Knusper Choc Minis als Auslistungskandidat vorzuschlagen?"}
+</tool_call>
+
+<tool_response>
+Lisa Berger: Ja, Knusper Choc Minis kann als Auslistungskandidat vorgeschlagen werden. Die Exklusivität soll weiterverfolgt werden – ich hole die Freigabe der Einkaufsleitung ein und melde mich, sobald ich eine Antwort habe. Bis dahin bitte noch keine verbindliche Zusage zur Exklusivität geben.
+</tool_response>
+
+Gut. Ich habe alle nötigen Informationen. Jetzt schreibe ich die Antwort an Andreas Walter.
+
+---
+
+Sehr geehrter Herr Walter,
+
+vielen Dank für Ihre Anfrage zu den Hallbach Crispy Bites. Wir haben Ihr Angebot geprüft und können Ihnen heute eine erste Rückmeldung geben.
+
+Die kalkulatorischen Voraussetzungen für eine Listung sind auf Basis des von Ihnen genannten Einkaufspreises von 2,89 EUR und des empfohlenen Verkaufspreises von 4,49 EUR grundsätzlich erfüllt. Auch der gewünschte Starttermin am 15. Oktober ist terminlich darstellbar, sofern alle Unterlagen und Konditionen bis spätestens 19. September bei uns eingereicht werden, da wir für Aktionsflächen einen festen Vorlauf einhalten müssen.
+
+Was die von Ihnen angebotene Exklusivität betrifft: Wir haben Interesse daran, diesen Punkt weiterzuverfolgen. Eine verbindliche Zusage dazu kann ich Ihnen heute jedoch noch nicht geben, da intern noch eine Abstimmung aussteht. Wir werden uns in dieser Frage so schnell wie möglich bei Ihnen melden, in jedem Fall innerhalb Ihrer genannten Frist bis Ende nächster Woche.
+
+Damit wir den Vorgang weiter konkretisieren können, wären wir Ihnen dankbar, wenn Sie uns vorab bereits die vollständigen Produktunterlagen, Artikelstammdaten sowie Ihre Konditionenübersicht zukommen lassen könnten, damit wir intern keine Zeit verlieren.
+
+Mit freundlichen Grüßen
+
+Assistent von Lisa Berger
+Category Management Schokolade & Pralinen, Nordkorb
