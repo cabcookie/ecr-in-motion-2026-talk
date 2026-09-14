@@ -790,19 +790,19 @@ export const SECTIONS: Section[] = [
           "before": {
             "h": "Frage für Frage · 7 Aufrufe",
             "n": "4.687",
-            "sub": "Eingabe-Token · 2,2 Cent",
-            "p": "Sechs Rückfragen, eine Empfehlung. Der Verlauf geht siebenmal hin und wächst dabei."
+            "sub": "Eingabe-Token · 2,1 Cent",
+            "p": "Sechs Rückfragen, eine Empfehlung. 3.799 Token kommen aus dem Cache — und es bleibt teurer."
           },
           "after": {
             "h": "Alles in einer Nachricht · 1 Aufruf",
             "n": "600",
-            "sub": "Eingabe-Token · 0,6 Cent",
+            "sub": "Eingabe-Token · 0,9 Cent",
             "p": "Dieselben Angaben, dieselbe Empfehlung. Nur einmal übertragen."
           },
-          "foot": "3 Runden 2,3-mal · 6 Runden 4,1-mal · 12 Runden 8,6-mal · 20 Runden 16,8-mal"
+          "foot": "Opus 4.8, mit Caching · 3 Runden 1,6-mal · 6 Runden 2,3-mal · 12 Runden 3,8-mal · 20 Runden 6,0-mal"
         },
-        "say": "Und das hat direkte Folgen. Wir haben beides einmal durchgerechnet, mit genau dem Systemprompt und genau der Mail, die Sie eben gesehen haben. Links: sechs Rückfragen, dann die Empfehlung — sieben Modellaufrufe, viertausendsiebenhundert Eingabe-Token. Rechts: alles gleich mitgegeben — ein Aufruf, sechshundert Token. Achtmal so viel für dasselbe Ergebnis. In Geld sind das zwei Cent gegen einen halben, das beeindruckt niemanden. Interessant ist die Zeile darunter: Das Verhältnis wächst schneller als die Zahl der Runden. Bei zwanzig Runden ist es das Siebzehnfache. Und wenn der Agent Unterlagen mit sich trägt — einen Kategoriebericht, ein Planogramm — dann wandern die bei jedem einzelnen Aufruf wieder mit.",
-        "note": "Zahlen aus packages/presentation/scripts/kostenrechnung.ts — pnpm --filter @ecr-talk/presentation kosten. Claude Sonnet 4.6 auf Bedrock, 3 Dollar je Million Eingabe-Token, 15 je Million Ausgabe. Ohne Prompt-Caching. Mit Anhang von 20.000 Token wird aus dem 4,1-fachen das 6,8-fache."
+        "say": "Und das hat direkte Folgen. Wir haben beides durchgerechnet, mit genau dem Systemprompt und genau der Mail, die Sie eben gesehen haben, auf dem größten Modell. Links: sechs Rückfragen, dann die Empfehlung. Sieben Aufrufe, viertausendsiebenhundert Eingabe-Token. Rechts: alles gleich mitgegeben. Ein Aufruf, sechshundert. Jetzt kommt ein berechtigter Einwand: Es gibt Caching. Was schon einmal durchgelaufen ist, kostet beim nächsten Mal ein Zehntel. Stimmt, und es ist hier eingerechnet — dreitausendachthundert von den viertausendsiebenhundert Token kommen aus dem Cache. Der Abstand schrumpft von vier auf gut zwei. Er verschwindet aber nicht, und der Grund ist der interessante Teil: Gecacht wird nur, was hineingeht. Die sechs Rückfragen selbst sind das, was herauskommt, und Ausgabe wird nie gecacht. Allein die sechs Fragen kosten links mehr als der ganze rechte Lauf.",
+        "note": "Zahlen aus packages/presentation/scripts/kostenrechnung.ts — pnpm --filter @ecr-talk/presentation kosten. Claude Opus 4.8 auf Bedrock: 5 Dollar je Million Eingabe, 25 Ausgabe, 0,50 je Million Cache-Treffer. Mit Fünf-Minuten-Caching. Ohne Caching wären es 3,7 gegen 0,9 Cent, also das 4,1-fache. Falls jemand nach der Lebensdauer fragt: der Fünf-Minuten-Cache setzt voraus, dass Lisa binnen fünf Minuten antwortet — tut sie das nicht, ist der Verlauf kalt und es gilt wieder die Rechnung ohne Caching. Die Stundenvariante kostet im Schreiben das Doppelte und landet bei 2,5 Cent. Auf Sonnet 4.6 sind alle Verhältnisse identisch, die Beträge rund 40 Prozent niedriger."
       }
     ],
     "n": 17

@@ -24,9 +24,25 @@ import { SYSTEM_PROMPT, SEED_MESSAGE } from '../src/slides/agent';
  */
 const tok = (s: string) => encode(s).length;
 
-/** Amazon Bedrock, Claude Sonnet 4.6, On-Demand, globales Inferenzprofil. */
-const PREIS_EIN = 3 / 1_000_000;
-const PREIS_AUS = 15 / 1_000_000;
+/**
+ * Preise je Million Token, Amazon Bedrock, On-Demand, globales Inferenzprofil.
+ *
+ * Prompt-Caching hat zwei Lebensdauern. Die kurze ist billiger zu schreiben,
+ * hält aber nur fünf Minuten — und genau das ist hier der Haken: In einem
+ * Gespräch, in dem ein Mensch antwortet, vergehen zwischen zwei Runden
+ * leicht mehr als fünf Minuten. Dann ist der Cache kalt und der Verlauf wird
+ * zum vollen Preis neu geschrieben. Die Stundenvariante überlebt das, kostet
+ * im Schreiben aber das Doppelte.
+ */
+const MODELLE = {
+  'Claude Opus 4.8': { ein: 5, aus: 25, schreib5m: 6.25, schreib1h: 10, lesen: 0.5 },
+  'Claude Sonnet 4.6': { ein: 3, aus: 15, schreib5m: 3.75, schreib1h: 6, lesen: 0.3 },
+} as const;
+
+type Preise = (typeof MODELLE)[keyof typeof MODELLE];
+type Modus = 'ohne' | '5m' | '1h';
+
+const M = 1_000_000;
 
 /** Die sechs Angaben, die dem Agenten fehlen — dieselben wie in Abschnitt 18. */
 const RUNDEN = [
@@ -82,75 +98,75 @@ const BRIEFING = [
   ...RUNDEN.map((r, i) => `${i + 1}. ${r.antwort}`),
 ].join('\n');
 
+
 const sys = tok(SYSTEM_PROMPT);
 const mail = tok(SEED_MESSAGE);
 
-// ─── Lauf A: Frage für Frage ────────────────────────────────────────────────
-//
-// Aufruf k trägt den Systemprompt, die Mail und alles, was bisher gesagt
-// wurde. Nach der sechsten Antwort folgt ein siebter Aufruf für die
-// Empfehlung.
-let einA = 0;
-let ausA = 0;
-let verlauf = 0;
-for (const runde of RUNDEN) {
-  einA += sys + mail + verlauf;
-  ausA += tok(runde.frage);
-  verlauf += tok(runde.frage) + tok(runde.antwort);
-}
-einA += sys + mail + verlauf;
-ausA += tok(EMPFEHLUNG);
-const aufrufeA = RUNDEN.length + 1;
+/**
+ * Das Gespräch als Folge von Abschnitten, in der Reihenfolge, in der sie
+ * hinzukommen. Abschnitt 0 ist der feste Vorspann, danach kommt je Runde die
+ * Frage des Agenten und Lisas Antwort dazu.
+ *
+ * Aufruf j trägt die Abschnitte 0 bis j. Das sind sieben Aufrufe: sechs
+ * Rückfragen und die Empfehlung.
+ */
+const ABSCHNITTE = [sys + mail, ...RUNDEN.map((r) => tok(r.frage) + tok(r.antwort))];
+const AUFRUFE = ABSCHNITTE.length;
 
-// ─── Lauf B: alles in einer Nachricht ───────────────────────────────────────
-const einB = sys + mail + tok(BRIEFING);
-const ausB = tok(EMPFEHLUNG);
-
-const kosten = (ein: number, aus: number) => ein * PREIS_EIN + aus * PREIS_AUS;
-const kostenA = kosten(einA, ausA);
-const kostenB = kosten(einB, ausB);
-
-const cent = (d: number) => `${(d * 100).toFixed(3)} ct`;
-const zahl = (n: number) => n.toLocaleString('de-DE');
+/** Ausgabe je Aufruf: sechs Fragen, dann die Empfehlung. */
+const AUSGABEN = [...RUNDEN.map((r) => tok(r.frage)), tok(EMPFEHLUNG)];
+const ausA = AUSGABEN.reduce((a, b) => a + b, 0);
 
 /**
- * Wie sich das Verhältnis verschiebt.
+ * Eingabe-Token nach Abrechnungsart.
  *
- * Zwei Hebel bestimmen es. Erstens die Zahl der Runden: der feste Vorspann —
- * Systemprompt und Mail — wird jedes Mal erneut bezahlt, der Verlauf wächst
- * obendrein. Zweitens die Größe dessen, was der Agent mit sich trägt. Hängen
- * an der ersten Nachricht Unterlagen, dann wandern die bei jedem Aufruf
- * wieder mit, und das Verhältnis läuft gegen die Zahl der Aufrufe.
+ * Ohne Caching zahlt jeder Aufruf alles, was er mitschickt. Mit Caching wird
+ * jeder Abschnitt genau einmal geschrieben und danach bei jedem weiteren
+ * Aufruf gelesen — Lesen kostet ein Zehntel.
  */
-function laufA(runden: number, anhang: number) {
-  let ein = 0;
-  let aus = 0;
-  let verlauf = 0;
-  for (let i = 0; i < runden; i++) {
-    const r = RUNDEN[i % RUNDEN.length];
-    ein += sys + mail + anhang + verlauf;
-    aus += tok(r.frage);
-    verlauf += tok(r.frage) + tok(r.antwort);
+function eingabeA(mitCache: boolean) {
+  let voll = 0;
+  let schreiben = 0;
+  let lesen = 0;
+  for (let j = 0; j < AUFRUFE; j++) {
+    for (let i = 0; i <= j; i++) {
+      if (!mitCache) voll += ABSCHNITTE[i];
+      else if (i === j) schreiben += ABSCHNITTE[i];
+      else lesen += ABSCHNITTE[i];
+    }
   }
-  ein += sys + mail + anhang + verlauf;
-  aus += tok(EMPFEHLUNG);
-  return kosten(ein, aus);
+  return { voll, schreiben, lesen };
 }
 
-function laufB(anhang: number) {
-  return kosten(sys + mail + anhang + tok(BRIEFING), tok(EMPFEHLUNG));
+function kostenA(p: Preise, modus: Modus) {
+  const e = eingabeA(modus !== 'ohne');
+  const schreibpreis = modus === '1h' ? p.schreib1h : p.schreib5m;
+  return (
+    (e.voll * p.ein + e.schreiben * schreibpreis + e.lesen * p.lesen + ausA * p.aus) / M
+  );
 }
 
-const skala = [
-  ['ohne Anhang', 0],
-  ['mit Kategoriebericht (~5.000 Token)', 5_000],
-  ['mit Bericht, Planogramm und Marktdaten (~20.000 Token)', 20_000],
-] as const;
+// ─── Lauf B: alles in einer Nachricht ───────────────────────────────────────
+//
+// Ein einziger Aufruf. Caching bringt hier nichts — es gibt keinen zweiten
+// Aufruf, der davon lesen könnte. Ein Cache-Eintrag wäre sogar teurer.
+// Ausnahme: der Systemprompt ist für alle Vorgänge derselbe und liegt im
+// laufenden Betrieb ohnehin im Cache.
+const einB = sys + mail + tok(BRIEFING);
+const ausB = tok(EMPFEHLUNG);
+const kostenB = (p: Preise) => (einB * p.ein + ausB * p.aus) / M;
+const kostenBWarm = (p: Preise) =>
+  (sys * p.lesen + (mail + tok(BRIEFING)) * p.ein + ausB * p.aus) / M;
+
+const ct = (d: number) => `${(d * 100).toFixed(3)} ct`;
+const zahl = (n: number) => n.toLocaleString('de-DE');
+
+const roh = eingabeA(false);
+const cached = eingabeA(true);
 
 console.log(`
 Kostenvergleich · Abschnitt 17
-Modell: Claude Sonnet 4.6 auf Amazon Bedrock, On-Demand
-Preis:  $3 je Mio. Eingabe-Token, $15 je Mio. Ausgabe-Token
+Sechs Rückfragen gegen eine Nachricht — dasselbe Ergebnis, derselbe Text.
 
 Bausteine
   Systemprompt              ${zahl(sys).padStart(6)} Token
@@ -158,51 +174,83 @@ Bausteine
   Sechs Angaben am Stück    ${zahl(tok(BRIEFING)).padStart(6)} Token
   Empfehlung                ${zahl(tok(EMPFEHLUNG)).padStart(6)} Token
 
-A · Frage für Frage (${aufrufeA} Modellaufrufe)
-  Eingabe   ${zahl(einA).padStart(7)} Token   $${(einA * PREIS_EIN).toFixed(5)}
-  Ausgabe   ${zahl(ausA).padStart(7)} Token   $${(ausA * PREIS_AUS).toFixed(5)}
-  Summe                        $${kostenA.toFixed(5)}   ${cent(kostenA)}
+Mengengerüst
+  A · ${AUFRUFE} Aufrufe   Eingabe ${zahl(roh.voll).padStart(6)} Token   Ausgabe ${zahl(ausA).padStart(5)} Token
+       davon mit Caching: ${zahl(cached.schreiben)} geschrieben, ${zahl(cached.lesen)} gelesen
+  B · 1 Aufruf     Eingabe ${zahl(einB).padStart(6)} Token   Ausgabe ${zahl(ausB).padStart(5)} Token
+`);
 
-B · Alles in einer Nachricht (1 Modellaufruf)
-  Eingabe   ${zahl(einB).padStart(7)} Token   $${(einB * PREIS_EIN).toFixed(5)}
-  Ausgabe   ${zahl(ausB).padStart(7)} Token   $${(ausB * PREIS_AUS).toFixed(5)}
-  Summe                        $${kostenB.toFixed(5)}   ${cent(kostenB)}
+for (const [name, p] of Object.entries(MODELLE)) {
+  const b = kostenB(p);
+  const zeilen: Array<[string, number]> = [
+    ['ohne Caching', kostenA(p, 'ohne')],
+    ['Caching, 5 Minuten', kostenA(p, '5m')],
+    ['Caching, 1 Stunde', kostenA(p, '1h')],
+  ];
+  console.log(`${name}   ($${p.ein} Eingabe · $${p.aus} Ausgabe · $${p.lesen} Cache-Treffer, je Mio.)`);
+  for (const [was, a] of zeilen) {
+    console.log(
+      `  A ${was.padEnd(20)} ${ct(a).padStart(9)}   gegen B ${ct(b).padStart(9)}   =  ${(
+        a / b
+      ).toFixed(1)}-mal`,
+    );
+  }
+  console.log(
+    `  B mit warmem Systemprompt ${ct(kostenBWarm(p)).padStart(9)}` +
+      `   ·  1.000 Vorgänge: A $${(kostenA(p, '5m') * 1000).toFixed(2)} gegen B $${(b * 1000).toFixed(2)}\n`,
+  );
+}
 
-Verhältnis: ${(kostenA / kostenB).toFixed(1)}-mal so teuer
-Eingabe-Token: ${(einA / einB).toFixed(1)}-mal so viele
+/** Wie das Verhältnis mit der Zahl der Runden wächst. */
+function verhaeltnis(runden: number, p: Preise, modus: Modus) {
+  const abschnitte = [
+    ABSCHNITTE[0],
+    ...Array.from({ length: runden }, (_, i) => ABSCHNITTE[1 + (i % RUNDEN.length)]),
+  ];
+  const ausgaben = [
+    ...Array.from({ length: runden }, (_, i) => tok(RUNDEN[i % RUNDEN.length].frage)),
+    tok(EMPFEHLUNG),
+  ];
+  let voll = 0;
+  let schreiben = 0;
+  let lesen = 0;
+  for (let j = 0; j < abschnitte.length; j++) {
+    for (let i = 0; i <= j; i++) {
+      if (modus === 'ohne') voll += abschnitte[i];
+      else if (i === j) schreiben += abschnitte[i];
+      else lesen += abschnitte[i];
+    }
+  }
+  const schreibpreis = modus === '1h' ? p.schreib1h : p.schreib5m;
+  const aus = ausgaben.reduce((a, b) => a + b, 0);
+  const a = (voll * p.ein + schreiben * schreibpreis + lesen * p.lesen + aus * p.aus) / M;
+  return a / kostenB(p);
+}
 
-Zum Einordnen: 1.000 solcher Vorgänge kosten
-  A  $${(kostenA * 1000).toFixed(2)}
-  B  $${(kostenB * 1000).toFixed(2)}
+const opus = MODELLE['Claude Opus 4.8'];
+console.log('Verhältnis nach Zahl der Runden · Claude Opus 4.8');
+console.log('  Runden        ohne Caching    mit Caching (5 Min.)');
+for (const n of [3, 6, 12, 20]) {
+  console.log(
+    `  ${String(n).padStart(2)}  ${verhaeltnis(n, opus, 'ohne').toFixed(1).padStart(14)}-mal ${verhaeltnis(
+      n,
+      opus,
+      '5m',
+    )
+      .toFixed(1)
+      .padStart(17)}-mal`,
+  );
+}
 
-Wie sich das verschiebt
-${skala
-  .map(([was, anhang]) => {
-    const a = laufA(6, anhang);
-    const b = laufB(anhang);
-    return `  ${was.padEnd(56)} ${cent(a).padStart(10)} gegen ${cent(b).padStart(9)}  =  ${(
-      a / b
-    ).toFixed(1)}-mal`;
-  })
-  .join('\n')}
-
-Mehr Runden, ohne Anhang
-${[3, 6, 12, 20]
-  .map((n) => {
-    const a = laufA(n, 0);
-    const b = laufB(0);
-    return `  ${String(n).padStart(2)} Runden  ${cent(a).padStart(10)} gegen ${cent(b).padStart(
-      9,
-    )}  =  ${(a / b).toFixed(1)}-mal`;
-  })
-  .join('\n')}
-
+console.log(`
 Gezählt mit cl100k_base, nicht mit dem Tokenizer von Claude — der ist nicht
-veröffentlicht. Für diesen Text sind das ${(
+veröffentlicht; für diesen Text sind das ${(
   (SYSTEM_PROMPT.length + SEED_MESSAGE.length) /
   (sys + mail)
 ).toFixed(2)} Zeichen je Token. Das Verhältnis
-der beiden Läufe hängt nicht am Tokenizer, die absoluten Cent-Beträge schon
-um einige Prozent. Ohne Prompt-Caching gerechnet; mit Caching schrumpft der
-Abstand, verschwindet aber nicht.
+der Läufe hängt nicht am Tokenizer, die absoluten Beträge um einige Prozent.
+
+Der Cache mit fünf Minuten Lebensdauer setzt voraus, dass Lisa binnen fünf
+Minuten antwortet. Tut sie das nicht, ist der Verlauf kalt und wird zum vollen
+Preis neu geschrieben — dann gilt wieder die Zeile "ohne Caching".
 `);
