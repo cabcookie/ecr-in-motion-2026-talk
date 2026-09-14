@@ -3,8 +3,8 @@ import type { ChartMock } from "@/slides/types";
 const CAP =
   "mx-auto mt-[26px] max-w-[100ch] text-center font-mono text-[23px] leading-[1.5] text-fg-3";
 
-const MONO = "IBM Plex Mono, monospace";
-const SANS = "IBM Plex Sans, sans-serif";
+const MONO = "Amazon Ember Mono, ui-monospace, monospace";
+const SANS = "Amazon Ember Display, Helvetica Neue, Arial, sans-serif";
 
 /** US-Landwirtschaft: nur die beiden belegten Eckwerte, kein erfundener Verlauf. */
 function Agriculture() {

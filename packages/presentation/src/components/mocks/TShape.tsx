@@ -1,8 +1,8 @@
 import type { TShapeMock } from "@/slides/types";
 
-const MONO = "IBM Plex Mono, monospace";
-const SANS = "IBM Plex Sans, sans-serif";
-const DISPLAY = "Bricolage Grotesque, sans-serif";
+const MONO = "Amazon Ember Mono, ui-monospace, monospace";
+const SANS = "Amazon Ember Display, Helvetica Neue, Arial, sans-serif";
+const DISPLAY = "Amazon Ember Display, Helvetica Neue, Arial, sans-serif";
 
 /**
  * Wissen als T: ein breiter Balken für das Allgemeinwissen, ein tiefer Stamm
