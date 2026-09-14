@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export const SECTION_MS = 760;
+export const SECTION_MS = 820;
 
 export interface Transition {
   /** Abschnitt, der gerade hinausläuft — null, wenn nichts läuft */

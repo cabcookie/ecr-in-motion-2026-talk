@@ -184,35 +184,38 @@ body:has(#root > [data-view="audience"]) #root {
 /*
   Abschnittswechsel.
 
-  Vorher lief der alte Abschnitt eine volle Bildhöhe weit hinaus und war dabei
-  schon nach 40 % der Zeit unsichtbar, während der neue bis 60 % wartete. In
-  der Mitte war damit fast nichts zu sehen — das las sich als harter Schnitt,
-  nicht als Bewegung.
+  Zwei Fassungen waren falsch. Die erste ließ den alten Abschnitt eine volle
+  Bildhöhe weit hinauslaufen, blendete ihn aber schon nach 40 % der Zeit aus,
+  während der neue bis 60 % wartete — dazwischen war der Schirm fast leer.
+  Die zweite kürzte die Strecke auf ein Zehntel und ließ beide lange gemeinsam
+  durchscheinen: dann standen zwei Überschriften übereinander, beide lesbar,
+  beide unlesbar.
 
-  Jetzt überlappen sie: der alte weicht nur ein Stück zurück und verblasst über
-  die ganze Dauer, der neue kommt ihm entgegen. Die kurze Strecke ist der
-  eigentliche Unterschied — eine ganze Bildhöhe in 760 ms ist auf einer
-  Leinwand schlicht zu schnell für das Auge.
+  Der Fehler war, Blenden und Bewegung gegeneinander auszuspielen. Über die
+  volle Bildhöhe berühren sich die beiden Abschnitte nie — der eine geht
+  hinaus, während der andere hereinkommt, wie beim Scrollen. Dann braucht es
+  gar keine Überblendung, nur an den Rändern etwas Weichzeichnung, damit der
+  Ein- und Austritt nicht hart abreißt.
 */
 @keyframes section-enter-from-below {
-  from { transform: translateY(18%); opacity: 0; }
-  40%  { opacity: 0.5; }
+  from { transform: translateY(100%); opacity: 0.35; }
+  30%  { opacity: 1; }
   to   { transform: translateY(0); opacity: 1; }
 }
 @keyframes section-leave-upward {
   from { transform: translateY(0); opacity: 1; }
-  60%  { opacity: 0.28; }
-  to   { transform: translateY(-11%); opacity: 0; }
+  70%  { opacity: 1; }
+  to   { transform: translateY(-100%); opacity: 0.35; }
 }
 @keyframes section-enter-from-above {
-  from { transform: translateY(-18%); opacity: 0; }
-  40%  { opacity: 0.5; }
+  from { transform: translateY(-100%); opacity: 0.35; }
+  30%  { opacity: 1; }
   to   { transform: translateY(0); opacity: 1; }
 }
 @keyframes section-leave-downward {
   from { transform: translateY(0); opacity: 1; }
-  60%  { opacity: 0.28; }
-  to   { transform: translateY(11%); opacity: 0; }
+  70%  { opacity: 1; }
+  to   { transform: translateY(100%); opacity: 0.35; }
 }
 
 /*
@@ -229,7 +232,8 @@ body:has(#root > [data-view="audience"]) #root {
   backface-visibility: hidden;
 }
 
-.section-enter-down { animation: section-enter-from-below 760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.section-leave-up   { animation: section-leave-upward   760ms cubic-bezier(0.33, 0, 0.67, 1) both; }
-.section-enter-up   { animation: section-enter-from-above 760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.section-leave-down { animation: section-leave-downward 760ms cubic-bezier(0.33, 0, 0.67, 1) both; }
+/* Eine Kurve, die sanft anfährt und lange ausläuft — Scrollen, kein Schnitt. */
+.section-enter-down { animation: section-enter-from-below 820ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.section-leave-up   { animation: section-leave-upward     820ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.section-enter-up   { animation: section-enter-from-above 820ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.section-leave-down { animation: section-leave-downward   820ms cubic-bezier(0.32, 0.72, 0, 1) both; }
