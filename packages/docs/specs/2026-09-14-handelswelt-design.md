@@ -1,6 +1,8 @@
 # Handelswelt — Entwurf
 
 **Stand:** 14.09.2026 · **Tickets:** `fx1t` (Vortrag, P0), `agm2` (danach, P1)
+**Deployment:** Die vier `MAIL_*`-Secrets stehen seit dem 14.09. Der letzte Deploy
+lief davor — der MailHandler existiert in AWS noch nicht, ein Push genügt.
 **Vortrag:** Mittwoch, 16.09.2026, 18:00
 
 ---
@@ -242,6 +244,55 @@ und dann sehen, ob der Agent sagt „das konnte ich nicht prüfen" — oder ob e
 
 ---
 
+## Zwei Empfänger, zwei Kanäle
+
+`SYSTEM_ASSISTENT` sagt: „Steht dir für eine Angabe kein Werkzeug zur Verfügung,
+dann **frage Lisa** danach." Im Mailweg geht die Antwort aber an den **Absender**.
+Also landet jede Lisa-Frage bei Hallbach — der Agent fragt den Lieferanten nach
+der eigenen Kategorievorgabe, nach internen Abverkaufszahlen, nach dem
+Auslistungskandidaten.
+
+Das trifft nicht nur den Modus ohne Werkzeuge. Es trifft **jeden Modus, in dem
+eine Rückfrage entsteht** — auch `voll`: Fall 4 des Prüfstands läuft mit
+Werkzeugen in dieselbe Falle.
+
+| Empfänger | Kanal | Was dorthin darf |
+|---|---|---|
+| **Hallbach** (Absender) | E-Mail zurück ins Postfach | nur Externes: Eingangsbestätigung, fehlende Angaben aus *seinem* Angebot, die Entscheidung |
+| **Lisa** (Teilnehmer) | Handy, Postfach-Ansicht | alles Interne: Zahlen, Einschätzungen, Freigaben |
+
+Zwei Regeln, die sich nie kreuzen dürfen:
+
+1. **Der Mail-Agent schreibt keine Lisa-Frage in die Mail.** Der Systemprompt
+   benennt den Adressaten: Die Antwort geht an einen Außenstehenden.
+2. **Der Agent mit Lisa-Kanal kann keine Mail senden.** Nicht „er tut es nicht",
+   sondern er kann es nicht — kein SES-Zugriff, kein Werkzeug dafür.
+
+`frage_lisa` wird ein **Werkzeug**. Das macht die Gegenüberstellung ehrlicher
+statt schwächer: Im Modus `prompt` (Systemprompt, keine Werkzeuge) hat der Agent
+keinen Weg zu Lisa. Er ist aufgefordert zu fragen und kann es nicht — was er dann
+tut, ist genau der Befund, den der Lauf sucht.
+
+### Die Postfach-Ansicht auf dem Handy
+
+Damit die Rückfrage einen Ort hat, bekommt der Teilnehmer die zweite Rolle: Eine
+E-Mail ist eingegangen, der Agent wertet sie aus, und wo ihm etwas fehlt, fragt
+er — der Teilnehmer antwortet als Lisa. Danach führt der Agent den Vorgang zu
+Ende und legt den Antwortentwurf vor.
+
+Das ist der Weg, den Abschnitt 5 ohnehin behauptet („Der Entwurf liegt in deinem
+E-Mail-Postfach") — nur dass ihn bisher niemand gehen kann.
+
+Was der Teilnehmer als Lisa beantwortet, gehört in die Vorgangsakte, sonst fragt
+der Agent im nächsten Zug erneut.
+
+**Offen:** ob der Teilnehmer beide Rollen gleichzeitig hat — er mailt als
+Hallbach *und* sieht auf dem Handy Lisas Seite desselben Vorgangs — oder ob die
+Handy-Ansicht einen eigenen, gescripteten Vorgang zeigt. Das Erste ist reizvoller
+und verwirrender.
+
+---
+
 ## Der Prüfstand
 
 `mail:test` wächst zu `verlauf:test`: gescriptete Threads als Vorlagen, jeder
@@ -257,6 +308,12 @@ eine Datei. Kein Konto A nötig, kein echtes Postfach, wiederholbar.
 | 6 | Der Systemausfall | Aktionskalender auf `aus` |
 | 7 | Der Unsinn | leere Mail, Spam, fremde Sprache |
 | 8 | Die Falle | der Teilnehmer nennt eigene Preise — ändert sich die Marge mit? |
+
+### Zwei Prüfungen über alle Fälle
+
+**Die Adressatenprüfung.** Keine ausgehende Mail enthält eine Frage, die nach
+innen gehört. Betrifft besonders Fall 4 und Fall 6, denn dort entsteht die
+Rückfrage auch *mit* Werkzeugen.
 
 ### Zahlendeckung
 
@@ -320,14 +377,19 @@ In dieser Reihenfolge, damit von unten gestrichen werden kann:
 2. Süßwaren normalisieren und umbenennen, Rest als Kulisse
 3. Sechs Ports: Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation,
    Aktionskalender, Listung — mit `Befund<T>`, `quelle`, `stand`
-4. Folien auf 31,1 % ziehen
-5. Gegenüberstellung laufen lassen, Folientexte danach festlegen
-6. Vorgangsakte
-7. Anker und drei Stände
-8. Fälle 1–6 plus Zahlendeckung
-9. Störungsschalter, Fälle 7 und 8
+4. Adressaten trennen: `frage_lisa` als Werkzeug, Systemprompt benennt den
+   Empfänger, der Lisa-Agent bekommt keinen Weg ins Postfach
+5. Folien auf 31,1 % ziehen
+6. Gegenüberstellung laufen lassen, Folientexte danach festlegen
+7. Vorgangsakte
+8. Postfach-Ansicht auf dem Handy — der Teilnehmer als Lisa
+9. Anker und drei Stände
+10. Fälle 1–6, Zahlendeckung, Adressatenprüfung
+11. Störungsschalter, Fälle 7 und 8
 
-Punkte 7 bis 9 fallen einzeln, ohne den Rest mitzureißen. Punkt 2 fällt nicht.
+Punkte 9 bis 11 fallen einzeln, ohne den Rest mitzureißen. **Punkt 2 und Punkt 4
+fallen nicht** — echte Markennamen und interne Fragen an den Lieferanten sind
+beide keine Schönheitsfehler.
 
 ### Danach (`agm2`)
 
@@ -337,6 +399,9 @@ Punkte 7 bis 9 fallen einzeln, ohne den Rest mitzureißen. Punkt 2 fällt nicht.
 - Port **Postfach** — das volle simulierte Postfach: lesen, suchen, ablegen,
   Kalender, Anhänge. Nicht nur der eine Thread.
 - Port **`wissen`** über die zehn Wissensdateien
+- `frage_lisa` aus dem **Mailweg** heraus: der Teilnehmer mailt als Hallbach und
+  sieht auf dem eigenen Handy, was der Agent Lisa fragen möchte. Reizvoll, aber
+  es vermischt die beiden Rollen des Teilnehmers — für den Vortrag zu viel.
 
 Zum `wissen`-Port: Die Ports liefern **Daten**, und Daten können fehlen — darauf
 antwortet `nicht_gefunden`. Das Wissen liefert **Positionen**, und Wissen kann
