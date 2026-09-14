@@ -192,8 +192,21 @@ export async function beantworte(
   mailtext: string,
   client = new BedrockRuntimeClient({}),
 ): Promise<Lauf> {
+  /*
+    Im Postfach läuft die GEHÄRTETE Fassung.
+
+    Gemessen (packages/docs/messungen/2026-09-14-zwei-prompts): Mit dem
+    ursprünglichen Prompt gingen in 3 von 5 Läufen Interna an den Absender —
+    Rohertrag, Marktpaneldaten, Regalbelegung. Mit der gehärteten Fassung in
+    keinem einzigen, bei gleichen Kosten und einer Systemabfrage weniger.
+
+    Nur der MAILWEG ist davon betroffen. Der Chat auf dem Handy behält seinen
+    Prompt, und das ist kein Versehen: Dort ist der Teilnehmer Lisa, und ihr
+    gegenüber sind dieselben Zahlen keine Interna, sondern genau das, wofür sie
+    den Assistenten hat.
+  */
   return beantworteMit(
-    modus === "assistent" ? AUSSTATTUNGEN.voll : AUSSTATTUNGEN.probe,
+    modus === "assistent" ? AUSSTATTUNGEN.gehaertet : AUSSTATTUNGEN.probe,
     mailtext,
     client,
   );
