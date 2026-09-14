@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { SECTIONS, TOTAL } from "@/slides/data";
 import { useNavigation } from "@/nav/useNavigation";
 import { useSectionTransition } from "@/nav/useSectionTransition";
-import { STAGE_W, useStageScale } from "@/nav/useStageScale";
+import { STAGE_W, useStageFit } from "@/nav/useStageScale";
 import { SectionView } from "./SectionView";
 import { CLEAN } from "@/routen";
 import { Logo } from "./Logo";
@@ -12,7 +12,7 @@ import { Logo } from "./Logo";
 export function LiveView() {
   const { index, step, total } = useNavigation(TOTAL);
   const { leaving, forward } = useSectionTransition(index);
-  const scale = useStageScale();
+  const { scale, left, top } = useStageFit();
   const section = SECTIONS[index];
   const [showHelp, setShowHelp] = useState(!CLEAN);
 
@@ -31,11 +31,12 @@ export function LiveView() {
   }, [all]);
 
   return (
-    <div className="fixed inset-0 grid place-items-center bg-stage">
+    <div className="fixed inset-0 overflow-hidden bg-stage">
+      {/* Versatz und Maßstab kommen aus useStageFit — siehe dort, warum nicht aus dem Layout. */}
       <div
-        className="relative h-[1080px] w-[1920px] shrink-0 origin-center overflow-hidden bg-stage"
+        className="absolute top-0 left-0 h-[1080px] w-[1920px] origin-top-left overflow-hidden bg-stage"
         data-block={section.b}
-        style={{ transform: `scale(${scale})` }}
+        style={{ transform: `translate(${left}px, ${top}px) scale(${scale})` }}
       >
         {leaving !== null && (
           <div

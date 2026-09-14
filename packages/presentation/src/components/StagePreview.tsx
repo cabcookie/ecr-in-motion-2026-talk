@@ -27,9 +27,20 @@ export function StagePreview({
   const box = useRef<HTMLDivElement>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [fsScale, setFsScale] = useState(1);
+  const [fsOffset, setFsOffset] = useState({ left: 0, top: 0 });
 
+  /*
+    Im Vollbild derselbe Fallstrick wie auf der Leinwand: Ein Kind, das breiter
+    ist als sein Gitter, zentriert sich in einer Spur, die bei null beginnt —
+    und steht dann zu weit rechts. Versatz deshalb selbst rechnen.
+  */
   const measure = useCallback(() => {
-    setFsScale(Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H));
+    const s = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
+    setFsScale(s);
+    setFsOffset({
+      left: Math.round((window.innerWidth - STAGE_W * s) / 2),
+      top: Math.round((window.innerHeight - STAGE_H * s) / 2),
+    });
   }, []);
 
   useEffect(() => {
@@ -60,7 +71,7 @@ export function StagePreview({
         data-block={section.b}
         className={
           fullscreen
-            ? "grid h-screen w-screen place-items-center overflow-hidden bg-stage"
+            ? "relative h-screen w-screen overflow-hidden bg-stage"
             : "relative overflow-hidden rounded-md border border-hair bg-stage"
         }
         style={
@@ -70,8 +81,14 @@ export function StagePreview({
         }
       >
         <div
-          className={fullscreen ? "shrink-0 origin-center" : "absolute top-0 left-0 origin-top-left"}
-          style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})` }}
+          className="absolute top-0 left-0 origin-top-left"
+          style={{
+            width: STAGE_W,
+            height: STAGE_H,
+            transform: fullscreen
+              ? `translate(${fsOffset.left}px, ${fsOffset.top}px) scale(${scale})`
+              : `scale(${scale})`,
+          }}
         >
           <SectionView section={section} panel={panel} isTitle={section.n === 1} />
           <Logo large={section.n === 1} animated={false} />
