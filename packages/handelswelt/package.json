@@ -8,9 +8,12 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "erzeuge": "tsx erzeugung/erzeuge.ts",
+    "marken:test": "tsx erzeugung/marken-test.ts"
   },
   "devDependencies": {
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "tsx": "4.20.6"
   }
 }
