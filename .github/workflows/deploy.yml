@@ -47,18 +47,6 @@ jobs:
       - name: Abhängigkeiten (gesperrt)
         run: pnpm install --frozen-lockfile
 
-      - name: Markenmaterial
-        # Schrift und Logo gehören Amazon und liegen nicht im Repository. Ohne sie
-        # greift der Ersatz-Schriftstapel — die Folien funktionieren, sehen aber
-        # anders aus. Deshalb ein Hinweis im Protokoll und kein stiller Durchlauf.
-        run: |
-          set -euo pipefail
-          if [ -d packages/brand-material ]; then
-            python3 packages/presentation/scripts/markenmaterial.py
-          else
-            echo "::warning::Kein Markenmaterial im Lauf — Ersatzschrift, kein Logo."
-          fi
-
       - name: Typen prüfen
         run: pnpm --filter @ecr-talk/presentation exec tsc --noEmit
 
@@ -67,6 +55,27 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
           aws-region: eu-central-1
+
+      - name: Markenmaterial holen
+        # Schrift und Logo gehören Amazon und liegen nicht im Repository. Sie
+        # kommen aus einem privaten Eimer, den der Bootstrap-Stack anlegt und
+        # den diese Rolle lesen darf.
+        #
+        # Das muss NACH den Zugangsdaten und VOR dem Ausrollen stehen: Hosting
+        # baut die Seite während des Synthetisierens, also innerhalb des
+        # nächsten Schritts.
+        run: |
+          set -euo pipefail
+          ziel=packages/presentation/public/brand
+          mkdir -p "$ziel"
+          aws s3 sync "s3://${BRAND_BUCKET}/" "$ziel/"
+          test -f "$ziel/aws-logo.svg" || {
+            echo "::error::Kein Logo im Eimer ${BRAND_BUCKET} — die Seite käme ohne Marke heraus."
+            exit 1
+          }
+          echo "Geholt: $(find "$ziel" -type f | wc -l | tr -d ' ') Dateien"
+        env:
+          BRAND_BUCKET: ecr2026-brand-carstenbkoch-de
 
       - name: Ausrollen
         env:
@@ -88,13 +97,22 @@ jobs:
         run: pnpm --filter @ecr-talk/presentation run deploy
 
       - name: Erreichbarkeit prüfen
+        # Nicht nur die Seite, sondern auch Logo und Schrift. Ein Rollout, der
+        # grün meldet und die Marke unterschlägt, ist schlimmer als einer, der
+        # scheitert — er fällt erst am Beamer auf.
         run: |
           set -euo pipefail
+          basis=https://ecr2026.carstenbkoch.de
+          pfade="/ /brand/aws-logo.svg /brand/fonts/AmazonEmberDisplay_Rg.woff2"
           for i in $(seq 1 20); do
-            code="$(curl -s -o /dev/null -w '%{http_code}' https://ecr2026.carstenbkoch.de/ || true)"
-            if [ "$code" = "200" ]; then echo "ecr2026.carstenbkoch.de antwortet mit 200"; exit 0; fi
-            echo "Versuch $i: HTTP $code — warte"
+            alle=ja
+            for p in $pfade; do
+              code="$(curl -s -o /dev/null -w '%{http_code}' "$basis$p" || true)"
+              [ "$code" = "200" ] || { alle=nein; letzter="$p → HTTP $code"; break; }
+            done
+            if [ "$alle" = "ja" ]; then echo "Seite, Logo und Schrift antworten mit 200"; exit 0; fi
+            echo "Versuch $i: $letzter — warte"
             sleep 15
           done
-          echo "::error::Die Seite antwortet nach fünf Minuten nicht mit 200."
+          echo "::error::Nach fünf Minuten nicht vollständig erreichbar: $letzter"
           exit 1

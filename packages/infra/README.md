@@ -56,6 +56,18 @@ dig +short NS ecr2026.carstenbkoch.de
 Kommen die vier Namen zurück, ist der Weg frei. Vorher nicht weitermachen: das
 Zertifikat im nächsten Schritt hängt daran.
 
+**4b. Schrift und Logo in den Eimer spiegeln.** Beides gehört Amazon und liegt
+nicht im Repository; der Deploy-Lauf holt es sich von dort. Einmal von der
+Maschine, auf der `packages/brand-material` liegt:
+
+```bash
+python3 packages/presentation/scripts/markenmaterial.py
+aws s3 sync packages/presentation/public/brand/ s3://ecr2026-brand-carstenbkoch-de/ --delete
+```
+
+Ohne diesen Schritt bricht der Deploy-Lauf ab — mit Absicht. Eine Seite, die
+grün meldet und ohne Marke herauskommt, fällt sonst erst am Beamer auf.
+
 **5. Zwei Secrets in GitHub setzen** (Repository → Settings → Secrets → Actions):
 
 | Secret | Inhalt |

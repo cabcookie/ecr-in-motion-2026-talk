@@ -81,3 +81,17 @@ export const MAIL_FROM = "ecr2026@carstenbkoch.de";
  * examples/konto-a/mail-empfang-stack.ts.
  */
 export const MAIL_HANDLER_ROLE = "ecr2026-mail-handler";
+
+/**
+ * Eimer für Schrift und Logo.
+ *
+ * Beides gehört Amazon und liegt deshalb nicht im Repository — das war die
+ * Vorgabe, und sie ist richtig. Nur checkt GitHub Actions damit ein Repo ohne
+ * die Dateien aus, und die ausgerollte Seite kam ohne Logo und in der
+ * Ersatzschrift heraus, ohne dass irgendetwas rot wurde.
+ *
+ * Also der Weg, der von Anfang an vorgeschlagen war: Die Dateien liegen in
+ * einem privaten Eimer, der Deploy-Lauf holt sie sich vor dem Bauen. Der Name
+ * enthält bewusst keine Konto-Nummer, weil dieses Repository öffentlich wird.
+ */
+export const BRAND_BUCKET = "ecr2026-brand-carstenbkoch-de";

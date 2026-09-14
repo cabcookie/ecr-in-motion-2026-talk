@@ -1,8 +1,9 @@
 import { CfnOutput, Fn, Stack, StackProps } from "aws-cdk-lib";
 import { OpenIdConnectProvider, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
 import { HostedZone } from "aws-cdk-lib/aws-route53";
+import { BlockPublicAccess, Bucket, BucketEncryption } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
-import { DEPLOY_ROLE, DEPLOY_SUBJECTS, DOMAIN } from "../config";
+import { BRAND_BUCKET, DEPLOY_ROLE, DEPLOY_SUBJECTS, DOMAIN } from "../config";
 import { githubOidcPrincipal } from "./github-oidc";
 
 /**
@@ -54,6 +55,20 @@ export class BootstrapStack extends Stack {
       }),
     );
 
+    /*
+      Schrift und Logo. Privat, versioniert, und vom Deploy-Lauf lesbar — mehr
+      braucht es nicht. Er holt sie sich vor dem Bauen; im Repository liegen sie
+      nicht, weil sie Amazon gehören.
+    */
+    const marke = new Bucket(this, "Brand", {
+      bucketName: BRAND_BUCKET,
+      encryption: BucketEncryption.S3_MANAGED,
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+      versioned: true,
+    });
+    marke.grantRead(deployRole);
+
     const zone = new HostedZone(this, "Zone", {
       zoneName: DOMAIN,
       comment: "ECR in Motion 2026 — Vortrag",
@@ -62,6 +77,10 @@ export class BootstrapStack extends Stack {
     new CfnOutput(this, "DeployRoleArn", {
       value: deployRole.roleArn,
       description: "Als AWS_DEPLOY_ROLE in die GitHub-Secrets eintragen",
+    });
+    new CfnOutput(this, "BrandBucket", {
+      value: marke.bucketName,
+      description: "Schrift und Logo hierhin spiegeln, siehe README",
     });
     new CfnOutput(this, "ZoneNameServers", {
       value: Fn.join(" ", zone.hostedZoneNameServers ?? []),
