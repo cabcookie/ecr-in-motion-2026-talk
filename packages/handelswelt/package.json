@@ -9,7 +9,8 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "marken:test": "tsx pruefung/marken-test.ts"
+    "marken:test": "tsx pruefung/marken-test.ts",
+    "ports:test": "tsx pruefung/ports-test.ts"
   },
   "devDependencies": {
     "typescript": "5.9.3",

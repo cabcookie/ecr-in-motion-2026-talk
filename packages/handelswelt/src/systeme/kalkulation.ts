@@ -7,7 +7,7 @@
  * auf die Leinwand. Genau die Halluzination, die Abschnitt 15 vorführen will,
  * nur im falschen Agenten.
  */
-import { SCHOKOLADE_UND_PRALINEN, type Kategorievorgabe } from '../daten/kategorien';
+import { SCHOKOLADE_UND_PRALINEN, standDerKategorie, type Kategorievorgabe } from '../daten/kategorien';
 import { type Befund, fehlschlag, treffer } from './port';
 
 export interface Margenbefund {
@@ -62,7 +62,7 @@ export function marge(
       luftInPunkten: runde((rohertrag - vorgabe.mindestRohertrag) * 100, 2),
     },
     `Kalkulation ${vorgabe.kategorie}`,
-    vorgabe.stand,
+    standDerKategorie(),
   );
 }
 
