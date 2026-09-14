@@ -752,7 +752,7 @@ export const SECTIONS: Section[] = [
             "Die Kategorie wächst um 3,2 %",
             "Underperformer ist Nocturne Mini mit −12 %",
             "Regalplatz gibt es nur, wenn etwas ausgelistet wird",
-            "Die Marge läge bei 34,2 %"
+            "Die Marge läge bei 31,1 %"
           ]
         },
         "app": "Chat mit Systemprompt, ohne Tools. Das Gespräch beginnt mit der Mail von Hallbach aus Abschnitt 2. Antwortvorschläge zum Antippen, damit niemand lange tippen muss. Der Systemprompt ist einsehbar — es ist derselbe, mit dem der Agent läuft."
@@ -837,7 +837,7 @@ export const SECTIONS: Section[] = [
                 "regalplanung.platz",
                 "aktionskalender.zeitraum"
               ],
-              "text": "Kategorie wächst +3,2 %. Underperformer: Nocturne Mini (−12 %). Regalplatz frei, wenn Nocturne Mini geht. Marge 34,2 % — über Vorgabe. Und: Am 22. Oktober werden in 12 Hamburger Märkten Aufsteller frei. Der Entwurf liegt in deinem E-Mail-Postfach."
+              "text": "Kategorie wächst +3,2 %. Underperformer: Nocturne Mini (−12 %). Regalplatz frei, wenn Nocturne Mini geht. Rohertrag 31,1 % — über Vorgabe, aber nur mit gut einem Punkt Luft. Und: Am 22. Oktober werden in 12 Hamburger Märkten Aufsteller frei. Der Entwurf liegt in deinem E-Mail-Postfach."
             }
           ]
         },

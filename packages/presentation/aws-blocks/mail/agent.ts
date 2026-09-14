@@ -52,6 +52,42 @@ Du hast keinen Zugriff auf Systeme, Daten oder Dokumente. Frage auch nicht nach 
 
 Antworte als E-Mail in reinem Fließtext, mit Anrede und Grußformel. Hänge darunter, getrennt durch eine Leerzeile und die Zeile "Wie ich darauf komme:", drei bis fünf Stichpunkte an, die deine Schritte benennen.`;
 
+/**
+ * Womit der Agent antritt.
+ *
+ * Für den Vortrag gibt es zwei Ausstattungen — Assistent und Probe. Für die
+ * Messung in v455 braucht es vier, weil die Folien behaupten, was der Unterschied
+ * ausmacht, und das vorher niemand nachgerechnet hat.
+ */
+export interface Ausstattung {
+  /** Der Systemprompt. Leer heißt: gar keiner. */
+  readonly systemprompt?: string;
+  readonly werkzeuge: boolean;
+  /** Name eines Werkzeugs, das nicht antwortet — für den Fall „System gestört". */
+  readonly stoerung?: string;
+}
+
+/**
+ * Ein nackter Auftrag ohne jede Rolle.
+ *
+ * Wichtig für die Messung: Der bisherige Proben-Agent hat sehr wohl einen
+ * Systemprompt (SYSTEM_PROBE) — er ist nur ein anderer, und er fordert
+ * ausdrücklich zum Raten auf. „Ohne Systemprompt" gab es im Code bisher nicht.
+ */
+const SYSTEM_ROH = `Beantworte diese E-Mail.`;
+
+export const AUSSTATTUNGEN: Readonly<Record<string, Ausstattung>> = {
+  roh: { systemprompt: SYSTEM_ROH, werkzeuge: false },
+  probe: { systemprompt: SYSTEM_PROBE, werkzeuge: false },
+  prompt: { systemprompt: SYSTEM_ASSISTENT, werkzeuge: false },
+  voll: { systemprompt: SYSTEM_ASSISTENT, werkzeuge: true },
+  gestoert: {
+    systemprompt: SYSTEM_ASSISTENT,
+    werkzeuge: true,
+    stoerung: "aktionskalender_zeitraum",
+  },
+};
+
 export interface Lauf {
   /** Der Antworttext des Agenten. */
   readonly text: string;
@@ -64,6 +100,16 @@ export interface Lauf {
    * Antwortmail darf: Die geht an den Absender, und das hier ist intern.
    */
   readonly fragenAnLisa: readonly { frage: string; warum: string }[];
+  /**
+   * Was die Systeme geantwortet haben, roh.
+   *
+   * Grundlage der Zahlendeckung: Jede Zahl in der Antwort muss sich hierauf
+   * oder auf die eingehende Mail zurückführen lassen. Was übrig bleibt, ist
+   * erfunden.
+   */
+  readonly belege: readonly Record<string, unknown>[];
+  /** Verbrauchte Token, für die Kostenrechnung. */
+  readonly verbrauch: { ein: number; aus: number };
 }
 
 /*
@@ -109,11 +155,26 @@ export async function beantworte(
   mailtext: string,
   client = new BedrockRuntimeClient({}),
 ): Promise<Lauf> {
-  const mitWerkzeugen = modus === "assistent";
-  const system = [{ text: mitWerkzeugen ? SYSTEM_ASSISTENT : SYSTEM_PROBE }];
+  return beantworteMit(
+    modus === "assistent" ? AUSSTATTUNGEN.voll : AUSSTATTUNGEN.probe,
+    mailtext,
+    client,
+  );
+}
+
+/** Derselbe Lauf, aber mit frei gewählter Ausstattung — für die Messung. */
+export async function beantworteMit(
+  ausstattung: Ausstattung,
+  mailtext: string,
+  client = new BedrockRuntimeClient({}),
+): Promise<Lauf> {
+  const mitWerkzeugen = ausstattung.werkzeuge;
+  const system = ausstattung.systemprompt ? [{ text: ausstattung.systemprompt }] : undefined;
   const messages: Message[] = [{ role: "user", content: [{ text: mailtext }] }];
   const schritte: string[] = [];
   const fragenAnLisa: { frage: string; warum: string }[] = [];
+  const belege: Record<string, unknown>[] = [];
+  const verbrauch = { ein: 0, aus: 0 };
 
   for (let runde = 0; runde < MAX_RUNDEN; runde++) {
     const antwort = await client.send(
@@ -126,12 +187,15 @@ export async function beantworte(
       }),
     );
 
+    verbrauch.ein += antwort.usage?.inputTokens ?? 0;
+    verbrauch.aus += antwort.usage?.outputTokens ?? 0;
+
     const inhalt = antwort.output?.message?.content ?? [];
     messages.push({ role: "assistant", content: inhalt });
 
     const aufrufe = inhalt.flatMap((b) => ("toolUse" in b && b.toolUse ? [b.toolUse] : []));
     if (antwort.stopReason !== "tool_use" || aufrufe.length === 0) {
-      return { text: textVon(inhalt), schritte, fragenAnLisa };
+      return { text: textVon(inhalt), schritte, fragenAnLisa, belege, verbrauch };
     }
 
     const ergebnisse: ContentBlock[] = aufrufe.map((a) => {
@@ -152,11 +216,25 @@ export async function beantworte(
       } else {
         schritte.push(a.name ?? "unbekannt");
       }
+      /*
+        Der Störungsschalter. Ein ausgefallenes System wirft nicht, sondern
+        antwortet mit einem Grund — sonst verschluckt die Schleife den Fehler,
+        und er kommt als erfundene Zahl wieder heraus.
+      */
+      const ergebnis =
+        a.name === ausstattung.stoerung
+          ? {
+              verfuegbar: false,
+              grund: "nicht_erreichbar",
+              hinweis: "Das System antwortet gerade nicht. Versuche es nicht erneut.",
+            }
+          : werkzeug
+            ? werkzeug.antwort(args)
+            : { fehler: "Werkzeug unbekannt" };
+      if (a.name !== FRAGE_LISA) belege.push(ergebnis);
+
       return {
-        toolResult: {
-          toolUseId: a.toolUseId,
-          content: [{ json: werkzeug ? werkzeug.antwort(args) : { fehler: "Werkzeug unbekannt" } }],
-        },
+        toolResult: { toolUseId: a.toolUseId, content: [{ json: ergebnis }] },
       } as ContentBlock;
     });
     messages.push({ role: "user", content: ergebnisse });
