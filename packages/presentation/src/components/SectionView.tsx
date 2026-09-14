@@ -52,7 +52,7 @@ export function SectionView({
     >
       {/* Kopf — wandert vom Bildmittelpunkt nach oben, wenn das erste Panel kommt */}
       <div
-        className={`flex flex-col transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`flex flex-col transition-[flex-grow] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           hero ? "flex-1 items-center justify-center text-center" : "flex-none items-start"
         }`}
       >
@@ -62,7 +62,7 @@ export function SectionView({
           </div>
         )}
         <h1
-          className={`m-0 font-display leading-[1.12] font-extrabold tracking-[-0.025em] text-balance text-fg transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${titleSize(
+          className={`m-0 font-display leading-[1.12] font-extrabold tracking-[-0.025em] text-balance text-fg transition-[font-size,max-width] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${titleSize(
             section.title,
             hero,
           )} ${hero ? "max-w-[20ch]" : "max-w-[26ch]"}`}
@@ -90,8 +90,14 @@ export function SectionView({
             {section.panels.map((p, i) => (
               <div
                 key={i}
-                className={`h-full w-full shrink-0 transition-opacity duration-[600ms] ${
-                  i === panel ? "opacity-100" : "opacity-0"
+                /*
+                  Das ausscheidende Panel bekommt ease-in: es bleibt zunächst
+                  hell und verliert erst zum Schluss. Mit der linearen Kurve
+                  war es nach einem Drittel der Strecke schon weg, obwohl es
+                  noch sichtbar über die Fläche schob.
+                */
+                className={`h-full w-full shrink-0 transition-opacity duration-[700ms] ${
+                  i === panel ? "opacity-100 ease-out" : "opacity-0 ease-in"
                 }`}
                 aria-hidden={i !== panel}
               >

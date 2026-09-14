@@ -181,28 +181,55 @@ body:has(#root > [data-view="audience"]) #root {
   kommt von unten. Der Inhalt blendet dabei verzögert ein, damit nichts lesbar
   ist, bevor es steht.
 */
+/*
+  Abschnittswechsel.
+
+  Vorher lief der alte Abschnitt eine volle Bildhöhe weit hinaus und war dabei
+  schon nach 40 % der Zeit unsichtbar, während der neue bis 60 % wartete. In
+  der Mitte war damit fast nichts zu sehen — das las sich als harter Schnitt,
+  nicht als Bewegung.
+
+  Jetzt überlappen sie: der alte weicht nur ein Stück zurück und verblasst über
+  die ganze Dauer, der neue kommt ihm entgegen. Die kurze Strecke ist der
+  eigentliche Unterschied — eine ganze Bildhöhe in 760 ms ist auf einer
+  Leinwand schlicht zu schnell für das Auge.
+*/
 @keyframes section-enter-from-below {
-  from { transform: translateY(100%); opacity: 0; }
-  60%  { opacity: 0; }
+  from { transform: translateY(18%); opacity: 0; }
+  40%  { opacity: 0.5; }
   to   { transform: translateY(0); opacity: 1; }
 }
 @keyframes section-leave-upward {
   from { transform: translateY(0); opacity: 1; }
-  40%  { opacity: 0; }
-  to   { transform: translateY(-100%); opacity: 0; }
+  60%  { opacity: 0.28; }
+  to   { transform: translateY(-11%); opacity: 0; }
 }
 @keyframes section-enter-from-above {
-  from { transform: translateY(-100%); opacity: 0; }
-  60%  { opacity: 0; }
+  from { transform: translateY(-18%); opacity: 0; }
+  40%  { opacity: 0.5; }
   to   { transform: translateY(0); opacity: 1; }
 }
 @keyframes section-leave-downward {
   from { transform: translateY(0); opacity: 1; }
-  40%  { opacity: 0; }
-  to   { transform: translateY(100%); opacity: 0; }
+  60%  { opacity: 0.28; }
+  to   { transform: translateY(11%); opacity: 0; }
+}
+
+/*
+  will-change hebt die beiden Ebenen auf eigene Compositing-Schichten. Ohne das
+  zeichnet der Browser den ganzen Abschnittsbaum je Bild neu — bei zwei
+  gleichzeitig laufenden Abschnitten auf 1920 × 1080 reicht das für sichtbares
+  Ruckeln.
+*/
+.section-enter-down,
+.section-leave-up,
+.section-enter-up,
+.section-leave-down {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .section-enter-down { animation: section-enter-from-below 760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.section-leave-up   { animation: section-leave-upward   760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.section-leave-up   { animation: section-leave-upward   760ms cubic-bezier(0.33, 0, 0.67, 1) both; }
 .section-enter-up   { animation: section-enter-from-above 760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.section-leave-down { animation: section-leave-downward 760ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.section-leave-down { animation: section-leave-downward 760ms cubic-bezier(0.33, 0, 0.67, 1) both; }

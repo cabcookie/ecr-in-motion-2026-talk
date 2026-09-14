@@ -4,13 +4,18 @@ import { useLayoutEffect, useRef, type ReactNode } from "react";
  * Hält Folieninhalte im Bild.
  *
  * Misst den Inhalt ungeskaliert und verkleinert ihn per transform, wenn er
- * höher oder breiter ist als der zugewiesene Platz. Damit kann kein Mock
- * über den Folienrand laufen, egal wie lang ein Text wird — und wir müssen
- * Inhalte nicht pro Folie von Hand auf die Bühne passen.
+ * höher oder breiter ist als der zugewiesene Platz. Damit kann kein Mock über
+ * den Folienrand laufen, egal wie lang ein Text wird.
  *
- * Greift direkt aufs DOM zu statt über State, damit kein Mess-Render-Kreis
- * entsteht. Der gemessene Faktor landet in data-fit, damit der
- * Screenshot-Lauf melden kann, welche Folien zu voll sind.
+ * Der Platz steht nicht sofort fest: Beim ersten Panel eines Abschnitts wandert
+ * die Überschrift gerade erst nach oben und gibt die Fläche nach und nach frei.
+ * Früher wurde deshalb einmal am Anfang und noch einmal nach 820 ms gemessen —
+ * und der Inhalt sprang sichtbar von halber auf volle Größe.
+ *
+ * Jetzt beobachtet ein ResizeObserver die Fläche und rechnet den Maßstab bei
+ * jeder Änderung neu. Die Naturgröße des Inhalts wird dabei nur einmal
+ * gemessen, danach kommt die Fläche aus contentRect — kein erzwungenes Layout
+ * je Bild, also keine Ruckler.
  */
 export function FitBox({
   children,
@@ -30,28 +35,47 @@ export function FitBox({
     const i = inner.current;
     if (!o || !i) return;
 
-    const apply = () => {
+    /** Naturgröße des Inhalts — ändert sich nur, wenn die Schrift nachlädt. */
+    let natH = 0;
+    let natW = 0;
+
+    const messen = () => {
       i.style.transform = "none";
-      const h = i.offsetHeight;
-      const w = i.offsetWidth;
-      if (!h || !w) return;
-      const s = Math.min(1, o.clientHeight / h, o.clientWidth / w);
+      natH = i.offsetHeight;
+      natW = i.offsetWidth;
+    };
+
+    const passen = (flaecheH: number, flaecheW: number) => {
+      if (!natH || !natW || !flaecheH || !flaecheW) return;
+      const s = Math.min(1, flaecheH / natH, flaecheW / natW);
       i.style.transformOrigin = centered ? "top center" : "top left";
       i.style.transform = s < 0.999 ? `scale(${s})` : "none";
       o.dataset.fit = s.toFixed(2);
     };
 
-    apply();
-    // Webfonts kommen nach dem ersten Layout an und ändern die Höhe
-    document.fonts.ready.then(apply).catch(() => {});
-    /*
-      Und noch einmal, wenn die Bewegung durch ist: Beim ersten Panel eines
-      Abschnitts wandert die Überschrift gerade erst nach oben. Wer währenddessen
-      misst, sieht den Platz, den sie noch einnimmt — und verkleinert den Inhalt
-      auf die Hälfte.
-    */
-    const after = setTimeout(apply, 820);
-    return () => clearTimeout(after);
+    messen();
+    passen(o.clientHeight, o.clientWidth);
+
+    const ro = new ResizeObserver((eintraege) => {
+      const r = eintraege[0]?.contentRect;
+      if (r) passen(r.height, r.width);
+    });
+    ro.observe(o);
+
+    // Webfonts kommen nach dem ersten Layout an und ändern die Naturgröße
+    let verworfen = false;
+    document.fonts.ready
+      .then(() => {
+        if (verworfen) return;
+        messen();
+        passen(o.clientHeight, o.clientWidth);
+      })
+      .catch(() => {});
+
+    return () => {
+      verworfen = true;
+      ro.disconnect();
+    };
   }, [slideKey, centered]);
 
   return (
