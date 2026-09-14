@@ -23,5 +23,10 @@ export interface SyncTransport {
   readonly id: string;
   send(msg: SyncMessage): void;
   subscribe(handler: (msg: SyncMessage) => void): () => void;
+  /**
+   * Meldet, ob die Verbindung gerade steht. Der BroadcastChannel steht immer;
+   * über das Netz kann sie abreißen, etwa wenn ein Handy gesperrt wird.
+   */
+  onStatus?(handler: (verbunden: boolean) => void): () => void;
   close(): void;
 }

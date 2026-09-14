@@ -5,12 +5,13 @@
 
 > **You have already been given the index below** — all of it, or as much of it as a session start could carry. It is the same index `nxm prime` replays, which stops at the byte budget the host delivers and says so when it does (`nxm index` prints the whole of it), so there is nothing to gain by reading it again here. Underneath it stands the FULL TEXT of each memory — that is what `nxm recall <key>` serves, and it is meant to be read one memory at a time, when the index tells you a particular one matters. Reading this file end to end is the expensive way to obtain what you already have.
 
-## Index (4)
+## Index (5)
 
 - **vortrag-szenario-entscheidung**: Der Vortrag nutzt das Lisa-Berger-Listungsszenario, nicht die gebaute Markus-Weber-Supply-Chain-Simulation.
 - **blocks-email-empfang**: AWS Blocks kann E-Mails senden (EmailClient/SES), aber nicht empfangen — Empfang über SES-Regel und Lambda in der CDK-Schicht.
 - **blocks-deployment-fallen**: Vor jedem Blocks-Deployment pruefen: Bucketnamen unter 63 Zeichen, esbuild im Wurzelpaket, stackId in .blocks/config.json.
 - **deployment-weg**: Deploy laeuft ueber GitHub OIDC; Hosted Zone und Rolle liegen in packages/infra und muessen vor dem ersten Anwendungs-Deployment stehen.
+- **github-oidc-sub**: OIDC-sub von GitHub enthaelt Besitzer- und Repo-ID; bei 'Not authorized' zeigt CloudTrail den tatsaechlichen Anspruch.
 
 ## Full text
 
@@ -35,3 +36,9 @@ Die Blocks-Bausteine bringen beim Deployment drei Stolpersteine mit, die erst be
 ### `deployment-weg`
 
 Das Hosting des Vortrags laeuft ueber GitHub Actions mit OIDC statt Schluesselpaaren. packages/infra ist eine eigene CDK-App fuer das, was einmal von Hand entsteht: die Deploy-Rolle und die Hosted Zone. Die Zone gehoert dorthin und NICHT in den Anwendungs-Stack, weil das CloudFront-Zertifikat ueber DNS geprueft wird - laege die Zone im selben Deployment, schriebe AWS den Pruefeintrag in eine noch nicht delegierte Zone und die Pruefung liefe bis zum Zeitlimit. Reihenfolge: OIDC-Anbieter, cdk bootstrap, Bootstrap-Stack, NS-Delegation in der uebergeordneten Zone, Secrets, erst dann die Anwendung. Beim OIDC-Vertrauen keine Bedingung auf repository_owner setzen - die hat in einem nxsflow-Konto zu verweigerter Rollenannahme gefuehrt; die sub-Positivliste grenzt das Repository ohnehin vollstaendig ein.
+
+---
+
+### `github-oidc-sub`
+
+GitHub Actions sendet im OIDC-sub-Anspruch die unveraenderlichen Kennungen von Besitzer und Repository, nicht die blossen Namen: repo:<owner>@<owner_id>/<repo>@<repo_id>:<kontext>. Eine Positivliste mit der Namensform allein fuehrt zu 'Not authorized to perform sts:AssumeRoleWithWebIdentity'. Zweitens: Sobald ein Job 'environment: <name>' nennt, wird der Anspruch zu ':environment:<name>' statt ':ref:refs/heads/<zweig>' - und weil der Zweig darin fehlt, muss die Umgebung zusaetzlich auf den Zweig eingeschraenkt werden (deployment_branch_policy). Drittens, fuer die Fehlersuche: Die STS-Meldung ist bei falscher Positivliste identisch mit der bei einer SCP-Sperre. Nur CloudTrail unterscheidet sie - das abgelehnte AssumeRoleWithWebIdentity-Ereignis nennt unter userIdentity.userName den Anspruch, der tatsaechlich ankam. Kennungen gegenpruefen mit: gh api repos/<repo> --jq '{id, owner:.owner.id}'.

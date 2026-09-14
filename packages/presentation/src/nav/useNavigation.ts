@@ -93,7 +93,9 @@ export function useNavigation(
     const t = create();
     if (!t) return;
     transport.current = t;
-    setConnected(true);
+    // Der BroadcastChannel kennt keinen Abriss und meldet deshalb nichts;
+    // über das Netz kommt der Stand vom Transport.
+    const offStatus = t.onStatus ? t.onStatus(setConnected) : (setConnected(true), () => {});
 
     const off = t.subscribe((msg) => {
       if (msg.type === "goto") {
@@ -111,6 +113,7 @@ export function useNavigation(
 
     return () => {
       off();
+      offStatus();
       t.close();
       transport.current = null;
       setConnected(false);

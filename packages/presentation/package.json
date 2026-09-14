@@ -15,7 +15,8 @@
     "deploy": "tsx aws-blocks/scripts/deploy.ts",
     "destroy": "tsx aws-blocks/scripts/destroy.ts",
     "kosten": "tsx scripts/kostenrechnung.ts",
-    "mail:test": "tsx scripts/mail-test.ts"
+    "mail:test": "tsx scripts/mail-test.ts",
+    "sperr:test": "node scripts/sperr-test.mjs"
   },
   "dependencies": {
     "@aws-blocks/blocks": "0.5.0",
