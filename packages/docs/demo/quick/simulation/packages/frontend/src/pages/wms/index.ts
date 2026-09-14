@@ -1,1 +1,0 @@
-export { WmsPage } from "./WmsPage";

@@ -88,9 +88,9 @@ nvm use          # nimmt 24.21.0 aus .nvmrc
 pnpm install
 ```
 
-## Hinweis zu den Produktfotos
+## Hinweis zum Sortiment
 
-`packages/docs/demo/product-catalog/pictures/` (~230 MB JPEGs) ist bewusst
-per `.gitignore` ausgeschlossen, damit das Repo klein bleibt. Die Bilder
-liegen lokal weiter im Verzeichnis. Falls sie versioniert werden sollen,
-ist Git LFS der richtige Weg.
+`packages/handelswelt/src/daten/sortiment.ts` ist erzeugt, nicht von Hand
+gepflegt. Vorlage, Zuordnungsliste und Erzeuger liegen ausserhalb dieses
+Repos; im Repo steht nur das Ergebnis. `pnpm --filter @ecr-talk/handelswelt
+run marken:test` prüft, dass darin kein gesperrter Name vorkommt.

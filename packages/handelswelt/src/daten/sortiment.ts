@@ -1,12 +1,12 @@
 /*
  * ERZEUGT — nicht von Hand ändern.
  *
- * Quelle: packages/docs/demo/product-catalog/script/Store_Assortment.json
- * Erzeuger: packages/handelswelt/erzeugung/erzeuge.ts
- * Zuordnung echter Marken auf Decknamen: erzeugung/decknamen.ts
+ * Erzeugt aus einer Vorlage, die bewusst ausserhalb dieses Repos liegt —
+ * zusammen mit dem Erzeuger und der Zuordnung echter Marken auf Decknamen.
  *
- * Warengruppen, Größen und Preislagen stammen aus 92 Regalfotos und sind echt.
- * Die Namen sind es nicht — siehe die Notiz `demo-daten-keine-echten-marken`.
+ * Warengruppen, Größen und Preislagen stammen aus Regalfotos und sind echt.
+ * Die Namen sind es nicht, und aus welchem Laden die Fotos stammen, steht hier
+ * nicht — siehe die Notiz `demo-daten-keine-echten-marken`.
  */
 
 export type Regalzone = 'tafel' | 'riegel' | 'pralinen';
@@ -42,7 +42,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 1,
     "absatzJahr": 15400,
-    "entwicklung": 6.1,
+    "entwicklung": 6.3,
     "ekPreis": 2.48,
     "vkPreis": 3.5900000000000003
   },
@@ -55,7 +55,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 15800,
-    "entwicklung": 3.5,
+    "entwicklung": 3.7,
     "ekPreis": 0.98,
     "vkPreis": 1.49
   },
@@ -68,7 +68,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 84300,
-    "entwicklung": 10.8,
+    "entwicklung": 11,
     "ekPreis": 1.1,
     "vkPreis": 1.69
   },
@@ -81,7 +81,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 4,
     "absatzJahr": 64700,
-    "entwicklung": 14.6,
+    "entwicklung": 14.8,
     "ekPreis": 1.2,
     "vkPreis": 1.69
   },
@@ -94,7 +94,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 40300,
-    "entwicklung": 5,
+    "entwicklung": 5.2,
     "ekPreis": 2.08,
     "vkPreis": 2.99
   },
@@ -107,7 +107,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 1,
     "absatzJahr": 39700,
-    "entwicklung": 10.7,
+    "entwicklung": 10.9,
     "ekPreis": 1.5,
     "vkPreis": 2.39
   },
@@ -120,7 +120,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 29400,
-    "entwicklung": -6.5,
+    "entwicklung": -6.3,
     "ekPreis": 1.98,
     "vkPreis": 2.79
   },
@@ -133,7 +133,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 82500,
-    "entwicklung": -3.6,
+    "entwicklung": -3.4,
     "ekPreis": 1.63,
     "vkPreis": 2.5900000000000003
   },
@@ -146,7 +146,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 85900,
-    "entwicklung": -9.5,
+    "entwicklung": -9.3,
     "ekPreis": 1.77,
     "vkPreis": 2.89
   },
@@ -159,7 +159,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 53700,
-    "entwicklung": 8.9,
+    "entwicklung": 9.1,
     "ekPreis": 0.93,
     "vkPreis": 1.69
   },
@@ -172,7 +172,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 107800,
-    "entwicklung": 10.3,
+    "entwicklung": 10.5,
     "ekPreis": 0.94,
     "vkPreis": 1.59
   },
@@ -185,7 +185,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 2,
     "absatzJahr": 60900,
-    "entwicklung": 16.6,
+    "entwicklung": 16.8,
     "ekPreis": 2.02,
     "vkPreis": 3.29
   },
@@ -198,7 +198,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 5,
     "absatzJahr": 136200,
-    "entwicklung": 2.5,
+    "entwicklung": 2.7,
     "ekPreis": 0.86,
     "vkPreis": 1.59
   },
@@ -211,7 +211,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 76700,
-    "entwicklung": 11.1,
+    "entwicklung": 11.3,
     "ekPreis": 0.64,
     "vkPreis": 1.19
   },
@@ -224,7 +224,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 5,
     "absatzJahr": 163500,
-    "entwicklung": -7.5,
+    "entwicklung": -7.3,
     "ekPreis": 0.86,
     "vkPreis": 1.59
   },
@@ -237,7 +237,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 106100,
-    "entwicklung": 9.2,
+    "entwicklung": 9.4,
     "ekPreis": 0.64,
     "vkPreis": 1.19
   },
@@ -250,7 +250,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 173900,
-    "entwicklung": 9.7,
+    "entwicklung": 9.9,
     "ekPreis": 0.63,
     "vkPreis": 1.19
   },
@@ -263,7 +263,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 5,
     "absatzJahr": 85200,
-    "entwicklung": 8.8,
+    "entwicklung": 9,
     "ekPreis": 0.77,
     "vkPreis": 1.39
   },
@@ -276,7 +276,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 5,
     "absatzJahr": 140200,
-    "entwicklung": 13.2,
+    "entwicklung": 13.4,
     "ekPreis": 0.87,
     "vkPreis": 1.49
   },
@@ -289,7 +289,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 174800,
-    "entwicklung": 3.7,
+    "entwicklung": 5.2,
     "ekPreis": 1.51,
     "vkPreis": 2.79
   },
@@ -302,7 +302,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 108100,
-    "entwicklung": -5.6,
+    "entwicklung": -5.4,
     "ekPreis": 0.97,
     "vkPreis": 1.59
   },
@@ -315,7 +315,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 169200,
-    "entwicklung": 7.9,
+    "entwicklung": 8.1,
     "ekPreis": 0.82,
     "vkPreis": 1.49
   },
@@ -328,7 +328,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 123600,
-    "entwicklung": 7.8,
+    "entwicklung": 8,
     "ekPreis": 0.76,
     "vkPreis": 1.39
   },
@@ -341,7 +341,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 2,
     "absatzJahr": 129400,
-    "entwicklung": 14.8,
+    "entwicklung": 15,
     "ekPreis": 0.84,
     "vkPreis": 1.39
   },
@@ -354,7 +354,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 147200,
-    "entwicklung": -7.1,
+    "entwicklung": -6.9,
     "ekPreis": 0.93,
     "vkPreis": 1.59
   },
@@ -380,7 +380,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 2,
     "absatzJahr": 165500,
-    "entwicklung": 4.8,
+    "entwicklung": 5,
     "ekPreis": 2.62,
     "vkPreis": 4.49
   },
@@ -393,7 +393,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 5,
     "absatzJahr": 126600,
-    "entwicklung": 13.1,
+    "entwicklung": 13.3,
     "ekPreis": 0.66,
     "vkPreis": 1.19
   },
@@ -406,7 +406,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 164800,
-    "entwicklung": 14.2,
+    "entwicklung": 14.4,
     "ekPreis": 0.92,
     "vkPreis": 1.59
   },
@@ -419,7 +419,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 140400,
-    "entwicklung": -7.8,
+    "entwicklung": -7.6,
     "ekPreis": 0.84,
     "vkPreis": 1.59
   },
@@ -432,7 +432,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 139500,
-    "entwicklung": -2.5,
+    "entwicklung": -2.3,
     "ekPreis": 0.89,
     "vkPreis": 1.49
   },
@@ -445,7 +445,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 2,
     "absatzJahr": 46300,
-    "entwicklung": 10.1,
+    "entwicklung": 10.3,
     "ekPreis": 0.53,
     "vkPreis": 0.89
   },
@@ -458,7 +458,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 92400,
-    "entwicklung": 0.9,
+    "entwicklung": 1.1,
     "ekPreis": 0.73,
     "vkPreis": 1.39
   },
@@ -471,7 +471,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 2,
     "absatzJahr": 172500,
-    "entwicklung": -1.9,
+    "entwicklung": -1.7,
     "ekPreis": 0.94,
     "vkPreis": 1.59
   },
@@ -484,7 +484,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 5,
     "absatzJahr": 138500,
-    "entwicklung": 8,
+    "entwicklung": 8.2,
     "ekPreis": 0.66,
     "vkPreis": 1.19
   },
@@ -497,7 +497,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 81500,
-    "entwicklung": -7.2,
+    "entwicklung": -7,
     "ekPreis": 1.1,
     "vkPreis": 1.99
   },
@@ -510,9 +510,22 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 77600,
-    "entwicklung": 3.6,
+    "entwicklung": 3.8,
     "ekPreis": 0.72,
     "vkPreis": 1.19
+  },
+  {
+    "nummer": "NK-487682",
+    "marke": "Chocorée",
+    "bezeichnung": "Ganznuss",
+    "gramm": 100,
+    "zone": "tafel",
+    "eigenmarke": true,
+    "facings": 5,
+    "absatzJahr": 77400,
+    "entwicklung": -4.7,
+    "ekPreis": 0.43,
+    "vkPreis": 0.79
   },
   {
     "nummer": "NK-295918",
@@ -523,7 +536,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 5,
     "absatzJahr": 72400,
-    "entwicklung": 3.1,
+    "entwicklung": 3.3,
     "ekPreis": 0.43,
     "vkPreis": 0.79
   },
@@ -536,7 +549,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 2,
     "absatzJahr": 129300,
-    "entwicklung": 9.3,
+    "entwicklung": 9.5,
     "ekPreis": 0.68,
     "vkPreis": 1.29
   },
@@ -549,7 +562,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 148300,
-    "entwicklung": -0.8,
+    "entwicklung": -0.6,
     "ekPreis": 0.94,
     "vkPreis": 1.59
   },
@@ -562,7 +575,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 171600,
-    "entwicklung": 15.6,
+    "entwicklung": 15.8,
     "ekPreis": 1.05,
     "vkPreis": 1.79
   },
@@ -575,7 +588,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 162000,
-    "entwicklung": -2.5,
+    "entwicklung": -2.3,
     "ekPreis": 0.97,
     "vkPreis": 1.79
   },
@@ -588,7 +601,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 141500,
-    "entwicklung": -9.6,
+    "entwicklung": -9.4,
     "ekPreis": 0.46,
     "vkPreis": 0.79
   },
@@ -601,7 +614,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 5,
     "absatzJahr": 110500,
-    "entwicklung": 1.3,
+    "entwicklung": 1.5,
     "ekPreis": 1.11,
     "vkPreis": 1.89
   },
@@ -614,7 +627,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 143100,
-    "entwicklung": 3.2,
+    "entwicklung": 3.4,
     "ekPreis": 1.34,
     "vkPreis": 2.49
   },
@@ -627,22 +640,9 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 57300,
-    "entwicklung": -7.6,
+    "entwicklung": -7.4,
     "ekPreis": 0.84,
     "vkPreis": 1.39
-  },
-  {
-    "nummer": "NK-839880",
-    "marke": "Chocorée",
-    "bezeichnung": "Nussbeißer",
-    "gramm": 100,
-    "zone": "tafel",
-    "eigenmarke": true,
-    "facings": 3,
-    "absatzJahr": 150200,
-    "entwicklung": 10.7,
-    "ekPreis": 0.47,
-    "vkPreis": 0.79
   },
   {
     "nummer": "NK-261299",
@@ -653,7 +653,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 144800,
-    "entwicklung": 9.9,
+    "entwicklung": 10.1,
     "ekPreis": 0.58,
     "vkPreis": 0.99
   },
@@ -666,7 +666,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 157800,
-    "entwicklung": -5.2,
+    "entwicklung": -5,
     "ekPreis": 0.65,
     "vkPreis": 1.19
   },
@@ -679,7 +679,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 161700,
-    "entwicklung": 15.3,
+    "entwicklung": 15.5,
     "ekPreis": 0.82,
     "vkPreis": 1.39
   },
@@ -692,7 +692,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 149400,
-    "entwicklung": -1.4,
+    "entwicklung": -1.2,
     "ekPreis": 1.45,
     "vkPreis": 2.39
   },
@@ -705,7 +705,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 50800,
-    "entwicklung": -6.5,
+    "entwicklung": -6.3,
     "ekPreis": 0.76,
     "vkPreis": 1.39
   },
@@ -718,7 +718,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 2,
     "absatzJahr": 167700,
-    "entwicklung": -7.9,
+    "entwicklung": -7.7,
     "ekPreis": 0.61,
     "vkPreis": 1.09
   },
@@ -731,7 +731,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 157700,
-    "entwicklung": 12.1,
+    "entwicklung": 12.3,
     "ekPreis": 2.15,
     "vkPreis": 3.79
   },
@@ -744,7 +744,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 124500,
-    "entwicklung": -2.1,
+    "entwicklung": -1.9,
     "ekPreis": 1.34,
     "vkPreis": 2.49
   },
@@ -757,7 +757,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 50100,
-    "entwicklung": 16.3,
+    "entwicklung": 16.5,
     "ekPreis": 0.46,
     "vkPreis": 0.79
   },
@@ -770,7 +770,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 3,
     "absatzJahr": 163900,
-    "entwicklung": 9.8,
+    "entwicklung": 10,
     "ekPreis": 1.35,
     "vkPreis": 2.49
   },
@@ -783,7 +783,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": true,
     "facings": 4,
     "absatzJahr": 101900,
-    "entwicklung": -3.3,
+    "entwicklung": -3.1,
     "ekPreis": 0.78,
     "vkPreis": 1.29
   },
@@ -796,7 +796,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 56700,
-    "entwicklung": -7,
+    "entwicklung": -6.8,
     "ekPreis": 1.31,
     "vkPreis": 1.99
   },
@@ -809,7 +809,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 62200,
-    "entwicklung": 14.2,
+    "entwicklung": 14.4,
     "ekPreis": 1.77,
     "vkPreis": 2.79
   },
@@ -822,7 +822,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 16400,
-    "entwicklung": -6.1,
+    "entwicklung": -5.9,
     "ekPreis": 1.37,
     "vkPreis": 2.0900000000000003
   },
@@ -835,7 +835,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 66100,
-    "entwicklung": -10.6,
+    "entwicklung": -10.4,
     "ekPreis": 2.02,
     "vkPreis": 2.99
   },
@@ -848,7 +848,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 24400,
-    "entwicklung": 5.3,
+    "entwicklung": 5.5,
     "ekPreis": 1.36,
     "vkPreis": 2.1900000000000004
   },
@@ -861,7 +861,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 1,
     "absatzJahr": 50700,
-    "entwicklung": -7.4,
+    "entwicklung": -7.2,
     "ekPreis": 1.63,
     "vkPreis": 2.39
   },
@@ -874,7 +874,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 47100,
-    "entwicklung": 3.8,
+    "entwicklung": 4,
     "ekPreis": 2.8,
     "vkPreis": 4.09
   },
@@ -887,7 +887,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 1,
     "absatzJahr": 55300,
-    "entwicklung": 2.7,
+    "entwicklung": 2.9,
     "ekPreis": 2.16,
     "vkPreis": 3.49
   },
@@ -900,7 +900,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 85400,
-    "entwicklung": 8.6,
+    "entwicklung": 8.8,
     "ekPreis": 2.43,
     "vkPreis": 3.79
   },
@@ -913,7 +913,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 87500,
-    "entwicklung": -8.4,
+    "entwicklung": -8.2,
     "ekPreis": 3.54,
     "vkPreis": 5.19
   },
@@ -926,7 +926,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 21000,
-    "entwicklung": 17.2,
+    "entwicklung": 17.4,
     "ekPreis": 2.74,
     "vkPreis": 3.89
   },
@@ -939,7 +939,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 85000,
-    "entwicklung": 0.6,
+    "entwicklung": 0.8,
     "ekPreis": 1.51,
     "vkPreis": 2.29
   },
@@ -952,7 +952,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 53500,
-    "entwicklung": 2.2,
+    "entwicklung": 2.4,
     "ekPreis": 1.27,
     "vkPreis": 1.79
   },
@@ -965,7 +965,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 1,
     "absatzJahr": 34400,
-    "entwicklung": 8.8,
+    "entwicklung": 9,
     "ekPreis": 1.74,
     "vkPreis": 2.49
   },
@@ -978,7 +978,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 80200,
-    "entwicklung": -2.6,
+    "entwicklung": -2.4,
     "ekPreis": 1.57,
     "vkPreis": 2.29
   },
@@ -991,7 +991,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 67500,
-    "entwicklung": -9.8,
+    "entwicklung": -9.6,
     "ekPreis": 1.24,
     "vkPreis": 1.79
   },
@@ -1004,7 +1004,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 62100,
-    "entwicklung": 9.9,
+    "entwicklung": 10.1,
     "ekPreis": 1.81,
     "vkPreis": 2.5900000000000003
   },
@@ -1017,7 +1017,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 1,
     "absatzJahr": 76900,
-    "entwicklung": 6.6,
+    "entwicklung": 6.8,
     "ekPreis": 0.9,
     "vkPreis": 1.29
   },
@@ -1030,7 +1030,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 33600,
-    "entwicklung": 7.6,
+    "entwicklung": 7.8,
     "ekPreis": 2,
     "vkPreis": 2.89
   },
@@ -1043,7 +1043,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 2,
     "absatzJahr": 68700,
-    "entwicklung": -4.1,
+    "entwicklung": -3.9,
     "ekPreis": 1.82,
     "vkPreis": 2.89
   },
@@ -1056,7 +1056,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 1,
     "absatzJahr": 24100,
-    "entwicklung": -7.9,
+    "entwicklung": -7.7,
     "ekPreis": 0.8,
     "vkPreis": 1.19
   },
@@ -1069,7 +1069,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 1,
     "absatzJahr": 77100,
-    "entwicklung": -10.5,
+    "entwicklung": -10.3,
     "ekPreis": 1.98,
     "vkPreis": 3.0900000000000003
   },
@@ -1082,7 +1082,7 @@ export const SORTIMENT: readonly Artikel[] = [
     "eigenmarke": false,
     "facings": 3,
     "absatzJahr": 38800,
-    "entwicklung": -2.3,
+    "entwicklung": -2.1,
     "ekPreis": 2.45,
     "vkPreis": 3.89
   }

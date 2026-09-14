@@ -5,19 +5,24 @@
 
 > **You have already been given the index below** — all of it, or as much of it as a session start could carry. It is the same index `nxm prime` replays, which stops at the byte budget the host delivers and says so when it does (`nxm index` prints the whole of it), so there is nothing to gain by reading it again here. Underneath it stands the FULL TEXT of each memory — that is what `nxm recall <key>` serves, and it is meant to be read one memory at a time, when the index tells you a particular one matters. Reading this file end to end is the expensive way to obtain what you already have.
 
-## Index (5)
+## Index (6)
 
-- **vortrag-szenario-entscheidung**: Der Vortrag nutzt das Lisa-Berger-Listungsszenario, nicht die gebaute Markus-Weber-Supply-Chain-Simulation.
+- **vortrag-szenario-entscheidung**: Der Vortrag folgt dem Lisa-Berger-Listungsszenario (Hallbach Crispy Bites gegen Nocturne Mini).
 - **blocks-email-empfang**: AWS Blocks kann E-Mails senden (EmailClient/SES), aber nicht empfangen — Empfang über SES-Regel und Lambda in der CDK-Schicht.
 - **blocks-deployment-fallen**: Vor jedem Blocks-Deployment pruefen: Bucketnamen unter 63 Zeichen, esbuild im Wurzelpaket, stackId in .blocks/config.json.
 - **deployment-weg**: Deploy laeuft ueber GitHub OIDC; Hosted Zone und Rolle liegen in packages/infra und muessen vor dem ersten Anwendungs-Deployment stehen.
 - **github-oidc-sub**: OIDC-sub von GitHub enthaelt Besitzer- und Repo-ID; bei 'Not authorized' zeigt CloudTrail den tatsaechlichen Anspruch.
+- **demo-daten-keine-echten-marken**: Keine echten Marken in Vortrag und Daten; Vorlage, Zuordnung und Erzeuger liegen ausserhalb des Repos, die Sperrliste darin nur als Hashes.
 
 ## Full text
 
 ### `vortrag-szenario-entscheidung`
 
-Der Vortrag folgt dem Lisa-Berger-Szenario (Category Managerin, Listungsantrag merci Crunchy Bites von Storck, Entdeckung freiwerdender Aktionsflächen am 22.10. in 12 Hamburger Märkten), NICHT dem bereits gebauten Markus-Weber-Supply-Chain-Szenario in packages/docs/demo/quick/simulation. Entscheidung von Carsten am 11.09.2026. Begründung: Die Listungsentscheidung provoziert stärker als eine Nachbestellung — der Agent trifft eine echte Geschäftsentscheidung und verhandelt, statt nur zu disponieren. Folge: Die Simulation braucht neue Datenmodelle, die heute fehlen (Aktionskalender/Kampagnen, Planogramm/Regalplatz, Kategorie-Performance, Marge). Die vorhandenen Tabellen (messages, inventory, suppliers, purchase_orders, kpi_states) decken das Szenario nicht ab.
+Der Vortrag folgt dem Lisa-Berger-Listungsszenario. Andreas Walter von Hallbach Suesswaren will 'Hallbach Crispy Bites' exklusiv einfuehren: EK 2,89 / VK 4,49, Mindestabnahme 500 VE, Wunschtermin 15. Oktober. Freiwerdende Aktionsflaechen am 22.10. in 12 Hamburger Maerkten. Auslistungskandidat: Nocturne Mini (-12 %, Premium-Eigenmarke mit 38,1 % Rohertrag - wer ihn auslistet, opfert sieben Punkte gegenueber Hallbachs 31,1 %).
+
+Entscheidung von Carsten am 11.09.2026 gegen das aeltere Supply-Chain-Szenario mit einem Einkaeufer und einer Nachbestellung. Begruendung: Die Listungsentscheidung provoziert staerker - der Agent trifft eine echte Geschaeftsentscheidung und verhandelt, statt nur zu disponieren. Die Namen sind Decknamen, siehe [[demo-daten-keine-echten-marken]].
+
+Die aeltere Simulation (SQLite, vier MCP-Server, Agent-Engine) lag unter packages/docs/demo und ist am 14.09.2026 mitsamt der uebrigen Vorlagen aus dem Repo heraus nach /Users/carskoch/Development/aws/ecr-2026-vorlage gezogen. Gerettet wurde daraus nur das Ankerdatum-Modul (jetzt packages/handelswelt/src/zeit/anker-datum.ts); die zugehoerigen Property-Tests liegen weiter dort drueben und sind portierenswert.
 
 ---
 
@@ -42,3 +47,15 @@ Das Hosting des Vortrags laeuft ueber GitHub Actions mit OIDC statt Schluesselpa
 ### `github-oidc-sub`
 
 GitHub Actions sendet im OIDC-sub-Anspruch die unveraenderlichen Kennungen von Besitzer und Repository, nicht die blossen Namen: repo:<owner>@<owner_id>/<repo>@<repo_id>:<kontext>. Eine Positivliste mit der Namensform allein fuehrt zu 'Not authorized to perform sts:AssumeRoleWithWebIdentity'. Zweitens: Sobald ein Job 'environment: <name>' nennt, wird der Anspruch zu ':environment:<name>' statt ':ref:refs/heads/<zweig>' - und weil der Zweig darin fehlt, muss die Umgebung zusaetzlich auf den Zweig eingeschraenkt werden (deployment_branch_policy). Drittens, fuer die Fehlersuche: Die STS-Meldung ist bei falscher Positivliste identisch mit der bei einer SCP-Sperre. Nur CloudTrail unterscheidet sie - das abgelehnte AssumeRoleWithWebIdentity-Ereignis nennt unter userIdentity.userName den Anspruch, der tatsaechlich ankam. Kennungen gegenpruefen mit: gh api repos/<repo> --jq '{id, owner:.owner.id}'.
+
+---
+
+### `demo-daten-keine-echten-marken`
+
+Im Vortrag und in allen Demo-Daten duerfen KEINE echten Hersteller, Marken oder Produkte vorkommen. Sie werden umbenannt; wiedererkennbar bleiben duerfen sie. Die etablierte Zuordnung steht in packages/presentation/src/slides/data.ts: der Hersteller heisst 'Hallbach Suesswaren' mit Ansprechpartner 'Andreas Walter', sein Produkt 'Hallbach Crispy Bites', die Handelskette 'Nordkorb' (Schwerpunkt Norden), der Auslistungskandidat 'Nocturne Mini'.
+
+Das Sortiment in packages/handelswelt/src/daten/sortiment.ts ist ERZEUGT. Vorlage, Zuordnungsliste (echte Marke -> Deckname) und Erzeuger liegen BEWUSST AUSSERHALB des Repos unter /Users/carskoch/Development/aws/ecr-2026-vorlage. Grund: Die Zuordnung ist der Decoder - wer sie liest, weiss, aus wessen Regal das Sortiment stammt. Das Repo soll oeffentlich werden koennen, ohne dass ein Category Manager der betroffenen Haeuser sagt: 'Moment, das sind doch unsere Daten.'
+
+Aus demselben Grund steht die Sperrliste im Repo nur als Hashes (packages/handelswelt/pruefung/nicht-erlaubt.ts): Eine lesbare Liste verraet durch ihre Zusammensetzung, was in der Vorlage stand - eine Schokoladenkategorie, die ausgerechnet ein Waschmittel verbietet, sagt genug. Der Klartext liegt bei der Vorlage. Gemessen wird mit 'pnpm --filter @ecr-talk/handelswelt run marken:test', und der Test enthaelt eine Gegenprobe, damit er nicht still gruen wird.
+
+Was im Repo bleiben darf: Warengruppen, Groessen und Preislagen. Die sind echt und branchenueblich, und daher kommt die Glaubwuerdigkeit - nicht aus den Namen.

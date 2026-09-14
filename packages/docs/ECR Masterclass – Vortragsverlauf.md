@@ -27,7 +27,7 @@ Alle vier Blöcke drehen sich um dieselbe auslösende Situation – dieselbe E-M
 
 **Persona:** Lisa Berger, Category Managerin bei einem großen Lebensmittelhändler, verantwortlich für die Kategorie „Schokolade & Pralinen".
 
-**Die auslösende E-Mail:** Ein Hersteller (z.B. Storck) schreibt Lisa: Er möchte ein neues Produkt – „Merci Crunchy Bites" – exklusiv mit ihrem Unternehmen auf den Markt bringen. Der Hersteller hat bereits einen Wunschtermin für die Markteinführung im Kopf: den 15. Oktober.
+**Die auslösende E-Mail:** Ein Hersteller (Hallbach Süßwaren) schreibt Lisa: Er möchte ein neues Produkt – „Hallbach Crispy Bites" – exklusiv mit ihrem Unternehmen auf den Markt bringen. Der Hersteller hat bereits einen Wunschtermin für die Markteinführung im Kopf: den 15. Oktober.
 
 ### Was ein Mensch normalerweise tun würde (= ein ganzer Arbeitstag)
 
@@ -50,16 +50,16 @@ Lisa müsste in der Regel:
 Der Agent empfängt die E-Mail und arbeitet den gesamten Vorgang eigenständig ab – ohne einen einzigen Menschen zu fragen. Er greift ausschließlich auf Geschäftsapplikationen zurück, die ihm die Informationen liefern, die sonst die Kollegen geliefert hätten:
 
 1. **E-Mail lesen & verstehen:** Der Agent erkennt: Listungsantrag, exklusive Einführung, Wunschtermin 15. Oktober.
-2. **Warenwirtschaft abfragen:** Kategorie „Schokolade & Pralinen" wächst (+3,2% YoY). Underperformer identifiziert: „Mon Chéri Mini" (−12% YoY) – Kandidat für Auslistung.
+2. **Warenwirtschaft abfragen:** Kategorie „Schokolade & Pralinen" wächst (+3,2% YoY). Underperformer identifiziert: „Nocturne Mini" (−12% YoY) – Kandidat für Auslistung.
 3. **Marktdaten prüfen:** Segment „Bites / Snacking" im Aufwärtstrend – das Produkt passt ins Portfolio.
 4. **Marge berechnen:** EK 2,89€, empf. VK 4,49€ → Marge 34,2% (über Kategorievorgabe von 30%). Wirtschaftlich attraktiv.
 5. **Entscheidende Entdeckung – Aktionsplanung:** Der Agent stellt fest, dass eine Woche nach dem gewünschten Starttermin, am 22. Oktober, eine andere Kampagne ausläuft. Für diese Kampagne waren in 12 Märkten im Hamburger Raum Zweitplatzierungen (Aufsteller) aufgebaut. Dieser Platz wird frei.
-6. **Business Case rechnen:** Wenn der Start um eine Woche auf den 22. Oktober verschoben wird, können die freiwerdenden Aufsteller für eine Einführungsaktion von Merci Crunchy Bites genutzt werden. Der Agent berechnet den erwarteten Uplift durch die Zweitplatzierung – das Ergebnis ist positiv.
-7. **Gegenvorschlag an Storck senden:** Der Agent antwortet auf die E-Mail: „Wir können das Produkt listen. Wir schlagen einen Start am 22. Oktober vor, um in 12 Hamburger Märkten freiwerdende Display-Flächen für eine Einführungsaktion zu nutzen. Bedingung: 15% Einführungsrabatt für die ersten 4 Wochen."
-8. **Rückantwort abwarten:** Storck bestätigt.
+6. **Business Case rechnen:** Wenn der Start um eine Woche auf den 22. Oktober verschoben wird, können die freiwerdenden Aufsteller für eine Einführungsaktion von Hallbach Crispy Bites genutzt werden. Der Agent berechnet den erwarteten Uplift durch die Zweitplatzierung – das Ergebnis ist positiv.
+7. **Gegenvorschlag an Hallbach senden:** Der Agent antwortet auf die E-Mail: „Wir können das Produkt listen. Wir schlagen einen Start am 22. Oktober vor, um in 12 Hamburger Märkten freiwerdende Display-Flächen für eine Einführungsaktion zu nutzen. Bedingung: 15% Einführungsrabatt für die ersten 4 Wochen."
+8. **Rückantwort abwarten:** Hallbach bestätigt.
 9. **Alles in Bewegung setzen – ohne zu fragen, nur informieren:**- Bestellungen im System anlegen
 
-- Planogramm aktualisieren (Mon Chéri Mini raus, Merci Crunchy Bites rein)
+- Planogramm aktualisieren (Nocturne Mini raus, Hallbach Crispy Bites rein)
 - Logistik informieren über neues Produkt und Lieferrhythmus
 - 12 Hamburger Marktleiter informieren über die Displayänderung ab 22. Oktober
 
@@ -153,7 +153,7 @@ Wir bauen jetzt in vier Stufen einen KI-Agenten auf – von nutzlos bis autonom.
 
 ### Stufe a) KI kann nichts, außer Texte verfassen
 
-**Was wir zeigen:** Dieselbe E-Mail von Storck – der Listungsantrag für Merci Crunchy Bites. Ein nacktes Sprachmodell ohne jeglichen Kontext bekommt die Aufgabe: „Bearbeite diesen Vorgang."
+**Was wir zeigen:** Dieselbe E-Mail von Hallbach – der Listungsantrag für Hallbach Crispy Bites. Ein nacktes Sprachmodell ohne jeglichen Kontext bekommt die Aufgabe: „Bearbeite diesen Vorgang."
 
 **Was wir technisch erklären:** Trainingsdaten – das Grundwissen des Modells. Jedes große Sprachmodell wurde auf riesigen Textmengen trainiert. Das ist sein Allgemeinwissen. Aber es kennt weder Ihre Firma, noch Ihre Produkte, noch Ihre Kunden. Es ist wie ein neuer Mitarbeiter am ersten Tag: intelligent, aber ahnungslos.
 
@@ -170,7 +170,7 @@ Wir bauen jetzt in vier Stufen einen KI-Agenten auf – von nutzlos bis autonom.
 - _Der Systemprompt:_ Bevor der Nutzer die erste Nachricht schickt, erhält der Agent ein Briefing – seine Einarbeitung. Das vermittelt Wissen, das das Modell aus dem Training nicht hat.
 - _Der Gesprächsverlauf:_ Jede Nachricht, die wir schicken, geht nicht allein an das Modell – der gesamte bisherige Verlauf wird mitgeschickt. Jeder Turn trägt zum Wissen des Agenten bei.
 
-**Demo:** Der Agent erkennt und meldet: „Lisa, du hast einen Listungsantrag von Storck erhalten. Neues Produkt: Merci Crunchy Bites. EK 2,89€, empf. VK 4,49€, Mindestabnahme 500 VE, gewünschter Start: 15. Oktober. Es handelt sich um eine Exklusiveinführung." – Er handelt noch nicht, aber er spart schon Zeit durch Zusammenfassung und Kontexteinordnung.
+**Demo:** Der Agent erkennt und meldet: „Lisa, du hast einen Listungsantrag von Hallbach erhalten. Neues Produkt: Hallbach Crispy Bites. EK 2,89€, empf. VK 4,49€, Mindestabnahme 500 VE, gewünschter Start: 15. Oktober. Es handelt sich um eine Exklusiveinführung." – Er handelt noch nicht, aber er spart schon Zeit durch Zusammenfassung und Kontexteinordnung.
 
 **Bonus-Demo – Turn löschen:** Wir nehmen einen früheren Turn aus dem Verlauf heraus, der entscheidende Kontextinformation geliefert hat, und stellen die gleiche Frage nochmal. Die Antwort ändert sich komplett. Das macht erlebbar: Jede einzelne Nachricht beeinflusst, was der Agent weiß und kann.
 
@@ -182,7 +182,7 @@ Wir bauen jetzt in vier Stufen einen KI-Agenten auf – von nutzlos bis autonom.
 
 **Was wir technisch erklären:** Tools – die Handlungsfähigkeit. Bisher konnte der Agent nur reden. Durch Tools kann er Daten abrufen, Systeme abfragen und Entwürfe produzieren. Er bereitet die Arbeit vor; der Mensch entscheidet und klickt „Senden".
 
-**Demo:** Der Agent hat alle Systeme abgefragt und meldet: „Die Kategorie Pralinen wächst +3,2%. Underperformer: Mon Chéri Mini (−12% YoY). Platz im Regal: Ja, wenn Mon Chéri Mini delisted wird. Marge Crunchy Bites: 34,2% (über Kategorievorgabe 30%). Außerdem: Am 22. Oktober läuft eine Kampagne in 12 Hamburger Märkten aus – die Aufsteller werden frei. Wenn wir den Start um eine Woche verschieben, können wir die Flächen für eine Einführungsaktion nutzen. Hier ist ein Antwortentwurf an Storck mit dem Gegenvorschlag." – Der Mensch prüft, passt ggf. an, und klickt „Senden".
+**Demo:** Der Agent hat alle Systeme abgefragt und meldet: „Die Kategorie Pralinen wächst +3,2%. Underperformer: Nocturne Mini (−12% YoY). Platz im Regal: Ja, wenn Nocturne Mini delisted wird. Marge Crunchy Bites: 34,2% (über Kategorievorgabe 30%). Außerdem: Am 22. Oktober läuft eine Kampagne in 12 Hamburger Märkten aus – die Aufsteller werden frei. Wenn wir den Start um eine Woche verschieben, können wir die Flächen für eine Einführungsaktion nutzen. Hier ist ein Antwortentwurf an Hallbach mit dem Gegenvorschlag." – Der Mensch prüft, passt ggf. an, und klickt „Senden".
 
 ---
 
@@ -192,7 +192,7 @@ Wir bauen jetzt in vier Stufen einen KI-Agenten auf – von nutzlos bis autonom.
 
 **Was wir erklären:** Hier kommen alle Bausteine zusammen – Trainingsdaten, Systemprompt, aufgebauter Kontext, Tools, und jetzt auch: Autonomie. Der Agent entscheidet selbständig über Zwischenschritte.
 
-**Demo/Szenario:** „Die E-Mail von Storck ist eingegangen. Ich habe die Kategorie analysiert, den Underperformer identifiziert, die Marge geprüft und festgestellt, dass das Produkt passt. Ich habe entdeckt, dass am 22. Oktober Aktionsflächen in 12 Hamburger Märkten frei werden. Ich habe Storck einen Gegenvorschlag gemacht: Start am 22. Oktober mit Einführungsaktion. Storck hat bestätigt. Daraufhin habe ich Bestellungen im System angelegt, das Planogramm aktualisiert, die Logistik informiert und die 12 Marktleiter über die Displayänderung benachrichtigt."
+**Demo/Szenario:** „Die E-Mail von Hallbach ist eingegangen. Ich habe die Kategorie analysiert, den Underperformer identifiziert, die Marge geprüft und festgestellt, dass das Produkt passt. Ich habe entdeckt, dass am 22. Oktober Aktionsflächen in 12 Hamburger Märkten frei werden. Ich habe Hallbach einen Gegenvorschlag gemacht: Start am 22. Oktober mit Einführungsaktion. Hallbach hat bestätigt. Daraufhin habe ich Bestellungen im System angelegt, das Planogramm aktualisiert, die Logistik informiert und die 12 Marktleiter über die Displayänderung benachrichtigt."
 
 Kein Mensch wurde gefragt. Alle wurden nur informiert.
 

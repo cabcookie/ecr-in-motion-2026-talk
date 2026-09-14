@@ -9,8 +9,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "erzeuge": "tsx erzeugung/erzeuge.ts",
-    "marken:test": "tsx erzeugung/marken-test.ts"
+    "marken:test": "tsx pruefung/marken-test.ts"
   },
   "devDependencies": {
     "typescript": "5.9.3",

@@ -37,19 +37,24 @@ Drei Fundstücke im Repo, die den Entwurf verkürzen:
 
 | Ort | Was | Verwendung |
 |---|---|---|
-| `packages/docs/demo/product-catalog/script/Store_Assortment.json` | 1.494 Produkte aus 92 Regalfotos, mit Marke, Kategorie, Größe. Davon 166 im Süßwarenumfeld | Grundlage des Sortiments |
-| `packages/docs/demo/quick/simulation/packages/db/src/anchor-date.ts` | `computeTimestamp` / `computeOffset`, mit Unit- und Property-Tests | Grundlage des Zeitmodells |
+| Vorlage, **ausserhalb des Repos** | 1.494 Produkte aus Regalfotos, mit Marke, Warengruppe, Größe | Grundlage des Sortiments |
+| `packages/handelswelt/src/zeit/anker-datum.ts` | `computeTimestamp` / `computeOffset`, aus einer früheren Simulation gerettet | Grundlage des Zeitmodells |
 | `packages/docs/Category Management/` | 12 Wissensagenten, 10 Wissensdateien, 6 dokumentierte Widersprüche | Grundlage des `wissen`-Ports (nach dem Vortrag) |
 
-Zum Sortiment: **„Storck" ist mit zwölf Artikeln bereits gelistet**, daneben die
-Eigenmarken Choceur (29) und Moser Roth (21). Das verschiebt das Szenario zum
-Besseren — kein Fremder klopft an, sondern ein Lieferant mit laufendem Geschäft
-will einen weiteren Artikel in ein volles Regal drücken, in dem zwei starke
-Eigenmarken den Platz halten.
+Zum Sortiment: **Hallbach ist mit zwölf Artikeln bereits gelistet**, daneben zwei
+starke Eigenmarken. Das verschiebt das Szenario zum Besseren — kein Fremder
+klopft an, sondern ein Lieferant mit laufendem Geschäft will einen weiteren
+Artikel in ein volles Regal drücken, in dem die eigenen Marken den Platz halten.
 
-Vorbehalt: 141 Kategorien für 1.494 Produkte, das Süßwarenumfeld vierfach
-gespalten („Süss & Salzig", „Süßwaren", „Kekse & Gebäck", „Knabberartikel").
-Fotogeneriert, entsprechend uneinheitlich. Eine Normalisierung gehört in den Plan.
+Vorbehalt: Die Vorlage ist fotogeneriert und entsprechend uneinheitlich — 141
+Warengruppen für 1.494 Produkte, das Süßwarenumfeld vierfach gespalten. Eine
+Normalisierung gehört in den Plan.
+
+**Vorlage, Zuordnung und Erzeuger liegen ausserhalb dieses Repos.** Im Repo steht
+nur das Ergebnis: ein Sortiment ohne echte Namen, ohne Hinweis darauf, aus wessen
+Regal es stammt. Die Sperrliste für `pruefung/marken-test.ts` steht als Hashes
+da — eine lesbare Liste verriete durch ihre Zusammensetzung, was in der Vorlage
+stand.
 
 Zur Wissensbasis: Die beiden Bücher behandeln Category Management auf der
 **Einkaufsseite**, nicht Sortimentsmanagement im Handel. Lisa Berger macht
@@ -70,7 +75,7 @@ Daten. Wiedererkennbar dürfen sie bleiben. Die etablierte Zuordnung steht in
 | (Handelskette) | Nordkorb |
 | (Auslistungskandidat) | Nocturne Mini |
 
-Die 166 Süßwaren bekommen dieselbe Behandlung: ALDI-Eigenmarken werden zu
+Das Sortiment bekommt dieselbe Behandlung: Eigenmarken der Vorlage werden zu
 Nordkorb-Eigenmarken, Herstellermarken zu erfundenen Häusern. Warengruppen,
 Größen und Preislagen bleiben echt — daher kommt die Glaubwürdigkeit, nicht aus
 den Namen.
@@ -427,13 +432,8 @@ Qualität/Compliance-Zertifikate.
 
 ## Offene Punkte
 
-- **Rollenverteilung.** `packages/docs/demo/quick/research/ALDI SÜD Supply Chain
-  Role Interactions.pdf` beantwortet vermutlich, welche Systeme eine Category
-  Managerin selbst anfasst und welche über einen Kollegen laufen. Noch nicht
-  gelesen; relevant für den Zuschnitt der Ports in `agm2`.
-- **Verhandlungsposition des Lieferanten.**
-  `quick/research/Storck Chocolate Price Increase Justification.pdf` liefert das
-  Material für Stand 3 (`hallbach_legt_nach`). Noch nicht gelesen.
-- **Umbenennungsliste.** Die konkrete Zuordnung der 166 Süßwaren-Marken auf
-  erfundene Häuser steht noch nicht; sie gehört mit ins Paket, nicht in einen
-  Kopf.
+- **Rollenverteilung.** Welche Systeme eine Category Managerin selbst anfasst und
+  welche über einen Kollegen laufen, ist noch offen — relevant für den Zuschnitt
+  der Ports in `agm2`. Material dazu liegt bei der Vorlage, ausserhalb des Repos.
+- **Verhandlungsposition des Lieferanten.** Für Stand 3 (`hallbach_legt_nach`)
+  fehlt noch, womit Hallbach beim Preis nachlegt. Ebenfalls ausserhalb.

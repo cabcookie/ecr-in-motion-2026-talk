@@ -1,12 +1,12 @@
 /*
  * ERZEUGT — nicht von Hand ändern.
  *
- * Quelle: packages/docs/demo/product-catalog/script/Store_Assortment.json
- * Erzeuger: packages/handelswelt/erzeugung/erzeuge.ts
- * Zuordnung echter Marken auf Decknamen: erzeugung/decknamen.ts
+ * Erzeugt aus einer Vorlage, die bewusst ausserhalb dieses Repos liegt —
+ * zusammen mit dem Erzeuger und der Zuordnung echter Marken auf Decknamen.
  *
- * Warengruppen, Größen und Preislagen stammen aus 92 Regalfotos und sind echt.
- * Die Namen sind es nicht — siehe die Notiz `demo-daten-keine-echten-marken`.
+ * Warengruppen, Größen und Preislagen stammen aus Regalfotos und sind echt.
+ * Die Namen sind es nicht, und aus welchem Laden die Fotos stammen, steht hier
+ * nicht — siehe die Notiz `demo-daten-keine-echten-marken`.
  */
 
 /*
