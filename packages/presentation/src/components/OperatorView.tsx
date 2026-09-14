@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { BLOCKS, SECTIONS, TOTAL, blockOf } from "@/slides/data";
 import { useNavigation } from "@/nav/useNavigation";
 import { StagePreview } from "./StagePreview";
 import { AudiencePreview } from "./AudiencePreview";
+import { aufSteuerung, setzeToken, steuerung, type Steuerung } from "@/sync/token";
 import { Schedule } from "./Schedule";
 
 const ACCENT = [
@@ -29,6 +31,51 @@ function Note({
         {label}
       </dt>
       <dd className="m-0 text-[15px] leading-relaxed text-fg-2">{children}</dd>
+    </div>
+  );
+}
+
+/**
+ * Zeigt, ob die Klicks auf der Leinwand ankommen.
+ *
+ * Ohne gültiges Steuerungsgeheimnis lehnt der Server jeden Folienwechsel ab.
+ * Vorher stand das nur in der Browserkonsole — man klickte weiter und merkte
+ * erst am Publikum, dass nichts passiert. Jetzt steht es hier, und das
+ * Geheimnis lässt sich an Ort und Stelle nachtragen.
+ */
+function Steuerungsstand() {
+  const [stand, setStand] = useState<Steuerung>(steuerung);
+  const [eingabe, setEingabe] = useState("");
+  useEffect(() => aufSteuerung(setStand), []);
+
+  if (stand === "greift" || stand === "offen") return null;
+  if (stand === "unbekannt") return null;
+
+  return (
+    <div className="flex flex-wrap items-center gap-3 rounded border border-b1 bg-b1/10 px-4 py-3">
+      <span className="font-mono text-[11px] tracking-[0.12em] text-b1 uppercase">
+        {stand === "fehlt" ? "Kein Steuerungsgeheimnis" : "Geheimnis abgelehnt"}
+      </span>
+      <span className="text-sm text-fg-2">
+        Die Leinwand folgt nicht. Trag es hier ein oder ruf die Seite mit
+        <code className="mx-1 font-mono text-fg-3">?token=…</code> auf.
+      </span>
+      <input
+        id="deck-token"
+        type="password"
+        value={eingabe}
+        onChange={(e) => setEingabe(e.target.value)}
+        placeholder="Steuerungsgeheimnis"
+        className="ml-auto w-56 rounded border border-hair bg-stage px-3 py-1.5 font-mono text-sm text-fg focus:border-b1 focus:outline-none"
+      />
+      <button
+        type="button"
+        onClick={() => setzeToken(eingabe)}
+        disabled={!eingabe.trim()}
+        className="rounded border border-hair px-3 py-1.5 text-sm hover:border-fg-3 disabled:opacity-30"
+      >
+        Übernehmen
+      </button>
     </div>
   );
 }
@@ -90,6 +137,8 @@ export function OperatorView() {
             </div>
           </div>
         </header>
+
+        <Steuerungsstand />
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,560px)_1fr]">
           {/* Vorschau */}

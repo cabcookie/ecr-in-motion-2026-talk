@@ -1,5 +1,6 @@
 import { api } from "aws-blocks";
 import type { SyncMessage, SyncTransport } from "./types";
+import { melde, token } from "./token";
 
 /**
  * Fernsteuerung über AWS Blocks Realtime — für Geräte, die sich keinen
@@ -12,7 +13,7 @@ import type { SyncMessage, SyncTransport } from "./types";
  * Beim Verbinden wird der zuletzt gesetzte Stand nachgeholt, damit ein
  * Gerät, das mitten im Vortrag dazukommt, sofort die richtige Folie zeigt.
  */
-export function createRealtimeTransport(token: string): SyncTransport {
+export function createRealtimeTransport(): SyncTransport {
   const id = Math.random().toString(36).slice(2, 10);
   let handler: ((msg: SyncMessage) => void) | null = null;
   let unsubscribe: (() => void) | null = null;
@@ -58,9 +59,17 @@ export function createRealtimeTransport(token: string): SyncTransport {
     const target = queued;
     queued = null;
     if (!target || closed) return;
-    void api.gotoSlide(target.index, target.step, id, token).catch((err) => {
-      console.error("Folienwechsel abgelehnt:", err);
-    });
+    void api
+      .gotoSlide(target.index, target.step, id, token())
+      .then(() => melde("greift"))
+      .catch((err) => {
+        // Der Server nennt den Grund im Klartext; wir unterscheiden nur, ob es
+        // am Geheimnis lag oder an der Leitung — die Anzeige am Steuerpult
+        // braucht nicht mehr.
+        const abgelehnt = String(err?.message ?? err).includes("Steuerungsgeheimnis");
+        melde(abgelehnt ? (token() ? "abgelehnt" : "fehlt") : "unbekannt");
+        console.error("Folienwechsel abgelehnt:", err);
+      });
   };
 
   return {

@@ -21,11 +21,28 @@ export const DEPLOY_ROLE = "ecr2026-deploy";
 /**
  * Wer darf die Rolle annehmen.
  *
- * Nur der Hauptzweig dieses Repositories. Kein Pull Request, kein Fork: dieser
- * Vortrag läuft einmal, an einem Abend — ein Staging-Zweig mit eigener
- * Vertrauenskette wäre Aufwand ohne Gegenwert.
+ * Der Deploy-Job nennt `environment: prod`, und sobald ein Job eine Umgebung
+ * nennt, setzt GitHub den `sub`-Anspruch auf `…:environment:<name>` statt auf
+ * `…:ref:refs/heads/<zweig>`. Wer nur den Zweig einträgt, bekommt beim ersten
+ * Lauf ein wortkarges "Not authorized to perform sts:AssumeRoleWithWebIdentity"
+ * — so geschehen am 14. September.
+ *
+ * Der Umgebungs-Anspruch trägt den Zweig nicht mehr in sich. Dass trotzdem nur
+ * `main` ausrollen kann, sichert die Zweigregel der Umgebung selbst:
+ *
+ *   gh api -X PUT repos/<repo>/environments/prod \
+ *     -f 'deployment_branch_policy[protected_branches]=false' \
+ *     -f 'deployment_branch_policy[custom_branch_policies]=true'
+ *   gh api -X POST repos/<repo>/environments/prod/deployment-branch-policies \
+ *     -f name=main
+ *
+ * Der Zweig-Anspruch bleibt daneben stehen, damit ein Job ohne Umgebung — etwa
+ * ein späterer Hilfslauf — nicht stillschweigend scheitert.
  */
-export const DEPLOY_SUBJECTS = [`repo:${REPO}:ref:refs/heads/main`];
+export const DEPLOY_SUBJECTS = [
+  `repo:${REPO}:environment:prod`,
+  `repo:${REPO}:ref:refs/heads/main`,
+];
 
 /**
  * Adresse, die der Agent bedient. Sie liegt auf der übergeordneten Domain und

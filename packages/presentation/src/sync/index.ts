@@ -5,8 +5,6 @@ import { LOKAL, ansicht } from "../routen";
 
 export type TransportKind = "broadcast" | "realtime" | "none";
 
-const params = new URLSearchParams(location.search);
-
 /**
  * Wie die drei Ansichten sich einig bleiben.
  *
@@ -23,10 +21,7 @@ const params = new URLSearchParams(location.search);
  */
 export function chooseTransport(): { kind: TransportKind; create: () => SyncTransport | null } {
   if (!LOKAL || ansicht() === "teilnehmer") {
-    const fromUrl = params.get("token");
-    if (fromUrl) sessionStorage.setItem("deck-token", fromUrl);
-    const token = fromUrl ?? sessionStorage.getItem("deck-token") ?? "";
-    return { kind: "realtime", create: () => createRealtimeTransport(token) };
+    return { kind: "realtime", create: () => createRealtimeTransport() };
   }
 
   if (BROADCAST_SUPPORTED) {
