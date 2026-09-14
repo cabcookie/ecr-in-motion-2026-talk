@@ -75,6 +75,14 @@ jobs:
           # über backendConfig gesetzt werden — das landet in einer öffentlich
           # lesbaren config.json.
           DECK_TOKEN: ${{ secrets.DECK_TOKEN }}
+          # Der Mailempfang liegt im Konto der Domain (siehe examples/konto-a).
+          # Von dort kommen diese vier Werte zurück. Keine Geheimnisse im engeren
+          # Sinn — eine ARN erlaubt nichts —, aber sie nennen Konto-IDs, und die
+          # muss man nicht veröffentlichen.
+          MAIL_ACCESS_ROLE_ARN: ${{ secrets.MAIL_ACCESS_ROLE_ARN }}
+          MAIL_BUCKET: ${{ secrets.MAIL_BUCKET }}
+          MAIL_TOPIC_ARN: ${{ secrets.MAIL_TOPIC_ARN }}
+          MAIL_IDENTITY_ARN: ${{ secrets.MAIL_IDENTITY_ARN }}
         run: pnpm --filter @ecr-talk/presentation deploy
 
       - name: Erreichbarkeit prüfen

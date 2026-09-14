@@ -5,11 +5,12 @@
 
 > **You have already been given the index below** — all of it, or as much of it as a session start could carry. It is the same index `nxm prime` replays, which stops at the byte budget the host delivers and says so when it does (`nxm index` prints the whole of it), so there is nothing to gain by reading it again here. Underneath it stands the FULL TEXT of each memory — that is what `nxm recall <key>` serves, and it is meant to be read one memory at a time, when the index tells you a particular one matters. Reading this file end to end is the expensive way to obtain what you already have.
 
-## Index (3)
+## Index (4)
 
 - **vortrag-szenario-entscheidung**: Der Vortrag nutzt das Lisa-Berger-Listungsszenario, nicht die gebaute Markus-Weber-Supply-Chain-Simulation.
 - **blocks-email-empfang**: AWS Blocks kann E-Mails senden (EmailClient/SES), aber nicht empfangen — Empfang über SES-Regel und Lambda in der CDK-Schicht.
 - **blocks-deployment-fallen**: Vor jedem Blocks-Deployment pruefen: Bucketnamen unter 63 Zeichen, esbuild im Wurzelpaket, stackId in .blocks/config.json.
+- **deployment-weg**: Deploy laeuft ueber GitHub OIDC; Hosted Zone und Rolle liegen in packages/infra und muessen vor dem ersten Anwendungs-Deployment stehen.
 
 ## Full text
 
@@ -28,3 +29,9 @@ AWS Blocks deckt E-Mail-VERSAND über den EmailClient-Block ab (lokal abgefangen
 ### `blocks-deployment-fallen`
 
 Die Blocks-Bausteine bringen beim Deployment drei Stolpersteine mit, die erst beim 'cdk synth' auffallen. Erstens: FileBucket-Namen werden aus Stack- und Blockkennung zusammengesetzt und duerfen 63 Zeichen nicht ueberschreiten - lange Blockkennungen wie 'lisa-assistant' sprengen das, kurze wie 'berater' nicht. Zweitens: die CDK-Buendelung ruft 'pnpm exec -- esbuild' im Wurzelverzeichnis des Repositories auf, esbuild muss also dort eine Abhaengigkeit sein, nicht nur im Paket. Drittens: .blocks/config.json braucht einen stackId-Eintrag und gehoert ins Repository - ohne ihn bricht der synth ab, und ein Deployment von einer anderen Maschine wuerde sonst einen zweiten Stack anlegen statt den vorhandenen zu ersetzen. Der Agent-Block laeuft lokal ohne AWS: ohne model.local faellt er auf einen Canned-Provider zurueck, mit dem sich Streaming, Verlauf und Wiederaufnahme vollstaendig pruefen lassen - nur die Antwortqualitaet nicht.
+
+---
+
+### `deployment-weg`
+
+Das Hosting des Vortrags laeuft ueber GitHub Actions mit OIDC statt Schluesselpaaren. packages/infra ist eine eigene CDK-App fuer das, was einmal von Hand entsteht: die Deploy-Rolle und die Hosted Zone. Die Zone gehoert dorthin und NICHT in den Anwendungs-Stack, weil das CloudFront-Zertifikat ueber DNS geprueft wird - laege die Zone im selben Deployment, schriebe AWS den Pruefeintrag in eine noch nicht delegierte Zone und die Pruefung liefe bis zum Zeitlimit. Reihenfolge: OIDC-Anbieter, cdk bootstrap, Bootstrap-Stack, NS-Delegation in der uebergeordneten Zone, Secrets, erst dann die Anwendung. Beim OIDC-Vertrauen keine Bedingung auf repository_owner setzen - die hat in einem nxsflow-Konto zu verweigerter Rollenannahme gefuehrt; die sub-Positivliste grenzt das Repository ohnehin vollstaendig ein.
