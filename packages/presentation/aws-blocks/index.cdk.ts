@@ -11,6 +11,7 @@ import { Hosting, BlocksStack, BlocksPresets } from '@aws-blocks/blocks/cdk';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { getStackName } from '@aws-blocks/blocks/scripts';
+import { DOMAIN, REGION } from '../../infra/config';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -20,10 +21,20 @@ const sandboxMode = app.node.tryGetContext('sandboxMode') === 'true';
 const projectRoot = app.node.tryGetContext('projectRoot') || process.cwd();
 
 const stackName = getStackName({ sandbox: sandboxMode, projectRoot });
+/*
+  Konto und Region müssen am Stack stehen, weil Hosting die Hosted Zone beim
+  Synthetisieren nachschlägt — ein Lookup braucht beides.
+*/
+const env = {
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION ?? REGION,
+};
+
 export const blocksStack = await BlocksStack.create(app, stackName, {
   backendHandlerPath: join(__dirname, 'index.handler.ts'),
   backendCDKPath: join(__dirname, 'index.ts'),
   defaults: sandboxMode ? BlocksPresets.sandbox : BlocksPresets.production,
+  env,
 });
 
 if (sandboxMode) {
@@ -48,12 +59,20 @@ if (!deckToken) {
   );
 }
 
-// Statisches Hosting nur beim echten Deployment, nicht in der Sandbox
+/*
+  Statisches Hosting nur beim echten Deployment, nicht in der Sandbox.
+
+  Die Hosted Zone liegt im Bootstrap-Stack (packages/infra) und muss stehen,
+  bevor das hier zum ersten Mal läuft: Hosting legt das CloudFront-Zertifikat
+  an und lässt es über DNS prüfen. Ist die Zone noch nicht vom übergeordneten
+  Namensserver delegiert, wartet die Prüfung bis zum Zeitlimit.
+*/
 if (!sandboxMode) {
   new Hosting(blocksStack, 'Hosting', {
     root: join(__dirname, '..'),
     buildCommand: 'pnpm build',
     buildOutputDir: 'dist',
     api: blocksStack,
+    domain: { domainName: DOMAIN, hostedZone: DOMAIN },
   });
 }

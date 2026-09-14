@@ -1,0 +1,90 @@
+name: deploy
+
+# Rollt den Vortrag nach ecr2026.carstenbkoch.de aus.
+#
+# Voraussetzung ist der Bootstrap-Stack aus packages/infra: er legt die Rolle an,
+# die dieser Workflow annimmt, und die Hosted Zone, gegen die das Zertifikat
+# geprüft wird. Beides wird einmal von Hand ausgerollt — ein Workflow kann nicht
+# die Rolle anlegen, die er zum Anlegen braucht.
+#
+# Zugangsdaten gibt es nur über OIDC, nicht als Schlüsselpaar im Repository.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/presentation/**"
+      - "packages/infra/config.ts"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # OIDC: die Deploy-Rolle annehmen
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Abhängigkeiten (gesperrt)
+        run: pnpm install --frozen-lockfile
+
+      - name: Markenmaterial
+        # Schrift und Logo gehören Amazon und liegen nicht im Repository. Ohne sie
+        # greift der Ersatz-Schriftstapel — die Folien funktionieren, sehen aber
+        # anders aus. Deshalb ein Hinweis im Protokoll und kein stiller Durchlauf.
+        run: |
+          set -euo pipefail
+          if [ -d packages/brand-material ]; then
+            python3 packages/presentation/scripts/markenmaterial.py
+          else
+            echo "::warning::Kein Markenmaterial im Lauf — Ersatzschrift, kein Logo."
+          fi
+
+      - name: Typen prüfen
+        run: pnpm --filter @ecr-talk/presentation exec tsc --noEmit
+
+      - name: AWS-Zugangsdaten über OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
+          aws-region: eu-central-1
+
+      - name: Ausrollen
+        env:
+          # Ohne dieses Geheimnis könnte jeder mit der Adresse die Folien
+          # weiterklicken. Es kommt aus den Repository-Secrets und darf NICHT
+          # über backendConfig gesetzt werden — das landet in einer öffentlich
+          # lesbaren config.json.
+          DECK_TOKEN: ${{ secrets.DECK_TOKEN }}
+        run: pnpm --filter @ecr-talk/presentation deploy
+
+      - name: Erreichbarkeit prüfen
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 20); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' https://ecr2026.carstenbkoch.de/ || true)"
+            if [ "$code" = "200" ]; then echo "ecr2026.carstenbkoch.de antwortet mit 200"; exit 0; fi
+            echo "Versuch $i: HTTP $code — warte"
+            sleep 15
+          done
+          echo "::error::Die Seite antwortet nach fünf Minuten nicht mit 200."
+          exit 1

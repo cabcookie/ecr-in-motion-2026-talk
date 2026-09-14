@@ -115,6 +115,27 @@ importers:
 
   packages/docs: {}
 
+  packages/infra:
+    devDependencies:
+      '@types/node':
+        specifier: 22.20.0
+        version: 22.20.0
+      aws-cdk:
+        specifier: 2.1141.0
+        version: 2.1141.0
+      aws-cdk-lib:
+        specifier: 2.257.0
+        version: 2.257.0(constructs@10.6.0)
+      constructs:
+        specifier: 10.6.0
+        version: 10.6.0
+      tsx:
+        specifier: 4.20.6
+        version: 4.20.6
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   packages/presentation:
     dependencies:
       '@aws-blocks/blocks':
@@ -1601,6 +1622,11 @@ packages:
       - table
       - yaml
       - mime-types
+
+  aws-cdk@2.1141.0:
+    resolution: {integrity: sha512-RIKueAoFNYUot/VmlUzPUbecxNCtLzJFqpy/O+vTpjrvDn4k2Uiu9Y/QlVlQzaSJw0qqNNY6ldusJVdkX8aBNA==}
+    engines: {node: '>= 18.0.0'}
+    hasBin: true
 
   aws-jwt-verify@5.2.1:
     resolution: {integrity: sha512-J+buA4M+qvQDk58WXFBLkDodkEX3DDL1ac5XFQPW3opxAsaLXYu5hYnlSHsaBRDBUXBAn695kE/cw/mdyJKwJg==}
@@ -4616,6 +4642,8 @@ snapshots:
       '@aws-cdk/asset-node-proxy-agent-v6': 2.1.3
       '@aws-cdk/cloud-assembly-schema': 53.28.0
       constructs: 10.6.0
+
+  aws-cdk@2.1141.0: {}
 
   aws-jwt-verify@5.2.1: {}
 
