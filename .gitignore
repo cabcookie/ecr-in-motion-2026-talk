@@ -48,6 +48,10 @@ cdk.out/
 
 # Markenmaterial von AWS — 2,5 GB Originaldateien (Gradienten, Muster, Blocks,
 # das Design-PDF, die PowerPoint-Vorlage). Das gehört nicht in ein Git-Repo.
-# Was die Präsentation tatsächlich braucht, wird nach
-# packages/presentation/public/brand/ kopiert und dort versioniert.
 packages/brand-material/
+
+# Schrift und Logo von AWS gehören Amazon, nicht uns, und werden deshalb auch
+# in verarbeiteter Form nicht mitversioniert. Geholt werden sie mit
+#   python3 packages/presentation/scripts/markenmaterial.py
+# Wer sie nicht hat, bekommt die Ersatzschrift und keine Logos.
+packages/presentation/public/brand/
