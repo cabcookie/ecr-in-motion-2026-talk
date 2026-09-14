@@ -105,7 +105,7 @@ export function OperatorView() {
                 <h2 className="mb-2 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
                   Auf den Handys
                 </h2>
-                <AudiencePreview width={224} height={400} />
+                <AudiencePreview width={200} height={300} />
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@ export function OperatorView() {
             Vorlesen. Der Folientitel steht nicht noch einmal hier — er ist
             in der Vorschau daneben zu sehen.
           */}
-          <div className="min-w-0">
+          <div className="flex min-w-0 flex-col">
             {panel?.say && (
               <div className="mb-5">
                 <p className="m-0 mb-2 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
@@ -147,6 +147,38 @@ export function OperatorView() {
                 </Note>
               )}
             </dl>
+
+                    <div className="mt-auto flex flex-col gap-2 border-t border-hair pt-4">
+            {BLOCKS.map((b) => (
+              <div key={b.n} className="flex items-center gap-2">
+                <span
+                  className="w-24 shrink-0 font-mono text-[10px] tracking-[0.1em] uppercase"
+                  style={{ color: ACCENT[b.n] }}
+                >
+                  {b.n} · {b.tab}
+                </span>
+                <div className="flex flex-wrap gap-1">
+                  {SECTIONS.filter((s) => s.b === b.n).map((s) => {
+                    const current = s.n === section.n;
+                    return (
+                      <button
+                        key={s.n}
+                        type="button"
+                        onClick={() => goto(s.n - 1)}
+                        title={`${s.panels[0]?.at ?? ""} ${s.title}`}
+                        className={`h-7 w-9 rounded font-mono text-[11px] tabular-nums transition-colors ${
+                          current ? "text-stage" : "border border-hair text-fg-3 hover:text-fg"
+                        }`}
+                        style={current ? { background: ACCENT[b.n] } : undefined}
+                      >
+                        {String(s.n).padStart(2, "0")}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
           </div>
         </div>
 
@@ -173,38 +205,6 @@ export function OperatorView() {
           </p>
         </div>
 
-        {/* Folienleiste */}
-        <div className="flex flex-col gap-2">
-          {BLOCKS.map((b) => (
-            <div key={b.n} className="flex items-center gap-2">
-              <span
-                className="w-24 shrink-0 font-mono text-[10px] tracking-[0.1em] uppercase"
-                style={{ color: ACCENT[b.n] }}
-              >
-                {b.n} · {b.tab}
-              </span>
-              <div className="flex flex-wrap gap-1">
-                {SECTIONS.filter((s) => s.b === b.n).map((s) => {
-                  const current = s.n === section.n;
-                  return (
-                    <button
-                      key={s.n}
-                      type="button"
-                      onClick={() => goto(s.n - 1)}
-                      title={`${s.panels[0]?.at ?? ""} ${s.title}`}
-                      className={`h-7 w-9 rounded font-mono text-[11px] tabular-nums transition-colors ${
-                        current ? "text-stage" : "border border-hair text-fg-3 hover:text-fg"
-                      }`}
-                      style={current ? { background: ACCENT[b.n] } : undefined}
-                    >
-                      {String(s.n).padStart(2, "0")}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
