@@ -1,6 +1,7 @@
 import { BLOCKS, SECTIONS, TOTAL, blockOf } from "@/slides/data";
 import { useNavigation } from "@/nav/useNavigation";
 import { StagePreview } from "./StagePreview";
+import { AudiencePreview } from "./AudiencePreview";
 import { Schedule } from "./Schedule";
 
 const ACCENT = ["", "var(--color-b1)", "var(--color-b2)", "var(--color-b3)", "var(--color-b4)"];
@@ -83,15 +84,29 @@ export function OperatorView() {
               <StagePreview section={section} panel={step} width={560} expandable />
             </div>
 
-            <div>
-              <h2 className="mb-2 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
-                Als Nächstes
-              </h2>
-              {nextSection ? (
-                <StagePreview section={nextSection} panel={nextPanel} width={320} />
-              ) : (
-                <p className="text-sm text-fg-3">Letzte Folie.</p>
-              )}
+            {/*
+              Die nächste Folie ist nur halb so breit wie die aktuelle. Der
+              Platz daneben trägt die Zuschauersicht — so sieht der
+              Vortragende, was gerade auf den Handys steht.
+            */}
+            <div className="flex items-start gap-4">
+              <div>
+                <h2 className="mb-2 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+                  Als Nächstes
+                </h2>
+                {nextSection ? (
+                  <StagePreview section={nextSection} panel={nextPanel} width={320} />
+                ) : (
+                  <p className="text-sm text-fg-3">Letzte Folie.</p>
+                )}
+              </div>
+
+              <div>
+                <h2 className="mb-2 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+                  Auf den Handys
+                </h2>
+                <AudiencePreview width={224} height={400} />
+              </div>
             </div>
           </div>
 
