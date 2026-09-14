@@ -11,7 +11,13 @@ import { Hosting, BlocksStack, BlocksPresets } from '@aws-blocks/blocks/cdk';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { getStackName } from '@aws-blocks/blocks/scripts';
-import { DOMAIN, REGION } from '../../infra/config';
+import { DOMAIN, MAIL_HANDLER_ROLE, REGION } from '../../infra/config';
+import { Duration } from 'aws-cdk-lib';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { LambdaSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -75,4 +81,82 @@ if (!sandboxMode) {
     api: blocksStack,
     domain: { domainName: DOMAIN, hostedZone: DOMAIN },
   });
+}
+
+/*
+  Der Postfach-Agent.
+
+  Er hängt an einem SNS-Topic im Konto der Domain und nimmt dort eine Rolle an,
+  um die Rohmail zu lesen und die Antwort als die verifizierte Identität zu
+  senden. Die vier Werte kommen aus den GitHub-Secrets; fehlen sie, bleibt der
+  Agent aus — der Rest des Vortrags läuft dann trotzdem.
+
+  Die Reihenfolge zwischen den Konten steht in examples/konto-a/README.md.
+*/
+const mailRolle = process.env.MAIL_ACCESS_ROLE_ARN ?? '';
+const mailBucket = process.env.MAIL_BUCKET ?? '';
+const mailTopic = process.env.MAIL_TOPIC_ARN ?? '';
+
+if (!sandboxMode && mailRolle && mailBucket && mailTopic) {
+  /*
+    Der Rollenname ist fest vergeben, nicht von CDK erzeugt. Die Rolle im
+    Domain-Konto muss ihr vertrauen, bevor es sie gibt — ein abgesprochener Name
+    bricht dieses Henne-Ei. Auf der anderen Seite steht derselbe Name in
+    examples/konto-a/mail-empfang-stack.ts.
+  */
+  const rolle = new Role(blocksStack, 'MailHandlerRole', {
+    roleName: MAIL_HANDLER_ROLE,
+    assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    description: 'Postfach-Agent: nimmt die Zugriffsrolle im Domain-Konto an',
+  });
+  rolle.addToPolicy(
+    new PolicyStatement({
+      actions: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
+      resources: ['arn:aws:logs:*:*:*'],
+    }),
+  );
+  rolle.addToPolicy(new PolicyStatement({ actions: ['sts:AssumeRole'], resources: [mailRolle] }));
+  // Das Modell läuft in unserem Konto, nicht im fremden — der Agent ist unsere
+  // Arbeit, nur Postfach und Absenderidentität sind es nicht.
+  rolle.addToPolicy(
+    new PolicyStatement({
+      actions: ['bedrock:InvokeModel'],
+      resources: ['arn:aws:bedrock:*::foundation-model/anthropic.claude-*', 'arn:aws:bedrock:*:*:inference-profile/*'],
+    }),
+  );
+
+  const postfachAgent = new NodejsFunction(blocksStack, 'MailHandler', {
+    entry: join(__dirname, 'mail', 'handler.ts'),
+    handler: 'handler',
+    runtime: Runtime.NODEJS_22_X,
+    role: rolle,
+    /*
+      Großzügig bemessen: Ein Lauf mit Werkzeugen sind mehrere Modellaufrufe
+      nacheinander, und am Abend schreiben alle gleichzeitig. Lieber eine
+      Minute zu viel als eine abgeschnittene Antwort.
+    */
+    timeout: Duration.minutes(5),
+    memorySize: 1024,
+    /*
+      Alles mit ins Bündel, auch das AWS-SDK.
+
+      Die Lambda-Laufzeit bringt zwar ein SDK v3 mit, aber nicht zwingend
+      client-bedrock-runtime und credential-providers — und ein fehlendes Modul
+      zeigt sich erst beim ersten Aufruf. Das wäre am Vortragsabend die
+      schlechteste Stelle für eine Überraschung. Ein paar Megabyte mehr und ein
+      paar Millisekunden Kaltstart sind der Preis.
+    */
+    bundling: { externalModules: [] },
+    environment: {
+      MAIL_ACCESS_ROLE_ARN: mailRolle,
+      MAIL_BUCKET: mailBucket,
+      MAIL_PREFIX: 'eingang/',
+    },
+  });
+
+  // Das Topic gehört dem anderen Konto; wir legen nur die Subscription an.
+  // Dass wir das dürfen, steht in dessen Topic-Policy.
+  Topic.fromTopicArn(blocksStack, 'MailTopic', mailTopic).addSubscription(
+    new LambdaSubscription(postfachAgent),
+  );
 }

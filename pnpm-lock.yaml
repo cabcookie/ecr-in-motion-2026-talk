@@ -144,9 +144,27 @@ importers:
       '@aws-blocks/hosting':
         specifier: 0.3.0
         version: 0.3.0(aws-cdk-lib@2.257.0(constructs@10.6.0))(constructs@10.6.0)(typescript@5.9.3)
+      '@aws-sdk/client-bedrock-runtime':
+        specifier: 3.1131.0
+        version: 3.1131.0
+      '@aws-sdk/client-s3':
+        specifier: 3.1131.0
+        version: 3.1131.0
+      '@aws-sdk/client-sesv2':
+        specifier: 3.1131.0
+        version: 3.1131.0
+      '@aws-sdk/client-sts':
+        specifier: 3.1131.0
+        version: 3.1131.0
+      '@aws-sdk/credential-providers':
+        specifier: 3.1131.0
+        version: 3.1131.0
       aws-blocks:
         specifier: link:./aws-blocks
         version: link:aws-blocks
+      postal-mime:
+        specifier: ^3.0.0
+        version: 3.0.0
       qrcode:
         specifier: 1.5.4
         version: 1.5.4
@@ -2428,6 +2446,9 @@ packages:
   pngjs@5.0.0:
     resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
     engines: {node: '>=10.13.0'}
+
+  postal-mime@3.0.0:
+    resolution: {integrity: sha512-Z4a9ar2Bv3YpK3IXag+Yda30k7bMZfpRuUGyqtHnZ2pjHG8Bl62EhZIk4n1dzv00gfzP9g+94e9kd8+XmjVWLA==}
 
   postcss@8.5.28:
     resolution: {integrity: sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A==}
@@ -5445,6 +5466,8 @@ snapshots:
   pluralize@8.0.0: {}
 
   pngjs@5.0.0: {}
+
+  postal-mime@3.0.0: {}
 
   postcss@8.5.28:
     dependencies:

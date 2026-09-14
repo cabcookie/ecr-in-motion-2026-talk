@@ -19,8 +19,16 @@ import { Construct } from "constructs";
 export interface MailEmpfangProps extends StackProps {
   /** Konto-ID des Vortrags — dort läuft die Lambda, die die Mail verarbeitet. */
   readonly vortragsKonto: string;
-  /** Adresse, die der Agent bedient. */
-  readonly adresse: string;
+  /**
+   * Adressen, die der Vortrag bedient.
+   *
+   * Zwei, nicht eine: Abschnitt 6 schreibt an Lisas Assistenten (mit
+   * Systemprompt und Werkzeugen), Abschnitt 15 an einen Agenten, der nichts hat
+   * als sein Training. Unterschieden wird über die Adresse und nicht über den
+   * Betreff — beim ersten fordern wir die Teilnehmer ausdrücklich auf, den Text
+   * zu ändern, und wer dabei den Betreff anfasst, bekäme den falschen Agenten.
+   */
+  readonly adressen: readonly string[];
   /** Domain, die in SES verifiziert ist. */
   readonly domain: string;
 }
@@ -39,7 +47,7 @@ const HANDLER_ROLLE = "ecr2026-mail-handler";
 export class MailEmpfangStack extends Stack {
   constructor(scope: Construct, id: string, props: MailEmpfangProps) {
     super(scope, id, props);
-    const { vortragsKonto, adresse, domain } = props;
+    const { vortragsKonto, adressen, domain } = props;
 
     /*
       Die Rohmails. Bewusst mit SSE-S3 und nicht mit KMS: ein KMS-Schlüssel
@@ -105,7 +113,7 @@ export class MailEmpfangStack extends Stack {
     });
 
     ruleSet.addRule("Eingang", {
-      recipients: [adresse],
+      recipients: [...adressen],
       enabled: true,
       scanEnabled: true,
       actions: [new S3({ bucket, objectKeyPrefix: "eingang/", topic })],

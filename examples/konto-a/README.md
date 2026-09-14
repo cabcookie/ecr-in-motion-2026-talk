@@ -2,8 +2,8 @@
 
 Der Vortrag läuft in einem Konto, die Domain `carstenbkoch.de` liegt in einem
 anderen. Diese Vorlage beschreibt den Teil im **Domain-Konto**: SES nimmt die
-Mail an `ecr2026@carstenbkoch.de` an, legt sie in S3, meldet das über SNS — und
-eine Rolle erlaubt dem Vortragskonto, die Mail zu lesen und die Antwort als die
+Mails an die beiden Vortragsadressen an, legt sie in S3, meldet das über SNS —
+und eine Rolle erlaubt dem Vortragskonto, die Mail zu lesen und die Antwort als die
 verifizierte Identität zu verschicken.
 
 `mail-empfang-stack.ts` ist ein CDK-Stack zum Übernehmen und Anpassen. Er ist
@@ -34,6 +34,20 @@ Warum **eine** Rolle statt zweier Berechtigungswege: Lesen ginge auch über eine
 Bucket Policy, Senden über SES Sending Authorization. Das wären zwei
 Handreichungen statt einer — und der `EmailClient`-Baustein von AWS Blocks reicht
 kein `SourceArn` durch, was den zweiten Weg ohnehin unbequem macht.
+
+## Zwei Adressen
+
+Der Vortrag braucht zwei Agenten, und sie werden über die Empfängeradresse
+auseinandergehalten:
+
+| Adresse | Agent |
+| --- | --- |
+| `ecr2026@carstenbkoch.de` | Lisas Assistent — Systemprompt, Werkzeuge, arbeitet den Vorgang ab |
+| `ecr2026-probe@carstenbkoch.de` | nur Trainingsdaten, keine Systeme — der erfindet die Marge, und das ist der Punkt |
+
+Nicht über den Betreff: Beim ersten fordert der Vortrag die Teilnehmer
+ausdrücklich auf, den Text zu ändern. Wer dabei auch den Betreff anfasst, bekäme
+sonst den falschen Agenten — und würde die Folie nicht verstehen.
 
 ## Voraussetzungen im Konto
 
@@ -67,7 +81,7 @@ Konto A braucht außerdem die **Konto-ID des Vortragskontos**. Sonst nichts.
 new MailEmpfangStack(app, "ecr2026-mail", {
   env: { account: "<konto-a>", region: "eu-central-1" },
   vortragsKonto: "<konto-b>",
-  adresse: "ecr2026@carstenbkoch.de",
+  adressen: ["ecr2026@carstenbkoch.de", "ecr2026-probe@carstenbkoch.de"],
   domain: "carstenbkoch.de",
 });
 ```

@@ -14,12 +14,19 @@
     "sandbox:destroy": "tsx -C cdk aws-blocks/scripts/sandbox-destroy.ts",
     "deploy": "tsx aws-blocks/scripts/deploy.ts",
     "destroy": "tsx aws-blocks/scripts/destroy.ts",
-    "kosten": "tsx scripts/kostenrechnung.ts"
+    "kosten": "tsx scripts/kostenrechnung.ts",
+    "mail:test": "tsx scripts/mail-test.ts"
   },
   "dependencies": {
     "@aws-blocks/blocks": "0.5.0",
     "@aws-blocks/hosting": "0.3.0",
+    "@aws-sdk/client-bedrock-runtime": "3.1131.0",
+    "@aws-sdk/client-s3": "3.1131.0",
+    "@aws-sdk/client-sesv2": "3.1131.0",
+    "@aws-sdk/client-sts": "3.1131.0",
+    "@aws-sdk/credential-providers": "3.1131.0",
     "aws-blocks": "link:./aws-blocks",
+    "postal-mime": "^3.0.0",
     "qrcode": "1.5.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
