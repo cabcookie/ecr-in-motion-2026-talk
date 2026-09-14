@@ -131,11 +131,6 @@ export function OperatorView() {
                   {panel?.inter!}
                 </Note>
               )}
-              {panel?.app && (
-                <Note label="App liefert" tone="text-b3">
-                  {panel?.app!}
-                </Note>
-              )}
               {panel?.note && (
                 <Note label="Hinweis" tone="text-fg-3">
                   {panel?.note!}
