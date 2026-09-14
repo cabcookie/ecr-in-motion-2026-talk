@@ -1,7 +1,7 @@
 import { BLOCKS, SECTIONS, TOTAL, blockOf } from "@/slides/data";
 import { useNavigation } from "@/nav/useNavigation";
 import { StagePreview } from "./StagePreview";
-import { Timer } from "./Timer";
+import { Schedule } from "./Schedule";
 
 const ACCENT = ["", "var(--color-b1)", "var(--color-b2)", "var(--color-b3)", "var(--color-b4)"];
 
@@ -42,14 +42,13 @@ export function OperatorView() {
             <div>
               <div className="font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
                 Block {block.n} · {block.tab}
-                {panel?.at && <span className="ml-2 text-[color:var(--accent)]">geplant {panel.at}</span>}
               </div>
               <div className="font-display text-lg font-bold">{block.title}</div>
             </div>
           </div>
 
           <div className="flex items-center gap-5">
-            <Timer />
+            <Schedule at={panel?.at} />
             <div className="text-right">
               <div className="font-mono text-2xl tabular-nums">
                 {String(section.n).padStart(2, "0")}

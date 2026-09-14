@@ -72,7 +72,7 @@ export function LiveView() {
             showHelp ? "opacity-100" : "opacity-0"
           }`}
         >
-          → / Leertaste vor · ← zurück · F Vollbild · {index + 1}/{total}
+          → / Leertaste vor · ← zurück · ⌃⌘F Vollbild · {index + 1}/{total}
         </div>
       )}
     </div>

@@ -1,5 +1,4 @@
 import type { Section } from "@/slides/types";
-import { blockOf } from "@/slides/data";
 import { MockView } from "./mocks";
 import { FitBox } from "./FitBox";
 
@@ -39,12 +38,18 @@ export function SectionView({
   panel: number;
   isTitle?: boolean;
 }) {
-  const block = blockOf(section.b);
   const hero = Boolean(section.hero) && panel === 0;
   const centered = isCentered(section, panel);
 
+  // Block und Foliennummer stehen bewusst nicht mehr im Bild — das Publikum
+  // soll die Aussage sehen, nicht die Buchhaltung. Die Kennzeichnung bleibt
+  // als Datenattribut, damit Screenshots und Tests sie weiterhin finden.
   return (
-    <div className="absolute inset-0 flex flex-col overflow-hidden px-[108px] pt-[86px] pb-[104px]">
+    <div
+      data-slideno={section.n}
+      data-panel={panel}
+      className="absolute inset-0 flex flex-col overflow-hidden px-[108px] pt-[86px] pb-[104px]"
+    >
       {/* Kopf — wandert vom Bildmittelpunkt nach oben, wenn das erste Panel kommt */}
       <div
         className={`flex flex-col transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
@@ -104,24 +109,6 @@ export function SectionView({
         </div>
       )}
 
-      <div className="absolute bottom-[32px] left-[44px] flex items-center gap-[13px] font-mono text-[20px] tracking-[0.11em] text-fg-3 uppercase">
-        <span className="size-[12px] rounded-full bg-[color:var(--accent)]" />
-        <span>
-          {block.n} · {block.tab}
-        </span>
-      </div>
-      <div
-        data-slideno={section.n}
-        data-panel={panel}
-        className="absolute right-[44px] bottom-[34px] font-mono text-[21px] tracking-[0.09em] tabular-nums text-fg-3"
-      >
-        {String(section.n).padStart(2, "0")}
-        {section.panels.length > 1 && (
-          <span className="text-fg-3/60">
-            .{panel + 1}
-          </span>
-        )}
-      </div>
     </div>
   );
 }

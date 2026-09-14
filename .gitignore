@@ -45,3 +45,9 @@ packages/presentation/shots/
 !**/.blocks/config.json
 .blocks-sandbox/
 cdk.out/
+
+# Markenmaterial von AWS — 2,5 GB Originaldateien (Gradienten, Muster, Blocks,
+# das Design-PDF, die PowerPoint-Vorlage). Das gehört nicht in ein Git-Repo.
+# Was die Präsentation tatsächlich braucht, wird nach
+# packages/presentation/public/brand/ kopiert und dort versioniert.
+packages/brand-material/
