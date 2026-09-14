@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Section } from "@/slides/types";
 import { SectionView } from "./SectionView";
+import { Logo } from "./Logo";
 import { STAGE_H, STAGE_W } from "@/nav/useStageScale";
 
 /**
@@ -73,6 +74,7 @@ export function StagePreview({
           style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})` }}
         >
           <SectionView section={section} panel={panel} isTitle={section.n === 1} />
+          <Logo large={section.n === 1} animated={false} />
         </div>
       </div>
 

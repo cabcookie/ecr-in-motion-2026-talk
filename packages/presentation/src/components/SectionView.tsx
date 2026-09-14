@@ -1,7 +1,6 @@
 import type { Section } from "@/slides/types";
 import { MockView } from "./mocks";
 import { FitBox } from "./FitBox";
-import { Logo } from "./Logo";
 
 /** Titelgröße nach Länge — lange Sätze dürfen nicht bis zum Rand laufen. */
 function titleSize(text: string, hero: boolean): string {
@@ -51,7 +50,6 @@ export function SectionView({
       data-panel={panel}
       className="absolute inset-0 flex flex-col overflow-hidden px-[108px] pt-[86px] pb-[104px]"
     >
-      <Logo large={isTitle} />
       {/* Kopf — wandert vom Bildmittelpunkt nach oben, wenn das erste Panel kommt */}
       <div
         className={`flex flex-col transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${

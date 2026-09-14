@@ -4,6 +4,7 @@ import { useNavigation } from "@/nav/useNavigation";
 import { useSectionTransition } from "@/nav/useSectionTransition";
 import { STAGE_W, useStageScale } from "@/nav/useStageScale";
 import { SectionView } from "./SectionView";
+import { Logo } from "./Logo";
 
 /** ?clean blendet den Tastaturhinweis aus — für Screenshots und den Ernstfall. */
 const CLEAN = new URLSearchParams(location.search).has("clean");
@@ -58,6 +59,9 @@ export function LiveView() {
         >
           <SectionView section={section} panel={step} isTitle={index === 0} />
         </div>
+
+        {/* Liegt auf der Bühne, nicht im Abschnitt — sonst wandert es mit hinaus. */}
+        <Logo large={index === 0} />
 
         <div className="absolute inset-x-0 bottom-0 h-[9px] bg-stage-3" />
         <div
