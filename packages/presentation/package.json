@@ -16,12 +16,14 @@
     "destroy": "tsx aws-blocks/scripts/destroy.ts",
     "kosten": "tsx scripts/kostenrechnung.ts",
     "mail:test": "tsx scripts/mail-test.ts",
+    "buendel:test": "tsx scripts/buendel-test.ts",
     "sperr:test": "node scripts/sperr-test.mjs",
     "buehne:test": "node scripts/buehne-test.mjs"
   },
   "dependencies": {
     "@aws-blocks/blocks": "0.5.0",
     "@aws-blocks/hosting": "0.3.0",
+    "@ecr-talk/handelswelt": "workspace:*",
     "@aws-sdk/client-bedrock-runtime": "3.1131.0",
     "@aws-sdk/client-s3": "3.1131.0",
     "@aws-sdk/client-sesv2": "3.1131.0",

@@ -115,6 +115,12 @@ importers:
 
   packages/docs: {}
 
+  packages/handelswelt:
+    devDependencies:
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   packages/infra:
     devDependencies:
       '@types/node':
@@ -159,6 +165,9 @@ importers:
       '@aws-sdk/credential-providers':
         specifier: 3.1131.0
         version: 3.1131.0
+      '@ecr-talk/handelswelt':
+        specifier: workspace:*
+        version: link:../handelswelt
       aws-blocks:
         specifier: link:./aws-blocks
         version: link:aws-blocks

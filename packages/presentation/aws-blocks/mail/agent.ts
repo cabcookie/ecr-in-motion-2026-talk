@@ -126,10 +126,16 @@ export async function beantworte(
     const ergebnisse: ContentBlock[] = aufrufe.map((a) => {
       const werkzeug = WERKZEUGE.find((w) => w.name === a.name);
       schritte.push(a.name ?? "unbekannt");
+      /*
+        Die Argumente gehen jetzt ans Werkzeug durch. Vorher taten sie das
+        nicht, und deshalb antwortete die Kalkulation bei jedem Preis mit
+        derselben Marge — überzeugend hergeleitet und falsch.
+      */
+      const args = (a.input ?? {}) as Record<string, unknown>;
       return {
         toolResult: {
           toolUseId: a.toolUseId,
-          content: [{ json: werkzeug ? werkzeug.antwort() : { fehler: "Werkzeug unbekannt" } }],
+          content: [{ json: werkzeug ? werkzeug.antwort(args) : { fehler: "Werkzeug unbekannt" } }],
         },
       } as ContentBlock;
     });

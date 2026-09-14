@@ -1,0 +1,16 @@
+{
+  "name": "@ecr-talk/handelswelt",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Die Systeme, in denen Lisas Assistent nachschlägt — simuliert, aber rechnend",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
