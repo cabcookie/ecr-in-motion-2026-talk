@@ -1,18 +1,24 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import type { Section } from "@/slides/types";
 import { MockView } from "./mocks";
 import { FitBox } from "./FitBox";
+import { STAGE_H } from "@/nav/useStageScale";
 
 /** Titelgröße nach Länge — lange Sätze dürfen nicht bis zum Rand laufen. */
-function titleSize(text: string, hero: boolean): string {
+function titlePx(text: string, hero: boolean): number {
   if (hero) {
-    if (text.length <= 30) return "text-[132px]";
-    if (text.length <= 60) return "text-[104px]";
-    return "text-[78px]";
+    if (text.length <= 30) return 132;
+    if (text.length <= 60) return 104;
+    return 78;
   }
-  if (text.length <= 34) return "text-[76px]";
-  if (text.length <= 64) return "text-[62px]";
-  return "text-[50px]";
+  if (text.length <= 34) return 76;
+  if (text.length <= 64) return 62;
+  return 50;
 }
+
+/** Abstand von der Oberkante des Inhalts, siehe pt-[86px] am Wurzelknoten. */
+const KOPF_OBEN = 86;
+const KOPF_MS = 820;
 
 /** Panels ohne Anwendungsfenster stehen mittig — die Aussage ist der Inhalt. */
 function isCentered(section: Section, panel: number): boolean {
@@ -28,6 +34,14 @@ function isCentered(section: Section, panel: number): boolean {
  * wandert beim Weiterklicken nach oben, wo er als Überschrift stehen bleibt.
  * Die Panels darunter scrollen horizontal; das verlassene Panel wandert nach
  * links und blendet unter einem Verlauf aus.
+ *
+ * Dieses Wandern war lange zweierlei: Der Titel wechselte Schriftgrad,
+ * Zeilenbreite und Ausrichtung zugleich, brach also neu um und sprang
+ * horizontal — zwei Objekte, nicht eines. Jetzt steht er immer in der
+ * Hero-Größe und bleibt zentriert; bewegt wird nur ein transform, das ihn
+ * hebt und verkleinert. Die Umbrüche bleiben damit gleich, und weil ein
+ * transform kein Layout anfasst, hat der Inhalt darunter von Anfang an seine
+ * endgültige Höhe — die eintreffende Mail muss ihre Größe nicht mehr ändern.
  */
 export function SectionView({
   section,
@@ -38,8 +52,27 @@ export function SectionView({
   panel: number;
   isTitle?: boolean;
 }) {
-  const hero = Boolean(section.hero) && panel === 0;
+  /** Abschnitt mit großem Auftakt — nur dort wandert der Titel überhaupt. */
+  const heroAbschnitt = Boolean(section.hero);
+  const hero = heroAbschnitt && panel === 0;
   const centered = isCentered(section, panel);
+
+  /*
+    In einem Hero-Abschnitt steht der Titel immer in der großen Fassung und
+    bleibt zentriert. Für die Panels danach schrumpft ihn ein transform auf das
+    normale Maß; gleichzeitig fällt der Versatz weg, der ihn in die Bildmitte
+    hebt. Beides in einer Bewegung — der Titel bleibt ein Objekt.
+  */
+  const kopf = useRef<HTMLDivElement>(null);
+  const [hebung, setHebung] = useState(0);
+  const klein = titlePx(section.title, false) / titlePx(section.title, true);
+
+  useLayoutEffect(() => {
+    if (!heroAbschnitt) return;
+    const h = kopf.current?.offsetHeight ?? 0;
+    // Mitte des Kopfes auf die Bildmitte legen — offsetHeight ignoriert transform
+    setHebung(Math.max(0, Math.round(STAGE_H / 2 - KOPF_OBEN - h / 2)));
+  }, [heroAbschnitt, section.n]);
 
   // Block und Foliennummer stehen bewusst nicht mehr im Bild — das Publikum
   // soll die Aussage sehen, nicht die Buchhaltung. Die Kennzeichnung bleibt
@@ -50,11 +83,22 @@ export function SectionView({
       data-panel={panel}
       className="absolute inset-0 flex flex-col overflow-hidden px-[108px] pt-[86px] pb-[104px]"
     >
-      {/* Kopf — wandert vom Bildmittelpunkt nach oben, wenn das erste Panel kommt */}
+      {/* Kopf — hebt und verkleinert sich als Ganzes, wenn das erste Panel kommt */}
       <div
-        className={`flex flex-col transition-[flex-grow] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          hero ? "flex-1 items-center justify-center text-center" : "flex-none items-start"
+        ref={kopf}
+        className={`flex flex-none flex-col ${
+          heroAbschnitt ? "items-center text-center" : "items-start"
         }`}
+        style={
+          heroAbschnitt
+            ? {
+                transform: hero ? `translateY(${hebung}px)` : `scale(${klein})`,
+                transformOrigin: "center top",
+                transition: `transform ${KOPF_MS}ms cubic-bezier(0.32, 0.72, 0, 1)`,
+                willChange: "transform",
+              }
+            : undefined
+        }
       >
         {isTitle && (
           <div className="mb-[42px] font-mono text-[26px] tracking-[0.2em] text-[color:var(--accent)] uppercase">
@@ -62,17 +106,18 @@ export function SectionView({
           </div>
         )}
         <h1
-          className={`m-0 font-display leading-[1.12] font-extrabold tracking-[-0.025em] text-balance text-fg transition-[font-size,max-width] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${titleSize(
-            section.title,
-            hero,
-          )} ${hero ? "max-w-[20ch]" : "max-w-[26ch]"}`}
+          className="m-0 font-display leading-[1.12] font-extrabold tracking-[-0.025em] text-balance text-fg"
+          style={{
+            fontSize: titlePx(section.title, heroAbschnitt),
+            maxWidth: heroAbschnitt ? "20ch" : "26ch",
+          }}
         >
           {section.title}
         </h1>
         {section.sub && (
           <p
             className={`m-0 mt-[22px] text-[34px] leading-[1.36] font-normal text-pretty text-fg-2 ${
-              hero ? "max-w-[38ch]" : "max-w-[52ch]"
+              heroAbschnitt ? "max-w-[38ch]" : "max-w-[52ch]"
             }`}
           >
             {section.sub}
@@ -82,7 +127,9 @@ export function SectionView({
 
       {/* Karussell — die Panels laufen horizontal durch */}
       {!hero && (
-        <div className="relative mt-[44px] min-h-0 flex-1">
+        <div
+          className={`relative mt-[44px] min-h-0 flex-1 ${heroAbschnitt ? "panel-rise" : ""}`}
+        >
           <div
             className="flex h-full transition-transform duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{ transform: `translateX(-${panel * 100}%)` }}
