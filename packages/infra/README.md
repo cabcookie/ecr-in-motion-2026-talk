@@ -37,7 +37,7 @@ npx cdk bootstrap aws://<konto>/eu-central-1
 **3. Diesen Stack ausrollen**, mit persönlichen Zugangsdaten:
 
 ```bash
-pnpm --filter @ecr-talk/infra deploy
+pnpm --filter @ecr-talk/infra run deploy
 ```
 
 Er gibt zwei Werte aus:

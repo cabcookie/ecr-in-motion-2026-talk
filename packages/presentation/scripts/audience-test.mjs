@@ -18,11 +18,17 @@ const live = await liveCtx.newPage();
 const phone = await phoneCtx.newPage();
 for (const p of [live, phone]) p.on("pageerror", (e) => console.log("FEHLER:", e.message));
 
-await live.goto(`${BASE}/?remote&clean=1`, { waitUntil: "networkidle" });
-await phone.goto(`${BASE}/?audience`, { waitUntil: "networkidle" });
+await live.goto(`${BASE}/audience?clean=1`, { waitUntil: "networkidle" });
+await phone.goto(`${BASE}/`, { waitUntil: "networkidle" });
 await phone.waitForTimeout(2500);
 
-const head = async (p) => (await p.textContent("h1")) ?? "";
+// Vor Abschnitt 6 zeigt das Handy nur den Wartehinweis und hat keine
+// Überschrift — dann nehmen wir den Seitentext.
+const head = async (p) => {
+  const h1 = p.locator("h1");
+  if ((await h1.count()) > 0) return (await h1.first().textContent()) ?? "";
+  return ((await p.textContent("body")) ?? "").replace(/\s+/g, " ").trim().slice(0, 50);
+};
 const slideNo = async () => live.getAttribute("[data-slideno]", "data-slideno");
 
 console.log(`Start        Folie ${await slideNo()} · Handy: „${(await head(phone)).slice(0, 40)}“`);

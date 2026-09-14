@@ -73,7 +73,7 @@ export function BioView({ m }: { m: BioMock }) {
  */
 export function QrTile({ size = 380 }: { size?: number }) {
   const [svg, setSvg] = useState("");
-  const url = `${location.origin}/?audience`;
+  const url = `${location.origin}/`;
 
   useEffect(() => {
     QRCode.toString(url, {
@@ -97,7 +97,7 @@ export function QrTile({ size = 380 }: { size?: number }) {
 
 /** QR-Code auf die Zuschauersicht. Die Adresse ergibt sich aus dem Aufruf. */
 export function QrView({ m }: { m: QrMock }) {
-  const url = `${location.origin}/?audience`;
+  const url = `${location.origin}/`;
   return (
     <div className="flex w-full items-center gap-[64px]">
       <QrTile />

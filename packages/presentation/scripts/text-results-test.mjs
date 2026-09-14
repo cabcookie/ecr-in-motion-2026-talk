@@ -2,7 +2,7 @@ import { chromium } from "playwright";
 const BASE = "http://localhost:3000";
 const browser = await chromium.launch();
 const live = await (await browser.newContext({ viewport: { width: 1920, height: 1080 } })).newPage();
-await live.goto(`${BASE}/?remote&clean=1`, { waitUntil: "networkidle" });
+await live.goto(`${BASE}/audience?clean=1`, { waitUntil: "networkidle" });
 await live.evaluate(() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "Home" })));
 await live.waitForTimeout(600);
 // bis Abschnitt 11 (Freitext)
@@ -14,7 +14,7 @@ const texte = ["Protokolle zusammenfassen", "Angebote gegenlesen", "Recherche zu
 for (const t of texte) {
   const ctx = await browser.newContext({ viewport: { width: 393, height: 852 }, isMobile: true, hasTouch: true });
   const phone = await ctx.newPage();
-  await phone.goto(`${BASE}/?audience`, { waitUntil: "networkidle" });
+  await phone.goto(`${BASE}/`, { waitUntil: "networkidle" });
   await phone.waitForTimeout(1600);
   const ta = phone.locator("textarea").first();
   if (await ta.count()) {

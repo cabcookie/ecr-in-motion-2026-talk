@@ -15,8 +15,8 @@ const live = await liveCtx.newPage();
 const op = await opCtx.newPage();
 for (const p of [live, op]) p.on("pageerror", (e) => console.log("FEHLER:", e.message));
 
-await live.goto(`${BASE}/?remote&clean=1`, { waitUntil: "networkidle" });
-await op.goto(`${BASE}/?operator&remote`, { waitUntil: "networkidle" });
+await live.goto(`${BASE}/audience?clean=1`, { waitUntil: "networkidle" });
+await op.goto(`${BASE}/operator`, { waitUntil: "networkidle" });
 await op.waitForSelector("[data-slideno]");
 await op.waitForTimeout(2500);
 
@@ -40,7 +40,7 @@ await show("Live +1 (Tastatur)");
 // Drittes Gerät kommt mitten im Vortrag dazu
 const lateCtx = await browser.newContext();
 const late = await lateCtx.newPage();
-await late.goto(`${BASE}/?remote&clean=1`, { waitUntil: "networkidle" });
+await late.goto(`${BASE}/audience?clean=1`, { waitUntil: "networkidle" });
 await late.waitForSelector("[data-slideno]");
 await late.waitForTimeout(2500);
 console.log(`Spät dazugekommen     zeigt: ${await read(late)} (erwartet: dieselbe Folie)`);

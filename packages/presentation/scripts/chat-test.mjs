@@ -19,8 +19,8 @@ const live = await liveCtx.newPage();
 const phone = await phoneCtx.newPage();
 for (const p of [live, phone]) p.on("pageerror", (e) => console.log("FEHLER:", e.message));
 
-await live.goto(`${BASE}/?remote&clean=1`, { waitUntil: "networkidle" });
-await phone.goto(`${BASE}/?audience`, { waitUntil: "networkidle" });
+await live.goto(`${BASE}/audience?clean=1`, { waitUntil: "networkidle" });
+await phone.goto(`${BASE}/`, { waitUntil: "networkidle" });
 await phone.waitForTimeout(2500);
 
 // Zu Abschnitt 16, Panel 2 — dort liegt der Chat

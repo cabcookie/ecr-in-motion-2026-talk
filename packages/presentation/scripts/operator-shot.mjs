@@ -7,10 +7,10 @@ const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 
 const live = await ctx.newPage();
-await live.goto(`${BASE}/?clean=1`, { waitUntil: "networkidle" });
+await live.goto(`${BASE}/audience?clean=1`, { waitUntil: "networkidle" });
 
 const op = await ctx.newPage();
-await op.goto(`${BASE}/?operator`, { waitUntil: "networkidle" });
+await op.goto(`${BASE}/operator`, { waitUntil: "networkidle" });
 await op.evaluate(() => document.fonts.ready);
 await op.waitForTimeout(800);
 

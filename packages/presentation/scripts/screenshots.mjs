@@ -14,7 +14,7 @@ const page = await browser.newPage({
   deviceScaleFactor: 1,
 });
 
-await page.goto(`${BASE}/?clean=1`, { waitUntil: "networkidle" });
+await page.goto(`${BASE}/audience?clean=1`, { waitUntil: "networkidle" });
 // Schriften müssen geladen sein, sonst wird der Fallback abgelichtet
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(600);

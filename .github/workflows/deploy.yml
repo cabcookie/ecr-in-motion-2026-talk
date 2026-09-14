@@ -83,7 +83,9 @@ jobs:
           MAIL_BUCKET: ${{ secrets.MAIL_BUCKET }}
           MAIL_TOPIC_ARN: ${{ secrets.MAIL_TOPIC_ARN }}
           MAIL_IDENTITY_ARN: ${{ secrets.MAIL_IDENTITY_ARN }}
-        run: pnpm --filter @ecr-talk/presentation deploy
+        # `pnpm run deploy`, nicht `pnpm deploy`: Letzteres ist ein eingebauter
+        # pnpm-Befehl und verdeckt das Skript aus der package.json.
+        run: pnpm --filter @ecr-talk/presentation run deploy
 
       - name: Erreichbarkeit prüfen
         run: |

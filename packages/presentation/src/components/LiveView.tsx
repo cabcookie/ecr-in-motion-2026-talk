@@ -4,10 +4,10 @@ import { useNavigation } from "@/nav/useNavigation";
 import { useSectionTransition } from "@/nav/useSectionTransition";
 import { STAGE_W, useStageScale } from "@/nav/useStageScale";
 import { SectionView } from "./SectionView";
+import { CLEAN } from "@/routen";
 import { Logo } from "./Logo";
 
-/** ?clean blendet den Tastaturhinweis aus — für Screenshots und den Ernstfall. */
-const CLEAN = new URLSearchParams(location.search).has("clean");
+
 
 export function LiveView() {
   const { index, step, total } = useNavigation(TOTAL);

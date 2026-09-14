@@ -21,7 +21,7 @@ export function AudiencePreview({ width, height }: { width: number; height: numb
       style={{ width: HANDY_W * scale, height: HANDY_H * scale }}
     >
       <iframe
-        src="/?audience"
+        src="/"
         title="Zuschauersicht"
         tabIndex={-1}
         className="pointer-events-none absolute top-0 left-0 origin-top-left border-0"
