@@ -54,3 +54,8 @@ packages/brand-material/
 #   python3 packages/presentation/scripts/markenmaterial.py
 # Wer sie nicht hat, bekommt die Ersatzschrift und keine Logos.
 packages/presentation/public/brand/
+
+# CDK-Zwischenspeicher für Kontext-Lookups. Der Schlüssel enthält die
+# Kontonummer, und dieses Repository wird öffentlich. Die CI schlägt die
+# Hosted Zone bei jedem Lauf selbst nach — sie hat die Rolle dafür.
+packages/presentation/cdk.context.json
