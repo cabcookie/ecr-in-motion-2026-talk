@@ -70,20 +70,6 @@ export function OperatorView() {
           </div>
         </header>
 
-        {/*
-          Der gesprochene Text steht über die volle Breite und groß — er ist
-          das Einzige, was während des Redens wirklich gelesen wird. Kein
-          Etikett davor: an dieser Stelle steht nie etwas anderes.
-        */}
-        {panel?.say && (
-          <div>
-            <p className="mb-2 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
-              {section.kind}
-            </p>
-            <p className="m-0 text-[28px] leading-[1.45] text-pretty text-fg">{panel.say}</p>
-          </div>
-        )}
-
         <div className="grid gap-6 lg:grid-cols-[minmax(0,560px)_1fr]">
           {/* Vorschau */}
           <div className="flex flex-col gap-4">
@@ -109,8 +95,21 @@ export function OperatorView() {
             </div>
           </div>
 
-          {/* Nebennotizen — der gesprochene Text steht oben, der Titel auf der Folie */}
+          {/*
+            Der gesprochene Text führt die Spalte an und ist groß genug zum
+            Vorlesen. Der Folientitel steht nicht noch einmal hier — er ist
+            in der Vorschau daneben zu sehen.
+          */}
           <div className="min-w-0">
+            {panel?.say && (
+              <div className="mb-5">
+                <p className="m-0 mb-2 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+                  Sprechertext
+                </p>
+                <p className="m-0 text-[26px] leading-[1.45] text-pretty text-fg">{panel.say}</p>
+              </div>
+            )}
+
             <dl className="m-0">
               {panel?.inter && (
                 <Note label="Interaktion" tone="text-[color:var(--accent)]">
