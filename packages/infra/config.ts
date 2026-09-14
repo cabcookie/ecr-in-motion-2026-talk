@@ -19,27 +19,49 @@ export const REGION = "eu-central-1";
 export const DEPLOY_ROLE = "ecr2026-deploy";
 
 /**
+ * Unveränderliche Kennungen von Besitzer und Repository.
+ *
+ * GitHub setzt sie in den `sub`-Anspruch: nicht `repo:cabcookie/…`, sondern
+ * `repo:cabcookie@2454422/ecr-in-motion-2026-talk@1363255134:…`. Das schützt
+ * gegen Umbenennungen — ein Repository, das später so heißt wie unseres,
+ * bekommt trotzdem keine Anmeldedaten.
+ *
+ * Gegengeprüft mit `gh api repos/<repo> --jq '{id, owner:.owner.id}'`.
+ */
+const OWNER_ID = 2454422;
+const REPO_ID = 1363255134;
+
+/**
  * Wer darf die Rolle annehmen.
  *
- * Der Deploy-Job nennt `environment: prod`, und sobald ein Job eine Umgebung
- * nennt, setzt GitHub den `sub`-Anspruch auf `…:environment:<name>` statt auf
- * `…:ref:refs/heads/<zweig>`. Wer nur den Zweig einträgt, bekommt beim ersten
- * Lauf ein wortkarges "Not authorized to perform sts:AssumeRoleWithWebIdentity"
- * — so geschehen am 14. September.
+ * Nur der Hauptzweig dieses Repositories. Kein Pull Request, kein Fork: dieser
+ * Vortrag läuft einmal, an einem Abend.
  *
- * Der Umgebungs-Anspruch trägt den Zweig nicht mehr in sich. Dass trotzdem nur
- * `main` ausrollen kann, sichert die Zweigregel der Umgebung selbst:
+ * Vier Einträge für zwei Fälle, und beide sind teuer gelernt:
  *
- *   gh api -X PUT repos/<repo>/environments/prod \
- *     -f 'deployment_branch_policy[protected_branches]=false' \
- *     -f 'deployment_branch_policy[custom_branch_policies]=true'
- *   gh api -X POST repos/<repo>/environments/prod/deployment-branch-policies \
- *     -f name=main
+ * Erstens die Umgebung. Der Deploy-Job nennt `environment: prod`, und sobald
+ * ein Job eine Umgebung nennt, setzt GitHub den Anspruch auf
+ * `…:environment:<name>` statt auf `…:ref:refs/heads/<zweig>`. Weil der
+ * Umgebungs-Anspruch den Zweig nicht mehr enthält, ist die Umgebung prod
+ * zusätzlich auf main eingeschränkt:
  *
- * Der Zweig-Anspruch bleibt daneben stehen, damit ein Job ohne Umgebung — etwa
- * ein späterer Hilfslauf — nicht stillschweigend scheitert.
+ *   gh api -X PUT repos/<repo>/environments/prod --input <(echo \
+ *     '{"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
+ *   gh api -X POST repos/<repo>/environments/prod/deployment-branch-policies -f name=main
+ *
+ * Zweitens die Kennungen. Beide Formen stehen hier, weil GitHub die kurze in
+ * manchen Zusammenhängen noch sendet. Jede ist eine genaue Zeichenkette, keine
+ * Abkürzung mit Stern — vier exakte Einträge sind enger als ein Muster.
+ *
+ * Die Diagnose lief über CloudTrail: Das abgelehnte Ereignis nennt unter
+ * userIdentity.userName den Anspruch, der tatsächlich ankam. Die Fehlermeldung
+ * von STS ("Not authorized to perform sts:AssumeRoleWithWebIdentity") sagt das
+ * nicht — sie sieht bei einer nicht passenden Positivliste genauso aus wie bei
+ * einer Sperre durch eine Kontenrichtlinie.
  */
 export const DEPLOY_SUBJECTS = [
+  `repo:${REPO.replace("/", `@${OWNER_ID}/`)}@${REPO_ID}:environment:prod`,
+  `repo:${REPO.replace("/", `@${OWNER_ID}/`)}@${REPO_ID}:ref:refs/heads/main`,
   `repo:${REPO}:environment:prod`,
   `repo:${REPO}:ref:refs/heads/main`,
 ];
