@@ -67,7 +67,12 @@ export function AudienceView() {
   return (
     <div
       data-view="audience"
-      className="min-h-dvh overflow-y-auto bg-stage text-fg"
+      /*
+        Feste Höhe, nicht Mindesthöhe. `min-h-dvh` wuchs mit dem Inhalt, und weil
+        body auf overflow:hidden steht — die Leinwand darf nie scrollen —, wurde
+        alles darunter abgeschnitten statt scrollbar. Hier ist der Scrollbereich.
+      */
+      className="h-dvh overflow-y-auto overscroll-contain bg-stage text-fg"
       style={{ ["--accent" as string]: ACCENT[section.b] }}
     >
       {wartet ? (
@@ -77,8 +82,16 @@ export function AudienceView() {
           </p>
         </div>
       ) : (
-      <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-6">
-        <header className="flex items-center justify-between gap-3">
+      <div
+        className="mx-auto flex max-w-lg flex-col gap-6 px-4 pb-16"
+        style={{ paddingBottom: "max(4rem, env(safe-area-inset-bottom))" }}
+      >
+        {/*
+          Bleibt oben stehen, wenn die Seite länger wird. Der negative Rand zieht
+          den Hintergrund über die volle Breite, sonst schöbe sich der Inhalt
+          seitlich daran vorbei.
+        */}
+        <header className="sticky top-0 z-10 -mx-4 flex items-center justify-between gap-3 border-b border-hair bg-stage px-4 py-4">
           <span className="flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-fg-3 uppercase">
             <span className="size-2 rounded-full" style={{ background: "var(--accent)" }} />
             {block.n} · {block.tab}
@@ -101,8 +114,8 @@ export function AudienceView() {
         ) : (
           <div className="rounded-2xl border border-dashed border-hair px-5 py-8 text-center">
             <p className="m-0 text-base leading-relaxed text-fg-3">
-              Hier ist gerade nichts zu tun. Die Seite folgt dem Vortrag von allein — lassen Sie
-              sie einfach offen.
+              Hier ist gerade nichts zu tun. Die Seite folgt dem Vortrag von allein — lass sie
+              einfach offen.
             </p>
           </div>
         )}
