@@ -139,6 +139,38 @@ export const AUSSTATTUNGEN: Readonly<Record<string, Ausstattung>> = {
   },
 };
 
+/**
+ * Ergänzt jedes Fachwerkzeug um ein Pflichtfeld `warum`.
+ *
+ * Der Grund wird im Moment des Aufrufs erfragt, nicht hinterher rekonstruiert.
+ * Das ist der Unterschied zwischen einer Begründung und einer Nacherzählung:
+ * Was der Agent nach dem Ergebnis aufschreibt, ist immer plausibel. Was er
+ * vorher sagt, ist eine Vorhersage, die danebengehen kann — und genau das
+ * macht sie überprüfbar.
+ *
+ * Die beiden Werkzeuge, die nichts nachschlagen, bleiben unberührt: Antworten
+ * und Rückfragen begründen sich selbst.
+ */
+function mitBegruendung(name: string, schema: Record<string, unknown>): Record<string, unknown> {
+  if (name === ANTWORTE || name === FRAGE_LISA) return schema;
+  const felder = (schema.properties ?? {}) as Record<string, unknown>;
+  const pflicht = (schema.required ?? []) as string[];
+  return {
+    ...schema,
+    properties: {
+      ...felder,
+      warum: {
+        type: "string",
+        description:
+          "In EINEM kurzen Satz: Warum fragst du dieses System jetzt, und was willst du " +
+          "damit klären? Der Satz geht in die Antwortmail an den Absender — schreibe ihn " +
+          "so, dass ein Aussenstehender ihn versteht, und nenne darin keine internen Werte.",
+      },
+    },
+    required: [...pflicht, "warum"],
+  };
+}
+
 export interface Lauf {
   /** Der Antworttext des Agenten. */
   readonly text: string;
@@ -167,7 +199,12 @@ export interface Lauf {
    * oder auf die eingehende Mail zurückführen lassen. Was übrig bleibt, ist
    * erfunden.
    */
-  readonly belege: readonly { system: string; ergebnis: Record<string, unknown> }[];
+  readonly belege: readonly {
+    system: string;
+    /** Warum der Agent dieses System gefragt hat — von ihm selbst, vor dem Ergebnis. */
+    warum?: string;
+    ergebnis: Record<string, unknown>;
+  }[];
   /** Verbrauchte Token, für die Kostenrechnung. */
   readonly verbrauch: { ein: number; aus: number };
 }
@@ -186,7 +223,7 @@ function werkzeugliste(ohne: readonly string[] = []): Tool[] {
         toolSpec: {
           name: w.name,
           description: w.beschreibung,
-          inputSchema: { json: w.schema },
+          inputSchema: { json: mitBegruendung(w.name, w.schema) },
         },
       }) as Tool,
   );
@@ -247,7 +284,7 @@ export async function beantworteMit(
   const schritte: string[] = [];
   const fragenAnLisa: { frage: string; warum: string }[] = [];
   let abgeschickt: { betreff: string; text: string } | undefined;
-  const belege: { system: string; ergebnis: Record<string, unknown> }[] = [];
+  const belege: { system: string; warum?: string; ergebnis: Record<string, unknown> }[] = [];
   const verbrauch = { ein: 0, aus: 0 };
 
   for (let runde = 0; runde < MAX_RUNDEN; runde++) {
@@ -326,7 +363,11 @@ export async function beantworteMit(
             ? werkzeug.antwort(args)
             : { fehler: "Werkzeug unbekannt" };
       if (a.name !== FRAGE_LISA && a.name !== ANTWORTE) {
-        belege.push({ system: a.name ?? "unbekannt", ergebnis });
+        belege.push({
+          system: a.name ?? "unbekannt",
+          warum: typeof args.warum === "string" ? args.warum : undefined,
+          ergebnis,
+        });
       }
 
       return {
