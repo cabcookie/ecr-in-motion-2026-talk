@@ -943,6 +943,63 @@ export const SECTIONS: Section[] = [
     title: "Wie wird der Agent besser?",
     panels: [
       {
+        mock: {
+          t: "results",
+          of: "flaeche",
+          as: "matrix",
+          axes: {
+            x: "Aktionsfläche angeboten?",
+            y: "Wie fiel die Antwort aus?",
+          },
+        },
+        say: "Bevor wir weitermachen, zwei Fragen an alle, die vorhin eine Mail geschrieben haben. Erstens: Hat der Agent Dir von sich aus eine Aktionsfläche angeboten — eine Zweitplatzierung, ein Kopfregal, irgendetwas in der Richtung? Zweitens: Wie ist er mit Deiner Anfrage insgesamt umgegangen? Hat er zugesagt, hat er es bedingt gemacht, oder hat er abgelehnt? Beides bitte auf dem Handy.",
+        audience: {
+          kind: "poll",
+          id: "flaeche",
+          persist: true,
+          message:
+            "Zwei Fragen zu der Antwort, die der Agent Dir geschickt hat.",
+          questions: [
+            {
+              id: "angeboten",
+              text: "Hat er Dir eine Aktionsfläche angeboten?",
+              options: [
+                { value: "ja", label: "Ja" },
+                { value: "nein", label: "Nein" },
+                { value: "keine", label: "Keine Mail" },
+              ],
+            },
+            {
+              id: "ausgang",
+              text: "Wie fiel seine Antwort aus?",
+              options: [
+                { value: "zusage", label: "Zusage" },
+                { value: "bedingt", label: "Bedingt" },
+                { value: "absage", label: "Absage" },
+              ],
+            },
+          ],
+        },
+        app: "Live-Matrix. Interessant ist die Spalte links unten: Aktionsfläche angeboten, Anfrage trotzdem abgelehnt.",
+      },
+      {
+        mock: {
+          t: "statement",
+          text: "Es gibt genau zwei im Quartal.",
+          after: "Er hat sie angeboten, bevor er über die Listung entschieden hatte. Manchen sogar in der Absage.",
+        },
+        say: "Schaut Euch das an. Und jetzt die unangenehme Zahl dazu: Es gibt im ganzen Quartal genau zwei freie Aktionsflächen. Zwölf Märkte im Raum Hamburg am zweiundzwanzigsten Oktober, und ein bundesweites Kopfregal am neunzehnten November. Das ist das Knappste, was diese Kategorie hat. Der Agent hat sie angeboten, bevor er überhaupt entschieden hatte, ob er das Produkt listet — und einigen von Euch hat er sie sogar angeboten und die Anfrage im selben Atemzug abgelehnt. Er macht das nicht aus Dummheit. Der Kalender sagt „frei“, und frei heißt für ihn „vergebbar“. Ihm fehlt der Gedanke, den jeder von Euch automatisch hat: Das hebe ich mir auf.",
+      },
+      {
+        mock: {
+          t: "statement",
+          text: "Das ist die Arbeit, die bleibt.",
+          after: "Nicht die Mail schreiben. Dem Agenten beibringen, wann er etwas NICHT anbietet.",
+        },
+        say: "Und genau da würde Memory greifen — nicht als Gedächtnis für einen Vorgang, sondern über Vorgänge hinweg. Ich würde ihn so steuern: Plane erst einmal mit normaler Regalfläche. Die Aktionsfläche bietest Du gar nicht an. Sammle Anfragen, eine Woche, zwei Wochen. Und wenn Du zehn davon gesehen hast, dann komm zu mir und sag: Von diesen zehn ist das hier die beste — der biete ich jetzt die Zweitplatzierung an, als Aufwertung, und hole mir dafür bessere Konditionen. Das ist ein Upsell, und er kann ihn nur machen, wenn er warten kann. Zweites Beispiel: Nächste Woche wird im Regal Fläche frei, weil ein Artikel ausläuft. Dann soll er sich erinnern, dass vor drei Wochen jemand angefragt hat, dem genau das gepasst hätte, und von sich aus zurückkommen. Nichts davon ist im Agenten gebaut, den Ihr heute Abend benutzt habt. Und das ist der Punkt: Diese Regeln muss jemand erfinden. Jemand muss sich überlegen, dass eine Aktionsfläche etwas ist, das man aufspart. Jemand muss entscheiden, ab wie vielen Anfragen sich das Warten lohnt. Das steht in keinem Handbuch, und kein Modell kommt von allein darauf. Das ist die Arbeit, die bleibt — und es ist eine andere Arbeit als die, die heute Morgen auf Eurem Schreibtisch lag.",
+        note: "Gemessen: 7 von 14 Szenarienläufen bieten die Fläche vom 22. Oktober an, darunter Wildberg, das im selben Schreiben abgelehnt wird. messungen/szenarien/. Bewusst nicht behoben — der Fehler ist hier mehr wert als seine Korrektur.",
+      },
+      {
         at: "18:51",
         mock: {
           t: "list",
