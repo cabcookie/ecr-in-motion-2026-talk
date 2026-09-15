@@ -5,7 +5,7 @@ import {
   type Message,
   type Tool,
 } from "@aws-sdk/client-bedrock-runtime";
-import { FRAGE_LISA, WERKZEUGE } from "./werkzeuge";
+import { ANTWORTE, FRAGE_LISA, WERKZEUGE } from "./werkzeuge";
 import type { Modus } from "./konfig";
 
 /**
@@ -37,10 +37,11 @@ So arbeitest du:
 3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.
 4. Deine Antwort geht an den ABSENDER der Mail — einen Außenstehenden, oft einen Lieferanten, der mit dir verhandelt. Was du intern klären musst, hat dort nichts zu suchen: keine internen Zahlen, keine Vorgaben des Hauses, keine Rückfrage ans eigene Haus. Brauchst du etwas von deinen Kolleginnen und Kollegen, lege es ihnen mit dem Werkzeug frage_das_team vor. Dem Absender gegenüber benennst du die offene Stelle nur so weit, wie er sie kennen darf.
 5. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.
+6. Schicke die fertige Antwort mit dem Werkzeug antworte_per_mail ab. Das ist der EINZIGE Weg, auf dem deine Antwort den Absender erreicht — was du sonst schreibst, liest niemand. Rufe es genau einmal auf, wenn du alles geprüft hast.
 
 Unverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.
 
-Du antwortest als E-Mail. Schreibe reinen Fließtext ohne Markdown, mit Anrede und Grußformel, und unterschreibe als "Lisa Berger".`;
+Der Empfänger ist der ABSENDER der eingegangenen Mail. Schreibe ihn direkt an — "Guten Tag Herr Müller", nicht einen Bericht ÜBER ihn an jemand anderen. Reiner Fließtext ohne Markdown, mit Anrede und Grußformel, ohne Betreffzeile im Text, unterschrieben mit "Lisa Berger".`;
 
 /**
  * Dieselbe Rolle, eine Regel mehr — und diese eine Regel ist der Unterschied,
@@ -141,6 +142,15 @@ export const AUSSTATTUNGEN: Readonly<Record<string, Ausstattung>> = {
 export interface Lauf {
   /** Der Antworttext des Agenten. */
   readonly text: string;
+  /**
+   * Was der Agent tatsächlich abschicken wollte — Betreff und Rumpf, so wie er
+   * sie dem Werkzeug übergeben hat.
+   *
+   * Der Unterschied zu `text` ist der ganze Punkt: `text` ist der letzte
+   * Modellzug samt Vorrede. Was hier steht, ist der Brief. Fehlt das Feld, hat
+   * der Agent nie abgeschickt — dann muss der Aufrufer entscheiden, was er tut.
+   */
+  readonly antwort?: { readonly betreff: string; readonly text: string };
   /** Welche Systeme er in welcher Reihenfolge abgefragt hat. */
   readonly schritte: readonly string[];
   /**
@@ -236,6 +246,7 @@ export async function beantworteMit(
   const messages: Message[] = [{ role: "user", content: [{ text: mailtext }] }];
   const schritte: string[] = [];
   const fragenAnLisa: { frage: string; warum: string }[] = [];
+  let abgeschickt: { betreff: string; text: string } | undefined;
   const belege: { system: string; ergebnis: Record<string, unknown> }[] = [];
   const verbrauch = { ein: 0, aus: 0 };
 
@@ -268,7 +279,7 @@ export async function beantworteMit(
 
     const aufrufe = inhalt.flatMap((b) => ("toolUse" in b && b.toolUse ? [b.toolUse] : []));
     if (antwort.stopReason !== "tool_use" || aufrufe.length === 0) {
-      return { text: textVon(inhalt), schritte, fragenAnLisa, belege, verbrauch };
+      return { text: textVon(inhalt), antwort: abgeschickt, schritte, fragenAnLisa, belege, verbrauch };
     }
 
     const ergebnisse: ContentBlock[] = aufrufe.map((a) => {
@@ -281,7 +292,17 @@ export async function beantworteMit(
         der abgefragten Systeme — die steht in der Mail an den Absender, und
         dort hat sie nichts verloren.
       */
-      if (a.name === FRAGE_LISA) {
+      /*
+        Das Sendewerkzeug ist keine Systemabfrage, sondern das Ergebnis. Es
+        gehört weder in die Liste der abgefragten Systeme noch in die Belege —
+        beides steht in der Mail, und dort hätte es nichts verloren.
+      */
+      if (a.name === ANTWORTE) {
+        abgeschickt = {
+          betreff: typeof args.betreff === "string" ? args.betreff : "",
+          text: typeof args.text === "string" ? args.text : "",
+        };
+      } else if (a.name === FRAGE_LISA) {
         fragenAnLisa.push({
           frage: typeof args.frage === "string" ? args.frage : "",
           warum: typeof args.warum === "string" ? args.warum : "",
@@ -304,12 +325,23 @@ export async function beantworteMit(
           : werkzeug
             ? werkzeug.antwort(args)
             : { fehler: "Werkzeug unbekannt" };
-      if (a.name !== FRAGE_LISA) belege.push({ system: a.name ?? "unbekannt", ergebnis });
+      if (a.name !== FRAGE_LISA && a.name !== ANTWORTE) {
+        belege.push({ system: a.name ?? "unbekannt", ergebnis });
+      }
 
       return {
         toolResult: { toolUseId: a.toolUseId, content: [{ json: ergebnis }] },
       } as ContentBlock;
     });
+    /*
+      Abgeschickt ist abgeschickt. Ohne diesen Ausstieg liefe das Modell weiter
+      und könnte ein zweites Mal senden — oder, schlimmer, nach dem Brief noch
+      einen Nachsatz schreiben, der dann als Antwort gälte.
+    */
+    if (abgeschickt) {
+      return { text: abgeschickt.text, antwort: abgeschickt, schritte, fragenAnLisa, belege, verbrauch };
+    }
+
     messages.push({ role: "user", content: ergebnisse });
   }
 

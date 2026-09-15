@@ -46,6 +46,7 @@ const SYSTEMNAMEN: Record<string, string> = {
   warenwirtschaft_artikel: "Warenwirtschaft — Artikelstamm",
   aktionskalender_zeitraum: "Aktionskalender — freie Flächen",
   listung_anforderungen: "Kategorieakte — Listungsweg",
+  kategorie_ziele: "Kategorieplan — Ziele des Geschäftsjahrs",
 };
 
 /**
@@ -57,7 +58,16 @@ const SYSTEMNAMEN: Record<string, string> = {
  * steht ebenfalls dort und nicht im Kleingedruckten.
  */
 export function baueAntwort(modus: Modus, lauf: Lauf): string {
-  const teile = [lauf.text.trim(), ""];
+  /*
+    Der Brief ist das, was der Agent dem Sendewerkzeug übergeben hat — nicht
+    sein letzter Modellzug. Der trug die Vorrede mit („Ich habe alle
+    Systemabfragen abgeschlossen …") und damit Denkarbeit in einen Brief an
+    einen Lieferanten.
+
+    `lauf.text` bleibt als Rückfall: Hat der Agent nie abgeschickt, ist eine
+    Antwort mit Vorrede immer noch besser als gar keine.
+  */
+  const teile = [(lauf.antwort?.text ?? lauf.text).trim(), ""];
 
   if (modus === "assistent") {
     teile.push("— — —", "");

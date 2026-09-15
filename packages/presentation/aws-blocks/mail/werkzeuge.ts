@@ -86,6 +86,20 @@ const leer = { type: "object", properties: {}, required: [] as string[] };
  */
 export const FRAGE_LISA = "frage_das_team";
 
+/**
+ * Der Name des Werkzeugs, mit dem die Antwort das Haus verlässt.
+ *
+ * Vorher gab es das nicht: Der letzte Modellzug WAR die Mail. Damit ging alles
+ * mit hinaus, was das Modell davor noch dachte — „Ich habe alle Systemabfragen
+ * abgeschlossen und kann Lisa nun eine Einschätzung geben" stand mit im Brief
+ * an den Lieferanten. Und der Betreff kam aus der eingehenden Mail, weshalb die
+ * selbstgeschriebene Betreffzeile im Rumpf landete.
+ *
+ * Mit einem Werkzeug ist die Trennung eindeutig: Was in `betreff` und `text`
+ * steht, geht hinaus. Alles andere bleibt Denkarbeit.
+ */
+export const ANTWORTE = "antworte_per_mail";
+
 export const WERKZEUGE: readonly Werkzeug[] = [
   {
     name: "warenwirtschaft_kategorie",
@@ -225,6 +239,30 @@ export const WERKZEUGE: readonly Werkzeug[] = [
         })),
         belegt: d.belegt,
       })),
+  },
+  {
+    name: ANTWORTE,
+    beschreibung:
+      "Sendet die fertige Antwort an den ABSENDER der eingegangenen Mail. Das ist der " +
+      "einzige Weg, auf dem deine Antwort ihn erreicht — was du sonst schreibst, liest " +
+      "niemand. Der Absender ist ein Aussenstehender, oft ein Lieferant, der mit uns " +
+      "verhandelt: Schreibe ihn direkt an, nicht ueber ihn. Rufe das Werkzeug genau einmal " +
+      "auf, wenn du alles geprueft hast.",
+    schema: {
+      type: "object",
+      properties: {
+        betreff: { type: "string", description: "Betreff der Antwortmail" },
+        text: {
+          type: "string",
+          description:
+            "Die vollstaendige Mail als Fliesstext, mit Anrede und Grussformel, ohne Markdown " +
+            "und ohne Betreffzeile im Text",
+        },
+      },
+      required: ["betreff", "text"],
+    },
+    /* Der Versand geschieht ausserhalb der Schleife — hier wird nur quittiert. */
+    antwort: () => ({ gesendet: true }),
   },
   {
     name: FRAGE_LISA,

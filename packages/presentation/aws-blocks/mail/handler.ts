@@ -92,7 +92,12 @@ async function verarbeite(meldung: SesMeldung): Promise<void> {
               von: postfach.adresse,
               vonName: postfach.anzeigename,
               an: eingang.absender,
-              betreff: eingang.betreff,
+              /*
+                Der Betreff kommt vom Agenten, wenn er einen gesetzt hat.
+                Vorher wurde immer der eingehende gespiegelt — und die vom
+                Modell selbst geschriebene Betreffzeile landete im Rumpf.
+              */
+              betreff: lauf.antwort?.betreff || eingang.betreff,
               text: baueAntwort(postfach.modus, lauf),
               inAntwortAuf: eingang.messageId,
             }),
