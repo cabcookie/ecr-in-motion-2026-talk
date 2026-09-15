@@ -105,6 +105,15 @@ export interface Ausstattung {
   readonly werkzeuge: boolean;
   /** Name eines Werkzeugs, das nicht antwortet — für den Fall „System gestört". */
   readonly stoerung?: string;
+  /**
+   * Werkzeuge, die gar nicht erst angeboten werden.
+   *
+   * Der Unterschied zu `stoerung` ist der ganze Punkt: Ein gestörtes System
+   * kennt der Agent, er kommt nur nicht heran — und wird das erwähnen. Ein
+   * weggelassenes System existiert für ihn nicht. Nur so lässt sich messen,
+   * was ein Werkzeug beiträgt, statt was sein Ausfall anrichtet.
+   */
+  readonly ohne?: readonly string[];
 }
 
 /**
@@ -160,8 +169,8 @@ export interface Lauf {
   Wert — deshalb hier eine Behauptung an genau zwei Stellen statt eines
   Nachbaus des Dokumenttyps.
 */
-function werkzeugliste(): Tool[] {
-  return WERKZEUGE.map(
+function werkzeugliste(ohne: readonly string[] = []): Tool[] {
+  return WERKZEUGE.filter((w) => !ohne.includes(w.name)).map(
     (w) =>
       ({
         toolSpec: {
@@ -247,7 +256,7 @@ export async function beantworteMit(
           daneben jetzt `modell:test`, der genau einen echten Aufruf macht.
         */
         inferenceConfig: { maxTokens: 1600 },
-        ...(mitWerkzeugen ? { toolConfig: { tools: werkzeugliste() } } : {}),
+        ...(mitWerkzeugen ? { toolConfig: { tools: werkzeugliste(ausstattung.ohne) } } : {}),
       }),
     );
 
