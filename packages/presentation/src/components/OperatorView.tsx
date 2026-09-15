@@ -3,6 +3,7 @@ import { BLOCKS, SECTIONS, TOTAL, blockOf } from "@/slides/data";
 import { useNavigation } from "@/nav/useNavigation";
 import { Aufzeichnung } from "./Aufzeichnung";
 import { Zuruecksetzen } from "./Zuruecksetzen";
+import { useZeitplan } from "@/probe/useZeitplan";
 import { StagePreview } from "./StagePreview";
 import { AudiencePreview } from "./AudiencePreview";
 import { aufSteuerung, setzeToken, steuerung, type Steuerung } from "@/sync/token";
@@ -88,6 +89,13 @@ export function OperatorView() {
   const section = SECTIONS[index];
   const block = blockOf(section.b);
   const panel = section.panels[step];
+
+  /*
+    Die Soll-Uhrzeit kommt aus dem gespeicherten Zeitplan, wenn es einen gibt,
+    sonst aus den Foliendaten. Nach einer Probe misst sich die Anzeige damit an
+    dem, was der Vortrag wirklich braucht, statt an einer Schätzung von vorher.
+  */
+  const { at: sollzeit, plan, verwerfen } = useZeitplan();
   /** Nächstes Panel — im selben Abschnitt oder das erste des nächsten. */
   const nextSection =
     step + 1 < section.panels.length ? section : SECTIONS[index + 1];
@@ -120,7 +128,11 @@ export function OperatorView() {
           <div className="flex items-center gap-5">
             <Aufzeichnung index={index} step={step} goto={goto} />
             <Zuruecksetzen />
-            <Schedule at={panel?.at} />
+            <Schedule
+              at={sollzeit(index, step)}
+              geprobt={plan !== null}
+              verwerfen={() => void verwerfen()}
+            />
             <div className="text-right">
               <div className="font-mono text-2xl tabular-nums">
                 {String(section.n).padStart(2, "0")}
@@ -244,7 +256,7 @@ export function OperatorView() {
                           key={s.n}
                           type="button"
                           onClick={() => goto(s.n - 1)}
-                          title={`${s.panels[0]?.at ?? ""} ${s.title}`}
+                          title={`${sollzeit(SECTIONS.indexOf(s), 0) ?? ""} ${s.title}`}
                           className={`h-7 w-9 rounded font-mono text-[11px] tabular-nums transition-colors ${
                             current
                               ? "text-stage"

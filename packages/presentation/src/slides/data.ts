@@ -242,7 +242,7 @@ export const SECTIONS: Section[] = [
           name: "Carsten Koch",
           role: "Global Account Manager Retail",
         },
-        say: "Ich bin Carsten Koch, habe mit elf Jahren das erste Mal programmiert und arbeite seit über fünfundzwanzig Jahren in der IT: Support, Qualitätssicherung, Projektmanagement, Produkt- und Innovationsmanagement, Vertrieb. Heute bin ich Global Account Manager für einen Lebensmitteleinzelhändler. Ich liebe es, auszuprobieren — und Menschen und Unternehmen dabei zu helfen, ihre Produktivität zu steigern.",
+        say: "Ich bin Carsten Koch, habe mit elf Jahren das erste Mal programmiert und arbeite seit über fünfundzwanzig Jahren in der IT: Support, Qualitätssicherung, Projektmanagement, Produkt- und Innovationsmanagement, Vertrieb. Heute bin ich Global Account Manager für einen Lebensmitteleinzelhändler. Ich liebe es, Technologien auszuprobieren — und Menschen und Unternehmen dabei zu helfen, ihre Produktivität zu steigern.",
         audience: {
           kind: "wait",
           id: "willkommen",
@@ -264,7 +264,7 @@ export const SECTIONS: Section[] = [
           caption: "Das hier ist keine PowerPoint.",
           hint: "Scanne den Code und mach mit.",
         },
-        say: "Deshalb ist das hier auch keine PowerPoint-Präsentation, sondern eine Webanwendung. Und Du kannst sie auf Deinem eigenen Handy aufrufen. Scanne bitte jetzt den QR-Code. Du siehst dort etwas anderes als auf der Leinwand — nämlich genau die Stelle, an der wir gerade sind, und was Du dazu beitragen kannst.",
+        say: "Deshalb ist das hier auch keine PowerPoint-Präsentation, sondern eine Webanwendung. Und Du kannst sie auf Deinem eigenen Handy aufrufen. Ich lade Dich ein, den QR-Code zu scannen und hier zu dieser Präsentation beizutragen und Agenten auszuprobieren. Du siehst dort etwas anderes als auf der Leinwand.",
         audience: {
           kind: "wait",
           id: "bereit",
@@ -283,7 +283,7 @@ export const SECTIONS: Section[] = [
             y: "Freust Du Dich darauf?",
           },
         },
-        say: "Zwei Fragen an Dich, beide auf einmal. Erstens: Beunruhigt Dich das Beispiel von eben? Und zweitens: Freust Du Dich darauf, dass es Realität wird? Die beiden schließen sich nicht aus — man kann beunruhigt sein und sich trotzdem freuen. Deshalb siehst Du Deine Antworten hier als Matrix, die sich nach und nach füllt.",
+        say: "Auf dem Handy findest Du nun zwei Fragen. Ich bitte dich darauf zu antworten, wir werden die Antworten hier auf der Leinwand sehen. [Geh auf die Antworten ein]",
         audience: {
           kind: "poll",
           id: "sorge",
@@ -337,7 +337,7 @@ export const SECTIONS: Section[] = [
           caption: "Schreib Lisa selbst.",
           hint: "Der Link öffnet Dein Mailprogramm. Ändere den Text — bau Dein eigenes Szenario.",
         },
-        say: "Und jetzt die Einladung, es selbst auszuprobieren. Auf Deinem Handy findest Du einen Link, der Dein Mailprogramm öffnet — mit einer vorbereiteten Nachricht an Lisa. Bitte ändere den Text. Bau Dein eigenes Szenario. Hinter dem Postfach wartet ein Agent, der Deine Anfrage verarbeitet und Dir antwortet. In der Antwort findest Du den Link zu dieser Präsentation, weiterführendes Material, die Liste der Aktionen, die der Agent ausgeführt hat — und den Link zur Code-Basis. Damit Du sehen kannst: Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht. Der Link bleibt den ganzen Abend offen, Du kannst das also auch später noch machen.",
+        say: "Und jetzt die Einladung, es selbst auszuprobieren. Auf Deinem Handy findest Du einen Link, der Dein Mailprogramm öffnet — mit einer vorbereiteten Nachricht an Lisa. Bitte ändere den Text. Bau Dein eigenes Szenario. Hinter dem Postfach wartet ein Agent, der Deine Anfrage verarbeitet und Dir antwortet. In der Antwort findest Du den Link zu dieser Präsentation, weiterführendes Material, die Liste der Aktionen, die der Agent ausgeführt hat — und den Link zur Code-Basis. Damit Du sehen kannst: Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.",
         audience: {
           kind: "mailto",
           id: "lisa-mail",
@@ -346,12 +346,11 @@ export const SECTIONS: Section[] = [
           label: "Mail an Lisa öffnen",
           to: "ecr2026@carstenbkoch.de",
           subject: "Anfrage an das Category Management",
-          body: "Guten Tag Frau Berger,\n\nwir möchten ein neues Produkt bei Ihnen listen. Bitte passe diesen Text an, um Dein eigenes Szenario zu bauen.\n\nMit freundlichen Grüßen",
+          body: "Guten Tag Frau Berger,\n\n[Bitte konstruiere ein Szenario, das für Lisa Berger relevant sein könnte. Sie ist Category Managerin bei Nordkorb für Schokoladen & Pralinen. Sie kümmert sich um Listungen, Auslistungen, Facings, Preise, Aktionen usw.Stelle Dich vor, welchen Hersteller du vertrittst und um welches Produkt es geht.]\n\nMit freundlichen Grüßen\n\n[Dein Name]",
           hint: "Ändere den Text, bevor Du sendest. Der Agent antwortet Dir — mit dem, was er getan hat, und den Belegen dazu.",
           privacy:
             "Ich speichere Deine E-Mail-Adresse nur, bis die Antwort versendet ist. Ich hebe sie nicht auf.",
         },
-        open: "Anmeldung über Google mit carsten.b.koch@gmail.com als einziger berechtigter Adresse fehlt noch — ohne sie sehen Teilnehmer dieselbe Ansicht wie die Leinwand.",
       },
     ],
     n: 6,
@@ -987,7 +986,6 @@ export const SECTIONS: Section[] = [
           ],
         },
         say: "Ein Punkt, den Du im Haus früh klären solltest: der EU AI Act. Er reguliert risikobasiert — es kommt also nicht auf die Technik an, sondern darauf, wofür Du sie einsetzt. Zwei Dinge sind für unser Beispiel relevant. Erstens Transparenz: Wenn ein Agent nach außen kommuniziert, sollte erkennbar sein, dass eine Maschine beteiligt war. Und zweitens Nachvollziehbarkeit — was hat er getan und warum. Das ist genau die Schrittfolge, die Du heute in der Antwort-Mail bekommen hast. Ich bin kein Jurist; hol Dir das früh ins Haus statt am Ende.",
-        open: "Vor dem Vortrag juristisch gegenprüfen lassen. Die Aussagen sind bewusst allgemein gehalten — keine Rechtsberatung.",
       },
     ],
     n: 23,

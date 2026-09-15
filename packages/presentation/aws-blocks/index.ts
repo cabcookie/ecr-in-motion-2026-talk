@@ -144,6 +144,43 @@ const rtFragen = new Realtime(scope, 'fragen-live', {
   namespaces: { fragen: Realtime.namespace(offeneFrage) },
 });
 
+/**
+ * Der überschriebene Zeitplan.
+ *
+ * In den Foliendaten trägt jede Folie eine Soll-Uhrzeit, geschätzt bevor der
+ * Vortrag je gehalten wurde. Nach einer Probe steht hier, was er wirklich
+ * braucht — gemessene Verweildauer plus die geschätzte Zeit für die Stellen,
+ * an denen das Publikum mitmacht.
+ *
+ * Er liegt im Speicher und nicht im Browser, weil er den Vortrag betrifft und
+ * nicht das Gerät, von dem aus geprobt wurde: Wer vom Laptop probt und vom
+ * Tablet vorträgt, soll denselben Plan sehen.
+ */
+const planstand = z.object({
+  index: z.number().int().min(0),
+  step: z.number().int().min(0),
+  /** Soll-Uhrzeit als "18:09". */
+  at: z.string(),
+  /** Davon für die Interaktion vorgesehen, in Sekunden. */
+  interaktion: z.number(),
+});
+
+const zeitplan = z.object({
+  beginn: z.string(),
+  staende: z.array(planstand),
+  geschrieben: z.number(),
+  ausProbe: z.number(),
+  gemessen: z.number(),
+  interaktion: z.number(),
+});
+
+export type Zeitplan = z.infer<typeof zeitplan>;
+
+const plaene = new KVStore(scope, 'zeitplan', { schema: zeitplan });
+
+/** Es gibt genau einen geltenden Plan. Ältere zu behalten hieße, sie zu verwalten. */
+const PLAN = 'aktuell';
+
 /*
   Zwei Postfächer, zwei Bestückungen, ein Agent.
 
@@ -234,6 +271,11 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
    * Fragen des Agenten. Der Folienstand bleibt, sonst spränge der Vortrag beim
    * Zurücksetzen an den Anfang.
    *
+   * Der Zeitplan bleibt ebenfalls stehen, und das ist keine Nachlässigkeit: Er
+   * ist das Ergebnis einer Probe, nicht die Eingabe eines Teilnehmers. Ihn beim
+   * Leeren des Saals mitzulöschen hieße, vor jedem Durchlauf neu zu proben.
+   * Wer ihn loswerden will, nimmt `zeitplanVerwerfen`.
+   *
    * Die Gespräche bleiben serverseitig stehen. Sie hängen an einer Kennung, die
    * nur das jeweilige Handy kennt; werden die Handys zurückgesetzt, findet sie
    * niemand mehr. Sie zu löschen hieße, jedes Gespräch einzeln aufzuzählen —
@@ -256,6 +298,32 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
     await rtReset.publish('reset', CHANNEL, { at: Date.now(), von });
     return { antworten: schluessel.length, fragen: fragenSchluessel.length };
+  },
+
+  // ─── Zeitplan ─────────────────────────────────────────────────────────────
+
+  /** Der geltende Zeitplan, oder nichts — dann gelten die Zeiten aus den Folien. */
+  async zeitplanLesen(): Promise<Zeitplan | null> {
+    return (await plaene.get(PLAN)) ?? null;
+  },
+
+  /**
+   * Den Zeitplan überschreiben.
+   *
+   * Geschützt wie ein Folienwechsel: Wer den Vortrag nicht steuern darf, darf
+   * auch nicht seine Zeiten umschreiben.
+   */
+  async zeitplanSchreiben(plan: Zeitplan, token = '') {
+    assertMayControl(token);
+    await plaene.put(PLAN, plan);
+    return plan;
+  },
+
+  /** Zurück auf die Zeiten aus den Foliendaten. */
+  async zeitplanVerwerfen(token = '') {
+    assertMayControl(token);
+    await plaene.delete(PLAN);
+    return { verworfen: true };
   },
 
   /**
