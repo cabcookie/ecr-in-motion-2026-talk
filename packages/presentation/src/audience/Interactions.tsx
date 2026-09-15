@@ -293,6 +293,33 @@ export function InteractionView({
   answers: Record<string, string>;
   onAnswer: (key: string, v: string) => void;
 }) {
+  return (
+    <div className="grid gap-4">
+      {/*
+        Der Zusammenhang steht über der Interaktion, nicht in ihr: Auf dem Handy
+        ist die Leinwand nicht zu sehen, und eine Frage ohne ihren Anlass ist
+        eine andere Frage. Bei `wait` entfällt er — dort ist der Satz selbst der
+        ganze Inhalt und würde sonst doppelt stehen.
+      */}
+      {interaction.kind !== "wait" && interaction.message && (
+        <p className="m-0 text-base leading-relaxed text-balance text-fg-3">
+          {interaction.message}
+        </p>
+      )}
+      <Koerper interaction={interaction} answers={answers} onAnswer={onAnswer} />
+    </div>
+  );
+}
+
+function Koerper({
+  interaction,
+  answers,
+  onAnswer,
+}: {
+  interaction: Interaction;
+  answers: Record<string, string>;
+  onAnswer: (key: string, v: string) => void;
+}) {
   switch (interaction.kind) {
     case "poll":
       return <Poll interaction={interaction} answers={answers} onAnswer={onAnswer} />;

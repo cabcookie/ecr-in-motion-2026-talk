@@ -218,14 +218,26 @@ export interface PollQuestion {
 }
 
 /**
+ * Ein Satz Zusammenhang, der über der Interaktion steht.
+ *
+ * Auf dem Handy fehlt alles, was gerade auf der Leinwand zu sehen ist: Wer eine
+ * Frage beantworten soll, sieht nur die Frage. Dieser Satz stellt her, worauf
+ * sie sich bezieht. Optional, weil die meisten Fragen für sich stehen — und
+ * dann ist jeder zusätzliche Satz nur eine Hürde vor der Antwort.
+ */
+interface MitZusammenhang {
+  message?: string;
+}
+
+/**
  * Was die Teilnehmer auf dem Handy sehen und tun. Pro Klick-Schritt höchstens
  * eine Interaktion — die Zuschauersicht zeigt immer nur die eine, die gerade
  * dran ist.
  */
-export type Interaction =
+export type Interaction = MitZusammenhang &
   /** Mehrere Fragen auf einmal — der Vortragende klickt dazwischen nicht weiter. */
-  | { kind: "poll"; id: string; questions: PollQuestion[]; persist?: boolean }
-  | {
+  (| { kind: "poll"; id: string; questions: PollQuestion[]; persist?: boolean }
+    | {
       kind: "text";
       id: string;
       prompt: string;
@@ -265,7 +277,8 @@ export type Interaction =
       suggestions?: string[];
       persist?: boolean;
     }
-  | { kind: "wait"; id: string; message: string; persist?: boolean };
+    /** Zwischen zwei Interaktionen — hier IST der Zusammenhang der ganze Inhalt. */
+    | { kind: "wait"; id: string; message: string; persist?: boolean });
 
 /**
  * Eine Stufe innerhalb eines Abschnitts.

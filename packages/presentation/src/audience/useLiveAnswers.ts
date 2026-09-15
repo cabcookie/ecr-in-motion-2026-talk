@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "aws-blocks";
+import { useReset } from "./useReset";
 
 export interface LiveAnswer {
   interactionId: string;
@@ -21,6 +22,14 @@ export interface LiveAnswer {
 export function useLiveAnswers(interactionIds: string[]) {
   const key = interactionIds.join("|");
   const [answers, setAnswers] = useState<LiveAnswer[]>([]);
+
+  /*
+    Die Auswertung hält ihre eigene Kopie. Ohne dieses Leeren blieben die Punkte
+    auf der Leinwand stehen, obwohl der Speicher schon leer ist — und das wäre
+    genau die Sorte Gespenst, die man in der Probe nicht bemerkt und am Abend
+    dann sieht.
+  */
+  useReset(useCallback(() => setAnswers([]), []));
 
   useEffect(() => {
     const ids = key ? key.split("|") : [];

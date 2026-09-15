@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BLOCKS, SECTIONS, TOTAL, blockOf } from "@/slides/data";
 import { useNavigation } from "@/nav/useNavigation";
 import { Aufzeichnung } from "./Aufzeichnung";
+import { Zuruecksetzen } from "./Zuruecksetzen";
 import { StagePreview } from "./StagePreview";
 import { AudiencePreview } from "./AudiencePreview";
 import { aufSteuerung, setzeToken, steuerung, type Steuerung } from "@/sync/token";
@@ -118,6 +119,7 @@ export function OperatorView() {
 
           <div className="flex items-center gap-5">
             <Aufzeichnung index={index} step={step} goto={goto} />
+            <Zuruecksetzen />
             <Schedule at={panel?.at} />
             <div className="text-right">
               <div className="font-mono text-2xl tabular-nums">

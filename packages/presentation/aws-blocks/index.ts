@@ -78,6 +78,22 @@ const rtAnswers = new Realtime(scope, 'answers-live', {
 });
 
 /**
+ * Ein Zurücksetzen.
+ *
+ * Inhaltlich trägt das Ereignis nichts — es sagt nur: fangt von vorn an. Der
+ * Zeitstempel steht trotzdem drin, damit zwei Zurücksetzungen hintereinander
+ * unterscheidbar bleiben und die zweite nicht als Wiederholung der ersten
+ * durchfällt.
+ */
+const resetEvent = z.object({ at: z.number(), von: z.string() });
+
+export type ResetEvent = z.infer<typeof resetEvent>;
+
+const rtReset = new Realtime(scope, 'reset-live', {
+  namespaces: { reset: Realtime.namespace(resetEvent) },
+});
+
+/**
  * Der Agent aus Abschnitt 16.
  *
  * Er bekommt den Systemprompt — und bewusst keine Tools. Genau das ist der
@@ -205,6 +221,50 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /** Kanal, über den neue Antworten live auf die Leinwand kommen. */
   async subscribeAnswers() {
     return rtAnswers.getChannel('answers', 'main');
+  },
+
+  /**
+   * Alles zurücksetzen, was Teilnehmer eingegeben haben.
+   *
+   * Gedacht für die Proben: Nach einem Durchlauf stehen Antworten im Speicher,
+   * und die stünden am Vortragsabend als Punkte auf der Leinwand, bevor der
+   * erste Teilnehmer den QR-Code gescannt hat.
+   *
+   * Gelöscht wird nur, was aus dem Publikum kam — Antworten und die offenen
+   * Fragen des Agenten. Der Folienstand bleibt, sonst spränge der Vortrag beim
+   * Zurücksetzen an den Anfang.
+   *
+   * Die Gespräche bleiben serverseitig stehen. Sie hängen an einer Kennung, die
+   * nur das jeweilige Handy kennt; werden die Handys zurückgesetzt, findet sie
+   * niemand mehr. Sie zu löschen hieße, jedes Gespräch einzeln aufzuzählen —
+   * für nichts, was danach anders aussähe.
+   */
+  async resetEingaben(von = 'operator', token = '') {
+    assertMayControl(token);
+
+    /*
+      Erst sammeln, dann löschen. Während eines laufenden Scans zu löschen ist
+      die Sorte Nebenwirkung, die genau einmal im Jahr eine Seite überspringt.
+    */
+    const schluessel: string[] = [];
+    for await (const eintrag of answers.scan()) schluessel.push(eintrag.key);
+    for (const key of schluessel) await answers.delete(key);
+
+    const fragenSchluessel: string[] = [];
+    for await (const eintrag of fragen.scan()) fragenSchluessel.push(eintrag.key);
+    for (const key of fragenSchluessel) await fragen.delete(key);
+
+    await rtReset.publish('reset', CHANNEL, { at: Date.now(), von });
+    return { antworten: schluessel.length, fragen: fragenSchluessel.length };
+  },
+
+  /**
+   * Kanal, über den ein Zurücksetzen bei den Handys und auf der Leinwand
+   * ankommt. Ohne ihn müsste jedes Gerät einzeln neu geladen werden — und
+   * genau das will man in einer Probe nicht tun.
+   */
+  async subscribeReset() {
+    return rtReset.getChannel('reset', CHANNEL);
   },
 
   // ─── Chat mit dem Agenten (Abschnitt 16) ──────────────────────────────────
