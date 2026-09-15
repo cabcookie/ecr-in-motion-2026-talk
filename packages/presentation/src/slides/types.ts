@@ -178,7 +178,19 @@ export interface ResultsMock {
   qr?: boolean;
 }
 
+/**
+ * Das vereinfachte Architekturbild.
+ *
+ * Dreistufig: Eingänge und Agent, dann seine Werkzeuge, dann die simulierten
+ * Systeme. `alt` beschreibt das Bild für alles, was kein Bild lesen kann.
+ */
+export interface ArchitekturMock {
+  t: "architektur";
+  alt: string;
+}
+
 export type Mock =
+  | ArchitekturMock
   | TShapeMock
   | MailThreadMock
   | RevealMock

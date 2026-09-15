@@ -2,12 +2,71 @@
 
 pnpm-Workspace für den Vortrag „ECR in Motion 2026".
 
+## Wie es gebaut ist
+
+Ein Agent, zwei Eingänge. Was ihn im Postfach von dem im Chat unterscheidet, ist
+nicht, wer er ist — sondern **womit er antworten kann**. Modell, Systemprompt
+und die sieben Fachwerkzeuge sind geteilt.
+
+```mermaid
+flowchart TB
+  MAIL["E-Mail vom Hersteller<br/>ecr2026@carstenbkoch.de"]
+  CHAT["Chat auf dem Handy<br/>Lisa fragt ihren Assistenten"]
+
+  MAIL --> SES["SES nimmt an · Konto A"]
+  SES --> ABLAGE["S3 legt ab, SNS meldet"]
+  ABLAGE --> LAM["Lambda liest die Rohmail"]
+
+  LAM --> AGENT
+  CHAT --> AGENT
+
+  AGENT["<br/>Ein Agent<br/>Claude Opus 4.8 · Bedrock AgentCore<br/>ein Systemprompt, eine Konfiguration<br/>"]
+
+  AGENT --> WM["antworte_per_mail<br/>nur im Mailweg"]
+  AGENT --> WC["antworte_im_chat<br/>nur im Chat"]
+  AGENT --> WL["frage_lisa<br/>hält an, bis geantwortet ist"]
+  WL -.-> MENSCH["Der Mensch antwortet live"]
+  MENSCH -.-> AGENT
+
+  AGENT --> SYS
+
+  subgraph SYS ["Simulierte Systeme · packages/handelswelt"]
+    direction LR
+    S1[Warenwirtschaft]
+    S2[Marktdaten]
+    S3[Regalplanung]
+    S4[Kalkulation]
+    S5[Aktionskalender]
+    S6[Listung]
+  end
+```
+
+**Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.** Welches
+System er befragt, in welcher Reihenfolge und was er aus den Antworten schließt,
+entscheidet er selbst.
+
+Drei Eigenschaften, die nicht zufällig so sind:
+
+- **Ein Port wirft nicht.** Jedes System antwortet mit einem `Befund` — bei
+  Erfolg mit `quelle` und `stand`, sonst mit einem Grund, den der Agent
+  aussprechen kann. Ein Fehler, den die Werkzeugschleife verschluckt, kommt als
+  erfundene Zahl wieder heraus.
+- **Die Vertraulichkeitsregel steht am Werkzeug, nicht im Prompt.** Sie gilt
+  nicht für den Agenten, sondern für den Kanal: Eine Mail geht an einen
+  Außenstehenden, eine Chatnachricht an Lisa selbst. Wer das Werkzeug nicht hat,
+  kann die Regel nicht verletzen.
+- **`frage_lisa` hält den Agenten an.** Mitten im Vorgang, bis ein Mensch
+  geantwortet hat — und diese Antwort wird zum Werkzeugergebnis, mit dem er
+  weiterrechnet.
+
 ## Struktur
 
 ```
 packages/
-  docs/           Vortragsunterlagen, Briefings, Demo-Material, Sample-Daten
-  presentation/   Die Präsentation als Web-App — Live-View und Operator-View
+  docs/           Vortragsunterlagen, Messungen, Storyboard
+  handelswelt/    Die simulierten Systeme — Daten hinter Ports
+  infra/          Bootstrap: OIDC-Rolle, Hosted Zone, Marken-Eimer
+  presentation/   Die Präsentation als Web-App, der Agent und der Mailweg
 ```
 
 ## Die Präsentation

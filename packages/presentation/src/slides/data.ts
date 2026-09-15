@@ -917,6 +917,39 @@ export const SECTIONS: Section[] = [
   },
   {
     "b": 3,
+    "kind": "Architektur",
+    "title": "So ist es gebaut.",
+    "sub": "Ein Agent, zwei Eingänge, sechs simulierte Systeme.",
+    "panels": [
+      {
+        "mock": {
+          "t": "architektur",
+          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_lisa, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme."
+        },
+        "say": "Bevor wir weitergehen, einmal das ganze Bild — vereinfacht, aber nichts darin ist gelogen. Links kommt die E-Mail an. Sie geht durch SES in einem zweiten Konto, landet in S3, eine Meldung weckt eine Lambda, die die Rohmail liest. Rechts das Handy: da tippt jemand direkt. Zwei völlig verschiedene Wege — und sie laufen auf dasselbe zu. Das ist der Punkt: Es ist EIN Agent. Ein Modell, ein Systemprompt, eine Konfiguration.",
+        "app": "Stufe 1 — Eingänge und Agent. Werkzeuge und Systeme noch abgeblendet."
+      },
+      {
+        "mock": {
+          "t": "architektur",
+          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_lisa, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme."
+        },
+        "say": "Was ihn unterscheidet, ist einzig, womit er antworten darf. Kommt der Vorgang per Mail, hat er ein Werkzeug zum Mailversand. Kommt er aus dem Chat, hat er eines für den Chat. Und im Mailweg hat er noch eines: frage_lisa. Das ist kein gewöhnliches Werkzeug — es hält den Agenten an. Mitten im Vorgang. Er wartet, bis ein Mensch geantwortet hat, und rechnet dann mit dieser Antwort weiter.",
+        "app": "Stufe 2 — die drei Werkzeuge. Der Pfeil zum Operator zeigt, wo die Rückfrage landet."
+      },
+      {
+        "mock": {
+          "t": "architektur",
+          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_lisa, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme."
+        },
+        "say": "Und links stehen die Systeme, in denen er nachschlägt. Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung. Die sind für heute Abend simuliert — das sage ich deutlich, und es steht auch unten auf dem Bild. Was nicht simuliert ist: welches dieser Systeme er befragt, in welcher Reihenfolge, und was er aus den Antworten schließt. Das entscheidet er.",
+        "app": "Stufe 3 — die simulierten Systeme. Vollbild."
+      }
+    ],
+    "n": 21
+  },
+  {
+    "b": 3,
     "kind": "Memory · Vorgehen",
     "title": "Wie wird der Agent besser?",
     "panels": [
@@ -980,7 +1013,7 @@ export const SECTIONS: Section[] = [
         "say": "Und irgendwann kommst Du an den Punkt, an dem die Mail, die der Agent schicken will, die ist, die Du geschickt hättest. Dann überführst Du das in Software — erst mit einer Bestätigungshürde: Er darf handeln, aber Du klickst. Und wenn das eine Weile gut geht, nimmst Du die Hürde weg. Wichtig: Das gilt immer nur für eine Klasse von Mails. Listungsanfragen zum Beispiel. Dann nimmst Du Dir die nächste Klasse vor. So wächst das, Stück für Stück."
       }
     ],
-    "n": 21
+    "n": 22
   },
   {
     "b": 3,
@@ -1011,7 +1044,7 @@ export const SECTIONS: Section[] = [
         "open": "Vor dem Vortrag juristisch gegenprüfen lassen. Die Aussagen sind bewusst allgemein gehalten — keine Rechtsberatung."
       }
     ],
-    "n": 22
+    "n": 23
   },
   {
     "b": 4,
@@ -1028,7 +1061,7 @@ export const SECTIONS: Section[] = [
         "say": "Damit sind wir zurück bei der Frage vom Anfang. Braucht man uns dann noch? Meine Antwort ist ja. Aber nicht so wie heute."
       }
     ],
-    "n": 23
+    "n": 24
   },
   {
     "b": 4,
@@ -1053,7 +1086,7 @@ export const SECTIONS: Section[] = [
         "say": "Und mach Dir keine Hoffnung, dass dabei Arbeit übrig bleibt. Sobald wir mehr schaffen, wird auch mehr erwartet — von Kunden, von Kollegen, vom eigenen Haus. Die Arbeit wird nicht weniger. Sie wird anders."
       }
     ],
-    "n": 24
+    "n": 25
   },
   {
     "b": 4,
@@ -1092,7 +1125,7 @@ export const SECTIONS: Section[] = [
         "note": "Produktnamen vor dem Vortrag gegen den aktuellen Stand prüfen — AWS benennt schnell um."
       }
     ],
-    "n": 25
+    "n": 26
   },
   {
     "b": 4,
@@ -1109,7 +1142,7 @@ export const SECTIONS: Section[] = [
         "say": "Und der letzte Punkt ist der einfachste: Komm morgen früh um acht zum Frühstück. Dort sitzen Entscheider aus anderen Häusern, die genau das gerade ausprobieren. Du hörst, was funktioniert — und vor allem, was nicht funktioniert. Das ist meistens der nützlichere Teil. Vielen Dank."
       }
     ],
-    "n": 26
+    "n": 27
   }
 ] as Section[];
 
