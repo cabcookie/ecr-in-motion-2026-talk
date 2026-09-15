@@ -24,6 +24,14 @@ export const vorgangskontext = z.object({
   betreff: z.string().optional(),
   /** Message-ID der eingehenden Mail, für den Gesprächsfaden. */
   nachrichtId: z.string().optional(),
+  /** An welches Postfach geschrieben wurde — als dieses wird geantwortet. */
+  postfach: z.string().optional(),
+  /*
+    Der Kanal dieses Zuges. Er steht im Kontext, damit `frage_lisa` ihn in die
+    offene Frage schreiben kann — ohne ihn wüsste später niemand, welchen Zug
+    Lisas Antwort fortsetzen soll.
+  */
+  kanal: z.string().optional(),
 });
 
 export type Vorgangskontext = z.infer<typeof vorgangskontext>;
@@ -50,7 +58,22 @@ export interface Versand {
  * dann versendet der Agent allein. Der Autonomieregler ist kein Bild, sondern
  * zwei Felder.
  */
-export function antworteVerMail(tool: ToolFactory<Vorgangskontext>, versende: Versand) {
+export function antworteVerMail(
+  tool: ToolFactory<Vorgangskontext>,
+  versende: Versand,
+  /*
+    Freigabe durch einen Menschen vor dem Versand.
+
+    Für den Vortrag AUS: In Abschnitt 6 schreiben achtzig Teilnehmer
+    gleichzeitig, und niemand kann achtzig Mails einzeln bestätigen. Der
+    Mensch-im-Kreis-Moment liegt dort, wo er hingehört — bei `frage_lisa`.
+
+    Die Fähigkeit steht trotzdem hier, weil sie die Stufe IST, die Block 4
+    erklärt: Der Agent schlägt vor, ein Mensch bestätigt, und wer „vertraue"
+    antwortet, lässt ihn ab dann allein.
+  */
+  mitFreigabe = false,
+) {
   return tool({
     description:
       'Sendet die fertige Antwort an den Absender der eingegangenen E-Mail. ' +
@@ -66,8 +89,8 @@ export function antworteVerMail(tool: ToolFactory<Vorgangskontext>, versende: Ve
         .string()
         .describe('Die vollständige Mail als Fließtext, mit Anrede und Grußformel, ohne Markdown'),
     }),
-    needsApproval: true,
-    trustable: true,
+    needsApproval: mitFreigabe,
+    trustable: mitFreigabe,
     handler: async ({ input, context }) => {
       await versende(context, input.betreff, input.text);
       return { gesendet: true, an: context.absender };
@@ -105,7 +128,20 @@ export function antworteImChat(tool: ToolFactory<Vorgangskontext>) {
  * Das gibt es nur im Mailweg. Im Chat wäre es sinnlos: Dort ist Lisa ohnehin
  * der Gesprächspartner — da fragt man einfach.
  */
-export function frageLisa(tool: ToolFactory<Vorgangskontext>) {
+/** Wohin eine offene Frage geschrieben wird, damit Lisa sie findet. */
+export interface Fragenablage {
+  (frage: {
+    id: string;
+    frage: string;
+    warum: string;
+    absender: string;
+    betreff: string;
+    kanal: string;
+    gestellt: number;
+  }): Promise<void>;
+}
+
+export function frageLisa(tool: ToolFactory<Vorgangskontext>, lege: Fragenablage) {
   return tool({
     description:
       'Legt Lisa Berger eine Rückfrage vor und wartet auf ihre Antwort. Nutze das für alles, ' +
@@ -125,6 +161,23 @@ export function frageLisa(tool: ToolFactory<Vorgangskontext>) {
         `reason` ist das, was die Operator-Ansicht anzeigt. Alles, was Carsten
         auf der Bühne zum Beantworten braucht, muss hier drinstehen.
       */
+      /*
+        Erst ablegen, dann anhalten — und nicht umgekehrt.
+
+        `interrupt()` kehrt nicht zurück, bevor jemand geantwortet hat. Stünde
+        die Ablage danach, wüsste Lisa nie, dass es etwas zu beantworten gibt,
+        und der Vorgang bliebe für immer stehen.
+      */
+      await lege({
+        id: `${context.absender}:${Date.now()}`,
+        frage: input.frage,
+        warum: input.warum,
+        absender: context.absender,
+        betreff: context.betreff ?? '',
+        kanal: context.kanal ?? '',
+        gestellt: Date.now(),
+      });
+
       const antwort = await interrupt<string>({
         name: 'frage-an-lisa',
         reason: {

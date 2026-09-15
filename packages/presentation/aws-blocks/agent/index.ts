@@ -22,6 +22,7 @@ import {
   antworteVerMail,
   frageLisa,
   vorgangskontext,
+  type Fragenablage,
   type Versand,
 } from './antwort';
 import { fachwerkzeuge } from './werkzeuge';
@@ -61,13 +62,31 @@ const GEMEINSAM = {
  * wird aus Stack- und Blockkennung zusammengesetzt und darf 63 Zeichen nicht
  * überschreiten.
  */
-export function postfachAgent(scope: Scope, versende: Versand): Agent<any> {
-  return new Agent(scope, 'post', {
+export function postfachAgent(
+  scope: Scope,
+  kennung: string,
+  versende: Versand,
+  lege: Fragenablage,
+  /*
+    Ob der Agent die Systeme der Handelswelt befragen darf.
+
+    Das ist der ganze Unterschied zwischen den beiden Postfächern — und der
+    Kern von Abschnitt 15. Derselbe Agent, derselbe Systemprompt, dieselben
+    Grenzen; ihm fehlen nur die Werkzeuge. Dann KANN er nichts nachschlagen und
+    muss fragen.
+
+    Vorher war der Vergleich schwächer und angreifbar: Das zweite Postfach hatte
+    einen ANDEREN Prompt, der ausdrücklich zum Raten aufforderte. Wer das merkt,
+    hat die Folie widerlegt.
+  */
+  mitFachwerkzeugen: boolean,
+): Agent<any> {
+  return new Agent(scope, kennung, {
     ...GEMEINSAM,
     tools: (tool) => ({
-      ...fachwerkzeuge(tool),
+      ...(mitFachwerkzeugen ? fachwerkzeuge(tool) : {}),
       antworte_per_mail: antworteVerMail(tool, versende),
-      frage_lisa: frageLisa(tool),
+      frage_lisa: frageLisa(tool, lege),
     }),
   });
 }
@@ -83,4 +102,4 @@ export function chatAgent(scope: Scope): Agent<any> {
   });
 }
 
-export { vorgangskontext, type Versand } from './antwort';
+export { vorgangskontext, type Fragenablage, type Versand } from './antwort';

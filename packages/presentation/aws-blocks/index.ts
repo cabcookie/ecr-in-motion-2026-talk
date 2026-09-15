@@ -9,7 +9,8 @@
  * Derselbe Code, kein Unterschied im Frontend.
  */
 import { ApiNamespace, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
-import { chatAgent } from './agent';
+import { chatAgent, postfachAgent } from './agent';
+import { perSes } from './agent/versand';
 import { z } from 'zod';
 
 const scope = new Scope('ecr-masterclass');
@@ -97,6 +98,53 @@ const rtAnswers = new Realtime(scope, 'answers-live', {
   Er kann im Chat antworten und keine Mail senden.
 */
 const berater = chatAgent(scope);
+
+/**
+ * Eine Frage, die der Agent Lisa vorgelegt hat und die noch offen ist.
+ *
+ * Sie liegt hier und nicht im Protokoll, weil sie beantwortet werden muss:
+ * Solange sie offen ist, steht ein Vorgang still und eine Mail geht nicht
+ * hinaus. Der Indikator auf der Folie liest genau diesen Speicher.
+ */
+const offeneFrage = z.object({
+  id: z.string(),
+  frage: z.string(),
+  warum: z.string(),
+  absender: z.string(),
+  betreff: z.string(),
+  /** Welchen Zug Lisas Antwort fortsetzt. */
+  kanal: z.string(),
+  gestellt: z.number(),
+  /** Gesetzt, sobald geantwortet wurde — die Frage bleibt als Beleg stehen. */
+  antwort: z.string().optional(),
+});
+
+export type OffeneFrage = z.infer<typeof offeneFrage>;
+
+const fragen = new KVStore(scope, 'lisa-fragen', { schema: offeneFrage });
+
+/** Damit der Indikator aufleuchtet, ohne dass jemand nachfragen muss. */
+const rtFragen = new Realtime(scope, 'fragen-live', {
+  namespaces: { fragen: Realtime.namespace(offeneFrage) },
+});
+
+/*
+  Zwei Postfächer, zwei Bestückungen, ein Agent.
+
+  Der Unterschied ist einzig, ob die Fachwerkzeuge dabei sind. Abschnitt 6
+  bekommt sie — dort soll der Agent fundiert antworten und selbst senden.
+  Abschnitt 15 bekommt sie nicht: Derselbe Agent, derselbe Prompt, aber er KANN
+  nichts nachschlagen. Also fragt er Lisa, und das ist der Punkt der Folie.
+*/
+const ablegen = async (f: OffeneFrage) => {
+  await fragen.put(f.id, f);
+  await rtFragen.publish('fragen', CHANNEL, f);
+};
+
+const postfaecher = {
+  assistent: postfachAgent(scope, 'post', perSes, ablegen, true),
+  probe: postfachAgent(scope, 'probe', perSes, ablegen, false),
+};
 
 export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /**
@@ -198,5 +246,62 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /** Kanal, über den die Antwort Stück für Stück hereinkommt. */
   async chatChannel(channelId: string) {
     return berater.getChannel(channelId);
+  },
+
+  /**
+   * Eine eingegangene E-Mail übergeben.
+   *
+   * Die Lambda am SNS-Topf parst die Rohmail und reicht sie hierher. Der Aufruf
+   * kehrt sofort zurück: Was danach geschieht — Systeme befragen, Lisa fragen,
+   * antworten — läuft im Agenten, und das Senden ist sein eigenes Werkzeug.
+   */
+  async mailEingang(
+    modus: 'assistent' | 'probe',
+    absender: string,
+    betreff: string,
+    text: string,
+    nachrichtId: string,
+    postfach: string,
+  ) {
+    const kanal = `mail-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    await postfaecher[modus].stream(text, {
+      channelId: kanal,
+      context: { absender, betreff, nachrichtId, postfach, kanal },
+    });
+    return { kanal };
+  },
+
+  /** Was der Agent gerade von Lisa wissen möchte. Der Indikator liest das. */
+  async lisaFragen() {
+    const offen: OffeneFrage[] = [];
+    for await (const eintrag of fragen.scan()) {
+      if (!eintrag.value.antwort) offen.push(eintrag.value);
+    }
+    return { offen: offen.sort((a, b) => a.gestellt - b.gestellt) };
+  },
+
+  /** Kanal für den Indikator — damit er aufleuchtet, statt gepollt zu werden. */
+  async lisaKanal() {
+    return rtFragen.getChannel('fragen', CHANNEL);
+  },
+
+  /**
+   * Lisas Antwort — und damit läuft der Vorgang weiter.
+   *
+   * `resume` setzt den angehaltenen Zug auf demselben Budget fort. Der Agent
+   * bekommt die Antwort als Ergebnis seines Werkzeugs und schreibt damit die
+   * Mail zu Ende.
+   */
+  async lisaAntwortet(id: string, antwort: string, modus: 'assistent' | 'probe', token = '') {
+    assertMayControl(token);
+    const frage = await fragen.get(id);
+    if (!frage) throw new Error(`Die Frage ${id} kenne ich nicht.`);
+    if (frage.antwort) return { schon: true };
+
+    await fragen.put(id, { ...frage, antwort });
+    await postfaecher[modus].resume(frage.kanal, [
+      { interruptId: 'frage-an-lisa', response: antwort },
+    ]);
+    return { fortgesetzt: true };
   },
 }));
