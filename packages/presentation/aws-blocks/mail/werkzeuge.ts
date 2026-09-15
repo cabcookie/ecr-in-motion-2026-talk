@@ -17,6 +17,7 @@ import {
   marge,
   platz,
   segment,
+  ziele,
   type Befund,
 } from "@ecr-talk/handelswelt";
 
@@ -260,6 +261,37 @@ export const WERKZEUGE: readonly Werkzeug[] = [
           regel: t.regel,
           entscheidet: t.entscheidet,
           giltWenn: t.giltWenn,
+        })),
+      })),
+  },
+  {
+    /*
+      Das einzige Werkzeug, das nicht sagt, ob etwas GEHT, sondern ob es
+      GEWOLLT ist. Ohne es endet jede Pruefung beim Ja mit Auflagen.
+    */
+    name: "kategorie_ziele",
+    beschreibung:
+      "Die Ziele der Kategorie fuer das laufende Geschaeftsjahr, je Kaeufergruppe: welche Gruppe " +
+      "gehalten, gesteigert oder neu gewonnen werden soll, wo wir heute stehen und warum. Nutze das, " +
+      "bevor du eine Anfrage befuerwortest oder ablehnst - eine Anfrage kann zulaessig sein und " +
+      "trotzdem den Zielen widersprechen.",
+    schema: leer,
+    antwort: () =>
+      ausgabe(ziele(), (d) => ({
+        geschaeftsjahr: d.geschaeftsjahr,
+        imMonat: `${d.monat}. von 12 Monaten`,
+        kaeufergruppen: d.staende.map((s) => ({
+          gruppe: s.name,
+          anlass: s.anlass,
+          warumGekauftWird: s.warum,
+          richtung: s.richtung,
+          vorgabe: s.vorgabe,
+          begruendung: s.begruendung,
+          anteilFlaeche: `${s.anteilFlaeche} %`,
+          anteilAbsatz: `${s.anteilAbsatz} %`,
+          entwicklung: `${s.entwicklung} %`,
+          zielAnteilFlaeche: s.zielAnteilFlaeche === undefined ? undefined : `${s.zielAnteilFlaeche} %`,
+          lage: s.lage,
         })),
       })),
   },

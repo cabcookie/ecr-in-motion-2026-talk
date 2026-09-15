@@ -23,6 +23,7 @@ import {
   marge,
   platz,
   segment,
+  ziele,
   type Befund,
 } from '@ecr-talk/handelswelt';
 import { z } from 'zod';
@@ -195,6 +196,41 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
             regel: t.regel,
             entscheidet: t.entscheidet,
             ...(t.giltWenn ? { giltWenn: t.giltWenn } : {}),
+          })),
+        })),
+    }),
+
+    /*
+      Das einzige Werkzeug, das nicht sagt, ob etwas GEHT, sondern ob es
+      GEWOLLT ist. Ohne es endet jede Prüfung beim Ja mit Auflagen — denn wer
+      nur Marge, Platz und Frist kennt, hat keinen Grund, etwas Zulässiges
+      abzulehnen.
+    */
+    kategorie_ziele: tool({
+      description:
+        'Die Ziele der Kategorie für das laufende Geschäftsjahr, je Käufergruppe: ' +
+        'welche Gruppe gehalten, gesteigert oder neu gewonnen werden soll, wo wir heute ' +
+        'stehen und warum. Nutze das, bevor du eine Anfrage befürwortest oder ablehnst — ' +
+        'eine Anfrage kann zulässig sein und trotzdem den Zielen widersprechen.',
+      parameters: z.object({}),
+      handler: async () =>
+        ausgabe(ziele(), (d) => ({
+          geschaeftsjahr: d.geschaeftsjahr,
+          imMonat: `${d.monat}. von 12 Monaten`,
+          kaeufergruppen: d.staende.map((s) => ({
+            gruppe: s.name,
+            anlass: s.anlass,
+            warumGekauftWird: s.warum,
+            richtung: s.richtung,
+            vorgabe: s.vorgabe,
+            begruendung: s.begruendung,
+            anteilFlaeche: punkte(s.anteilFlaeche),
+            anteilAbsatz: punkte(s.anteilAbsatz),
+            entwicklung: punkte(s.entwicklung),
+            ...(s.zielAnteilFlaeche === undefined
+              ? {}
+              : { zielAnteilFlaeche: punkte(s.zielAnteilFlaeche) }),
+            lage: s.lage,
           })),
         })),
     }),

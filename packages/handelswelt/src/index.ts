@@ -29,10 +29,19 @@ export { type Segmentauskunft, segment, segmentVon } from './systeme/marktdaten'
 export { type Weichkandidat, type Zonenauskunft, istZone, platz } from './systeme/regalplanung';
 export { type FreieFlaeche, type Kalenderauskunft, flaechen } from './systeme/aktionskalender';
 export { type Listungsweg, type Tor, anforderungen } from './systeme/listung';
+export { type Zielauskunft, type Zielstand, ziele } from './systeme/ziele';
 
 export { type Kategorievorgabe, SCHOKOLADE_UND_PRALINEN, standDerKategorie } from './daten/kategorien';
 export { type Artikel, type Regalzone, KATEGORIE, SORTIMENT } from './daten/sortiment';
 export { type Warengruppe, KULISSE } from './daten/kulisse';
+export {
+  type Kaeufergruppe,
+  KAEUFERGRUPPEN,
+  gruppeMit,
+  gruppeVon,
+  preisJe100g,
+} from './daten/kaeufergruppen';
+export { type Geschaeftsjahr, type Richtung, type Ziel, ZIELE, geschaeftsjahr, zielFuer } from './daten/ziele';
 
 export {
   type Abstand,
