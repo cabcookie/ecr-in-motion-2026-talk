@@ -287,6 +287,16 @@ export type Interaction = MitZusammenhang &
       /** Bis wann der Knopf angeboten wird, als HH:MM Ortszeit. */
       until?: string;
       /**
+       * Letzter Abschnitt, in dem der Knopf noch erscheint.
+       *
+       * Verlässlicher als `until`: Eine Uhrzeit trifft nur zu, wenn der Vortrag
+       * im Plan liegt. Eine Abschnittsnummer trifft immer zu. Ab dem Abschnitt
+       * danach ist das Handy wieder frei für das, was gerade dran ist — und
+       * genau darum geht es: Eine Seite, auf der drei alte Angebote stehen,
+       * lenkt von dem einen ab, das zählt.
+       */
+      bisAbschnitt?: number;
+      /**
        * Jedem Teilnehmer eine Rolle zuteilen und den Entwurf dazu vorfüllen.
        *
        * Ohne das schreibt jeder ins Blaue: Man weiß weder, für welche Marke man

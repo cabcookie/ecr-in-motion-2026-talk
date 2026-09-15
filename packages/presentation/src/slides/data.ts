@@ -113,7 +113,7 @@ export const SECTIONS: Section[] = [
             ["Laufzeit", "4 Wochen"],
           ],
         },
-        say: "Wir können listen — aber nicht zum 15. Oktober, sondern eine Woche später, am 22. In zwölf Märkten im Raum Hamburg werden an diesem Tag Zweitplatzierungsflächen frei, die sich für eine Einführungsaktion nutzen lassen. Lisa erwartet aber fünfzehn Prozent Einführungsrabatt für die ersten vier Wochen. Und jetzt das Besondere: Kein Mensch war beteiligt. Auch Lisa nicht — denn Lisa ist kein Mensch. Lisa ist ein KI-Agent. Sie hat die E-Mail analysiert, sich einen Plan gemacht, Daten aus den Systemen geholt, sie gegeneinandergestellt, ausgewertet, Entscheidungen getroffen, die Antwort formuliert und abgeschickt. Alles innerhalb von sieben Minuten. Zwei Stunden später bestätigt Hallbach.",
+        say: "Wir können listen — aber nicht zum 15. Oktober, sondern eine Woche später, am 22. In zwölf Märkten im Raum Hamburg werden an diesem Tag Zweitplatzierungsflächen frei, die sich für eine Einführungsaktion nutzen lassen. Lisa erwartet aber fünfzehn Prozent Einführungsrabatt für die ersten vier Wochen. Und jetzt das Besondere: Kein Mensch war beteiligt. Auch Lisa nicht — denn Lisa ist kein Mensch. Lisa ist ein KI-Agent. Sie hat die E-Mail analysiert, sich einen Plan gemacht, Daten aus den Systemen geholt, sie gegeneinandergestellt, ausgewertet, Entscheidungen getroffen, die Antwort formuliert und abgeschickt. Alles innerhalb von sieben Minuten und mit unter einem Euro Kosten. Zwei Stunden später bestätigt Hallbach.",
       },
       {
         at: "18:04",
@@ -142,7 +142,7 @@ export const SECTIONS: Section[] = [
             },
           ],
         },
-        say: "Und wieder übernimmt der Agent. Er bucht Bestellungen im Warenwirtschaftssystem. Er aktualisiert das Planogramm für die Aufsteller in den 12 Märkten. Die Logistik wird über den neuen Lieferrhythmus informiert und die zwölf Marktleiter über den Displaywechsel am 22. Oktober. Vier Systeme, alles parallel. Auch das ohne eine einzige Rückfrage.",
+        say: "Und wieder übernimmt Lisa. Sie bucht Bestellungen im Warenwirtschaftssystem, aktualisiert das Planogramm für die Aufsteller in den 12 Märkten. Sie informiert die Logistik über den neuen Lieferrhythmus und die zwölf Marktleiter über den Displaywechsel am 22. Oktober. Vier Systeme, alles parallel. Auch das ohne eine einzige Rückfrage.",
         app: "Vier Systeme quittieren sichtbar. Die zwölf Marktleiter als echte Liste, nicht als Zahl.",
       },
     ],
@@ -171,7 +171,7 @@ export const SECTIONS: Section[] = [
             ],
           ],
         },
-        say: "Kurz zu Lisa, denn um ihre Arbeit geht es heute Abend. Lisa Berger verantwortet bei Nordkorb die Kategorie Schokolade und Pralinen. Sie entscheidet über Listungen und Auslistungen, verhandelt Konditionen, plant Regale und Aktionen. Das ist eine vollwertige Stelle mit einer vollwertigen Verantwortung — und Lisa ist kein Mensch. Lisa ist der Agent, den Du gerade gesehen hast. Ich sage das jetzt und nicht erst am Ende, weil ich nicht will, dass Du den Abend über rätselst. Die Frage heute ist nicht, ob so etwas geht. Die Frage ist, was dazugehört, damit es gut geht.",
+        say: "Kurz zu Lisa, denn um ihre Arbeit geht es heute Abend. Lisa Berger verantwortet bei Nordkorb die Kategorie Schokolade und Pralinen. Sie entscheidet über Listungen und Auslistungen, verhandelt Konditionen, plant Regale und Aktionen. Das ist eine vollwertige Stelle mit einer vollwertigen Verantwortung — und Lisa ist kein Mensch. Lisa ist der Agent, den wir gerade gesehen haben. Wir wollen uns heute Abend damit beschäftigen, wie wir einen Agenten bauen, der so gut die Arbeit eines Categor Managers unterstützen kann.",
       },
       {
         at: "18:06",
@@ -202,7 +202,7 @@ export const SECTIONS: Section[] = [
             ["Rückmail an den Hersteller", "Entscheidung oder Gegenvorschlag"],
           ],
         },
-        say: "Und jetzt stell Dir vor, ein Mensch hätte auf diesem Stuhl gesessen. Dann sähe derselbe Vorgang so aus. Er hätte die Mail gelesen und sich zunächst einen Plan gemacht. Er hätte überlegt, welche Datenbank er braucht, hätte in der Warenwirtschaft nachgesehen, wie die Kategorie läuft und wer Underperformer ist. Er hätte Marktdaten zum Segment geprüft und sich angeschaut, welche Angebote gerade von anderen Händlern und Anbietern existieren. Er hätte die Regalplanung geprüft, um zu wissen, ob überhaupt Platz für die Aktionsware da ist oder wer dafür weichen müsste. Er hätte die Marge gerechnet und in der Aktionsplanung nachgesehen, ob es eine Gelegenheit für die Aktion gibt. Und dann wird es zäh: Er fragt die Logistik — und wartet. Er fragt die Marktleitung — und wartet. Er fragt die Einkaufsleitung — und wartet wieder. Niemand von denen sitzt da und wartet auf diese eine Anfrage. Realistisch reden wir nicht von Minuten, sondern von Tagen, eher von Wochen, bevor eine Antwort an Hallbach überhaupt möglich geworden wäre. Lisa hat dafür sieben Minuten gebraucht. Und dabei...",
+        say: "Und jetzt stell Dir vor, Lisa wäre ein Mensch. Dann sähe derselbe Vorgang wahrscheinlich so aus. Sie hätte die Mail gelesen und sich zunächst einen Plan gemacht. Sie hätte überlegt, welche Datenbasis sie benötigt, hätte in der Warenwirtschaft nachgesehen, wie die Kategorie läuft und wer Underperformer ist. Sie hätte Marktdaten zum Segment geprüft und sich angeschaut, welche Angebote gerade von anderen Händlern und Anbietern existieren. Sie hätte die Regalplanung geprüft, um zu wissen, ob überhaupt Platz für die Aktionsware da ist oder wer dafür weichen müsste. Sie hätte die Marge gerechnet und in der Aktionsplanung nachgesehen, ob es eine Gelegenheit für die Aktion gibt. Und dann wird es zäh: Sie fragt die Logistik — und wartet. Sie fragt die Marktleitung — und wartet. Sie fragt die Einkaufsleitung — und wartet wieder. Niemand von denen sitzt da und wartet auf diese eine Anfrage. Realistisch reden wir nicht von Minuten, sondern von Tagen, eher von Wochen, bevor eine Antwort an Hallbach überhaupt möglich geworden wäre. Unser KI-Agent Lisa hat dafür sieben Minuten gebraucht. Und dabei...",
       },
     ],
     n: 3,
@@ -338,13 +338,22 @@ export const SECTIONS: Section[] = [
           caption: "Schreib Lisa selbst.",
           hint: "Du bist jetzt Lieferant für Nordkorb. Lies Dein Briefing. Der Link öffnet Dein Mailprogramm.",
         },
-        say: "Und jetzt die Einladung, es selbst auszuprobieren. Auf Deinem Handy steht ganz oben Dein Briefing — klapp es bitte zuerst auf. Du bist ab jetzt nämlich nicht mehr Du, sondern Lieferant: Du vertrittst einen Hersteller gegenüber Nordkorb. Im Briefing steht, für welche Marke Du stehst, was Nordkorb heute von Dir im Regal hat, was Du erreichen willst — und wo der Haken liegt. Jeder hier im Raum hat eine andere Rolle bekommen. Darunter findest Du den Link, der Dein Mailprogramm öffnet. Die Mail ist schon geschrieben, passend zu Deiner Rolle; trag bitte Deinen Namen ein. Und wenn Du magst, ändere den Inhalt der Email. Hinter dem Postfach wartet ein Agent, der Deine Anfrage verarbeitet und Dir antwortet. In der Antwort findest Du den Link zu dieser Präsentation, weiterführendes Material, die Liste der Aktionen, die der Agent ausgeführt hat — und den Link zur Code-Basis. Damit Du sehen kannst: Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.",
+        say: "Und jetzt die Einladung, es selbst auszuprobieren. Auf Deinem Handy steht ganz oben Dein Briefing — klapp es bitte zuerst auf. Du bist ab jetzt nämlich nicht mehr Du, sondern Lieferant: Du vertrittst einen Hersteller gegenüber Nordkorb. Im Briefing steht, für welche Marke Du stehst, was Nordkorb heute von Dir im Regal hat, was Du erreichen willst — und wo der Haken liegt. Jeder hier im Raum hat eine andere Rolle bekommen. Darunter findest Du den Link, der Dein Mailprogramm öffnet. Die Mail ist schon geschrieben, passend zu Deiner Rolle; trag bitte Deinen Namen ein. Und wenn Du magst, ändere den Inhalt der Email. Hinter dem Postfach wartet Lisa, unser KI-Agent, der Deine Anfrage verarbeitet und Dir antwortet. In der Antwort findest Du den Link zu dieser Präsentation, weiterführendes Material, die Liste der Aktionen, die der Agent ausgeführt hat — und den Link zur Code-Basis. Damit Du sehen kannst: Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.",
         audience: {
           kind: "mailto",
           id: "lisa-mail",
           briefing: true,
           persist: true,
-          until: "20:00",
+          /*
+            Bis Abschnitt 7 bleibt der Knopf auf dem Handy stehen — wer beim
+            Schreiben länger braucht, soll ihn wiederfinden. Ab Abschnitt 8
+            verschwindet er: Dort beginnt der Beleg-Teil, und das Handy soll
+            nicht mit einem Angebot von vorhin zugestellt sein.
+
+            Kein `until` mehr. Es wurde ohnehin nur angezeigt und nie
+            durchgesetzt, und "Bis 20:00 möglich" wäre jetzt schlicht falsch.
+          */
+          bisAbschnitt: 7,
           label: "Mail an Lisa öffnen",
           to: "ecr2026@carstenbkoch.de",
           subject: "Anfrage an das Category Management",
@@ -366,7 +375,7 @@ export const SECTIONS: Section[] = [
     panels: [
       {
         at: "18:11",
-        say: "Wir haben jetzt so einen Agenten auch mal live gesehen. Ihr solltet inzwischen eine Email zurück bekommen haben. Dario Amodei, Migründer und Chef von Anthropic sagte im Mai 2025:",
+        say: "Wir haben jetzt so einen Agenten auch mal live gesehen. Ihr solltet inzwischen eine Email zurück bekommen haben. Es ist beunruhigend und spannend zugleich. Dario Amodei, Mitgründer und Chef von Anthropic sagte im Mai 2025:",
       },
       {
         at: "18:11",
@@ -433,7 +442,7 @@ export const SECTIONS: Section[] = [
           t: "chart",
           which: "agriculture",
         },
-        say: "Aber: die Propheten hatten recht. Die Jobs sind wirklich verschwunden. Die US-Landwirtschaft beschäftigte 1900 41% aller Erwerbstätigen. Im Jahr 2000 waren es 2%. Millionen von Arbeitsplätzen — weg. Nur: Eine dauerhafte Massenarbeitslosigkeit ist daraus nie geworden. Wenn Du Dir ansiehst, wann die Arbeitslosenquote in Deutschland wirklich ausschlug — Weltwirtschaftskrise, Nachkriegszeit, Ölkrise, Wiedervereinigung — dann waren das Kriege und Wirtschaftskrisen. Keine einzige dieser Spitzen kam von einer neuen Technologie.",
+        say: "Aber: die Propheten hatten recht. Die Jobs sind wirklich verschwunden. Die US-Landwirtschaft beschäftigte 1900 41% aller Erwerbstätigen. Im Jahr 2000 waren es 2%. Millionen von Arbeitsplätzen — weg. Nur: Eine dauerhafte Massenarbeitslosigkeit ist daraus nie geworden. In Deutschland stieg die Arbeitslosenquote während der Weltwirtschaftskrise, der Nachkriegszeit, während der Ölkrise und nach der Wiedervereinigung. Keine einzige dieser Spitzen kam von einer neuen Technologie.",
       },
     ],
     n: 9,

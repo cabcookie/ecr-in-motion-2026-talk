@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SECTIONS, TOTAL, blockOf } from "@/slides/data";
 import type { Interaction } from "@/slides/types";
 import { useNavigation } from "@/nav/useNavigation";
@@ -25,18 +25,39 @@ function vorDemStart(index: number, step: number): boolean {
 /**
  * Interaktionen, die offen bleiben.
  *
- * Die Mail an Lisa darf bis zum Ende geschrieben werden, und wer bei der
- * Umfrage zu langsam war, soll sie nachholen können. Alles, was bis zum
- * aktuellen Stand vorkam und `persist` trägt, bleibt erreichbar.
+ * Wer bei der Umfrage zu langsam war, soll sie nachholen können. Alles, was bis
+ * zum aktuellen Stand vorkam und `persist` trägt, bleibt erreichbar — aber nicht
+ * unbegrenzt: Eine Seite, auf der drei alte Angebote stehen, lenkt von dem
+ * einen ab, das gerade zählt.
+ *
+ * Zwei Schranken begrenzen das. `bisAbschnitt` nennt den letzten Abschnitt, in
+ * dem etwas noch erscheint; `until` eine Uhrzeit. Die Abschnittsnummer ist die
+ * verlässlichere — eine Uhrzeit trifft nur zu, wenn der Vortrag im Plan liegt.
  */
-function persistentUpTo(index: number, panel: number, current: Interaction | null) {
+function abgelaufen(at: string | undefined, jetzt: Date): boolean {
+  if (!at) return false;
+  const m = /^(\d{1,2}):(\d{2})$/.exec(at.trim());
+  if (!m) return false;
+  return jetzt.getHours() * 60 + jetzt.getMinutes() > Number(m[1]) * 60 + Number(m[2]);
+}
+
+function persistentUpTo(
+  index: number,
+  panel: number,
+  current: Interaction | null,
+  jetzt: Date,
+) {
   const out: Interaction[] = [];
+  const hier = SECTIONS[index]?.n ?? 0;
   for (let s = 0; s <= index; s++) {
     const section = SECTIONS[s];
     const last = s === index ? panel : section.panels.length - 1;
     for (let p = 0; p <= last; p++) {
       const a = section.panels[p]?.audience;
-      if (a && "persist" in a && a.persist && a.id !== current?.id) out.push(a);
+      if (!a || !("persist" in a) || !a.persist || a.id === current?.id) continue;
+      if ("bisAbschnitt" in a && a.bisAbschnitt !== undefined && hier > a.bisAbschnitt) continue;
+      if ("until" in a && abgelaufen(a.until, jetzt)) continue;
+      out.push(a);
     }
   }
   return out;
@@ -74,9 +95,20 @@ export function AudienceView() {
   const block = blockOf(section.b);
   const wartet = vorDemStart(index, step);
   const current = section.panels[step]?.audience ?? null;
+  /*
+    Eine Uhr im Minutentakt. Ohne sie bliebe ein abgelaufenes Angebot stehen,
+    bis die nächste Folie kommt — und wenn der Vortrag gerade dort verweilt,
+    hiesse "Bis 20:00 möglich" um 20:15 immer noch dasselbe.
+  */
+  const [minute, setMinute] = useState(() => new Date());
+  useEffect(() => {
+    const t = setInterval(() => setMinute(new Date()), 30_000);
+    return () => clearInterval(t);
+  }, []);
+
   const stillOpen = useMemo(
-    () => persistentUpTo(index, step, current),
-    [index, step, current],
+    () => persistentUpTo(index, step, current, minute),
+    [index, step, current, minute],
   );
 
   return (
