@@ -116,15 +116,22 @@ const SYSTEME_Y = 556;
 const ELEMENTE: Element[] = [
   /* Stufe 0 — die beiden Eingänge laufen auf einen Agenten zu */
   { id: "mail", stufe: 0, art: "eingang", x: 40, y: 24, w: 340, farbe: "var(--color-sys-mail)", titel: "E-Mail vom Hersteller", unter: "ecr2026@carstenbkoch.de" },
-  { id: "ses", stufe: 0, art: "station", x: 62, y: 130, w: 296, text: "SES nimmt an · Konto A" },
-  { id: "s3", stufe: 0, art: "station", x: 62, y: 184, w: 296, text: "S3 legt ab, SNS meldet" },
-  { id: "lambda", stufe: 0, art: "station", x: 62, y: 238, w: 296, text: "Lambda liest die Rohmail" },
+  /*
+    Ein Kasten statt dreier.
+
+    Vorher standen hier SES, S3/SNS und die Lambda einzeln. Das war ehrlich und
+    falsch zugleich: Kein Category Manager im Saal interessiert sich dafür, über
+    welche drei AWS-Dienste eine Mail hereinkommt. Drei Kästen kosten
+    Aufmerksamkeit und zahlen nichts auf die Aussage ein — dass zwei Eingänge
+    auf EINEN Agenten laufen.
+
+    Wer es genau wissen will, findet es in packages/mail-infra.
+  */
+  { id: "infra", stufe: 0, art: "station", x: 62, y: 170, w: 296, text: "E-Mail-Infrastruktur" },
   { id: "chat", stufe: 0, art: "eingang", x: 820, y: 24, w: 340, farbe: "var(--color-sys-chat)", titel: "Chat auf dem Handy", unter: "Lisa fragt ihren Assistenten" },
 
-  { id: "p-mail1", stufe: 0, art: "pfeil", x: 210, y: 92, x2: 210, y2: 130 },
-  { id: "p-mail2", stufe: 0, art: "pfeil", x: 210, y: 166, x2: 210, y2: 184 },
-  { id: "p-mail3", stufe: 0, art: "pfeil", x: 210, y: 220, x2: 210, y2: 238 },
-  { id: "p-mail4", stufe: 0, art: "pfeil", x: 210, y: 274, x2: 380, y2: AGENT_Y + 30 },
+  { id: "p-mail1", stufe: 0, art: "pfeil", x: 210, y: 92, x2: 210, y2: 168 },
+  { id: "p-mail2", stufe: 0, art: "pfeil", x: 210, y: 206, x2: 380, y2: AGENT_Y + 30 },
   { id: "p-chat", stufe: 0, art: "pfeil", x: 990, y: 92, x2: 820, y2: AGENT_Y + 30 },
 
   { id: "agent", stufe: 0, art: "agent", x: 390, y: AGENT_Y, w: 420 },

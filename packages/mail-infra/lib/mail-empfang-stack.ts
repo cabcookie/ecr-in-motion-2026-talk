@@ -1,12 +1,26 @@
 /**
- * Beispiel für Konto A — das Konto, in dem carstenbkoch.de liegt.
+ * Die E-Mail-Infrastruktur — der Teil, der im Domain-Konto lebt.
  *
- * Dieser Stack gehört NICHT in dieses Repository-Deployment. Er ist die Vorlage
- * für den Teil, der im Domain-Konto aufgesetzt wird: SES nimmt die Mail an,
- * legt sie in S3, meldet das über SNS — und eine Rolle erlaubt dem Vortrags-
- * konto, die Mail zu lesen und die Antwort zu verschicken.
+ * **Dieser Stack ist in diesem Repository NICHT verdrahtet.** Er wird von
+ * nichts hier aufgerufen, und `pnpm run deploy` rollt ihn nicht aus. Er steht
+ * hier, weil das Architekturbild ihn als „E-Mail-Infrastruktur" zeigt und
+ * jemand, der das Ganze nachbauen will, wissen muss, was dahintersteckt.
  *
- * Die Reihenfolge und die auszutauschenden Werte stehen in der README daneben.
+ * Der Grund für die Trennung ist keine Architekturvorliebe: Die Adresse des
+ * Agenten liegt auf der ÜBERGEORDNETEN Domain, nicht auf der Subdomain des
+ * Vortrags. Empfang braucht MX-Eintrag und Domainprüfung in der Zone dieser
+ * Domain — und die liegt in einem anderen Konto.
+ *
+ * SES nimmt die Mail an, legt sie in S3, meldet das über SNS. Eine einzige
+ * Rolle erlaubt dem Vortragskonto beides: die Rohmail zu lesen und die Antwort
+ * als die verifizierte Identität zu senden. Eine statt zweier Berechtigungs-
+ * wege, weil der EmailClient-Baustein von AWS Blocks kein `SourceArn`
+ * durchreicht.
+ *
+ * Die produktive Fassung läuft in einem eigenen Repository, mit CLI zum Lesen
+ * und Senden und einer Guard-Lambda für das Receipt Rule Set. Was dort teuer
+ * gelernt wurde, steht in der README neben dieser Datei — vor allem die Falle
+ * mit dem aktiven Rule Set, die den Mailempfang still abschalten kann.
  */
 import { Duration, RemovalPolicy, Stack, StackProps, CfnOutput } from "aws-cdk-lib";
 import { AccountPrincipal, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
