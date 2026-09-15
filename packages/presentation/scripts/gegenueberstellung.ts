@@ -23,8 +23,8 @@ import { AUSSTATTUNGEN, beantworteMit, type Lauf } from "../aws-blocks/mail/agen
 const LAEUFE = Number(process.env.LAEUFE ?? 5);
 const ORDNER = process.env.ORDNER ?? "/tmp/gegenueberstellung";
 
-/** Preise je Million Token, Sonnet 4.6 auf Bedrock — wie in kostenrechnung.ts. */
-const PREIS = { ein: 3, aus: 15 };
+/** Preise je Million Token, Opus 4.8 auf Bedrock — wie in kostenrechnung.ts. */
+const PREIS = { ein: 5, aus: 25 };
 
 const MAIL = [
   "Sehr geehrte Frau Berger,",

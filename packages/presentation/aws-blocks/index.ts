@@ -95,7 +95,12 @@ const rtAnswers = new Realtime(scope, 'answers-live', {
 // wird aus Stack- und Blockkennung zusammengesetzt und darf 63 Zeichen nicht
 // überschreiten. 'lisa-assistant' sprengte das Limit um zwei Zeichen.
 const chatAgent = new Agent(scope, 'berater', {
-  model: { deployed: [BedrockModels.BALANCED, BedrockModels.FAST] },
+  /*
+    SMART ist Opus 4.8 — dasselbe Modell wie im Mailweg. FAST (Haiku) bleibt
+    als Rückfall stehen: Wenn am Vortragsabend achtzig Handys gleichzeitig
+    schreiben und Opus drosselt, ist eine schnellere Antwort besser als keine.
+  */
+  model: { deployed: [BedrockModels.SMART, BedrockModels.FAST] },
   systemPrompt: SYSTEM_PROMPT,
   streamingMode: 'token',
   /** Ein Saal voller Handys — der Verlauf soll nicht unbegrenzt mitwachsen. */

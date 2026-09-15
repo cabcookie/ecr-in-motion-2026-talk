@@ -19,7 +19,8 @@
     "buendel:test": "tsx scripts/buendel-test.ts",
     "sperr:test": "node scripts/sperr-test.mjs",
     "buehne:test": "node scripts/buehne-test.mjs",
-    "gegenueberstellung": "tsx scripts/gegenueberstellung.ts"
+    "gegenueberstellung": "tsx scripts/gegenueberstellung.ts",
+    "modell:test": "tsx scripts/modell-test.ts"
   },
   "dependencies": {
     "@aws-blocks/blocks": "0.5.0",

@@ -1,0 +1,45 @@
+Ich prüfe die Angaben zunächst und arbeite den Vorgang durch.
+
+**Zusammenfassung des Angebots:**
+- Produkt: Hallbach Crispy Bites (Neulistung)
+- Einkaufspreis: 2,89 EUR, empf. VK: 4,49 EUR
+- Mindestabnahme: 500 VE
+- Wunschtermin: 15. Oktober
+- Besonderheit: exklusive Einführung angeboten
+- Rückmeldung erbeten bis Ende nächster Woche
+
+**Was ich für eine Entscheidung brauche:**
+
+1. *Marge:* Aus EK 2,89 und VK 4,49 lässt sich die Rohmarge rechnen. Der VK ist allerdings nur eine Empfehlung — der tatsächliche VK und ggf. die Mehrwertsteuerbehandlung müssten belastbar feststehen, bevor ich die Kategorievorgabe prüfe. Die Zielmarge ist eine interne Vorgabe, die ich dem Lieferanten nicht offenlege.
+
+2. *Regalplatz:* Eine Neulistung setzt in der Regel eine Auslistung voraus. Ich müsste im Sortiments-/Regalsystem prüfen, ob ein Auslistungskandidat vorhanden ist. Diese Entscheidung liegt bei Lisa.
+
+3. *Termin:* Der 15. Oktober liegt außerhalb meines Blicks auf den Aktionskalender — für eine mögliche Aktionsfläche gilt ein Vorlauf von mindestens vier Wochen. Ob der Start als reine Regallistung oder mit Aktionsfläche gedacht ist, ist noch offen.
+
+4. *Exklusivität:* Eine Exklusivzusage kann ich nicht selbst geben; sie braucht die Freigabe der Einkaufsleitung.
+
+Da mir hier für mehrere Punkte weder die nötigen Systemwerkzeuge noch die Entscheidungsbefugnis zur Verfügung stehen, lege ich die offenen Punkte Lisa vor, statt sie selbst zu entscheiden.
+
+Ich habe folgende Rückfragen an Frau Berger gerichtet (über frage_lisa):
+- Gibt es für die Kategorie Schokolade & Pralinen einen Auslistungskandidaten, der Regalplatz für die Neulistung freimacht?
+- Soll der Start als reine Regallistung oder mit Aktionsfläche erfolgen (Vorlauf beachten)?
+- Soll die angebotene Exklusivität bei der Einkaufsleitung zur Freigabe eingereicht werden?
+
+An den Absender geht folgende Antwort:
+
+---
+
+Sehr geehrter Herr Walter,
+
+vielen Dank für Ihr Angebot zu den Hallbach Crispy Bites. Ich habe die Eckdaten aufgenommen: Einkaufspreis 2,89 EUR, empfohlener Verkaufspreis 4,49 EUR, Mindestabnahme 500 VE, Wunschstart 15. Oktober sowie Ihr Angebot einer exklusiven Einführung.
+
+Bevor wir eine Entscheidung treffen können, klären wir intern noch einige Punkte. Damit ich das Angebot sauber bewerten kann, wären mir folgende Angaben von Ihrer Seite hilfreich:
+
+- Ist der genannte Verkaufspreis von 4,49 EUR als unverbindliche Empfehlung zu verstehen, oder gibt es hierzu eine feste Vorgabe? Für unsere Kalkulation ist der endgültige Preisrahmen entscheidend.
+- Denken Sie beim Start am 15. Oktober an eine reine Regallistung, oder ist eine begleitende Aktionsfläche gewünscht? Für Aktionsflächen benötigen wir einen gewissen Vorlauf, den wir bei diesem Termin gemeinsam im Blick behalten sollten.
+- Zur angebotenen Exklusivität: Können Sie den Umfang und die Laufzeit näher beschreiben? Diese Konditionen prüfen wir gesondert.
+
+Ihre Rückmeldefrist bis Ende nächster Woche habe ich notiert. Ich melde mich, sobald die internen Abstimmungen abgeschlossen sind, und komme bei Bedarf vorher auf die genannten Punkte zurück.
+
+Mit freundlichen Grüßen
+Assistent von Lisa Berger

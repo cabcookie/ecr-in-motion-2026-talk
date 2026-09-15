@@ -9,10 +9,14 @@ import { FRAGE_LISA, WERKZEUGE } from "./werkzeuge";
 import type { Modus } from "./konfig";
 
 /**
- * Claude Sonnet 4.6 über ein globales Inferenzprofil — dasselbe Modell, das
- * auch hinter dem Chat auf dem Handy steht.
+ * Claude Opus 4.8 über ein globales Inferenzprofil — dasselbe Modell, das auch
+ * hinter dem Chat auf dem Handy steht (`BedrockModels.SMART`).
+ *
+ * Teurer als Sonnet: 5 statt 3 USD je Million Eingabetoken, 25 statt 15 für die
+ * Ausgabe. Bei einem Saal voller Handys ist das die Überlegung wert — die
+ * Messung in packages/docs/messungen sagt, was ein Lauf tatsächlich kostet.
  */
-const MODELL = "global.anthropic.claude-sonnet-4-6";
+const MODELL = "global.anthropic.claude-opus-4-8";
 
 /** Höchstens so viele Runden Werkzeugaufrufe. Ohne Deckel läuft eine Schleife. */
 const MAX_RUNDEN = 8;
@@ -232,7 +236,17 @@ export async function beantworteMit(
         modelId: MODELL,
         system,
         messages,
-        inferenceConfig: { maxTokens: 1600, temperature: 0.3 },
+        /*
+          Kein `temperature`. Opus 4.8 lehnt den Parameter ab — „`temperature`
+          is deprecated for this model" — und zwar bei JEDEM Aufruf, nicht nur
+          bei manchen. Beim Wechsel von Sonnet auf Opus sind daran 30 von 30
+          Messläufen gescheitert.
+
+          Gefunden hat das nur der Lauf gegen echtes Bedrock. `mail:test` läuft
+          gegen eine Attrappe und war die ganze Zeit grün — deshalb steht
+          daneben jetzt `modell:test`, der genau einen echten Aufruf macht.
+        */
+        inferenceConfig: { maxTokens: 1600 },
         ...(mitWerkzeugen ? { toolConfig: { tools: werkzeugliste() } } : {}),
       }),
     );
