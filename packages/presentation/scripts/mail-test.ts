@@ -9,6 +9,7 @@
  * dabei durch eine Attrappe ersetzt.
  */
 import { beantworte } from "../aws-blocks/mail/agent";
+import { FRAGE_LISA } from "../aws-blocks/mail/werkzeuge";
 import { baueAntwort, baueRohmail, lies } from "../aws-blocks/mail/brief";
 import { postfachFuer } from "../aws-blocks/mail/konfig";
 
@@ -59,7 +60,7 @@ function attrappe(mitWerkzeugen: boolean, mitFrageAnLisa = false) {
                       {
                         toolUse: {
                           toolUseId: "t3",
-                          name: "frage_lisa",
+                          name: FRAGE_LISA,
                           input: {
                             frage: GEHEIME_FRAGE,
                             warum: "Für die Bewertung der Mindestabnahme.",
@@ -140,17 +141,17 @@ console.log("\nAdressatentrennung");
 const mitFrage = await beantworte("assistent", eingang.text, attrappe(true, true) as any);
 const mailAnWalter = baueAntwort("assistent", mitFrage);
 
-pruefe(mitFrage.fragenAnLisa.length === 1, "Die Frage an Lisa ist im Lauf vermerkt");
+pruefe(mitFrage.fragenAnLisa.length === 1, "Die interne Rückfrage ist im Lauf vermerkt");
 pruefe(
-  mitFrage.schritte.length === 2 && !mitFrage.schritte.includes("frage_lisa"),
-  `frage_lisa zählt nicht als abgefragtes System (${mitFrage.schritte.join(", ")})`,
+  mitFrage.schritte.length === 2 && !mitFrage.schritte.includes(FRAGE_LISA),
+  `${FRAGE_LISA} zählt nicht als abgefragtes System (${mitFrage.schritte.join(", ")})`,
 );
 pruefe(!mailAnWalter.includes(GEHEIME_FRAGE), "Der Wortlaut der Frage steht NICHT in der Mail");
 pruefe(
   !/Absatzerwartung|Riegelzone|vierten Quartal/i.test(mailAnWalter),
   "Auch kein Bruchstück davon steht in der Mail",
 );
-pruefe(!mailAnWalter.includes("frage_lisa"), "Der Werkzeugname steht nicht in der Mail");
+pruefe(!mailAnWalter.includes(FRAGE_LISA), "Der Werkzeugname steht nicht in der Mail");
 pruefe(
   mailAnWalter.includes("interne Rückfrage"),
   "Dass eine Rückfrage läuft, darf der Absender erfahren",

@@ -113,7 +113,7 @@ export const SECTIONS: Section[] = [
             ["Laufzeit", "4 Wochen"],
           ],
         },
-        say: "Wir können listen — aber nicht zum 15. Oktober, sondern eine Woche später, am 22. In zwölf Märkten im Raum Hamburg werden an diesem Tag Zweitplatzierungsflächen frei, die sich für eine Einführungsaktion nutzen lassen. Lisa erwartet aber fünfzehn Prozent Einführungsrabatt für die ersten vier Wochen. Und jetzt das Besondere: Kein Mensch war beteiligt. Ein KI-Agent hat die E-Mail analysiert, sich einen Plan gemacht, Daten aus den Systemen geholt, sie gegeneinandergestellt, ausgewertet, Entscheidungen getroffen, die Antwort formuliert und abgeschickt. Alles innerhalb von sieben Minuten. Zwei Stunden später bestätigt Hallbach.",
+        say: "Wir können listen — aber nicht zum 15. Oktober, sondern eine Woche später, am 22. In zwölf Märkten im Raum Hamburg werden an diesem Tag Zweitplatzierungsflächen frei, die sich für eine Einführungsaktion nutzen lassen. Lisa erwartet aber fünfzehn Prozent Einführungsrabatt für die ersten vier Wochen. Und jetzt das Besondere: Kein Mensch war beteiligt. Auch Lisa nicht — denn Lisa ist kein Mensch. Lisa ist ein KI-Agent. Sie hat die E-Mail analysiert, sich einen Plan gemacht, Daten aus den Systemen geholt, sie gegeneinandergestellt, ausgewertet, Entscheidungen getroffen, die Antwort formuliert und abgeschickt. Alles innerhalb von sieben Minuten. Zwei Stunden später bestätigt Hallbach.",
       },
       {
         at: "18:04",
@@ -152,6 +152,7 @@ export const SECTIONS: Section[] = [
     b: 1,
     kind: "Persona",
     title: "Lisa Berger, Category Managerin",
+    sub: "Lisa ist kein Mensch.",
     panels: [
       {
         at: "18:05",
@@ -170,7 +171,7 @@ export const SECTIONS: Section[] = [
             ],
           ],
         },
-        say: "Kurz zu Lisa, denn um ihre Arbeit geht es hier. Lisa Berger ist Category Managerin bei Nordkorb und verantwortet die Kategorie Schokolade und Pralinen. Sie trifft also Entscheidungen über Listungen und Auslistungen, verhandelt Konditionen, plant die Regale und Aktionen — das ist ihr Tagesgeschäft. Und der Agent, den wir gerade gesehen haben, hat genau das getan, wofür sie bezahlt wird.",
+        say: "Kurz zu Lisa, denn um ihre Arbeit geht es heute Abend. Lisa Berger verantwortet bei Nordkorb die Kategorie Schokolade und Pralinen. Sie entscheidet über Listungen und Auslistungen, verhandelt Konditionen, plant Regale und Aktionen. Das ist eine vollwertige Stelle mit einer vollwertigen Verantwortung — und Lisa ist kein Mensch. Lisa ist der Agent, den Du gerade gesehen hast. Ich sage das jetzt und nicht erst am Ende, weil ich nicht will, dass Du den Abend über rätselst. Die Frage heute ist nicht, ob so etwas geht. Die Frage ist, was dazugehört, damit es gut geht.",
       },
       {
         at: "18:06",
@@ -201,7 +202,7 @@ export const SECTIONS: Section[] = [
             ["Rückmail an den Hersteller", "Entscheidung oder Gegenvorschlag"],
           ],
         },
-        say: "Wenn Lisa das selbst gemacht hätte, sähe es in etwa so aus. Lisa hätte die Email gelesen und sich zunächst einen Plan gemacht. Sie hätte überlegt, welche Datenbank sie braucht, hätte in der Warenwirtschaft nachgesehen, wie die Kategorie läuft und wer Underperformer sind. Sie hätte Marktdaten zum Segment geprüft, sich angeschaut, welche Angebote gerade von anderen Lebensmittelhändlern und Anbietern existieren. Sie hätte die Regalplanung geprüft, damit sie weiß, ob sie überhaupt einen Platz für die Aktionsware hätte oder wer dafür weichen müsste. Sie hätte Marge gerechnet und in der Aktionsplanung nachgesehen, ob es eine Gelegenheit für die Aktion gibt. Und dann wird es zäh: Sie fragt die Logistik — und wartet. Sie fragt die Marktleitung — und wartet. Sie fragt die Einkaufsleitung — und wartet wieder. Niemand von denen sitzt nur da und wartet auf Lisas Anfrage. Realistisch reden wir hier nicht von Minuten, sondern von Tagen, wenn nicht Wochen, bevor eine Antwort an Hallbach überhaupt möglich geworden wäre. Aber 7 Minuten? Der Agent hat all das getan und dabei...",
+        say: "Und jetzt stell Dir vor, ein Mensch hätte auf diesem Stuhl gesessen. Dann sähe derselbe Vorgang so aus. Er hätte die Mail gelesen und sich zunächst einen Plan gemacht. Er hätte überlegt, welche Datenbank er braucht, hätte in der Warenwirtschaft nachgesehen, wie die Kategorie läuft und wer Underperformer ist. Er hätte Marktdaten zum Segment geprüft und sich angeschaut, welche Angebote gerade von anderen Händlern und Anbietern existieren. Er hätte die Regalplanung geprüft, um zu wissen, ob überhaupt Platz für die Aktionsware da ist oder wer dafür weichen müsste. Er hätte die Marge gerechnet und in der Aktionsplanung nachgesehen, ob es eine Gelegenheit für die Aktion gibt. Und dann wird es zäh: Er fragt die Logistik — und wartet. Er fragt die Marktleitung — und wartet. Er fragt die Einkaufsleitung — und wartet wieder. Niemand von denen sitzt da und wartet auf diese eine Anfrage. Realistisch reden wir nicht von Minuten, sondern von Tagen, eher von Wochen, bevor eine Antwort an Hallbach überhaupt möglich geworden wäre. Lisa hat dafür sieben Minuten gebraucht. Und dabei...",
       },
     ],
     n: 3,
@@ -264,7 +265,7 @@ export const SECTIONS: Section[] = [
           caption: "Das hier ist keine PowerPoint.",
           hint: "Scanne den Code und mach mit.",
         },
-        say: "Deshalb ist das hier auch keine PowerPoint-Präsentation, sondern eine Webanwendung. Und Du kannst sie auf Deinem eigenen Handy aufrufen. Ich lade Dich ein, den QR-Code zu scannen und hier zu dieser Präsentation beizutragen und Agenten auszuprobieren. Du siehst dort etwas anderes als auf der Leinwand.",
+        say: "Deshalb ist das hier auch keine PowerPoint-Präsentation, sondern eine Webanwendung. Und Du kannst sie auf Deinem eigenen Handy aufrufen. Ich lade Dich ein, den QR-Code zu scannen und hier zu dieser Präsentation beizutragen und Agenten auszuprobieren. Du wirst dort gleich 2 Fragen sehen.",
         audience: {
           kind: "wait",
           id: "bereit",
@@ -283,7 +284,7 @@ export const SECTIONS: Section[] = [
             y: "Freust Du Dich darauf?",
           },
         },
-        say: "Auf dem Handy findest Du nun zwei Fragen. Ich bitte dich darauf zu antworten, wir werden die Antworten hier auf der Leinwand sehen. [Geh auf die Antworten ein]",
+        say: "Ich bitte dich darauf zu antworten. Eure Antworten werden hier auf der Leinwand anonym erscheinen. [Geh auf die Antworten ein]",
         audience: {
           kind: "poll",
           id: "sorge",
@@ -337,7 +338,7 @@ export const SECTIONS: Section[] = [
           caption: "Schreib Lisa selbst.",
           hint: "Du bist jetzt Lieferant für Nordkorb. Lies Dein Briefing. Der Link öffnet Dein Mailprogramm.",
         },
-        say: "Und jetzt die Einladung, es selbst auszuprobieren. Auf Deinem Handy steht ganz oben Dein Briefing — klapp es bitte zuerst auf. Du bist ab jetzt nämlich nicht mehr Du, sondern Lieferant: Du vertrittst einen Hersteller gegenüber Nordkorb. Im Briefing steht, für welche Marke Du stehst, was Nordkorb heute von Dir im Regal hat, was Du erreichen willst — und wo der Haken liegt. Jeder hier im Raum hat eine andere Rolle bekommen. Darunter findest Du den Link, der Dein Mailprogramm öffnet. Die Mail ist schon geschrieben, passend zu Deiner Rolle; trag Deinen Namen ein. Und wenn Du magst, ändere sie — verhandle härter, als da steht. Hinter dem Postfach wartet ein Agent, der Deine Anfrage verarbeitet und Dir antwortet. In der Antwort findest Du den Link zu dieser Präsentation, weiterführendes Material, die Liste der Aktionen, die der Agent ausgeführt hat — und den Link zur Code-Basis. Damit Du sehen kannst: Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.",
+        say: "Und jetzt die Einladung, es selbst auszuprobieren. Auf Deinem Handy steht ganz oben Dein Briefing — klapp es bitte zuerst auf. Du bist ab jetzt nämlich nicht mehr Du, sondern Lieferant: Du vertrittst einen Hersteller gegenüber Nordkorb. Im Briefing steht, für welche Marke Du stehst, was Nordkorb heute von Dir im Regal hat, was Du erreichen willst — und wo der Haken liegt. Jeder hier im Raum hat eine andere Rolle bekommen. Darunter findest Du den Link, der Dein Mailprogramm öffnet. Die Mail ist schon geschrieben, passend zu Deiner Rolle; trag bitte Deinen Namen ein. Und wenn Du magst, ändere den Inhalt der Email. Hinter dem Postfach wartet ein Agent, der Deine Anfrage verarbeitet und Dir antwortet. In der Antwort findest Du den Link zu dieser Präsentation, weiterführendes Material, die Liste der Aktionen, die der Agent ausgeführt hat — und den Link zur Code-Basis. Damit Du sehen kannst: Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.",
         audience: {
           kind: "mailto",
           id: "lisa-mail",
@@ -347,7 +348,7 @@ export const SECTIONS: Section[] = [
           label: "Mail an Lisa öffnen",
           to: "ecr2026@carstenbkoch.de",
           subject: "Anfrage an das Category Management",
-          body: "Guten Tag Frau Berger,\n\n[Bitte konstruiere ein Szenario, das für Lisa Berger relevant sein könnte. Sie ist Category Managerin bei Nordkorb für Schokoladen & Pralinen. Sie kümmert sich um Listungen, Auslistungen, Facings, Preise, Aktionen usw.Stelle Dich vor, welchen Hersteller du vertrittst und um welches Produkt es geht.]\n\nMit freundlichen Grüßen\n\n[Dein Name]",
+          body: "Guten Tag Frau Berger,\n\n[Bitte konstruiere ein Szenario, das für Lisa Berger relevant sein könnte. Sie verantwortet bei Nordkorb die Kategorie Schokoladen & Pralinen. Sie kümmert sich um Listungen, Auslistungen, Facings, Preise, Aktionen usw.Stelle Dich vor, welchen Hersteller du vertrittst und um welches Produkt es geht.]\n\nMit freundlichen Grüßen\n\n[Dein Name]",
           hint: "Lies zuerst Dein Briefing — Du vertrittst einen Hersteller. Der Entwurf ist schon geschrieben; trag Deinen Namen ein und ändere, was Du willst. Der Agent antwortet Dir mit dem, was er getan hat, und den Belegen dazu.",
           privacy:
             "Ich speichere Deine E-Mail-Adresse nur, bis die Antwort versendet ist. Ich hebe sie nicht auf.",
@@ -358,9 +359,15 @@ export const SECTIONS: Section[] = [
   },
   {
     b: 2,
-    kind: "Beleg",
-    title: "Ich bin damit nicht allein.",
+    kind: "Kernsatz",
+    title: "Mit der Sorge sind wir nicht allein",
+    sub: "KI nimmt mir meinen Job",
+    hero: true,
     panels: [
+      {
+        at: "18:11",
+        say: "Wir haben jetzt so einen Agenten auch mal live gesehen. Ihr solltet inzwischen eine Email zurück bekommen haben. Dario Amodei, Migründer und Chef von Anthropic sagte im Mai 2025:",
+      },
       {
         at: "18:11",
         mock: {
@@ -368,64 +375,51 @@ export const SECTIONS: Section[] = [
           text: "KI könnte die Hälfte aller Einstiegsjobs im Bürobereich vernichten und die Arbeitslosigkeit binnen ein bis fünf Jahren auf 10 bis 20 Prozent treiben.",
           cite: "Dario Amodei · Anthropic · Mai 2025",
         },
-        say: "Mit dieser Sorge bin ich nicht allein. Dario Amodei, Mitgründer und Chef von Anthropic, hat im Mai 2025 genau das gesagt: Die Hälfte aller Einstiegsjobs im Bürobereich könnte verschwinden, die Arbeitslosigkeit auf zehn bis zwanzig Prozent steigen — binnen ein bis fünf Jahren. Im Februar dieses Jahres hat er das noch einmal bekräftigt. Das ist der Mann, der das Produkt verkauft. Und er warnt davor.",
+        say: "Die Hälfte aller Einstiegsjobs im Bürobereich könnte verschwinden, die Arbeitslosigkeit auf zehn bis zwanzig Prozent steigen — binnen ein bis fünf Jahren. Im Februar dieses Jahres hat er das noch einmal bekräftigt. Das ist der Mann, der hinter einem der am stärksten wachsenden KI Unternehmen; am meisten bekannt für das Modell Claude oder den Softwareentwicklungs-Assistenten Claude Code. Und er warnt davor. Der Erfinder von Claude Code ist Boris Cherny und er hat Anfang des Jahres auf X veröffentlicht, dass Claude Code nun zu 100% von Claude Code weiterentwickelt werden würde. Daraufhin entstand diese Diskussion auf X:",
         note: 'Quelle: Interview mit Jim VandeHei und Mike Allen, Axios, 28. Mai 2025. „White-collar bloodbath" ist die Formulierung von Axios, nicht von Amodei.',
+      },
+      {
+        at: "18:12",
+        mock: {
+          t: "bild",
+          src: "/tweet-on-claude.png",
+          alt: "Screenshot einer Unterhaltung auf X. Ein Nutzer fragt, warum Anthropic über 100 offene Entwicklerstellen ausschreibt, wenn Claude Code inzwischen 100 % des eigenen Codes schreibt. Boris Cherny, der Erfinder von Claude Code, antwortet: Jemand müsse die Modelle anleiten, mit Kunden sprechen, sich mit anderen Teams abstimmen und entscheiden, was als Nächstes gebaut wird — Engineering verändere sich, und gute Entwickler seien wichtiger denn je.",
+        },
+        say: "Ein Nutzer fragt: Wenn Claude Code inzwischen hundert Prozent des eigenen Codes schreibt — warum hat Anthropic dann über hundert offene Entwicklerstellen? Und Boris Cherny, der Erfinder von Claude Code, zeichnet ein ganz anderes Bild als sein Chef. Er sagt: Jemand muss die Modelle anleiten, mit Kunden sprechen, sich mit anderen Teams abstimmen, entscheiden, was als Nächstes gebaut wird. Engineering verändert sich — und gute Entwickler sind wichtiger denn je. Aus demselben Haus, über dasselbe Produkt, zwei völlig verschiedene Bilder. Haben wir das nicht schon einmal gehört, dass eine Technologie zur Massenarbeitslosigkeit führen würde?",
       },
     ],
     n: 7,
   },
   {
     b: 2,
-    kind: "Beleg",
-    title: "Aus demselben Haus kommt das Gegenteil.",
-    panels: [
-      {
-        at: "18:12",
-        mock: {
-          t: "tweets",
-          items: [
-            {
-              handle: "@user · 14. Feb. 2026",
-              text: "Claude Code is writing 100% of Claude code now. But Anthropic has 100+ open dev positions on their jobs page. ?",
-            },
-            {
-              handle: "@bcherny · Erfinder von Claude Code, Anthropic",
-              reply: true,
-              text: "Someone has to prompt the Claudes, talk to customers, coordinate with other teams, decide what to build next. Engineering is changing and great engineers are more important than ever.",
-            },
-          ],
-        },
-        say: "Claude Code ist ein Produkt von Anthropic — derselben Firma. Und der Erfinder von Claude Code zeichnet ein ganz anderes Bild. Jemand muss die Modelle anleiten, mit Kunden sprechen, sich mit anderen Teams abstimmen, entscheiden, was als Nächstes gebaut wird. Und dann fällt mir auf: Es ist nicht das erste Mal, dass wir befürchtet haben, eine Technologie würde uns in die Massenarbeitslosigkeit führen.",
-        app: "Screenshot liegt vor: tweet-on-claude.png — er beglaubigt stärker als gesetzter Text.",
-      },
-    ],
-    n: 8,
-  },
-  {
-    b: 2,
-    kind: "Historie",
+    kind: "Kernsatz",
     title: "Die Propheten vor ihm lagen falsch.",
+    hero: true,
     panels: [
       {
         at: "18:13",
+        say: "Vor Dario gab es schon diese Propheten und sie lagen alle falsch",
+      },
+      {
+        at: "18:13",
         mock: {
-          t: "list",
-          ordered: false,
-          items: [
-            [
-              "John von Neumann, 1949",
-              'prognostizierte ein „Jahrzehnt des Ruins" — die Beschäftigung stieg in sechs Jahren um vier Millionen',
-            ],
-            [
-              "Jeremy Rifkin, 1995",
-              'warnte vor dem „Ende der Arbeit" — danach fiel die US-Arbeitslosigkeit unter 4 %',
-            ],
-          ],
+          t: "quote",
+          text: "Jahrzehnt des Ruins",
+          cite: "John von Neumann · 1949",
         },
-        say: 'John von Neumann sagte 1949 ein Jahrzehnt des Ruins voraus. In den sechs Jahren danach stieg die Beschäftigung um vier Millionen. Jeremy Rifkin veröffentlichte 1995 „Das Ende der Arbeit" — danach fiel die US-Arbeitslosigkeit unter vier Prozent. Dieselbe Sorge, immer wieder, seit der Dampfmaschine.',
+        say: "John von Neumann sagte 1949 ein Jahrzehnt des Ruins voraus. In den sechs Jahren danach stieg die Beschäftigung um vier Millionen.",
+      },
+      {
+        at: "18:13",
+        mock: {
+          t: "quote",
+          text: "Das Ende der Arbeit",
+          cite: "Jeremy Rifkin · 1995",
+        },
+        say: 'Jeremy Rifkin veröffentlichte 1995 „Das Ende der Arbeit" — danach fiel die US-Arbeitslosigkeit unter vier Prozent. Dieselbe Sorge, immer wieder, seit der Dampfmaschine.',
       },
     ],
-    n: 9,
+    n: 8,
   },
   {
     b: 2,
@@ -439,11 +433,10 @@ export const SECTIONS: Section[] = [
           t: "chart",
           which: "agriculture",
         },
-        say: "Und jetzt der Teil, den man nicht wegdiskutieren sollte: Die Propheten hatten ja recht. Die Jobs sind wirklich verschwunden. Die US-Landwirtschaft beschäftigte 1900 einundvierzig Prozent aller Erwerbstätigen. Im Jahr 2000 waren es zwei. Millionen von Arbeitsplätzen — weg. Nur: Eine dauerhafte Massenarbeitslosigkeit ist daraus nie geworden. Wenn Du Dir ansiehst, wann die Arbeitslosenquote in Deutschland wirklich ausschlug — Weltwirtschaftskrise, Nachkriegszeit, Ölkrise, Wiedervereinigung — dann waren das Kriege und Wirtschaftskrisen. Keine einzige dieser Spitzen kam von einer neuen Technologie. Die Zahlen dazu schicke ich Dir mit der Antwort-Mail.",
-        note: "Die Arbeitsmarkt-Zeitreihe wird nur gesprochen und als Beleg in der Antwort-Mail mitgeschickt — sie braucht keine eigene Folie.",
+        say: "Aber: die Propheten hatten recht. Die Jobs sind wirklich verschwunden. Die US-Landwirtschaft beschäftigte 1900 41% aller Erwerbstätigen. Im Jahr 2000 waren es 2%. Millionen von Arbeitsplätzen — weg. Nur: Eine dauerhafte Massenarbeitslosigkeit ist daraus nie geworden. Wenn Du Dir ansiehst, wann die Arbeitslosenquote in Deutschland wirklich ausschlug — Weltwirtschaftskrise, Nachkriegszeit, Ölkrise, Wiedervereinigung — dann waren das Kriege und Wirtschaftskrisen. Keine einzige dieser Spitzen kam von einer neuen Technologie.",
       },
     ],
-    n: 10,
+    n: 9,
   },
   {
     b: 2,
@@ -462,10 +455,10 @@ export const SECTIONS: Section[] = [
             ["Neue Arbeit entsteht", "in Tätigkeiten, die es vorher nicht gab"],
           ],
         },
-        say: "Der Ökonom David Frederick Schloss hat dafür 1891 einen Namen gefunden: den Irrtum von der festen Menge Arbeit. Die Annahme, es gäbe einen festen Vorrat an Arbeit, und wenn eine Maschine ein Stück davon übernimmt, ist es für uns weg. So funktioniert es aber nicht. Wenn Kosten sinken, steigt die Nachfrage. Und wenn die Nachfrage steigt, entsteht neue Arbeit. Ich glaube, bei KI wird es genauso laufen — das ist meine persönliche Prognose. Softwareentwicklung wird gerade billiger. Also werden wir jetzt Probleme mit Software lösen, bei denen sich die Entwicklung vorher nicht gerechnet hätte. Wir werden mehr Software bauen. Und brauchen dafür vielleicht sogar mehr Entwickler.",
+        say: "Der Ökonom David Frederick Schloss hat dafür 1891 einen Namen gefunden: den Irrtum von der festen Menge Arbeit. Die Annahme, es gäbe einen festen Vorrat an Arbeit, und wenn eine Maschine ein Stück davon übernimmt, ist es für uns weg. So funktioniert es aber nicht. Wenn Kosten sinken, steigt die Nachfrage. Und wenn die Nachfrage steigt, entsteht neue Arbeit. Ich glaube, bei KI wird es genauso laufen — das ist meine persönliche Prognose. Softwareentwicklung wird gerade billiger. Also werden wir jetzt Probleme mit Software lösen, bei denen sich die Entwicklung vorher nicht gerechnet hätte. Wir werden mehr Software bauen. Und brauchen dafür vielleicht sogar mehr Entwickler. Diese Präsentation ist dafür das beste Beispiel. Vor einem Jahr hätte ich mir das noch nicht denken können, für einen Vortrag, eine eigene Präsentationssoftware zu verwenden, anstatt einfach PowerPoint zu verwenden. Jetzt ist es mit einem überschaubaren Aufwand möglich und es ermöglicht deutlich mehr Interaktion.",
       },
     ],
-    n: 11,
+    n: 10,
   },
   {
     b: 2,
@@ -479,11 +472,12 @@ export const SECTIONS: Section[] = [
           of: "abgegeben",
           as: "list",
         },
-        say: "Und jetzt Du noch einmal. Auf Deinem Handy steht die Frage: Welche Aufgaben hast Du heute schon an eine KI abgegeben, die Du früher selbst gemacht hast? Schreib kurz mit. Deine Antworten erscheinen hier auf der Leinwand.",
+        say: "Deswegen jetzt noch einmal eine Frage an Dich. Bitte schau auf Dein Handy und lass uns wissen, welche Aufgaben Du heute schon an eine KI abgegeben hast, die Du früher selbst erledigt hast? Gern mehrere — nach dem Senden kannst Du direkt die nächste eintippen. Deine Antworten erscheinen hier anonym auf der Leinwand.",
         audience: {
           kind: "text",
           id: "abgegeben",
           persist: true,
+          mehrfach: true,
           prompt: "Welche Aufgaben hast Du heute schon an KI abgegeben?",
           placeholder: "Zum Beispiel: Protokolle zusammenfassen",
           examples: [
@@ -498,7 +492,7 @@ export const SECTIONS: Section[] = [
         app: "Freitext vom Handy, Antworten erscheinen live auf der Leinwand.",
       },
     ],
-    n: 12,
+    n: 11,
   },
   {
     b: 3,
@@ -528,10 +522,10 @@ export const SECTIONS: Section[] = [
             ["Laufzeit", "4 Wochen"],
           ],
         },
-        say: "Schauen wir noch einmal auf diese Antwort. Sieben Minuten, kein Mensch beteiligt. Wie hat die KI das geschafft? Und warum ist das noch nicht die Regel — warum ist Dein eigener KI-Assistent im Alltag so viel enttäuschender als das hier?",
+        say: "Schauen wir noch einmal auf diese Antwort von Lisa, unserem Agenten für Schokolade & Pralinen. Sieben Minuten, kein Mensch beteiligt. Wie hat die KI das geschafft? Und warum ist das noch nicht die Regel — warum enttäuschen die Ergebnisse heute so häufig noch?",
       },
     ],
-    n: 13,
+    n: 12,
   },
   {
     b: 3,
@@ -560,7 +554,7 @@ export const SECTIONS: Section[] = [
         say: "Dieses Allgemeinwissen ist in der Regel gut dokumentiert und über das Internet abrufbar. Es ist also gut möglich, dass es bei heutigen KI-Modellen in den Trainingsdaten enthalten war. Und die Modelle haben davon mehr als wir: breiter und tiefer. Was ihnen fehlt, ist der Stamm. Das Spezialwissen, um die Aufgabe eines Category Managers wirklich auszuführen.",
       },
     ],
-    n: 14,
+    n: 13,
   },
   {
     b: 3,
@@ -623,7 +617,7 @@ export const SECTIONS: Section[] = [
           "Antworten vergleichen lassen: „Wer hat eine bekommen? Was steht bei Dir für eine Marge drin?“",
       },
     ],
-    n: 15,
+    n: 14,
   },
   {
     b: 3,
@@ -646,7 +640,7 @@ export const SECTIONS: Section[] = [
         say: "Was braucht er also? Drei Dinge. Erstens einen Systemprompt: wer bin ich, für wen arbeite ich, welche Regeln gelten hier. Zweitens Tools und Memory: einen Weg, an die Daten zu kommen — und einen Weg, sich zu merken, was er dabei gelernt hat. Und drittens Autonomie: die Berechtigung, Dinge nicht nur vorzuschlagen, sondern zu tun. Aus dem Rechteck wird wieder ein T. Die drei gehen wir jetzt einzeln durch.",
       },
     ],
-    n: 16,
+    n: 15,
   },
   {
     b: 3,
@@ -661,7 +655,7 @@ export const SECTIONS: Section[] = [
           items: [
             [
               "Wer bin ich",
-              "Assistent von Lisa Berger, Category Management Schokolade & Pralinen bei Nordkorb",
+              "Lisa Berger · Category Management Schokolade & Pralinen bei Nordkorb",
             ],
             [
               "Was gilt hier",
@@ -694,7 +688,7 @@ export const SECTIONS: Section[] = [
           label: "Chat starten",
           hint: "Du bekommst die Mail von Hallbach. Der Agent fragt Dich nach den Daten, die ihm fehlen — die Tools bist Du.",
           systemPrompt:
-            "Du bist der Assistent von Lisa Berger, Category Managerin für Schokolade & Pralinen bei der Lebensmittelkette Nordkorb.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann frage Lisa danach. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n7. Halte dich kurz. Deine Antwort wird auf einem Handy gelesen: ein kurzer Absatz, bei Bedarf drei Stichpunkte.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
+            "Du bist Lisa Berger, der KI-Agent für Category Management Schokolade & Pralinen bei der Lebensmittelkette Nordkorb. Du entscheidest selbst, und du zeichnest mit deinem Namen.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann lege die Frage dem Category-Team vor. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n7. Halte dich kurz. Deine Antwort wird auf einem Handy gelesen: ein kurzer Absatz, bei Bedarf drei Stichpunkte.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
           suggestions: [
             "Die Kategorie wächst um 3,2 %",
             "Underperformer ist Nocturne Mini mit −12 %",
@@ -705,7 +699,7 @@ export const SECTIONS: Section[] = [
         app: "Chat mit Systemprompt, ohne Tools. Das Gespräch beginnt mit der Mail von Hallbach aus Abschnitt 2. Antwortvorschläge zum Antippen, damit niemand lange tippen muss. Der Systemprompt ist einsehbar — es ist derselbe, mit dem der Agent läuft.",
       },
     ],
-    n: 17,
+    n: 16,
   },
   {
     b: 3,
@@ -753,7 +747,7 @@ export const SECTIONS: Section[] = [
         note: "Zahlen aus packages/presentation/scripts/kostenrechnung.ts — pnpm --filter @ecr-talk/presentation kosten. Claude Opus 4.8 auf Bedrock: 5 Dollar je Million Eingabe, 25 Ausgabe, 0,50 je Million Cache-Treffer. Mit Fünf-Minuten-Caching. Ohne Caching wären es 3,7 gegen 0,9 Cent, also das 4,1-fache. Falls jemand nach der Lebensdauer fragt: der Fünf-Minuten-Cache setzt voraus, dass Lisa binnen fünf Minuten antwortet — tut sie das nicht, ist der Verlauf kalt und es gilt wieder die Rechnung ohne Caching. Die Stundenvariante kostet im Schreiben das Doppelte und landet bei 2,5 Cent. Auf Sonnet 4.6 sind alle Verhältnisse identisch, die Beträge rund 40 Prozent niedriger.",
       },
     ],
-    n: 18,
+    n: 17,
   },
   {
     b: 3,
@@ -810,7 +804,7 @@ export const SECTIONS: Section[] = [
         say: "Wie funktioniert das technisch? Ein Tool ist zunächst nichts weiter als eine Beschreibung: wie heißt es, wozu ist es gut, welche Angaben braucht es. Diese Beschreibung wird Teil der Instruktionen, die das Modell bei jedem Aufruf bekommt. Es liest sie und entscheidet selbst, wann ein Zugriff sinnvoll ist. Und MCP — das Model Context Protocol — ist die Steckdose dafür: ein gemeinsames Format, damit jedes System seine Werkzeuge anbieten kann, ohne dass wir den Agenten jedes Mal umbauen.",
       },
     ],
-    n: 19,
+    n: 18,
   },
   {
     b: 3,
@@ -849,12 +843,13 @@ export const SECTIONS: Section[] = [
         mock: {
           t: "statement",
           text: "Und er verschenkt die Aktionsfläche.",
-          after: "Alle drei Läufe ohne Ziele bieten die Fläche vom 22. Oktober an. Es gibt genau zwei im Quartal.",
+          after:
+            "Alle drei Läufe ohne Ziele bieten die Fläche vom 22. Oktober an. Es gibt genau zwei im Quartal.",
         },
         say: "Und jetzt der Teil, der mir am meisten zu denken gegeben hat. Alle drei Läufe ohne Ziele bieten dem Lieferanten von sich aus die Aktionsflächen an — darunter die vom zweiundzwanzigsten Oktober im Raum Hamburg. Das ist genau die Fläche, die Du am Anfang des Abends gesehen hast, die an Hallbach ging. Es gibt nur zwei davon im ganzen Quartal. Er verschenkt also das Knappste, was diese Kategorie hat, an ein Produkt, über dessen Listung er noch gar nicht entschieden hat. Nicht aus Bosheit. Er hat nur keinen Grund, es nicht zu tun.",
       },
     ],
-    n: 20,
+    n: 19,
   },
   {
     b: 3,
@@ -902,7 +897,7 @@ export const SECTIONS: Section[] = [
           "Antworten sammeln. Wenn niemand etwas hat: nach der Halluzination von vorhin fragen.",
       },
     ],
-    n: 21,
+    n: 20,
   },
   {
     b: 3,
@@ -913,7 +908,7 @@ export const SECTIONS: Section[] = [
       {
         mock: {
           t: "architektur",
-          alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_lisa, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme.",
+          alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_das_team, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme.",
         },
         say: "Bevor wir weitergehen, einmal das ganze Bild — vereinfacht, aber nichts darin ist gelogen. Links kommt die E-Mail an. Sie geht durch SES in einem zweiten Konto, landet in S3, eine Meldung weckt eine Lambda, die die Rohmail liest. Rechts das Handy: da tippt jemand direkt. Zwei völlig verschiedene Wege — und sie laufen auf dasselbe zu. Das ist der Punkt: Es ist EIN Agent. Ein Modell, ein Systemprompt, eine Konfiguration.",
         app: "Stufe 1 — Eingänge und Agent. Werkzeuge und Systeme noch abgeblendet.",
@@ -921,21 +916,21 @@ export const SECTIONS: Section[] = [
       {
         mock: {
           t: "architektur",
-          alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_lisa, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme.",
+          alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_das_team, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme.",
         },
-        say: "Was ihn unterscheidet, ist einzig, womit er antworten darf. Kommt der Vorgang per Mail, hat er ein Werkzeug zum Mailversand. Kommt er aus dem Chat, hat er eines für den Chat. Und im Mailweg hat er noch eines: frage_lisa. Das ist kein gewöhnliches Werkzeug — es hält den Agenten an. Mitten im Vorgang. Er wartet, bis ein Mensch geantwortet hat, und rechnet dann mit dieser Antwort weiter.",
+        say: "Was ihn unterscheidet, ist einzig, womit er antworten darf. Kommt der Vorgang per Mail, hat er ein Werkzeug zum Mailversand. Kommt er aus dem Chat, hat er eines für den Chat. Und im Mailweg hat er noch eines: frage_das_team. Das ist kein gewöhnliches Werkzeug — es hält den Agenten an. Mitten im Vorgang. Er wartet, bis ein Mensch geantwortet hat, und rechnet dann mit dieser Antwort weiter.",
         app: "Stufe 2 — die drei Werkzeuge. Der Pfeil zum Operator zeigt, wo die Rückfrage landet.",
       },
       {
         mock: {
           t: "architektur",
-          alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_lisa, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme.",
+          alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_das_team, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme.",
         },
         say: "Und links stehen die Systeme, in denen er nachschlägt. Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung. Die sind für heute Abend simuliert — das sage ich deutlich, und es steht auch unten auf dem Bild. Was nicht simuliert ist: welches dieser Systeme er befragt, in welcher Reihenfolge, und was er aus den Antworten schließt. Das entscheidet er.",
         app: "Stufe 3 — die simulierten Systeme. Vollbild.",
       },
     ],
-    n: 22,
+    n: 21,
   },
   {
     b: 3,
@@ -986,7 +981,8 @@ export const SECTIONS: Section[] = [
         mock: {
           t: "statement",
           text: "Es gibt genau zwei im Quartal.",
-          after: "Er hat sie angeboten, bevor er über die Listung entschieden hatte. Manchen sogar in der Absage.",
+          after:
+            "Er hat sie angeboten, bevor er über die Listung entschieden hatte. Manchen sogar in der Absage.",
         },
         say: "Schaut Euch das an. Und jetzt die unangenehme Zahl dazu: Es gibt im ganzen Quartal genau zwei freie Aktionsflächen. Zwölf Märkte im Raum Hamburg am zweiundzwanzigsten Oktober, und ein bundesweites Kopfregal am neunzehnten November. Das ist das Knappste, was diese Kategorie hat. Der Agent hat sie angeboten, bevor er überhaupt entschieden hatte, ob er das Produkt listet — und einigen von Euch hat er sie sogar angeboten und die Anfrage im selben Atemzug abgelehnt. Er macht das nicht aus Dummheit. Der Kalender sagt „frei“, und frei heißt für ihn „vergebbar“. Ihm fehlt der Gedanke, den jeder von Euch automatisch hat: Das hebe ich mir auf.",
       },
@@ -994,7 +990,8 @@ export const SECTIONS: Section[] = [
         mock: {
           t: "statement",
           text: "Das ist die Arbeit, die bleibt.",
-          after: "Nicht die Mail schreiben. Dem Agenten beibringen, wann er etwas NICHT anbietet.",
+          after:
+            "Nicht die Mail schreiben. Dem Agenten beibringen, wann er etwas NICHT anbietet.",
         },
         say: "Und genau da würde Memory greifen — nicht als Gedächtnis für einen Vorgang, sondern über Vorgänge hinweg. Ich würde ihn so steuern: Plane erst einmal mit normaler Regalfläche. Die Aktionsfläche bietest Du gar nicht an. Sammle Anfragen, eine Woche, zwei Wochen. Und wenn Du zehn davon gesehen hast, dann komm zu mir und sag: Von diesen zehn ist das hier die beste — der biete ich jetzt die Zweitplatzierung an, als Aufwertung, und hole mir dafür bessere Konditionen. Das ist ein Upsell, und er kann ihn nur machen, wenn er warten kann. Zweites Beispiel: Nächste Woche wird im Regal Fläche frei, weil ein Artikel ausläuft. Dann soll er sich erinnern, dass vor drei Wochen jemand angefragt hat, dem genau das gepasst hätte, und von sich aus zurückkommen. Nichts davon ist im Agenten gebaut, den Ihr heute Abend benutzt habt. Und das ist der Punkt: Diese Regeln muss jemand erfinden. Jemand muss sich überlegen, dass eine Aktionsfläche etwas ist, das man aufspart. Jemand muss entscheiden, ab wie vielen Anfragen sich das Warten lohnt. Das steht in keinem Handbuch, und kein Modell kommt von allein darauf. Das ist die Arbeit, die bleibt — und es ist eine andere Arbeit als die, die heute Morgen auf Eurem Schreibtisch lag.",
         note: "Gemessen: 7 von 14 Szenarienläufen bieten die Fläche vom 22. Oktober an, darunter Wildberg, das im selben Schreiben abgelehnt wird. messungen/szenarien/. Bewusst nicht behoben — der Fehler ist hier mehr wert als seine Korrektur.",
@@ -1060,7 +1057,7 @@ export const SECTIONS: Section[] = [
         say: "Und irgendwann kommst Du an den Punkt, an dem die Mail, die der Agent schicken will, die ist, die Du geschickt hättest. Dann überführst Du das in Software — erst mit einer Bestätigungshürde: Er darf handeln, aber Du klickst. Und wenn das eine Weile gut geht, nimmst Du die Hürde weg. Wichtig: Das gilt immer nur für eine Klasse von Mails. Listungsanfragen zum Beispiel. Dann nimmst Du Dir die nächste Klasse vor. So wächst das, Stück für Stück.",
       },
     ],
-    n: 23,
+    n: 22,
   },
   {
     b: 3,
@@ -1090,7 +1087,7 @@ export const SECTIONS: Section[] = [
         say: "Ein Punkt, den Du im Haus früh klären solltest: der EU AI Act. Er reguliert risikobasiert — es kommt also nicht auf die Technik an, sondern darauf, wofür Du sie einsetzt. Zwei Dinge sind für unser Beispiel relevant. Erstens Transparenz: Wenn ein Agent nach außen kommuniziert, sollte erkennbar sein, dass eine Maschine beteiligt war. Und zweitens Nachvollziehbarkeit — was hat er getan und warum. Das ist genau die Schrittfolge, die Du heute in der Antwort-Mail bekommen hast. Ich bin kein Jurist; hol Dir das früh ins Haus statt am Ende.",
       },
     ],
-    n: 24,
+    n: 23,
   },
   {
     b: 4,
@@ -1107,7 +1104,7 @@ export const SECTIONS: Section[] = [
         say: "Damit sind wir zurück bei der Frage vom Anfang. Braucht man uns dann noch? Meine Antwort ist ja. Aber nicht so wie heute.",
       },
     ],
-    n: 25,
+    n: 24,
   },
   {
     b: 4,
@@ -1132,7 +1129,7 @@ export const SECTIONS: Section[] = [
         say: "Und mach Dir keine Hoffnung, dass dabei Arbeit übrig bleibt. Sobald wir mehr schaffen, wird auch mehr erwartet — von Kunden, von Kollegen, vom eigenen Haus. Die Arbeit wird nicht weniger. Sie wird anders.",
       },
     ],
-    n: 26,
+    n: 25,
   },
   {
     b: 4,
@@ -1171,7 +1168,7 @@ export const SECTIONS: Section[] = [
         note: "Produktnamen vor dem Vortrag gegen den aktuellen Stand prüfen — AWS benennt schnell um.",
       },
     ],
-    n: 27,
+    n: 26,
   },
   {
     b: 4,
@@ -1188,7 +1185,7 @@ export const SECTIONS: Section[] = [
         say: "Und der letzte Punkt ist der einfachste: Komm morgen früh um acht zum Frühstück. Dort sitzen Entscheider aus anderen Häusern, die genau das gerade ausprobieren. Du hörst, was funktioniert — und vor allem, was nicht funktioniert. Das ist meistens der nützlichere Teil. Vielen Dank.",
       },
     ],
-    n: 28,
+    n: 27,
   },
 ] as Section[];
 

@@ -11,6 +11,7 @@ import {
   StatementView,
   TimelineView,
   TweetsView,
+  BildView,
 } from "./PlainMocks";
 import { BioView, MailThreadView, QrView, RevealView } from "./StepMocks";
 import { ResultsView } from "./Results";
@@ -58,6 +59,8 @@ export function MockView({
       return <RevealView m={mock} step={step} />;
     case "bio":
       return <BioView m={mock} />;
+    case "bild":
+      return <BildView m={mock} />;
     case "qr":
       return <QrView m={mock} />;
     case "results":

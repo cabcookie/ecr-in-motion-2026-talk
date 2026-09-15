@@ -100,12 +100,13 @@ export function baueAntwort(modus: Modus, lauf: Lauf): string {
     "",
     `Der Vortrag zum Mitklicken:  ${VORTRAG_URL}`,
     `Der Quelltext dazu:          ${CODE_URL}`,
-    "",
-    "Mehr zum Nachlesen:",
-    "  Arbeitslosenquote in Deutschland seit 1950 (Destatis, Eurostat)",
-    "  https://www-genesis.destatis.de",
-    "  Anteil der Landwirtschaft an den Erwerbstätigen, USA 1900-2000",
-    "  https://www.census.gov/history",
+    /*
+      Hier standen zwei Belege gegen die Massenarbeitslosigkeit. Sie sind raus:
+      Die Links fuehrten nur auf die Startseiten der beiden Aemter, nicht auf
+      die Tabellen. Ein Beleg, den der Empfaenger selbst suchen muss, ist
+      keiner — und in einer Mail, die ohnehin von der Sache handelt, war der
+      Exkurs auch deplatziert.
+    */
     "",
     "Ihre E-Mail-Adresse wurde nur für diese eine Antwort verwendet und ist",
     "damit gelöscht.",

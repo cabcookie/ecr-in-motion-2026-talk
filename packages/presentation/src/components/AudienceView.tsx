@@ -54,7 +54,7 @@ function persistentUpTo(index: number, panel: number, current: Interaction | nul
  */
 export function AudienceView() {
   const { index, step, connected } = useNavigation(TOTAL, { readOnly: true, keyboard: false });
-  const { answers, submit, pending } = useAnswers();
+  const { answers, submit, submitWeitere, pending } = useAnswers();
 
   /*
     Zurücksetzen heißt hier: neu laden.
@@ -125,7 +125,12 @@ export function AudienceView() {
         </h1>
 
         {current ? (
-          <InteractionView interaction={current} answers={answers} onAnswer={submit} />
+          <InteractionView
+            interaction={current}
+            answers={answers}
+            onAnswer={submit}
+            onWeitere={submitWeitere}
+          />
         ) : (
           <div className="rounded-2xl border border-dashed border-hair px-5 py-8 text-center">
             <p className="m-0 text-base leading-relaxed text-fg-3">
@@ -141,7 +146,13 @@ export function AudienceView() {
               Weiterhin möglich
             </h2>
             {stillOpen.map((i) => (
-              <InteractionView key={i.id} interaction={i} answers={answers} onAnswer={submit} />
+              <InteractionView
+                key={i.id}
+                interaction={i}
+                answers={answers}
+                onAnswer={submit}
+                onWeitere={submitWeitere}
+              />
             ))}
           </section>
         )}

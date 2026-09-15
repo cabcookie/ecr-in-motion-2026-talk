@@ -6,7 +6,15 @@ const CAP =
 const MONO = "Amazon Ember Mono, ui-monospace, monospace";
 const SANS = "Amazon Ember Display, Helvetica Neue, Arial, sans-serif";
 
-/** US-Landwirtschaft: nur die beiden belegten Eckwerte, kein erfundener Verlauf. */
+/*
+  US-Landwirtschaft: nur die beiden belegten Eckwerte, kein erfundener Verlauf.
+
+  Ohne Achsenbeschriftung und ohne Bildunterschrift — beides wird gesprochen.
+  Zwei Balken mit 41 und 2 brauchen keine Erklaerung auf der Leinwand; wer sie
+  dort hinschreibt, nimmt dem Satz des Vortragenden die Arbeit ab und dem Bild
+  die Ruhe. Der aria-label traegt die Angabe weiterhin fuer alle, die das Bild
+  nicht sehen.
+*/
 function Agriculture() {
   const base = 470;
   const maxH = 350;
@@ -18,9 +26,6 @@ function Agriculture() {
     <>
       <svg viewBox="0 0 1360 560" role="img"
         aria-label="Anteil der Landwirtschaft an den US-Beschäftigten: 41 Prozent im Jahr 1900, 2 Prozent im Jahr 2000">
-        <text x="0" y="40" fontFamily={MONO} fontSize="24" letterSpacing="3" fill="var(--color-fg-3)">
-          ANTEIL AN DEN US-BESCHÄFTIGTEN
-        </text>
         <line x1="0" y1={base} x2="1360" y2={base} stroke="var(--color-hair)" strokeWidth="2" />
         {bars.map((b) => {
           const h = Math.max(8, (b.val / 41) * maxH);
@@ -39,9 +44,6 @@ function Agriculture() {
           );
         })}
       </svg>
-      <p className={CAP}>
-        Zwei Belegwerte. Der Verlauf dazwischen ist bewusst nicht gezeichnet.
-      </p>
     </>
   );
 }

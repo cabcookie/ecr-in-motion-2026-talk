@@ -59,14 +59,43 @@ function FreeText({
   interaction,
   value,
   onAnswer,
+  onWeitere,
 }: {
   interaction: Extract<Interaction, { kind: "text" }>;
   value?: string;
   onAnswer: (v: string) => void;
+  onWeitere?: (v: string, lfd: number) => void;
 }) {
-  const [draft, setDraft] = useState(value ?? "");
-  useEffect(() => setDraft(value ?? ""), [value]);
+  const mehrfach = interaction.mehrfach === true;
+  const [draft, setDraft] = useState(mehrfach ? "" : (value ?? ""));
+  /* Was dieses Gerät schon beigetragen hat — im Mehrfachmodus die ganze Liste. */
+  const [gesendet, setGesendet] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!mehrfach) setDraft(value ?? "");
+  }, [value, mehrfach]);
+
   const dirty = draft.trim() !== (value ?? "").trim();
+  const schonDa = gesendet.includes(draft.trim());
+  const absendbar = draft.trim() !== "" && (mehrfach ? !schonDa : dirty);
+
+  function senden() {
+    const text = draft.trim();
+    if (!text) return;
+    if (mehrfach) {
+      /*
+        Die erste Antwort geht den gewöhnlichen Weg, jede weitere bekommt eine
+        laufende Nummer. So bleibt die Korrektur der ersten möglich, und die
+        Leinwand sieht trotzdem alles.
+      */
+      if (gesendet.length === 0) onAnswer(text);
+      else onWeitere?.(text, gesendet.length);
+      setGesendet((g) => [...g, text]);
+      setDraft("");
+    } else {
+      onAnswer(text);
+    }
+  }
 
   return (
     <div className={CARD}>
@@ -74,33 +103,66 @@ function FreeText({
         {interaction.prompt}
       </p>
       <div className="mb-4 flex flex-wrap gap-2">
-        {interaction.examples.map((ex) => (
-          <button
-            key={ex}
-            type="button"
-            onClick={() => setDraft(ex)}
-            className="rounded-full border border-hair bg-stage px-3 py-1.5 text-sm text-fg-3 active:bg-stage-3"
-          >
-            {ex}
-          </button>
-        ))}
+        {interaction.examples
+          .filter((ex) => !gesendet.includes(ex))
+          .map((ex) => (
+            <button
+              key={ex}
+              type="button"
+              onClick={() => setDraft(ex)}
+              className="rounded-full border border-hair bg-stage px-3 py-1.5 text-sm text-fg-3 active:bg-stage-3"
+            >
+              {ex}
+            </button>
+          ))}
       </div>
       <textarea
         id={`text-${interaction.id}`}
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
-        placeholder={interaction.placeholder}
+        placeholder={
+          mehrfach && gesendet.length ? "Und was noch?" : interaction.placeholder
+        }
         rows={3}
         className="w-full resize-none rounded-xl border border-hair bg-stage px-4 py-3 text-lg text-fg placeholder:text-fg-3 focus:border-[color:var(--accent)] focus:outline-none"
       />
       <button
         type="button"
-        disabled={!draft.trim() || !dirty}
-        onClick={() => onAnswer(draft.trim())}
+        disabled={!absendbar}
+        onClick={senden}
         className="mt-3 w-full rounded-xl bg-[color:var(--accent)] px-5 py-4 text-lg font-semibold text-stage disabled:opacity-30"
       >
-        {dirty ? "Senden" : "Gesendet"}
+        {mehrfach
+          ? gesendet.length
+            ? "Noch eine senden"
+            : "Senden"
+          : dirty
+            ? "Senden"
+            : "Gesendet"}
       </button>
+
+      {/*
+        Was schon draußen ist, bleibt sichtbar. Ohne das wüsste im
+        Mehrfachmodus niemand, ob die letzte Eingabe angekommen ist — das Feld
+        leert sich ja.
+      */}
+      {gesendet.length > 0 && (
+        <>
+          <p className="m-0 mt-5 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+            Von Dir gesendet
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {gesendet.map((g) => (
+              <span
+                key={g}
+                className="rounded-full border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/10 px-3 py-1.5 text-sm text-fg-2"
+              >
+                ✓ {g}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -436,10 +498,12 @@ export function InteractionView({
   interaction,
   answers,
   onAnswer,
+  onWeitere,
 }: {
   interaction: Interaction;
   answers: Record<string, string>;
   onAnswer: (key: string, v: string) => void;
+  onWeitere?: (key: string, v: string, lfd: number) => void;
 }) {
   return (
     <div className="grid gap-4">
@@ -454,7 +518,12 @@ export function InteractionView({
           {interaction.message}
         </p>
       )}
-      <Koerper interaction={interaction} answers={answers} onAnswer={onAnswer} />
+      <Koerper
+        interaction={interaction}
+        answers={answers}
+        onAnswer={onAnswer}
+        onWeitere={onWeitere}
+      />
     </div>
   );
 }
@@ -463,10 +532,12 @@ function Koerper({
   interaction,
   answers,
   onAnswer,
+  onWeitere,
 }: {
   interaction: Interaction;
   answers: Record<string, string>;
   onAnswer: (key: string, v: string) => void;
+  onWeitere?: (key: string, v: string, lfd: number) => void;
 }) {
   switch (interaction.kind) {
     case "poll":
@@ -477,6 +548,7 @@ function Koerper({
           interaction={interaction}
           value={answers[interaction.id]}
           onAnswer={(v) => onAnswer(interaction.id, v)}
+          onWeitere={(v, lfd) => onWeitere?.(interaction.id, v, lfd)}
         />
       );
     case "mailto":

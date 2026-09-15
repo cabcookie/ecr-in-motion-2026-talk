@@ -9,7 +9,7 @@
  * Jetzt ist es ein Agent. Der Unterschied zwischen den Eingangswegen liegt
  * allein darin, womit er antworten kann:
  *
- *   E-Mail  →  `antworte_per_mail` (Entwurf, der Mensch bestätigt) + `frage_lisa`
+ *   E-Mail  →  `antworte_per_mail` (Entwurf, der Mensch bestätigt) + `frage_das_team`
  *   Chat    →  `antworte_im_chat`
  *
  * Die sechs Fachwerkzeuge teilen sich beide. Sie sind dünne Adapter über die

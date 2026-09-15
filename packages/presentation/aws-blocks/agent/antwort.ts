@@ -8,7 +8,7 @@
  *
  * Deshalb steht die Vertraulichkeitsregel hier und nicht im Systemprompt. Sie
  * gilt nicht für den Agenten, sie gilt für den KANAL: Eine Mail geht an einen
- * Außenstehenden, eine Chatnachricht geht an Lisa selbst. Dieselbe Zahl ist im
+ * Außenstehenden, eine Chatnachricht ans eigene Haus. Dieselbe Zahl ist im
  * einen Fall ein Leck und im anderen genau das, wofür sie den Assistenten hat.
  *
  * Die Regel beim Werkzeug statt im Prompt ist auch robuster: Ein Agent, der
@@ -27,9 +27,9 @@ export const vorgangskontext = z.object({
   /** An welches Postfach geschrieben wurde — als dieses wird geantwortet. */
   postfach: z.string().optional(),
   /*
-    Der Kanal dieses Zuges. Er steht im Kontext, damit `frage_lisa` ihn in die
+    Der Kanal dieses Zuges. Er steht im Kontext, damit `frage_das_team` ihn in die
     offene Frage schreiben kann — ohne ihn wüsste später niemand, welchen Zug
-    Lisas Antwort fortsetzen soll.
+    die Antwort des Teams fortsetzen soll.
   */
   kanal: z.string().optional(),
 });
@@ -66,7 +66,7 @@ export function antworteVerMail(
 
     Für den Vortrag AUS: In Abschnitt 6 schreiben achtzig Teilnehmer
     gleichzeitig, und niemand kann achtzig Mails einzeln bestätigen. Der
-    Mensch-im-Kreis-Moment liegt dort, wo er hingehört — bei `frage_lisa`.
+    Mensch-im-Kreis-Moment liegt dort, wo er hingehört — bei `frage_das_team`.
 
     Die Fähigkeit steht trotzdem hier, weil sie die Stufe IST, die Block 4
     erklärt: Der Agent schlägt vor, ein Mensch bestätigt, und wer „vertraue"
@@ -101,34 +101,34 @@ export function antworteVerMail(
 /**
  * Antworten im Chat.
  *
- * Kein `needsApproval`: Hier sitzt Lisa selbst am anderen Ende. Eine Antwort an
- * sie braucht niemandes Freigabe, und Interna sind hier keine — sie ist das
- * Haus.
+ * Kein `needsApproval`: Am anderen Ende sitzt jemand aus dem eigenen Haus.
+ * Eine Antwort dorthin braucht niemandes Freigabe, und Interna sind hier keine
+ * — das ist der ganze Unterschied zur Mail nach draußen.
  */
 export function antworteImChat(tool: ToolFactory<Vorgangskontext>) {
   return tool({
     description:
-      'Antwortet Lisa im Chat. Sie ist die Category Managerin selbst — ihr gegenüber sind ' +
-      'Zahlen aus unseren Systemen keine Interna, sondern genau das, wofür sie dich hat. ' +
-      'Nenne sie mit Quelle und Stand.',
+      'Antwortet der Person, die gerade mit dir chattet. Sie gehört zum Category-Team, ' +
+      'also zum eigenen Haus — ihr gegenüber sind Zahlen aus unseren Systemen keine Interna, ' +
+      'sondern genau das, wofür sie dich fragt. Nenne sie mit Quelle und Stand.',
     parameters: z.object({
-      text: z.string().describe('Die Antwort an Lisa. Kurz — sie liest auf dem Handy.'),
+      text: z.string().describe('Die Antwort. Kurz — sie wird auf dem Handy gelesen.'),
     }),
     handler: async ({ input }) => ({ gesendet: true, text: input.text }),
   });
 }
 
 /**
- * Eine Rückfrage an Lisa.
+ * Eine Rückfrage ans eigene Haus.
  *
  * `interrupt()` hält den Zug an. Der Agent wartet, die Frage landet beim
  * Operator, und erst wenn sie beantwortet ist, läuft der Vorgang weiter und die
  * Mail geht hinaus.
  *
- * Das gibt es nur im Mailweg. Im Chat wäre es sinnlos: Dort ist Lisa ohnehin
- * der Gesprächspartner — da fragt man einfach.
+ * Das gibt es nur im Mailweg. Im Chat wäre es sinnlos: Dort sitzt der
+ * Ansprechpartner ohnehin am anderen Ende — da fragt man einfach.
  */
-/** Wohin eine offene Frage geschrieben wird, damit Lisa sie findet. */
+/** Wohin eine offene Frage geschrieben wird, damit das Team sie findet. */
 export interface Fragenablage {
   (frage: {
     id: string;
@@ -144,18 +144,18 @@ export interface Fragenablage {
 export function frageLisa(tool: ToolFactory<Vorgangskontext>, lege: Fragenablage) {
   return tool({
     description:
-      'Legt Lisa Berger eine Rückfrage vor und wartet auf ihre Antwort. Nutze das für alles, ' +
-      'was du von ihr brauchst und in keinem System steht — interne Einschätzungen, Freigaben, ' +
-      'Zahlen ohne Quelle. Der Vorgang pausiert, bis sie geantwortet hat.',
+      'Legt dem Category-Team eine Rückfrage vor und wartet auf die Antwort. Nutze das für ' +
+      'alles, was du brauchst und in keinem System steht — interne Einschätzungen, Freigaben, ' +
+      'Zahlen ohne Quelle. Der Vorgang pausiert, bis geantwortet wurde.',
     parameters: z.object({
-      frage: z.string().describe('Was du von Lisa wissen musst, als ganzer Satz'),
+      frage: z.string().describe('Was du vom Team wissen musst, als ganzer Satz'),
       warum: z.string().describe('Wofür du die Angabe brauchst'),
     }),
     handler: async ({ input, context, interrupt }) => {
       /*
         `interrupt()` hält den Zug an UND gibt zurück, was der Mensch geantwortet
         hat. Deshalb steht es hier im Handler und nicht in der `interrupt`-Hook
-        davor: Lisas Antwort wird damit zum Werkzeugergebnis, und der Agent
+        davor: Die Antwort wird damit zum Werkzeugergebnis, und der Agent
         rechnet damit weiter, statt sie nur zur Kenntnis zu nehmen.
 
         `reason` ist das, was die Operator-Ansicht anzeigt. Alles, was Carsten

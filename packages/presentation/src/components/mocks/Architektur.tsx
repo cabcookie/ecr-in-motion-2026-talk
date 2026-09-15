@@ -143,7 +143,7 @@ const ELEMENTE: Element[] = [
   { id: "p-w3", stufe: 1, art: "pfeil", x: 700, y: AGENT_Y + 104, x2: 900, y2: WERKZEUG_Y - 2 },
   { id: "w-mail", stufe: 1, art: "werkzeug", x: 170, y: WERKZEUG_Y, w: 280, titel: "antworte_per_mail", unter: "nur im Mailweg" },
   { id: "w-chat", stufe: 1, art: "werkzeug", x: 470, y: WERKZEUG_Y, w: 260, titel: "antworte_im_chat", unter: "nur im Chat" },
-  { id: "w-lisa", stufe: 1, art: "werkzeug", x: 750, y: WERKZEUG_Y, w: 300, titel: "frage_lisa", unter: "hält an, bis geantwortet ist" },
+  { id: "w-lisa", stufe: 1, art: "werkzeug", x: 750, y: WERKZEUG_Y, w: 300, titel: "frage_das_team", unter: "hält an, bis geantwortet ist" },
   { id: "n-operator", stufe: 1, art: "notiz", x: 1050, y: WERKZEUG_Y - 14, text: "der Mensch antwortet live  ↓", farbe: "var(--color-b2)" },
 
   /* Stufe 2 — die Systeme, in denen er nachschlägt */

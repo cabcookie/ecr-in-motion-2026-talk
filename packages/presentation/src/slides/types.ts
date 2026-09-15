@@ -144,6 +144,21 @@ export interface SteppedMock {
   frames: Mock[];
 }
 
+/**
+ * Ein Bild, das für sich steht.
+ *
+ * Für Belege, die als Beleg aussehen müssen: ein Screenshot beglaubigt stärker
+ * als derselbe Text neu gesetzt. Wer ihn nachgebaut sieht, fragt sich, ob er
+ * stimmt; wer das Original sieht, fragt sich das nicht.
+ */
+export interface BildMock {
+  t: "bild";
+  /** Pfad im public-Verzeichnis. */
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
 /** QR-Code auf die Zuschauersicht, mit kurzer Anleitung daneben. */
 export interface QrMock {
   t: "qr";
@@ -190,6 +205,7 @@ export interface ArchitekturMock {
 }
 
 export type Mock =
+  | BildMock
   | ArchitekturMock
   | TShapeMock
   | MailThreadMock
@@ -244,6 +260,14 @@ export type Interaction = MitZusammenhang &
       placeholder: string;
       examples: string[];
       persist?: boolean;
+      /**
+       * Mehrere Antworten statt einer.
+       *
+       * Auf „Welche Aufgaben hast Du abgegeben?" gibt es selten nur eine
+       * Antwort. Ohne dies überschriebe die zweite Eingabe die erste, und die
+       * Leinwand zeigte am Ende weniger, als der Raum beigetragen hat.
+       */
+      mehrfach?: boolean;
     }
   | {
       kind: "mailto";

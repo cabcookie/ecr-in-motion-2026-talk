@@ -9,7 +9,7 @@
  * Jetzt gibt es eine Definition. Was die beiden Eingangswege unterscheidet,
  * ist ausschließlich, **womit der Agent antworten kann**:
  *
- *   Postfach  →  antworte_per_mail (Entwurf, Mensch bestätigt) + frage_lisa
+ *   Postfach  →  antworte_per_mail (Entwurf, Mensch bestätigt) + frage_das_team
  *   Chat      →  antworte_im_chat
  *
  * Alles andere — Modell, Systemprompt, die sechs Fachwerkzeuge, die Grenzen —
@@ -102,7 +102,7 @@ export function postfachAgent(
     tools: (tool) => ({
       ...(mitFachwerkzeugen ? fachwerkzeuge(tool) : {}),
       antworte_per_mail: antworteVerMail(tool, versende),
-      frage_lisa: frageLisa(tool, lege),
+      frage_das_team: frageLisa(tool, lege),
     }),
   });
 }

@@ -1,5 +1,5 @@
 /**
- * Die Systeme, in denen Lisas Assistent nachschlägt.
+ * Die Systeme, in denen der Agent nachschlägt.
  *
  * Sie sind simuliert, und der Vortrag sagt das auch so: „Die Systeme sind
  * simuliert. Die Arbeit des Agenten ist es nicht." Die Entscheidung aus den
@@ -77,14 +77,14 @@ function ausgabe<T>(befund: Befund<T>, umbau: (daten: T) => Record<string, unkno
 const leer = { type: "object", properties: {}, required: [] as string[] };
 
 /**
- * Der Name des Werkzeugs, mit dem der Agent Lisa erreicht.
+ * Der Name des Werkzeugs, mit dem der Agent sein eigenes Haus erreicht.
  *
  * Es steht hier bei den anderen, ist aber keines: Es schlägt nichts nach,
- * sondern legt eine Frage auf Lisas Tisch. Die Werkzeugschleife in agent.ts
+ * sondern legt eine Frage auf den Tisch des Category-Teams. Die Werkzeugschleife in agent.ts
  * greift es deshalb gesondert ab — die Frage ist ein ERGEBNIS des Laufs, keine
  * Auskunft eines Systems.
  */
-export const FRAGE_LISA = "frage_lisa";
+export const FRAGE_LISA = "frage_das_team";
 
 export const WERKZEUGE: readonly Werkzeug[] = [
   {
@@ -229,9 +229,9 @@ export const WERKZEUGE: readonly Werkzeug[] = [
   {
     name: FRAGE_LISA,
     beschreibung:
-      "Legt Lisa Berger eine Rückfrage vor. Nutze das für ALLES, was du von ihr brauchst — " +
+      "Legt dem Category-Team eine Rückfrage vor. Nutze das für ALLES, was du von dort brauchst — " +
       "interne Zahlen, Einschätzungen, Freigaben. Die Antwortmail geht an einen Außenstehenden; " +
-      "dort hat eine Frage an Lisa nichts zu suchen.",
+      "dort hat eine interne Rückfrage nichts zu suchen.",
     schema: {
       type: "object",
       properties: {
@@ -243,7 +243,7 @@ export const WERKZEUGE: readonly Werkzeug[] = [
     antwort: (args) => ({
       vermerkt: true,
       hinweis:
-        `Die Frage liegt Lisa Berger vor: „${text(args.frage)}". Sie beantwortet sie nicht in ` +
+        `Die Frage liegt dem Category-Team vor: „${text(args.frage)}". Es beantwortet sie nicht in ` +
         `diesem Lauf. Schreibe dem Absender ohne sie — benenne die offene Stelle nur so weit, ` +
         `wie er sie kennen darf, und erfinde keinen Wert an ihrer Stelle.`,
     }),

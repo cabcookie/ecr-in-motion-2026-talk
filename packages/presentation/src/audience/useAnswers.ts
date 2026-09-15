@@ -43,7 +43,15 @@ export function useAnswers() {
         if (cancelled || !rows?.length) return;
         setAnswers((current) => {
           const merged = { ...current };
-          for (const row of rows) merged[row.interactionId] = row.value;
+          /*
+            Mehrfachantworten liegen unter `<teilnehmer>#<n>`. Beim
+            Wiederherstellen interessiert nur die erste je Interaktion — die
+            Liste der weiteren führt die Interaktion selbst, nicht dieser
+            Zwischenspeicher.
+          */
+          for (const row of rows) {
+            if (!row.participantId.includes("#")) merged[row.interactionId] = row.value;
+          }
           writeCache(merged);
           return merged;
         });
@@ -75,5 +83,29 @@ export function useAnswers() {
     [me],
   );
 
-  return { answers, submit, pending, participant: me };
+  /**
+   * Eine WEITERE Antwort auf dieselbe Frage.
+   *
+   * Der Speicher schlüsselt nach `<interaktion>:<teilnehmer>` — damit jemand
+   * seine Antwort korrigieren kann, statt sie zu vervielfachen. Für eine Frage,
+   * auf die es mehrere Antworten gibt, ist das genau falsch herum. Deshalb
+   * bekommt jede weitere Antwort einen Zusatz an der Teilnehmerkennung: Die
+   * Interaktionskennung bleibt gleich, die Leinwand findet also alles, und die
+   * Antworten überschreiben sich nicht mehr gegenseitig.
+   */
+  const submitWeitere = useCallback(
+    async (interactionId: string, value: string, lfd: number) => {
+      setPending(true);
+      try {
+        await api.submitAnswer(interactionId, `${me}#${lfd}`, value);
+      } catch {
+        // Beim nächsten Versuch geht sie mit
+      } finally {
+        setPending(false);
+      }
+    },
+    [me],
+  );
+
+  return { answers, submit, submitWeitere, pending, participant: me };
 }
