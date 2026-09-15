@@ -814,6 +814,50 @@ export const SECTIONS: Section[] = [
   },
   {
     b: 3,
+    kind: "Stufe 2 · Tools",
+    title: "Zulässig ist nicht dasselbe wie gewollt.",
+    panels: [
+      {
+        mock: {
+          t: "statement",
+          text: "Sechs Werkzeuge sagen, ob etwas geht.",
+          after: "Keines sagt, ob wir es wollen.",
+        },
+        say: "Alle Werkzeuge, die Du bisher gesehen hast, haben eines gemeinsam: Sie schlagen etwas nach. Was kostet das, passt das ins Regal, hält der Termin die Frist. Damit kann der Agent prüfen, ob etwas zulässig ist. Was er damit nicht kann, ist beurteilen, ob wir es überhaupt wollen. Und ein Prüfer ohne Präferenz endet zwangsläufig beim Ja.",
+      },
+      {
+        mock: {
+          t: "diff",
+          before: {
+            h: "Sechs Werkzeuge",
+            n: "0 von 3",
+            sub: "Läufen wird entschieden",
+            p: "„Die Konditionen erfüllen unsere Anforderung — kein Hindernis. Ihre Positionierung als Preiseinstieg ist nachvollziehbar. Sobald die interne Abstimmung abgeschlossen ist, komme ich auf Sie zu.“",
+          },
+          after: {
+            h: "Sieben Werkzeuge",
+            n: "3 von 3",
+            sub: "Läufen wird abgesagt",
+            p: "„Ihre Konditionen erfüllen unsere Anforderung, der Termin hält die Frist. Dennoch muss ich absagen: Der Preiseinstieg ist der Eigenmarke vorbehalten, die Fläche ist ausgeschöpft.“",
+          },
+          foot: "Dieselbe Mail, dasselbe Modell, derselbe Systemprompt. Das siebte Werkzeug schlägt nichts nach — es kennt die Ziele der Kategorie.",
+        },
+        say: "Wir haben das gemessen, und zwar so, dass nur eine einzige Sache verschieden war. Dieselbe Mail, dasselbe Modell, derselbe Systemprompt. Links hat der Agent sechs Werkzeuge, rechts sieben. Das siebte schlägt nichts nach. Es kennt die Ziele der Kategorie für dieses Geschäftsjahr: welche Käufergruppe wir halten wollen, welche wir steigern und welche wir neu gewinnen. Links entscheidet er in null von drei Läufen. Er bestätigt dem Lieferanten sogar ausdrücklich die Positionierung, die uns schaden würde, und vertagt den Rest auf eine interne Abstimmung, die es gar nicht gibt. Rechts sagt er dreimal ab — freundlich, und mit dem Grund. Das ist der hochmotivierte Abiturient von vorhin, nur eine Stufe später: Er kann jetzt alles nachschlagen und entscheidet trotzdem nicht.",
+        note: "Sechs Läufe gegen Bedrock, Opus 4.8, 206 Cent. Antworten vollständig in packages/presentation/messungen/ziele-gegentest/. Geurteilt wurde durch Lesen, nicht per Regex — der automatische Klassifikator hielt zwei eindeutige Absagen für unklar bzw. für ein Ja.",
+      },
+      {
+        mock: {
+          t: "statement",
+          text: "Und er verschenkt die Aktionsfläche.",
+          after: "Alle drei Läufe ohne Ziele bieten die Fläche vom 22. Oktober an. Es gibt genau zwei im Quartal.",
+        },
+        say: "Und jetzt der Teil, der mir am meisten zu denken gegeben hat. Alle drei Läufe ohne Ziele bieten dem Lieferanten von sich aus die Aktionsflächen an — darunter die vom zweiundzwanzigsten Oktober im Raum Hamburg. Das ist genau die Fläche, die Du am Anfang des Abends gesehen hast, die an Hallbach ging. Es gibt nur zwei davon im ganzen Quartal. Er verschenkt also das Knappste, was diese Kategorie hat, an ein Produkt, über dessen Listung er noch gar nicht entschieden hat. Nicht aus Bosheit. Er hat nur keinen Grund, es nicht zu tun.",
+      },
+    ],
+    n: 20,
+  },
+  {
+    b: 3,
     kind: "Stufe 3 · Autonomie",
     title: "Autonomie",
     panels: [
@@ -858,7 +902,7 @@ export const SECTIONS: Section[] = [
           "Antworten sammeln. Wenn niemand etwas hat: nach der Halluzination von vorhin fragen.",
       },
     ],
-    n: 20,
+    n: 21,
   },
   {
     b: 3,
@@ -891,7 +935,7 @@ export const SECTIONS: Section[] = [
         app: "Stufe 3 — die simulierten Systeme. Vollbild.",
       },
     ],
-    n: 21,
+    n: 22,
   },
   {
     b: 3,
@@ -959,7 +1003,7 @@ export const SECTIONS: Section[] = [
         say: "Und irgendwann kommst Du an den Punkt, an dem die Mail, die der Agent schicken will, die ist, die Du geschickt hättest. Dann überführst Du das in Software — erst mit einer Bestätigungshürde: Er darf handeln, aber Du klickst. Und wenn das eine Weile gut geht, nimmst Du die Hürde weg. Wichtig: Das gilt immer nur für eine Klasse von Mails. Listungsanfragen zum Beispiel. Dann nimmst Du Dir die nächste Klasse vor. So wächst das, Stück für Stück.",
       },
     ],
-    n: 22,
+    n: 23,
   },
   {
     b: 3,
@@ -989,7 +1033,7 @@ export const SECTIONS: Section[] = [
         say: "Ein Punkt, den Du im Haus früh klären solltest: der EU AI Act. Er reguliert risikobasiert — es kommt also nicht auf die Technik an, sondern darauf, wofür Du sie einsetzt. Zwei Dinge sind für unser Beispiel relevant. Erstens Transparenz: Wenn ein Agent nach außen kommuniziert, sollte erkennbar sein, dass eine Maschine beteiligt war. Und zweitens Nachvollziehbarkeit — was hat er getan und warum. Das ist genau die Schrittfolge, die Du heute in der Antwort-Mail bekommen hast. Ich bin kein Jurist; hol Dir das früh ins Haus statt am Ende.",
       },
     ],
-    n: 23,
+    n: 24,
   },
   {
     b: 4,
@@ -1006,7 +1050,7 @@ export const SECTIONS: Section[] = [
         say: "Damit sind wir zurück bei der Frage vom Anfang. Braucht man uns dann noch? Meine Antwort ist ja. Aber nicht so wie heute.",
       },
     ],
-    n: 24,
+    n: 25,
   },
   {
     b: 4,
@@ -1031,7 +1075,7 @@ export const SECTIONS: Section[] = [
         say: "Und mach Dir keine Hoffnung, dass dabei Arbeit übrig bleibt. Sobald wir mehr schaffen, wird auch mehr erwartet — von Kunden, von Kollegen, vom eigenen Haus. Die Arbeit wird nicht weniger. Sie wird anders.",
       },
     ],
-    n: 25,
+    n: 26,
   },
   {
     b: 4,
@@ -1070,7 +1114,7 @@ export const SECTIONS: Section[] = [
         note: "Produktnamen vor dem Vortrag gegen den aktuellen Stand prüfen — AWS benennt schnell um.",
       },
     ],
-    n: 26,
+    n: 27,
   },
   {
     b: 4,
@@ -1087,7 +1131,7 @@ export const SECTIONS: Section[] = [
         say: "Und der letzte Punkt ist der einfachste: Komm morgen früh um acht zum Frühstück. Dort sitzen Entscheider aus anderen Häusern, die genau das gerade ausprobieren. Du hörst, was funktioniert — und vor allem, was nicht funktioniert. Das ist meistens der nützlichere Teil. Vielen Dank.",
       },
     ],
-    n: 27,
+    n: 28,
   },
 ] as Section[];
 
