@@ -20,6 +20,22 @@ function titlePx(text: string, hero: boolean): number {
 const KOPF_OBEN = 86;
 const KOPF_MS = 820;
 
+/**
+ * Abschnitte, deren Panels dasselbe Bild in Stufen AUFBAUEN.
+ *
+ * Für die ergibt das horizontale Karussell keinen Sinn: Es schöbe die Zeichnung
+ * seitlich weg und eine fast identische Kopie herein. Schlimmer noch, jedes
+ * Panel ist ein eigener DOM-Baum — die Einblendanimation liefe dann bei jedem
+ * Klick für ALLE Elemente neu, obwohl nur drei dazugekommen sind.
+ *
+ * Solche Abschnitte bekommen deshalb eine EINZIGE, stehende Instanz, der die
+ * aktuelle Stufe als `step` gereicht wird. React lässt die vorhandenen Elemente
+ * dann in Ruhe und hängt nur die neuen ein — und nur die animieren.
+ */
+function istStehend(section: Section): boolean {
+  return section.panels.every((p) => p.mock?.t === "architektur");
+}
+
 /** Panels ohne Anwendungsfenster stehen mittig — die Aussage ist der Inhalt. */
 function isCentered(section: Section, panel: number): boolean {
   const m = section.panels[panel]?.mock;
@@ -56,6 +72,7 @@ export function SectionView({
   const heroAbschnitt = Boolean(section.hero);
   const hero = heroAbschnitt && panel === 0;
   const centered = isCentered(section, panel);
+  const stehend = istStehend(section);
 
   /*
     In einem Hero-Abschnitt steht der Titel immer in der großen Fassung und
@@ -148,6 +165,24 @@ export function SectionView({
             heroAbschnitt ? "panel-rise" : ""
           }`}
         >
+          {stehend ? (
+            /*
+              Ein Baum, der wächst. Der `slideKey` trägt bewusst KEINE
+              Panelnummer — sonst würde die FitBox bei jedem Klick neu
+              aufgebaut und wir wären wieder da, wo wir hergekommen sind.
+            */
+            <div className="h-full w-full" aria-hidden={false}>
+              {section.panels[panel]?.mock && (
+                <FitBox slideKey={section.n * 100} centered={centered}>
+                  <MockView
+                    mock={section.panels[panel].mock!}
+                    terse={isTerse(section.panels[panel].mock!)}
+                    step={panel}
+                  />
+                </FitBox>
+              )}
+            </div>
+          ) : (
           <div
             className="flex h-full transition-transform duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{ transform: `translateX(-${panel * 100}%)` }}
@@ -174,6 +209,7 @@ export function SectionView({
               </div>
             ))}
           </div>
+          )}
 
         </div>
       )}

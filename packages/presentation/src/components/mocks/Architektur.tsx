@@ -58,7 +58,10 @@ export function ArchitekturView({ m, step = 0 }: { m: ArchitekturMock; step?: nu
           textAnchor="middle"
           fill="var(--color-fg-3)"
           className="arch-el"
-          style={{ fontSize: 19, animationDelay: `${ELEMENTE.length * 85}ms` }}
+          style={{
+            fontSize: 19,
+            animationDelay: `${ELEMENTE.filter((e) => e.stufe === 0).length * 85}ms`,
+          }}
         >
           Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.
         </text>
@@ -157,10 +160,19 @@ const ELEMENTE: Element[] = [
   { id: "systeme", stufe: 2, art: "systeme", x: 40, y: SYSTEME_Y, w: 1120 },
 ];
 
-/** Reihenfolge des Einfallens: links vor rechts, bei Gleichstand oben vor unten. */
+/**
+ * Reihenfolge des Einfallens: links vor rechts, bei Gleichstand oben vor unten.
+ *
+ * Gezählt wird INNERHALB der Stufe, nicht über das ganze Bild. Sonst bekäme das
+ * erste Werkzeug in Stufe 1 den Versatz seiner Position im Gesamtbild — über
+ * eine Sekunde Wartezeit, bevor sich etwas rührt, obwohl nur drei Kästen
+ * dazukommen.
+ */
 function ordnung(e: Element): number {
-  const sortiert = [...ELEMENTE].sort((a, b) => a.x - b.x || a.y - b.y);
-  return sortiert.indexOf(e);
+  const gleicheStufe = ELEMENTE.filter((a) => a.stufe === e.stufe).sort(
+    (a, b) => a.x - b.x || a.y - b.y,
+  );
+  return gleicheStufe.indexOf(e);
 }
 
 function zeichne(e: Element, i: number) {
