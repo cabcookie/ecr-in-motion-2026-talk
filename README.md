@@ -45,11 +45,8 @@ flowchart TB
   MAIL["E-Mail vom Hersteller<br/>ecr2026@carstenbkoch.de"]
   CHAT["Chat auf dem Handy<br/>Lisa fragt ihren Assistenten"]
 
-  MAIL --> SES["SES nimmt an · Konto A"]
-  SES --> ABLAGE["S3 legt ab, SNS meldet"]
-  ABLAGE --> LAM["Lambda liest die Rohmail"]
-
-  LAM --> AGENT
+  MAIL --> SES["E-Mail-Infrastruktur<br/>eigenes Konto · packages/mail-infra"]
+  SES --> AGENT
   CHAT --> AGENT
 
   AGENT["<br/>Ein Agent<br/>Claude Opus 4.8 · Bedrock AgentCore<br/>ein Systemprompt, eine Konfiguration<br/>"]
@@ -231,10 +228,26 @@ AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation sandbox
 
 ### Der Mailweg, wenn Du ihn willst
 
-`packages/mail-infra/` beschreibt, was dafür im Domain-Konto stehen muss, und
-nennt die vier Werte, die als GitHub-Secrets zurückkommen. Fehlt auch nur einer,
-legt die CDK-Schicht den Mail-Handler gar nicht erst an — ein halb verdrahteter
-Mailweg wäre schlimmer als gar keiner.
+Der Vortrag läuft auch ohne: Der Chat auf dem Handy zeigt denselben Agenten mit
+denselben Werkzeugen. Wer die Teilnehmer aber wirklich per E-Mail schreiben
+lassen will, braucht **`packages/mail-infra/`** — den Stack, der Mail annimmt,
+in S3 legt und den Eingang meldet. In diesem Repository ist er bewusst nicht
+verdrahtet; die README dort beschreibt die Schritte.
+
+**Rechne einen Werktag Vorlauf ein.** Ein neues AWS-Konto steht in der
+SES-Sandbox, und die beschränkt das **Senden** auf verifizierte Adressen,
+200 Nachrichten pro Tag und eine pro Sekunde. Der Empfang ist davon nicht
+betroffen — die Mails kommen an, der Agent arbeitet, nur die Antwort geht nicht
+hinaus. Das sieht aus wie ein Zustellfehler und ist keiner.
+
+Für einen Saal voller Menschen hilft Verifizieren nicht: Jede Adresse müsste
+selbst einen Bestätigungslink anklicken. Also
+[Produktionszugriff beantragen](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html),
+bevor Du planst. Für eine Probe mit den eigenen Adressen reicht die Sandbox.
+
+Vier Werte kommen als GitHub-Secrets zurück. Fehlt auch nur einer, legt die
+CDK-Schicht den Mail-Handler gar nicht erst an — ein halb verdrahteter Mailweg
+wäre schlimmer als gar keiner.
 
 ## Prüfen
 
