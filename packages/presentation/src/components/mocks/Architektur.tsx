@@ -21,7 +21,7 @@ import type { ArchitekturMock } from "@/slides/types";
 export function ArchitekturView({ m, step = 0 }: { m: ArchitekturMock; step?: number }) {
   return (
     <div className="flex w-full justify-center">
-      <svg viewBox="0 0 1200 660" className="w-full max-w-[1200px]" role="img" aria-label={m.alt}>
+      <svg viewBox="0 0 1200 720" className="w-full max-w-[1200px]" role="img" aria-label={m.alt}>
         <defs>
           <marker
             id="arch-pfeil"
@@ -52,19 +52,6 @@ export function ArchitekturView({ m, step = 0 }: { m: ArchitekturMock; step?: nu
           </g>
         ))}
 
-        <text
-          x={600}
-          y={648}
-          textAnchor="middle"
-          fill="var(--color-fg-3)"
-          className="arch-el"
-          style={{
-            fontSize: 19,
-            animationDelay: `${ELEMENTE.filter((e) => e.stufe === 0).length * 85}ms`,
-          }}
-        >
-          Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.
-        </text>
       </svg>
     </div>
   );
@@ -110,7 +97,17 @@ type Element =
   | { id: string; stufe: number; art: "systeme"; x: number; y: number; w: number }
   | { id: string; stufe: number; art: "pfeil"; x: number; y: number; x2: number; y2: number }
   | { id: string; stufe: number; art: "weg"; x: number; y: number; punkte: string }
-  | { id: string; stufe: number; art: "notiz"; x: number; y: number; text: string; farbe: string };
+  | {
+      id: string;
+      stufe: number;
+      art: "notiz";
+      x: number;
+      y: number;
+      text: string;
+      farbe: string;
+      anker?: "start" | "middle" | "end";
+      groesse?: number;
+    };
 
 const AGENT_Y = 300;
 const WERKZEUG_Y = 430;
@@ -158,6 +155,22 @@ const ELEMENTE: Element[] = [
   */
   { id: "p-sys", stufe: 2, art: "weg", x: 100, y: AGENT_Y + 52, punkte: `390,${AGENT_Y + 52} 100,${AGENT_Y + 52} 100,${SYSTEME_Y - 4}` },
   { id: "systeme", stufe: 2, art: "systeme", x: 40, y: SYSTEME_Y, w: 1120 },
+  /*
+    Der Satz gehört zu den Systemen und stand vorher von Anfang an da — er
+    behauptete also etwas über einen Kasten, den das Publikum noch gar nicht
+    gesehen hatte. Jetzt fällt er mit ihm ein, als Letztes.
+  */
+  {
+    id: "hinweis",
+    stufe: 2,
+    art: "notiz",
+    x: 600,
+    y: SYSTEME_Y + 122,
+    text: "Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.",
+    farbe: "var(--color-fg-3)",
+    anker: "middle",
+    groesse: 19,
+  },
 ];
 
 /**
@@ -265,7 +278,14 @@ function zeichne(e: Element, i: number) {
       );
     case "notiz":
       return (
-        <text x={e.x} y={e.y} textAnchor="end" fill={e.farbe} style={{ fontSize: 16 }} key={i}>
+        <text
+          x={e.x}
+          y={e.y}
+          textAnchor={e.anker ?? "end"}
+          fill={e.farbe}
+          style={{ fontSize: e.groesse ?? 16 }}
+          key={i}
+        >
           {e.text}
         </text>
       );
