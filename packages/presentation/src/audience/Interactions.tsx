@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Interaction } from "@/slides/types";
 import { SEED_MAIL } from "@/slides/agent";
-import { briefingFuer, type Briefing } from "@/slides/briefing";
+import { briefingFuer, gruppenName, type Briefing } from "@/slides/briefing";
 import { participantId } from "./participant";
 import { useAgentChat } from "./useAgentChat";
 
@@ -195,6 +195,27 @@ function BriefingKarte({ briefing }: { briefing: Briefing }) {
                 </tbody>
               </table>
             </div>
+          )}
+
+          {briefing.produkt && (
+            <>
+              <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+                Dein Produkt
+              </div>
+              <p className="m-0 mt-1 text-[15px] leading-relaxed text-fg-2">
+                <b className="text-fg">{briefing.produkt.name}</b> — {briefing.produkt.was}
+              </p>
+              {/*
+                Warum jemand danach greift. Der Satz, den der Agent gegen die
+                Ziele der Kategorie halten kann — ein Adjektiv könnte er nicht.
+              */}
+              <p className="m-0 mt-2 text-[15px] leading-relaxed text-fg-3">
+                {briefing.produkt.warum}
+              </p>
+              <p className="m-0 mt-2 font-mono text-[11px] tracking-[0.06em] text-fg-3">
+                Käufergruppe: {gruppenName(briefing.produkt.gruppe)}
+              </p>
+            </>
           )}
 
           <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
