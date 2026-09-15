@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { Interaction } from "@/slides/types";
 import { SEED_MAIL } from "@/slides/agent";
+import { briefingFuer, type Briefing } from "@/slides/briefing";
+import { participantId } from "./participant";
 import { useAgentChat } from "./useAgentChat";
 
 const CARD = "rounded-2xl border border-hair bg-stage-2 p-5";
@@ -104,29 +106,154 @@ function FreeText({
 }
 
 /** Öffnet das Mailprogramm mit vorformuliertem Text. */
-function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "mailto" }> }) {
-  const href =
-    `mailto:${interaction.to}` +
-    `?subject=${encodeURIComponent(interaction.subject)}` +
-    `&body=${encodeURIComponent(interaction.body)}`;
+/**
+ * Das Briefing: wer der Teilnehmer in dieser Mail ist.
+ *
+ * Aufgeklappt wäre es eine Wand aus Text über dem Knopf, und der Knopf ist das,
+ * worauf es ankommt. Zugeklappt ist es eine Zeile, die neugierig macht — wer
+ * sie überliest, kann trotzdem schreiben.
+ *
+ * Die Bestandstabelle steht bewusst mit drin. Sie ist das, was der Teilnehmer
+ * über sich wissen muss, und sie stammt aus demselben Sortiment, in dem der
+ * Agent nachschlägt: Was hier steht, findet er auch.
+ */
+function BriefingKarte({ briefing }: { briefing: Briefing }) {
+  const [offen, setOffen] = useState(false);
 
   return (
-    <div className={CARD}>
-      <p className="m-0 mb-4 text-lg leading-relaxed text-fg-2">{interaction.hint}</p>
-      <a
-        href={href}
-        className="block rounded-xl bg-[color:var(--accent)] px-5 py-4 text-center text-lg font-semibold text-stage"
+    <div className="rounded-2xl border border-[color:var(--accent)]/40 bg-stage-2">
+      <button
+        type="button"
+        onClick={() => setOffen((o) => !o)}
+        aria-expanded={offen}
+        className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
       >
-        {interaction.label}
-      </a>
-      {interaction.privacy && (
-        <p className="m-0 mt-4 text-sm leading-relaxed text-fg-3">{interaction.privacy}</p>
+        <span className="min-w-0">
+          <span className="block font-mono text-[10px] tracking-[0.14em] text-[color:var(--accent)] uppercase">
+            Dein Briefing
+          </span>
+          <span className="mt-0.5 block text-lg font-semibold text-fg">
+            {briefing.rolle}, {briefing.firma}
+          </span>
+        </span>
+        <span className="shrink-0 font-mono text-[11px] text-fg-3">
+          {offen ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {offen && (
+        <div className="border-t border-hair px-5 py-4">
+          <p className="m-0 text-base leading-relaxed text-fg-2">
+            Du vertrittst <b className="text-fg">{briefing.marke}</b> gegenüber Nordkorb.
+          </p>
+
+          <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+            Was Nordkorb von Dir führt
+          </div>
+          {briefing.bestand.length === 0 ? (
+            <p className="m-0 mt-2 text-[15px] leading-relaxed text-fg-2">
+              Nichts. Nordkorb führt Deine Marke noch nicht — Du willst erstmals
+              gelistet werden.
+            </p>
+          ) : (
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full border-collapse text-left text-[13px]">
+                <thead>
+                  <tr className="font-mono text-[10px] tracking-[0.1em] text-fg-3 uppercase">
+                    <th className="py-1 pr-2 font-normal">Artikel</th>
+                    <th className="py-1 pr-2 text-right font-normal">Fac.</th>
+                    <th className="py-1 pr-2 text-right font-normal">Absatz/Jahr</th>
+                    <th className="py-1 text-right font-normal">Entw.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {briefing.bestand.map((a) => (
+                    <tr key={a.bezeichnung} className="border-t border-hair">
+                      <td className="py-1.5 pr-2 text-fg-2">
+                        {a.bezeichnung}
+                        <span className="text-fg-3">
+                          {" "}
+                          {a.gramm} g · {a.zone}
+                        </span>
+                      </td>
+                      <td className="py-1.5 pr-2 text-right tabular-nums text-fg-2">
+                        {a.facings}
+                      </td>
+                      <td className="py-1.5 pr-2 text-right tabular-nums text-fg-2">
+                        {a.absatzJahr.toLocaleString("de-DE")}
+                      </td>
+                      <td
+                        className={`py-1.5 text-right whitespace-nowrap tabular-nums ${
+                          a.entwicklung < 0 ? "text-b1" : "text-b4"
+                        }`}
+                      >
+                        {a.entwicklung > 0 ? "+" : ""}
+                        {a.entwicklung.toLocaleString("de-DE")} %
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+            Dein Ziel
+          </div>
+          <p className="m-0 mt-1 text-[15px] leading-relaxed text-fg-2">
+            {briefing.auftrag}
+          </p>
+
+          <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+            Der Haken
+          </div>
+          <p className="m-0 mt-1 text-[15px] leading-relaxed text-fg-3">
+            {briefing.haken}
+          </p>
+        </div>
       )}
-      {interaction.until && (
-        <p className="m-0 mt-2 font-mono text-[11px] tracking-wider text-fg-3 uppercase">
-          Bis {interaction.until} möglich
-        </p>
-      )}
+    </div>
+  );
+}
+
+function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "mailto" }> }) {
+  /*
+    Die Zuteilung hängt an der Gerätekennung und nicht an einem Würfel: Wer die
+    Seite neu lädt, während er noch schreibt, soll dieselbe Rolle wiederfinden.
+  */
+  const briefing = useRef(
+    interaction.briefing ? briefingFuer(participantId()) : null,
+  ).current;
+
+  const betreff = briefing?.betreff ?? interaction.subject;
+  const text = briefing?.text ?? interaction.body;
+
+  const href =
+    `mailto:${interaction.to}` +
+    `?subject=${encodeURIComponent(betreff)}` +
+    `&body=${encodeURIComponent(text)}`;
+
+  return (
+    <div className="grid gap-4">
+      {briefing && <BriefingKarte briefing={briefing} />}
+
+      <div className={CARD}>
+        <p className="m-0 mb-4 text-lg leading-relaxed text-fg-2">{interaction.hint}</p>
+        <a
+          href={href}
+          className="block rounded-xl bg-[color:var(--accent)] px-5 py-4 text-center text-lg font-semibold text-stage"
+        >
+          {interaction.label}
+        </a>
+        {interaction.privacy && (
+          <p className="m-0 mt-4 text-sm leading-relaxed text-fg-3">{interaction.privacy}</p>
+        )}
+        {interaction.until && (
+          <p className="m-0 mt-2 font-mono text-[11px] tracking-wider text-fg-3 uppercase">
+            Bis {interaction.until} möglich
+          </p>
+        )}
+      </div>
     </div>
   );
 }

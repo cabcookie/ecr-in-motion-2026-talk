@@ -262,6 +262,15 @@ export type Interaction = MitZusammenhang &
       persist?: boolean;
       /** Bis wann der Knopf angeboten wird, als HH:MM Ortszeit. */
       until?: string;
+      /**
+       * Jedem Teilnehmer eine Rolle zuteilen und den Entwurf dazu vorfüllen.
+       *
+       * Ohne das schreibt jeder ins Blaue: Man weiß weder, für welche Marke man
+       * steht, noch was Nordkorb davon führt. Bewusst nicht überall an — in
+       * Abschnitt 15 soll der Text ausdrücklich unverändert bleiben, dort wäre
+       * ein Briefing das Gegenteil des Punktes.
+       */
+      briefing?: boolean;
     }
   /**
    * Gespräch mit dem Agenten auf dem Handy. Der Systemprompt ist einsehbar —
