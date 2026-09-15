@@ -8,8 +8,8 @@
  * Lokal ist Realtime ein WebSocket-Server im Prozess, in AWS AppSync Events.
  * Derselbe Code, kein Unterschied im Frontend.
  */
-import { Agent, ApiNamespace, BedrockModels, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
-import { SYSTEM_PROMPT } from '../src/slides/agent';
+import { ApiNamespace, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
+import { chatAgent } from './agent';
 import { z } from 'zod';
 
 const scope = new Scope('ecr-masterclass');
@@ -91,36 +91,12 @@ const rtAnswers = new Realtime(scope, 'answers-live', {
  * eingebauten Canned-Provider zurück. Die Antworten sind dann Attrappen, aber
  * Streaming, Verlauf und Wiederaufnahme lassen sich damit vollständig prüfen.
  */
-// Kurze Kennung mit Absicht: der Name des S3-Buckets für die Sitzungsstände
-// wird aus Stack- und Blockkennung zusammengesetzt und darf 63 Zeichen nicht
-// überschreiten. 'lisa-assistant' sprengte das Limit um zwei Zeichen.
-const chatAgent = new Agent(scope, 'berater', {
-  /*
-    SMART ist Opus 4.8 — dasselbe Modell wie im Mailweg. FAST (Haiku) bleibt
-    als Rückfall stehen: Wenn am Vortragsabend achtzig Handys gleichzeitig
-    schreiben und Opus drosselt, ist eine schnellere Antwort besser als keine.
-  */
-  model: { deployed: [BedrockModels.SMART, BedrockModels.FAST] },
-  systemPrompt: SYSTEM_PROMPT,
-  streamingMode: 'token',
-  /** Ein Saal voller Handys — der Verlauf soll nicht unbegrenzt mitwachsen. */
-  conversation: { strategy: 'sliding-window', windowSize: 20 },
-  /** Ohne Tools endet ein Zug nach einem Modellaufruf. Mehr wäre ein Fehler. */
-  maxLlmCalls: 2,
-  /*
-    Keine Werkzeuge, und das ist hier keine Sparsamkeit, sondern eine Sperre.
-
-    Dieser Agent spricht mit Lisa — also mit dem Teilnehmer am Handy. Er darf
-    deshalb UNTER KEINEN UMSTÄNDEN ins Postfach schreiben können: Was zwischen
-    ihm und Lisa besprochen wird, ist intern, und der Absender einer Mail ist
-    ein Außenstehender. Der Mail-Agent trennt dieselben beiden Kanäle von der
-    anderen Seite her (frage_lisa in aws-blocks/mail/werkzeuge.ts).
-
-    Wer hier später ein Werkzeug ergänzt, muss zuerst zeigen, dass es keinen
-    Weg nach draußen öffnet.
-  */
-  maxToolIterations: false,
-});
+/*
+  Der Agent kommt aus `agent/` — dieselbe Definition, die auch hinter dem
+  Postfach steht. Was ihn hier unterscheidet, ist einzig sein Antwortwerkzeug:
+  Er kann im Chat antworten und keine Mail senden.
+*/
+const berater = chatAgent(scope);
 
 export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /**
@@ -192,7 +168,7 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Neues Gespräch beginnen. */
   async chatStart(participantId: string) {
-    return { conversationId: await chatAgent.createConversationId(participantId) };
+    return { conversationId: await berater.createConversationId(participantId) };
   },
 
   /**
@@ -205,16 +181,22 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
     channelId: string,
     participantId: string,
   ) {
-    await chatAgent.stream(message, { conversationId, channelId, userId: participantId });
+    await berater.stream(message, {
+      conversationId,
+      channelId,
+      userId: participantId,
+      /* Pflicht, seit der Agent ein Kontextschema hat: Wer schreibt hier? */
+      context: { absender: participantId },
+    });
   },
 
   /** Verlauf — damit ein gesperrtes Handy sein Gespräch wiederfindet. */
   async chatHistory(conversationId: string) {
-    return { messages: await chatAgent.getConversation(conversationId) };
+    return { messages: await berater.getConversation(conversationId) };
   },
 
   /** Kanal, über den die Antwort Stück für Stück hereinkommt. */
   async chatChannel(channelId: string) {
-    return chatAgent.getChannel(channelId);
+    return berater.getChannel(channelId);
   },
 }));
