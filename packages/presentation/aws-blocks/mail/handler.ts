@@ -98,7 +98,7 @@ async function verarbeite(meldung: SesMeldung): Promise<void> {
                 Modell selbst geschriebene Betreffzeile landete im Rumpf.
               */
               betreff: lauf.antwort?.betreff || eingang.betreff,
-              text: baueAntwort(postfach.modus, lauf),
+              text: baueAntwort(postfach.modus, lauf, eingang),
               inAntwortAuf: eingang.messageId,
             }),
             "utf8",

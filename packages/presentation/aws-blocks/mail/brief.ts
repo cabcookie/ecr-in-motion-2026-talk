@@ -49,6 +49,90 @@ const SYSTEMNAMEN: Record<string, string> = {
   kategorie_ziele: "Kategorieplan — Ziele des Geschäftsjahrs",
 };
 
+const GRUENDE: Record<string, string> = {
+  nicht_gefunden: "Dazu liegt dort nichts vor.",
+  nicht_zustaendig: "Dafür ist diese Kategorie nicht zuständig.",
+  unvollstaendig: "Die Anfrage war für dieses System nicht vollständig genug.",
+  nicht_erreichbar: "Das System hat nicht geantwortet.",
+};
+
+/**
+ * Was dabei herauskam — in einem Satz, und ohne Werte.
+ *
+ * Diese Zeilen gehen an den ABSENDER, also an einen Lieferanten, mit dem wir
+ * verhandeln. Er darf erfahren, OB eine Bedingung erfüllt ist; er darf nicht
+ * erfahren, MIT WELCHEM WERT. Ein Rohertrag von 36,0 %, die Belegung des
+ * Regals oder der Name des Artikels, der weichen müsste, sind genau die
+ * Angaben, die in der Verhandlung gegen uns arbeiten.
+ *
+ * Deshalb wird hier nicht das Ergebnis wiedergegeben, sondern sein Befund. Der
+ * Agent hält sich im Brief an dieselbe Regel; diese Fusszeile dürfte sie nicht
+ * unterlaufen.
+ */
+function ergebnisSatz(system: string, e: Record<string, unknown>): string {
+  if (e.verfuegbar === false) {
+    return GRUENDE[String(e.grund)] ?? "Dieses System konnte nichts beitragen.";
+  }
+
+  switch (system) {
+    case "kalkulation_marge":
+      return e.erfuellt
+        ? "Die Kalkulation erfüllt unsere Kategorievorgabe."
+        : "Die Kalkulation erfüllt unsere Kategorievorgabe nicht.";
+
+    case "regalplanung_platz":
+      return Number(e.facingsFrei) > 0
+        ? "In der betreffenden Regalzone ist noch Platz."
+        : "Die betreffende Regalzone ist voll — eine Neulistung setzt eine Auslistung voraus.";
+
+    case "warenwirtschaft_kategorie":
+      return String(e.entwicklung ?? "").trimStart().startsWith("-")
+        ? "Die Kategorie entwickelt sich insgesamt rückläufig."
+        : "Die Kategorie entwickelt sich insgesamt positiv.";
+
+    case "warenwirtschaft_artikel":
+      return "Der Artikelstamm dieser Kategorie wurde geprüft.";
+
+    case "marktdaten_segment":
+      return `Das Produkt fällt ins Segment „${String(e.segment ?? "—")}“; dessen Entwicklung im Markt ist mir bekannt.`;
+
+    case "aktionskalender_zeitraum":
+      return e.fristErfuellt
+        ? Number(e.anzahlFreierFlaechen ?? 1) > 0
+          ? "Der Wunschtermin hält unsere Vorlauffrist, und es gibt freie Aktionsflächen in seiner Nähe."
+          : "Der Wunschtermin hält unsere Vorlauffrist."
+        : "Der Wunschtermin unterschreitet unsere Vorlauffrist für Aktionsflächen.";
+
+    case "listung_anforderungen":
+      return `Der Listungsweg dieser Kategorie hat ${Array.isArray(e.tore) ? e.tore.length : "mehrere"} Tore; ich habe geprüft, welche davon greifen.`;
+
+    case "kategorie_ziele":
+      return `Abgeglichen mit unserem Kategorieplan ${String(e.geschaeftsjahr ?? "")} — er legt fest, welche Käufergruppen wir halten und welche wir ausbauen.`;
+
+    default:
+      return "Abgefragt und in die Bewertung eingerechnet.";
+  }
+}
+
+/**
+ * Die ursprüngliche Nachricht, eingerückt wie in jedem Mailprogramm.
+ *
+ * Wer eine Antwort bekommt, will sehen, worauf sie sich bezieht — besonders
+ * wenn zwischen Anfrage und Antwort Stunden liegen oder man mehrere Anfragen
+ * geschickt hat.
+ */
+function zitat(eingang: { absenderName?: string; absender: string; text: string }): string[] {
+  const wer = eingang.absenderName ? `${eingang.absenderName} <${eingang.absender}>` : eingang.absender;
+  const zeilen = eingang.text.trim().split("\n");
+  /* Eine sehr lange Mail nicht vollständig spiegeln — der Bezug reicht. */
+  const gekuerzt = zeilen.length > 40 ? [...zeilen.slice(0, 40), "…"] : zeilen;
+  return [`Am ${heute()} schrieb ${wer}:`, "", ...gekuerzt.map((z) => (z ? `> ${z}` : ">"))];
+}
+
+function heute(): string {
+  return new Date().toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
 /**
  * Die Antwortmail.
  *
@@ -57,7 +141,7 @@ const SYSTEMNAMEN: Record<string, string> = {
  * Abschnitt 24 vom EU AI Act her fordert. Dass eine Maschine geantwortet hat,
  * steht ebenfalls dort und nicht im Kleingedruckten.
  */
-export function baueAntwort(modus: Modus, lauf: Lauf): string {
+export function baueAntwort(modus: Modus, lauf: Lauf, eingang?: Eingang): string {
   /*
     Der Brief ist das, was der Agent dem Sendewerkzeug übergeben hat — nicht
     sein letzter Modellzug. Der trug die Vorrede mit („Ich habe alle
@@ -72,10 +156,20 @@ export function baueAntwort(modus: Modus, lauf: Lauf): string {
   if (modus === "assistent") {
     teile.push("— — —", "");
     if (lauf.schritte.length > 0) {
-      teile.push("Was ich dafür abgefragt habe:");
-      lauf.schritte.forEach((s, i) =>
-        teile.push(`  ${i + 1}. ${SYSTEMNAMEN[s] ?? s}`),
-      );
+      teile.push("Was ich dafür abgefragt habe, und warum:", "");
+      /*
+        Die Begründung stammt vom Agenten selbst, gegeben BEVOR er das Ergebnis
+        kannte. Fehlt sie — etwa weil ein älterer Lauf sie nicht mitführte —,
+        bleibt der Systemname allein stehen, statt dass hier eine erfunden wird.
+      */
+      lauf.schritte.forEach((system, i) => {
+        const beleg = lauf.belege.filter((b) => b.system === system)[0];
+        teile.push(`  ${i + 1}. ${SYSTEMNAMEN[system] ?? system}`);
+        if (beleg?.warum) teile.push(`     ${beleg.warum.trim()}`);
+        if (beleg) teile.push(`     → ${ergebnisSatz(system, beleg.ergebnis)}`);
+        teile.push("");
+      });
+      teile.pop();
     } else {
       teile.push("Ich habe für diese Antwort kein System abgefragt.");
     }
@@ -100,6 +194,15 @@ export function baueAntwort(modus: Modus, lauf: Lauf): string {
       "Agenten ist es nicht: Welche Systeme er befragt und was er daraus",
       "schließt, entscheidet er selbst.",
     );
+  }
+
+  /*
+    Die ursprüngliche Nachricht zitiert, wie es jedes Mailprogramm täte. Wer
+    mehrere Anfragen geschickt hat oder Stunden später liest, sieht sonst nicht,
+    worauf sich die Antwort bezieht.
+  */
+  if (eingang?.text?.trim()) {
+    teile.push("", "— — —", "", ...zitat(eingang));
   }
 
   teile.push(
