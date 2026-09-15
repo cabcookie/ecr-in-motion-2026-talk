@@ -6,6 +6,8 @@
  * belegen.
  */
 
+import { type Abstand, alsStand, anker, verschiebe } from '../zeit/anker';
+
 export interface Kategorievorgabe {
   readonly kategorie: string;
   /** Mindest-Rohertrag als Anteil, nicht als Prozentzahl. 0,30 sind 30 %. */
@@ -18,17 +20,19 @@ export interface Kategorievorgabe {
   readonly mehrwertsteuer: number;
   /** Vorlauf für Aktionsflächen. */
   readonly vorlaufWochen: number;
-  readonly stand: string;
+  /** Abstand des Datenstands zum Ankerdatum — nie ein festes Datum. */
+  readonly standAbstand: Abstand;
 }
 
-/*
-  `stand` ist vorerst ein festes Datum. Sobald das Ankerdatum steht (sx5y),
-  kommt es von dort — sonst altert die Angabe zwischen Probe und Auftritt.
-*/
 export const SCHOKOLADE_UND_PRALINEN: Kategorievorgabe = {
   kategorie: 'Schokolade & Pralinen',
   mindestRohertrag: 0.3,
   mehrwertsteuer: 0.07,
   vorlaufWochen: 4,
-  stand: '2026-09-12',
+  standAbstand: { tage: -4 },
 };
+
+/** Der Datenstand der Warenwirtschaft, lesbar — „12.09." */
+export function standDerKategorie(): string {
+  return alsStand(verschiebe(anker(), SCHOKOLADE_UND_PRALINEN.standAbstand));
+}

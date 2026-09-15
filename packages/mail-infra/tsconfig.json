@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    // pnpm legt für dieses Paket einen Link auf eine aws-cdk-lib-Variante ohne
+    // aufgelöstes `constructs`-Peer, und die gibt es im Store nicht. Statt das
+    // zu umgehen, zeigen wir auf die Auflösung, die `packages/infra` bekommt —
+    // dasselbe Paket, dieselbe Fassung. Dieser Stack wird ohnehin nicht von
+    // hier ausgerollt; er soll nur nachweislich übersetzen.
+    "paths": {
+      "aws-cdk-lib": ["../infra/node_modules/aws-cdk-lib"],
+      "aws-cdk-lib/*": ["../infra/node_modules/aws-cdk-lib/*"],
+      "constructs": ["../infra/node_modules/constructs"]
+    }
+  },
+  "include": ["lib"]
+}

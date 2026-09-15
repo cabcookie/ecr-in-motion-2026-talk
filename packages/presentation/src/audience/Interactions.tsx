@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { Interaction } from "@/slides/types";
 import { SEED_MAIL } from "@/slides/agent";
+import { briefingFuer, gruppenName, type Briefing } from "@/slides/briefing";
+import { participantId } from "./participant";
 import { useAgentChat } from "./useAgentChat";
 
 const CARD = "rounded-2xl border border-hair bg-stage-2 p-5";
@@ -57,14 +59,43 @@ function FreeText({
   interaction,
   value,
   onAnswer,
+  onWeitere,
 }: {
   interaction: Extract<Interaction, { kind: "text" }>;
   value?: string;
   onAnswer: (v: string) => void;
+  onWeitere?: (v: string, lfd: number) => void;
 }) {
-  const [draft, setDraft] = useState(value ?? "");
-  useEffect(() => setDraft(value ?? ""), [value]);
+  const mehrfach = interaction.mehrfach === true;
+  const [draft, setDraft] = useState(mehrfach ? "" : (value ?? ""));
+  /* Was dieses Gerät schon beigetragen hat — im Mehrfachmodus die ganze Liste. */
+  const [gesendet, setGesendet] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!mehrfach) setDraft(value ?? "");
+  }, [value, mehrfach]);
+
   const dirty = draft.trim() !== (value ?? "").trim();
+  const schonDa = gesendet.includes(draft.trim());
+  const absendbar = draft.trim() !== "" && (mehrfach ? !schonDa : dirty);
+
+  function senden() {
+    const text = draft.trim();
+    if (!text) return;
+    if (mehrfach) {
+      /*
+        Die erste Antwort geht den gewöhnlichen Weg, jede weitere bekommt eine
+        laufende Nummer. So bleibt die Korrektur der ersten möglich, und die
+        Leinwand sieht trotzdem alles.
+      */
+      if (gesendet.length === 0) onAnswer(text);
+      else onWeitere?.(text, gesendet.length);
+      setGesendet((g) => [...g, text]);
+      setDraft("");
+    } else {
+      onAnswer(text);
+    }
+  }
 
   return (
     <div className={CARD}>
@@ -72,61 +103,240 @@ function FreeText({
         {interaction.prompt}
       </p>
       <div className="mb-4 flex flex-wrap gap-2">
-        {interaction.examples.map((ex) => (
-          <button
-            key={ex}
-            type="button"
-            onClick={() => setDraft(ex)}
-            className="rounded-full border border-hair bg-stage px-3 py-1.5 text-sm text-fg-3 active:bg-stage-3"
-          >
-            {ex}
-          </button>
-        ))}
+        {interaction.examples
+          .filter((ex) => !gesendet.includes(ex))
+          .map((ex) => (
+            <button
+              key={ex}
+              type="button"
+              onClick={() => setDraft(ex)}
+              className="rounded-full border border-hair bg-stage px-3 py-1.5 text-sm text-fg-3 active:bg-stage-3"
+            >
+              {ex}
+            </button>
+          ))}
       </div>
       <textarea
         id={`text-${interaction.id}`}
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
-        placeholder={interaction.placeholder}
+        placeholder={
+          mehrfach && gesendet.length ? "Und was noch?" : interaction.placeholder
+        }
         rows={3}
         className="w-full resize-none rounded-xl border border-hair bg-stage px-4 py-3 text-lg text-fg placeholder:text-fg-3 focus:border-[color:var(--accent)] focus:outline-none"
       />
       <button
         type="button"
-        disabled={!draft.trim() || !dirty}
-        onClick={() => onAnswer(draft.trim())}
+        disabled={!absendbar}
+        onClick={senden}
         className="mt-3 w-full rounded-xl bg-[color:var(--accent)] px-5 py-4 text-lg font-semibold text-stage disabled:opacity-30"
       >
-        {dirty ? "Senden" : "Gesendet"}
+        {mehrfach
+          ? gesendet.length
+            ? "Noch eine senden"
+            : "Senden"
+          : dirty
+            ? "Senden"
+            : "Gesendet"}
       </button>
+
+      {/*
+        Was schon draußen ist, bleibt sichtbar. Ohne das wüsste im
+        Mehrfachmodus niemand, ob die letzte Eingabe angekommen ist — das Feld
+        leert sich ja.
+      */}
+      {gesendet.length > 0 && (
+        <>
+          <p className="m-0 mt-5 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+            Von Dir gesendet
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {gesendet.map((g) => (
+              <span
+                key={g}
+                className="rounded-full border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/10 px-3 py-1.5 text-sm text-fg-2"
+              >
+                ✓ {g}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 /** Öffnet das Mailprogramm mit vorformuliertem Text. */
-function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "mailto" }> }) {
-  const href =
-    `mailto:${interaction.to}` +
-    `?subject=${encodeURIComponent(interaction.subject)}` +
-    `&body=${encodeURIComponent(interaction.body)}`;
+/**
+ * Das Briefing: wer der Teilnehmer in dieser Mail ist.
+ *
+ * Aufgeklappt wäre es eine Wand aus Text über dem Knopf, und der Knopf ist das,
+ * worauf es ankommt. Zugeklappt ist es eine Zeile, die neugierig macht — wer
+ * sie überliest, kann trotzdem schreiben.
+ *
+ * Die Bestandstabelle steht bewusst mit drin. Sie ist das, was der Teilnehmer
+ * über sich wissen muss, und sie stammt aus demselben Sortiment, in dem der
+ * Agent nachschlägt: Was hier steht, findet er auch.
+ */
+function BriefingKarte({ briefing }: { briefing: Briefing }) {
+  const [offen, setOffen] = useState(false);
 
   return (
-    <div className={CARD}>
-      <p className="m-0 mb-4 text-lg leading-relaxed text-fg-2">{interaction.hint}</p>
-      <a
-        href={href}
-        className="block rounded-xl bg-[color:var(--accent)] px-5 py-4 text-center text-lg font-semibold text-stage"
+    <div className="rounded-2xl border border-[color:var(--accent)]/40 bg-stage-2">
+      <button
+        type="button"
+        onClick={() => setOffen((o) => !o)}
+        aria-expanded={offen}
+        className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
       >
-        {interaction.label}
-      </a>
-      {interaction.privacy && (
-        <p className="m-0 mt-4 text-sm leading-relaxed text-fg-3">{interaction.privacy}</p>
+        <span className="min-w-0">
+          <span className="block font-mono text-[10px] tracking-[0.14em] text-[color:var(--accent)] uppercase">
+            Dein Briefing
+          </span>
+          <span className="mt-0.5 block text-lg font-semibold text-fg">
+            {briefing.rolle}, {briefing.firma}
+          </span>
+        </span>
+        <span className="shrink-0 font-mono text-[11px] text-fg-3">
+          {offen ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {offen && (
+        <div className="border-t border-hair px-5 py-4">
+          <p className="m-0 text-base leading-relaxed text-fg-2">
+            Du vertrittst <b className="text-fg">{briefing.marke}</b> gegenüber Nordkorb.
+          </p>
+
+          <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+            Was Nordkorb von Dir führt
+          </div>
+          {briefing.bestand.length === 0 ? (
+            <p className="m-0 mt-2 text-[15px] leading-relaxed text-fg-2">
+              Nichts. Nordkorb führt Deine Marke noch nicht — Du willst erstmals
+              gelistet werden.
+            </p>
+          ) : (
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full border-collapse text-left text-[13px]">
+                <thead>
+                  <tr className="font-mono text-[10px] tracking-[0.1em] text-fg-3 uppercase">
+                    <th className="py-1 pr-2 font-normal">Artikel</th>
+                    <th className="py-1 pr-2 text-right font-normal">Fac.</th>
+                    <th className="py-1 pr-2 text-right font-normal">Absatz/Jahr</th>
+                    <th className="py-1 text-right font-normal">Entw.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {briefing.bestand.map((a) => (
+                    <tr key={a.bezeichnung} className="border-t border-hair">
+                      <td className="py-1.5 pr-2 text-fg-2">
+                        {a.bezeichnung}
+                        <span className="text-fg-3">
+                          {" "}
+                          {a.gramm} g · {a.zone}
+                        </span>
+                      </td>
+                      <td className="py-1.5 pr-2 text-right tabular-nums text-fg-2">
+                        {a.facings}
+                      </td>
+                      <td className="py-1.5 pr-2 text-right tabular-nums text-fg-2">
+                        {a.absatzJahr.toLocaleString("de-DE")}
+                      </td>
+                      <td
+                        className={`py-1.5 text-right whitespace-nowrap tabular-nums ${
+                          a.entwicklung < 0 ? "text-b1" : "text-b4"
+                        }`}
+                      >
+                        {a.entwicklung > 0 ? "+" : ""}
+                        {a.entwicklung.toLocaleString("de-DE")} %
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {briefing.produkt && (
+            <>
+              <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+                Dein Produkt
+              </div>
+              <p className="m-0 mt-1 text-[15px] leading-relaxed text-fg-2">
+                <b className="text-fg">{briefing.produkt.name}</b> — {briefing.produkt.was}
+              </p>
+              {/*
+                Warum jemand danach greift. Der Satz, den der Agent gegen die
+                Ziele der Kategorie halten kann — ein Adjektiv könnte er nicht.
+              */}
+              <p className="m-0 mt-2 text-[15px] leading-relaxed text-fg-3">
+                {briefing.produkt.warum}
+              </p>
+              <p className="m-0 mt-2 font-mono text-[11px] tracking-[0.06em] text-fg-3">
+                Käufergruppe: {gruppenName(briefing.produkt.gruppe)}
+              </p>
+            </>
+          )}
+
+          <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+            Dein Ziel
+          </div>
+          <p className="m-0 mt-1 text-[15px] leading-relaxed text-fg-2">
+            {briefing.auftrag}
+          </p>
+
+          <div className="mt-4 font-mono text-[10px] tracking-[0.14em] text-fg-3 uppercase">
+            Der Haken
+          </div>
+          <p className="m-0 mt-1 text-[15px] leading-relaxed text-fg-3">
+            {briefing.haken}
+          </p>
+        </div>
       )}
-      {interaction.until && (
-        <p className="m-0 mt-2 font-mono text-[11px] tracking-wider text-fg-3 uppercase">
-          Bis {interaction.until} möglich
-        </p>
-      )}
+    </div>
+  );
+}
+
+function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "mailto" }> }) {
+  /*
+    Die Zuteilung hängt an der Gerätekennung und nicht an einem Würfel: Wer die
+    Seite neu lädt, während er noch schreibt, soll dieselbe Rolle wiederfinden.
+  */
+  const briefing = useRef(
+    interaction.briefing ? briefingFuer(participantId()) : null,
+  ).current;
+
+  const betreff = briefing?.betreff ?? interaction.subject;
+  const text = briefing?.text ?? interaction.body;
+
+  const href =
+    `mailto:${interaction.to}` +
+    `?subject=${encodeURIComponent(betreff)}` +
+    `&body=${encodeURIComponent(text)}`;
+
+  return (
+    <div className="grid gap-4">
+      {briefing && <BriefingKarte briefing={briefing} />}
+
+      <div className={CARD}>
+        <p className="m-0 mb-4 text-lg leading-relaxed text-fg-2">{interaction.hint}</p>
+        <a
+          href={href}
+          className="block rounded-xl bg-[color:var(--accent)] px-5 py-4 text-center text-lg font-semibold text-stage"
+        >
+          {interaction.label}
+        </a>
+        {interaction.privacy && (
+          <p className="m-0 mt-4 text-sm leading-relaxed text-fg-3">{interaction.privacy}</p>
+        )}
+        {interaction.until && (
+          <p className="m-0 mt-2 font-mono text-[11px] tracking-wider text-fg-3 uppercase">
+            Bis {interaction.until} möglich
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -288,10 +498,46 @@ export function InteractionView({
   interaction,
   answers,
   onAnswer,
+  onWeitere,
 }: {
   interaction: Interaction;
   answers: Record<string, string>;
   onAnswer: (key: string, v: string) => void;
+  onWeitere?: (key: string, v: string, lfd: number) => void;
+}) {
+  return (
+    <div className="grid gap-4">
+      {/*
+        Der Zusammenhang steht über der Interaktion, nicht in ihr: Auf dem Handy
+        ist die Leinwand nicht zu sehen, und eine Frage ohne ihren Anlass ist
+        eine andere Frage. Bei `wait` entfällt er — dort ist der Satz selbst der
+        ganze Inhalt und würde sonst doppelt stehen.
+      */}
+      {interaction.kind !== "wait" && interaction.message && (
+        <p className="m-0 text-base leading-relaxed text-balance text-fg-3">
+          {interaction.message}
+        </p>
+      )}
+      <Koerper
+        interaction={interaction}
+        answers={answers}
+        onAnswer={onAnswer}
+        onWeitere={onWeitere}
+      />
+    </div>
+  );
+}
+
+function Koerper({
+  interaction,
+  answers,
+  onAnswer,
+  onWeitere,
+}: {
+  interaction: Interaction;
+  answers: Record<string, string>;
+  onAnswer: (key: string, v: string) => void;
+  onWeitere?: (key: string, v: string, lfd: number) => void;
 }) {
   switch (interaction.kind) {
     case "poll":
@@ -302,6 +548,7 @@ export function InteractionView({
           interaction={interaction}
           value={answers[interaction.id]}
           onAnswer={(v) => onAnswer(interaction.id, v)}
+          onWeitere={(v, lfd) => onWeitere?.(interaction.id, v, lfd)}
         />
       );
     case "mailto":

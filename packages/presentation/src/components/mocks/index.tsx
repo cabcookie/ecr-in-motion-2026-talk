@@ -11,10 +11,12 @@ import {
   StatementView,
   TimelineView,
   TweetsView,
+  BildView,
 } from "./PlainMocks";
 import { BioView, MailThreadView, QrView, RevealView } from "./StepMocks";
 import { ResultsView } from "./Results";
 import { TShapeView } from "./TShape";
+import { ArchitekturView } from "./Architektur";
 
 export function MockView({
   mock,
@@ -27,6 +29,8 @@ export function MockView({
   step?: number;
 }) {
   switch (mock.t) {
+    case "architektur":
+      return <ArchitekturView m={mock} step={step} />;
     case "mail":
       return <MailMockView m={mock} />;
     case "chat":
@@ -55,6 +59,8 @@ export function MockView({
       return <RevealView m={mock} step={step} />;
     case "bio":
       return <BioView m={mock} />;
+    case "bild":
+      return <BildView m={mock} />;
     case "qr":
       return <QrView m={mock} />;
     case "results":

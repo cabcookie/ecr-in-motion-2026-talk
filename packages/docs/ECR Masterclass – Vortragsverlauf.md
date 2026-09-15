@@ -52,7 +52,7 @@ Der Agent empfängt die E-Mail und arbeitet den gesamten Vorgang eigenständig a
 1. **E-Mail lesen & verstehen:** Der Agent erkennt: Listungsantrag, exklusive Einführung, Wunschtermin 15. Oktober.
 2. **Warenwirtschaft abfragen:** Kategorie „Schokolade & Pralinen" wächst (+3,2% YoY). Underperformer identifiziert: „Nocturne Mini" (−12% YoY) – Kandidat für Auslistung.
 3. **Marktdaten prüfen:** Segment „Bites / Snacking" im Aufwärtstrend – das Produkt passt ins Portfolio.
-4. **Marge berechnen:** EK 2,89€, empf. VK 4,49€ → Marge 34,2% (über Kategorievorgabe von 30%). Wirtschaftlich attraktiv.
+4. **Marge berechnen:** EK 2,89€, empf. VK 4,49€ → Rohertrag 31,1% auf den Netto-VK (7% MwSt), über der Kategorievorgabe von 30% — aber nur mit gut einem Punkt Luft.
 5. **Entscheidende Entdeckung – Aktionsplanung:** Der Agent stellt fest, dass eine Woche nach dem gewünschten Starttermin, am 22. Oktober, eine andere Kampagne ausläuft. Für diese Kampagne waren in 12 Märkten im Hamburger Raum Zweitplatzierungen (Aufsteller) aufgebaut. Dieser Platz wird frei.
 6. **Business Case rechnen:** Wenn der Start um eine Woche auf den 22. Oktober verschoben wird, können die freiwerdenden Aufsteller für eine Einführungsaktion von Hallbach Crispy Bites genutzt werden. Der Agent berechnet den erwarteten Uplift durch die Zweitplatzierung – das Ergebnis ist positiv.
 7. **Gegenvorschlag an Hallbach senden:** Der Agent antwortet auf die E-Mail: „Wir können das Produkt listen. Wir schlagen einen Start am 22. Oktober vor, um in 12 Hamburger Märkten freiwerdende Display-Flächen für eine Einführungsaktion zu nutzen. Bedingung: 15% Einführungsrabatt für die ersten 4 Wochen."
@@ -182,7 +182,7 @@ Wir bauen jetzt in vier Stufen einen KI-Agenten auf – von nutzlos bis autonom.
 
 **Was wir technisch erklären:** Tools – die Handlungsfähigkeit. Bisher konnte der Agent nur reden. Durch Tools kann er Daten abrufen, Systeme abfragen und Entwürfe produzieren. Er bereitet die Arbeit vor; der Mensch entscheidet und klickt „Senden".
 
-**Demo:** Der Agent hat alle Systeme abgefragt und meldet: „Die Kategorie Pralinen wächst +3,2%. Underperformer: Nocturne Mini (−12% YoY). Platz im Regal: Ja, wenn Nocturne Mini delisted wird. Marge Crunchy Bites: 34,2% (über Kategorievorgabe 30%). Außerdem: Am 22. Oktober läuft eine Kampagne in 12 Hamburger Märkten aus – die Aufsteller werden frei. Wenn wir den Start um eine Woche verschieben, können wir die Flächen für eine Einführungsaktion nutzen. Hier ist ein Antwortentwurf an Hallbach mit dem Gegenvorschlag." – Der Mensch prüft, passt ggf. an, und klickt „Senden".
+**Demo:** Der Agent hat alle Systeme abgefragt und meldet: „Die Kategorie Pralinen wächst +3,2%. Underperformer: Nocturne Mini (−12% YoY). Platz im Regal: Ja, wenn Nocturne Mini delisted wird. Rohertrag Crispy Bites: 31,1% (über Kategorievorgabe 30%, aber knapp). Außerdem: Am 22. Oktober läuft eine Kampagne in 12 Hamburger Märkten aus – die Aufsteller werden frei. Wenn wir den Start um eine Woche verschieben, können wir die Flächen für eine Einführungsaktion nutzen. Hier ist ein Antwortentwurf an Hallbach mit dem Gegenvorschlag." – Der Mensch prüft, passt ggf. an, und klickt „Senden".
 
 ---
 

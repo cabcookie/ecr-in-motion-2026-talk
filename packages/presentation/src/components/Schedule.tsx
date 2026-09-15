@@ -35,10 +35,23 @@ function ladeVersatz(): number {
  * Tageszeit durchspielen und die Zeiten prüfen lassen. Für den Ernstfall gilt
  * 18:00, und zwar auch dann, wenn es ein paar Minuten später losgeht: das Ende
  * um 19:00 verschiebt sich nicht mit.
+ *
+ * `geprobt` heißt: Die Soll-Uhrzeit links stammt aus einer aufgezeichneten
+ * Probe, nicht aus den Schätzungen in den Foliendaten. Das gehört sichtbar
+ * gemacht — sonst weiß man auf der Bühne nicht, gegen was man gerade misst.
  */
-export function Schedule({ at }: { at?: string }) {
+export function Schedule({
+  at,
+  geprobt = false,
+  verwerfen,
+}: {
+  at?: string;
+  geprobt?: boolean;
+  verwerfen?: () => void;
+}) {
   const [now, setNow] = useState(() => new Date());
   const [versatz, setVersatz] = useState(ladeVersatz);
+  const [fragt, setFragt] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
@@ -108,6 +121,31 @@ export function Schedule({ at }: { at?: string }) {
         </div>
         <span className="font-mono text-[10px] tracking-[0.1em] text-fg-3 uppercase">
           {versatz ? `Probe · Beginn ${hhmm(START_SOLL + versatz)}` : "Ernstfall · Ende 19:00"}
+          {geprobt &&
+            (fragt ? (
+              <>
+                {" · "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    verwerfen?.();
+                    setFragt(false);
+                  }}
+                  className="text-b1 uppercase hover:underline"
+                >
+                  Folienzeiten?
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setFragt(true)}
+                title="Zurück auf die geschätzten Zeiten aus den Foliendaten"
+                className="text-b3 uppercase hover:underline"
+              >
+                {" · "}geprobte Zeiten
+              </button>
+            ))}
         </span>
       </div>
     </div>

@@ -8,8 +8,9 @@
  * Lokal ist Realtime ein WebSocket-Server im Prozess, in AWS AppSync Events.
  * Derselbe Code, kein Unterschied im Frontend.
  */
-import { Agent, ApiNamespace, BedrockModels, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
-import { SYSTEM_PROMPT } from '../src/slides/agent';
+import { ApiNamespace, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
+import { chatAgent, postfachAgent } from './agent';
+import { perSes } from './agent/versand';
 import { z } from 'zod';
 
 const scope = new Scope('ecr-masterclass');
@@ -77,12 +78,32 @@ const rtAnswers = new Realtime(scope, 'answers-live', {
 });
 
 /**
- * Der Agent aus Abschnitt 16.
+ * Ein Zurücksetzen.
  *
- * Er bekommt den Systemprompt — und bewusst keine Tools. Genau das ist der
- * Punkt der Stufe: Er weiß, welche Angaben ihm fehlen und in welchem System
- * sie stünden, kann sie aber nicht holen. Also fragt er die Teilnehmer.
- * Die sind seine Werkzeuge.
+ * Inhaltlich trägt das Ereignis nichts — es sagt nur: fangt von vorn an. Der
+ * Zeitstempel steht trotzdem drin, damit zwei Zurücksetzungen hintereinander
+ * unterscheidbar bleiben und die zweite nicht als Wiederholung der ersten
+ * durchfällt.
+ */
+const resetEvent = z.object({ at: z.number(), von: z.string() });
+
+export type ResetEvent = z.infer<typeof resetEvent>;
+
+const rtReset = new Realtime(scope, 'reset-live', {
+  namespaces: { reset: Realtime.namespace(resetEvent) },
+});
+
+/**
+ * Der Agent im Handy-Chat.
+ *
+ * Dieselbe Definition, die auch hinter dem Postfach steht — er kann nur eines
+ * nicht: eine Mail senden. Dafür antwortet er im Chat.
+ *
+ * ACHTUNG, hier stand bis zur Vereinheitlichung das Gegenteil: „bewusst keine
+ * Tools". Das stimmt nicht mehr. `chatAgent` bringt alle Fachwerkzeuge mit,
+ * einschließlich der Ziele. Der stufenweise Aufbau — erst Prompt, dann
+ * Werkzeuge einzeln dazu —, der den Unterschied auf dem Handy erlebbar machen
+ * soll, ist NOCH NICHT gebaut.
  *
  * Der Prompt kommt aus den Foliendaten, damit der Agent mit demselben Text
  * läuft, den das Publikum auf dem Handy aufklappen kann.
@@ -91,19 +112,91 @@ const rtAnswers = new Realtime(scope, 'answers-live', {
  * eingebauten Canned-Provider zurück. Die Antworten sind dann Attrappen, aber
  * Streaming, Verlauf und Wiederaufnahme lassen sich damit vollständig prüfen.
  */
-// Kurze Kennung mit Absicht: der Name des S3-Buckets für die Sitzungsstände
-// wird aus Stack- und Blockkennung zusammengesetzt und darf 63 Zeichen nicht
-// überschreiten. 'lisa-assistant' sprengte das Limit um zwei Zeichen.
-const chatAgent = new Agent(scope, 'berater', {
-  model: { deployed: [BedrockModels.BALANCED, BedrockModels.FAST] },
-  systemPrompt: SYSTEM_PROMPT,
-  streamingMode: 'token',
-  /** Ein Saal voller Handys — der Verlauf soll nicht unbegrenzt mitwachsen. */
-  conversation: { strategy: 'sliding-window', windowSize: 20 },
-  /** Ohne Tools endet ein Zug nach einem Modellaufruf. Mehr wäre ein Fehler. */
-  maxLlmCalls: 2,
-  maxToolIterations: false,
+const berater = chatAgent(scope);
+
+/**
+ * Eine Frage, die der Agent Lisa vorgelegt hat und die noch offen ist.
+ *
+ * Sie liegt hier und nicht im Protokoll, weil sie beantwortet werden muss:
+ * Solange sie offen ist, steht ein Vorgang still und eine Mail geht nicht
+ * hinaus. Der Indikator auf der Folie liest genau diesen Speicher.
+ */
+const offeneFrage = z.object({
+  id: z.string(),
+  frage: z.string(),
+  warum: z.string(),
+  absender: z.string(),
+  betreff: z.string(),
+  /** Welchen Zug Lisas Antwort fortsetzt. */
+  kanal: z.string(),
+  gestellt: z.number(),
+  /** Gesetzt, sobald geantwortet wurde — die Frage bleibt als Beleg stehen. */
+  antwort: z.string().optional(),
 });
+
+export type OffeneFrage = z.infer<typeof offeneFrage>;
+
+const fragen = new KVStore(scope, 'lisa-fragen', { schema: offeneFrage });
+
+/** Damit der Indikator aufleuchtet, ohne dass jemand nachfragen muss. */
+const rtFragen = new Realtime(scope, 'fragen-live', {
+  namespaces: { fragen: Realtime.namespace(offeneFrage) },
+});
+
+/**
+ * Der überschriebene Zeitplan.
+ *
+ * In den Foliendaten trägt jede Folie eine Soll-Uhrzeit, geschätzt bevor der
+ * Vortrag je gehalten wurde. Nach einer Probe steht hier, was er wirklich
+ * braucht — gemessene Verweildauer plus die geschätzte Zeit für die Stellen,
+ * an denen das Publikum mitmacht.
+ *
+ * Er liegt im Speicher und nicht im Browser, weil er den Vortrag betrifft und
+ * nicht das Gerät, von dem aus geprobt wurde: Wer vom Laptop probt und vom
+ * Tablet vorträgt, soll denselben Plan sehen.
+ */
+const planstand = z.object({
+  index: z.number().int().min(0),
+  step: z.number().int().min(0),
+  /** Soll-Uhrzeit als "18:09". */
+  at: z.string(),
+  /** Davon für die Interaktion vorgesehen, in Sekunden. */
+  interaktion: z.number(),
+});
+
+const zeitplan = z.object({
+  beginn: z.string(),
+  staende: z.array(planstand),
+  geschrieben: z.number(),
+  ausProbe: z.number(),
+  gemessen: z.number(),
+  interaktion: z.number(),
+});
+
+export type Zeitplan = z.infer<typeof zeitplan>;
+
+const plaene = new KVStore(scope, 'zeitplan', { schema: zeitplan });
+
+/** Es gibt genau einen geltenden Plan. Ältere zu behalten hieße, sie zu verwalten. */
+const PLAN = 'aktuell';
+
+/*
+  Zwei Postfächer, zwei Bestückungen, ein Agent.
+
+  Der Unterschied ist einzig, ob die Fachwerkzeuge dabei sind. Abschnitt 6
+  bekommt sie — dort soll der Agent fundiert antworten und selbst senden.
+  Abschnitt 15 bekommt sie nicht: Derselbe Agent, derselbe Prompt, aber er KANN
+  nichts nachschlagen. Also fragt er Lisa, und das ist der Punkt der Folie.
+*/
+const ablegen = async (f: OffeneFrage) => {
+  await fragen.put(f.id, f);
+  await rtFragen.publish('fragen', CHANNEL, f);
+};
+
+const postfaecher = {
+  assistent: postfachAgent(scope, 'post', perSes, ablegen, true),
+  probe: postfachAgent(scope, 'probe', perSes, ablegen, false),
+};
 
 export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /**
@@ -166,6 +259,81 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
     return rtAnswers.getChannel('answers', 'main');
   },
 
+  /**
+   * Alles zurücksetzen, was Teilnehmer eingegeben haben.
+   *
+   * Gedacht für die Proben: Nach einem Durchlauf stehen Antworten im Speicher,
+   * und die stünden am Vortragsabend als Punkte auf der Leinwand, bevor der
+   * erste Teilnehmer den QR-Code gescannt hat.
+   *
+   * Gelöscht wird nur, was aus dem Publikum kam — Antworten und die offenen
+   * Fragen des Agenten. Der Folienstand bleibt, sonst spränge der Vortrag beim
+   * Zurücksetzen an den Anfang.
+   *
+   * Der Zeitplan bleibt ebenfalls stehen, und das ist keine Nachlässigkeit: Er
+   * ist das Ergebnis einer Probe, nicht die Eingabe eines Teilnehmers. Ihn beim
+   * Leeren des Saals mitzulöschen hieße, vor jedem Durchlauf neu zu proben.
+   * Wer ihn loswerden will, nimmt `zeitplanVerwerfen`.
+   *
+   * Die Gespräche bleiben serverseitig stehen. Sie hängen an einer Kennung, die
+   * nur das jeweilige Handy kennt; werden die Handys zurückgesetzt, findet sie
+   * niemand mehr. Sie zu löschen hieße, jedes Gespräch einzeln aufzuzählen —
+   * für nichts, was danach anders aussähe.
+   */
+  async resetEingaben(von = 'operator', token = '') {
+    assertMayControl(token);
+
+    /*
+      Erst sammeln, dann löschen. Während eines laufenden Scans zu löschen ist
+      die Sorte Nebenwirkung, die genau einmal im Jahr eine Seite überspringt.
+    */
+    const schluessel: string[] = [];
+    for await (const eintrag of answers.scan()) schluessel.push(eintrag.key);
+    for (const key of schluessel) await answers.delete(key);
+
+    const fragenSchluessel: string[] = [];
+    for await (const eintrag of fragen.scan()) fragenSchluessel.push(eintrag.key);
+    for (const key of fragenSchluessel) await fragen.delete(key);
+
+    await rtReset.publish('reset', CHANNEL, { at: Date.now(), von });
+    return { antworten: schluessel.length, fragen: fragenSchluessel.length };
+  },
+
+  // ─── Zeitplan ─────────────────────────────────────────────────────────────
+
+  /** Der geltende Zeitplan, oder nichts — dann gelten die Zeiten aus den Folien. */
+  async zeitplanLesen(): Promise<Zeitplan | null> {
+    return (await plaene.get(PLAN)) ?? null;
+  },
+
+  /**
+   * Den Zeitplan überschreiben.
+   *
+   * Geschützt wie ein Folienwechsel: Wer den Vortrag nicht steuern darf, darf
+   * auch nicht seine Zeiten umschreiben.
+   */
+  async zeitplanSchreiben(plan: Zeitplan, token = '') {
+    assertMayControl(token);
+    await plaene.put(PLAN, plan);
+    return plan;
+  },
+
+  /** Zurück auf die Zeiten aus den Foliendaten. */
+  async zeitplanVerwerfen(token = '') {
+    assertMayControl(token);
+    await plaene.delete(PLAN);
+    return { verworfen: true };
+  },
+
+  /**
+   * Kanal, über den ein Zurücksetzen bei den Handys und auf der Leinwand
+   * ankommt. Ohne ihn müsste jedes Gerät einzeln neu geladen werden — und
+   * genau das will man in einer Probe nicht tun.
+   */
+  async subscribeReset() {
+    return rtReset.getChannel('reset', CHANNEL);
+  },
+
   // ─── Chat mit dem Agenten (Abschnitt 16) ──────────────────────────────────
   //
   // Die Teilnehmer melden sich nicht an. Ein Gespräch gehört dem Gerät, das
@@ -175,7 +343,7 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Neues Gespräch beginnen. */
   async chatStart(participantId: string) {
-    return { conversationId: await chatAgent.createConversationId(participantId) };
+    return { conversationId: await berater.createConversationId(participantId) };
   },
 
   /**
@@ -188,16 +356,79 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
     channelId: string,
     participantId: string,
   ) {
-    await chatAgent.stream(message, { conversationId, channelId, userId: participantId });
+    await berater.stream(message, {
+      conversationId,
+      channelId,
+      userId: participantId,
+      /* Pflicht, seit der Agent ein Kontextschema hat: Wer schreibt hier? */
+      context: { absender: participantId },
+    });
   },
 
   /** Verlauf — damit ein gesperrtes Handy sein Gespräch wiederfindet. */
   async chatHistory(conversationId: string) {
-    return { messages: await chatAgent.getConversation(conversationId) };
+    return { messages: await berater.getConversation(conversationId) };
   },
 
   /** Kanal, über den die Antwort Stück für Stück hereinkommt. */
   async chatChannel(channelId: string) {
-    return chatAgent.getChannel(channelId);
+    return berater.getChannel(channelId);
+  },
+
+  /**
+   * Eine eingegangene E-Mail übergeben.
+   *
+   * Die Lambda am SNS-Topf parst die Rohmail und reicht sie hierher. Der Aufruf
+   * kehrt sofort zurück: Was danach geschieht — Systeme befragen, Lisa fragen,
+   * antworten — läuft im Agenten, und das Senden ist sein eigenes Werkzeug.
+   */
+  async mailEingang(
+    modus: 'assistent' | 'probe',
+    absender: string,
+    betreff: string,
+    text: string,
+    nachrichtId: string,
+    postfach: string,
+  ) {
+    const kanal = `mail-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    await postfaecher[modus].stream(text, {
+      channelId: kanal,
+      context: { absender, betreff, nachrichtId, postfach, kanal },
+    });
+    return { kanal };
+  },
+
+  /** Was der Agent gerade von Lisa wissen möchte. Der Indikator liest das. */
+  async lisaFragen() {
+    const offen: OffeneFrage[] = [];
+    for await (const eintrag of fragen.scan()) {
+      if (!eintrag.value.antwort) offen.push(eintrag.value);
+    }
+    return { offen: offen.sort((a, b) => a.gestellt - b.gestellt) };
+  },
+
+  /** Kanal für den Indikator — damit er aufleuchtet, statt gepollt zu werden. */
+  async lisaKanal() {
+    return rtFragen.getChannel('fragen', CHANNEL);
+  },
+
+  /**
+   * Lisas Antwort — und damit läuft der Vorgang weiter.
+   *
+   * `resume` setzt den angehaltenen Zug auf demselben Budget fort. Der Agent
+   * bekommt die Antwort als Ergebnis seines Werkzeugs und schreibt damit die
+   * Mail zu Ende.
+   */
+  async lisaAntwortet(id: string, antwort: string, modus: 'assistent' | 'probe', token = '') {
+    assertMayControl(token);
+    const frage = await fragen.get(id);
+    if (!frage) throw new Error(`Die Frage ${id} kenne ich nicht.`);
+    if (frage.antwort) return { schon: true };
+
+    await fragen.put(id, { ...frage, antwort });
+    await postfaecher[modus].resume(frage.kanal, [
+      { interruptId: 'frage-an-lisa', response: antwort },
+    ]);
+    return { fortgesetzt: true };
   },
 }));

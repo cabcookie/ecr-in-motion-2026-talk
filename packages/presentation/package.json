@@ -18,7 +18,10 @@
     "mail:test": "tsx scripts/mail-test.ts",
     "buendel:test": "tsx scripts/buendel-test.ts",
     "sperr:test": "node scripts/sperr-test.mjs",
-    "buehne:test": "node scripts/buehne-test.mjs"
+    "buehne:test": "node scripts/buehne-test.mjs",
+    "gegenueberstellung": "tsx scripts/gegenueberstellung.ts",
+    "modell:test": "tsx scripts/modell-test.ts",
+    "szenarien": "tsx scripts/szenarien-lauf.ts"
   },
   "dependencies": {
     "@aws-blocks/blocks": "0.5.0",

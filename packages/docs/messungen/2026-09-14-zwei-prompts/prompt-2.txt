@@ -1,0 +1,74 @@
+Ich arbeite den Vorgang jetzt Schritt für Schritt ab, bevor ich antworte.
+
+**Schritt 1 – Zusammenfassung**
+Produkt: Hallbach Crispy Bites
+Einkaufspreis: 2,89 EUR
+Empfohlener VK: 4,49 EUR
+Mindestabnahme: 500 VE
+Wunschtermin: 15. Oktober
+Besonderheit: Exklusivangebot
+
+**Schritt 2 – Was muss ich prüfen?**
+1. Marge bei den genannten Konditionen
+2. Regalplatzsituation / ob eine Auslistung nötig wäre
+3. Ob der 15. Oktober im Aktionskalender machbar ist (Vorlauf ≥ 4 Wochen)
+4. Exklusivzusage → braucht Freigabe der Einkaufsleitung → Lisa fragen
+
+Los geht's.
+
+---
+
+**Margenprüfung (eigene Berechnung):**
+Marge = (VK – EK) / VK = (4,49 – 2,89) / 4,49 = 1,60 / 4,49 ≈ 35,6 %
+Das liegt über der Mindestmarge von 30 %. ✓
+
+---
+
+**Jetzt die Werkzeuge:**
+
+```
+pruefe_regal(kategorie="Schokolade & Pralinen")
+```
+
+```
+pruefe_aktionskalender(datum="15. Oktober")
+```
+
+```
+frage_lisa(
+  thema="Exklusivfreigabe & Neulistung Hallbach Crispy Bites",
+  frage="Für die Neulistung Hallbach Crispy Bites (EK 2,89 EUR, EVP 4,49 EUR, Marge ~35,6 %, Mindestabnahme 500 VE, Wunschstart 15. Oktober) liegen zwei Punkte vor, die deine Entscheidung brauchen: 1) Hallbach bietet die Einführung exklusiv an – das braucht die Freigabe der Einkaufsleitung. Soll ich diese einholen oder lehnst du die Exklusivität ab? 2) Falls du grundsätzlich Interesse hast: Welches Produkt käme für eine Auslistung infrage, um den Regalplatz freizumachen?"
+)
+```
+
+Ich warte auf die Rückmeldung der Werkzeuge und schreibe dann die Antwort-Mail an Herrn Walter.
+
+---
+
+*— Werkzeuge wurden aufgerufen, Ergebnisse stehen noch aus. Sobald Lisa und die Systemabfragen geantwortet haben, geht die Mail raus. —*
+
+---
+
+Für den Fall, dass ich die Mail bereits jetzt formulieren soll (ohne Werkzeugrückmeldung), hier der Entwurf auf Basis der bisher gesicherten Informationen:
+
+---
+
+Sehr geehrter Herr Walter,
+
+vielen Dank für Ihre Anfrage zu den Hallbach Crispy Bites und das Interesse an einer Listung bei Nordkorb.
+
+Ich habe Ihre Konditionen geprüft und kann Ihnen bereits eine erste Rückmeldung geben. Die kalkulatorische Seite Ihres Angebots bewegt sich in einem für uns grundsätzlich interessanten Bereich, sodass wir die Anfrage gerne weiterverfolgen möchten.
+
+Zu zwei Punkten benötige ich jedoch noch etwas Zeit, bevor ich Ihnen eine verbindliche Aussage machen kann.
+
+Erstens zum Exklusivcharakter der Einführung: Eine solche Zusage erfordert auf unserer Seite eine interne Abstimmung, die ich bereits angestoßen habe. Ich bitte Sie, mir hierfür bis Ende nächster Woche noch keine abschließende Antwort zu erwarten, werde mich aber so schnell wie möglich bei Ihnen melden.
+
+Zweitens zum Wunschtermin 15. Oktober: Ich prüfe derzeit, ob dieser Termin in unsere Planung integrierbar ist, und werde Ihnen das Ergebnis zeitnah mitteilen.
+
+Sobald mir die offenen Punkte intern geklärt sind, melde ich mich umgehend bei Ihnen. Ich gehe davon aus, dass ich Ihnen spätestens in der übernächsten Woche eine fundierte Rückmeldung geben kann.
+
+Mit freundlichen Grüßen
+
+Assistent von Lisa Berger
+Category Management Schokolade & Pralinen
+Nordkorb

@@ -92,7 +92,12 @@ async function verarbeite(meldung: SesMeldung): Promise<void> {
               von: postfach.adresse,
               vonName: postfach.anzeigename,
               an: eingang.absender,
-              betreff: eingang.betreff,
+              /*
+                Der Betreff kommt vom Agenten, wenn er einen gesetzt hat.
+                Vorher wurde immer der eingehende gespiegelt — und die vom
+                Modell selbst geschriebene Betreffzeile landete im Rumpf.
+              */
+              betreff: lauf.antwort?.betreff || eingang.betreff,
               text: baueAntwort(postfach.modus, lauf),
               inAntwortAuf: eingang.messageId,
             }),
@@ -104,6 +109,16 @@ async function verarbeite(meldung: SesMeldung): Promise<void> {
   );
 
   console.log(`[${postfach.modus}] beantwortet, ${lauf.schritte.length} Systeme abgefragt`);
+
+  /*
+    Die Fragen an Lisa gehen nicht mit der Mail hinaus — sie hätten dort auch
+    nichts zu suchen. Bis es einen Weg zu ihr gibt, landen sie wenigstens im
+    Protokoll, statt still verlorenzugehen. Ein Agent, der etwas braucht und es
+    niemandem sagen kann, ist schlimmer als einer, der nichts braucht.
+  */
+  for (const f of lauf.fragenAnLisa) {
+    console.log(`[an Lisa] ${f.frage} — ${f.warum}`);
+  }
 }
 
 /** Betreff und Text so vorlegen, wie sie im Postfach stünden. */

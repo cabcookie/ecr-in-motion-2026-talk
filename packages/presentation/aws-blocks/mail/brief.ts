@@ -43,7 +43,10 @@ const SYSTEMNAMEN: Record<string, string> = {
   marktdaten_segment: "Marktdaten — Segment",
   regalplanung_platz: "Regalplanung — Platzprüfung",
   kalkulation_marge: "Kalkulation — Marge",
+  warenwirtschaft_artikel: "Warenwirtschaft — Artikelstamm",
   aktionskalender_zeitraum: "Aktionskalender — freie Flächen",
+  listung_anforderungen: "Kategorieakte — Listungsweg",
+  kategorie_ziele: "Kategorieplan — Ziele des Geschäftsjahrs",
 };
 
 /**
@@ -55,7 +58,16 @@ const SYSTEMNAMEN: Record<string, string> = {
  * steht ebenfalls dort und nicht im Kleingedruckten.
  */
 export function baueAntwort(modus: Modus, lauf: Lauf): string {
-  const teile = [lauf.text.trim(), ""];
+  /*
+    Der Brief ist das, was der Agent dem Sendewerkzeug übergeben hat — nicht
+    sein letzter Modellzug. Der trug die Vorrede mit („Ich habe alle
+    Systemabfragen abgeschlossen …") und damit Denkarbeit in einen Brief an
+    einen Lieferanten.
+
+    `lauf.text` bleibt als Rückfall: Hat der Agent nie abgeschickt, ist eine
+    Antwort mit Vorrede immer noch besser als gar keine.
+  */
+  const teile = [(lauf.antwort?.text ?? lauf.text).trim(), ""];
 
   if (modus === "assistent") {
     teile.push("— — —", "");
@@ -67,6 +79,21 @@ export function baueAntwort(modus: Modus, lauf: Lauf): string {
     } else {
       teile.push("Ich habe für diese Antwort kein System abgefragt.");
     }
+
+    /*
+      Dass eine interne Rückfrage läuft, darf der Absender wissen — WAS gefragt
+      wurde, nicht. Deshalb steht hier eine Zahl und kein Wortlaut: Die Fragen
+      an Lisa sind der einzige Teil des Laufs, der diese Mail nicht verlässt.
+    */
+    if (lauf.fragenAnLisa.length > 0) {
+      teile.push(
+        "",
+        lauf.fragenAnLisa.length === 1
+          ? "Zu einem Punkt habe ich eine interne Rückfrage angestoßen."
+          : `Zu ${lauf.fragenAnLisa.length} Punkten habe ich interne Rückfragen angestoßen.`,
+      );
+    }
+
     teile.push(
       "",
       "Die Systeme dahinter sind für diesen Abend simuliert. Die Arbeit des",
@@ -83,12 +110,13 @@ export function baueAntwort(modus: Modus, lauf: Lauf): string {
     "",
     `Der Vortrag zum Mitklicken:  ${VORTRAG_URL}`,
     `Der Quelltext dazu:          ${CODE_URL}`,
-    "",
-    "Mehr zum Nachlesen:",
-    "  Arbeitslosenquote in Deutschland seit 1950 (Destatis, Eurostat)",
-    "  https://www-genesis.destatis.de",
-    "  Anteil der Landwirtschaft an den Erwerbstätigen, USA 1900-2000",
-    "  https://www.census.gov/history",
+    /*
+      Hier standen zwei Belege gegen die Massenarbeitslosigkeit. Sie sind raus:
+      Die Links fuehrten nur auf die Startseiten der beiden Aemter, nicht auf
+      die Tabellen. Ein Beleg, den der Empfaenger selbst suchen muss, ist
+      keiner — und in einer Mail, die ohnehin von der Sache handelt, war der
+      Exkurs auch deplatziert.
+    */
     "",
     "Ihre E-Mail-Adresse wurde nur für diese eine Antwort verwendet und ist",
     "damit gelöscht.",

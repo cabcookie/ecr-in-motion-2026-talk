@@ -3,6 +3,7 @@ import { SECTIONS, TOTAL, blockOf } from "@/slides/data";
 import type { Interaction } from "@/slides/types";
 import { useNavigation } from "@/nav/useNavigation";
 import { useAnswers } from "@/audience/useAnswers";
+import { eigeneEingabenLoeschen, useReset } from "@/audience/useReset";
 import { InteractionView } from "@/audience/Interactions";
 
 const ACCENT = ["", "var(--color-b1)", "var(--color-b2)", "var(--color-b3)", "var(--color-b4)"];
@@ -53,7 +54,21 @@ function persistentUpTo(index: number, panel: number, current: Interaction | nul
  */
 export function AudienceView() {
   const { index, step, connected } = useNavigation(TOTAL, { readOnly: true, keyboard: false });
-  const { answers, submit, pending } = useAnswers();
+  const { answers, submit, submitWeitere, pending } = useAnswers();
+
+  /*
+    Zurücksetzen heißt hier: neu laden.
+
+    Man könnte die Zustände einzeln leeren — die Antworten, das Gespräch, die
+    Gesprächskennung, den laufenden Strom vom Agenten. Vier Stellen, die beim
+    nächsten Umbau auseinanderlaufen. Ein Neuladen nach dem Löschen des lokalen
+    Speichers lässt nichts übrig und landet auf demselben Folienstand, weil die
+    Ansicht der Leinwand folgt.
+  */
+  useReset(() => {
+    eigeneEingabenLoeschen();
+    location.reload();
+  });
 
   const section = SECTIONS[index];
   const block = blockOf(section.b);
@@ -110,7 +125,12 @@ export function AudienceView() {
         </h1>
 
         {current ? (
-          <InteractionView interaction={current} answers={answers} onAnswer={submit} />
+          <InteractionView
+            interaction={current}
+            answers={answers}
+            onAnswer={submit}
+            onWeitere={submitWeitere}
+          />
         ) : (
           <div className="rounded-2xl border border-dashed border-hair px-5 py-8 text-center">
             <p className="m-0 text-base leading-relaxed text-fg-3">
@@ -126,7 +146,13 @@ export function AudienceView() {
               Weiterhin möglich
             </h2>
             {stillOpen.map((i) => (
-              <InteractionView key={i.id} interaction={i} answers={answers} onAnswer={submit} />
+              <InteractionView
+                key={i.id}
+                interaction={i}
+                answers={answers}
+                onAnswer={submit}
+                onWeitere={submitWeitere}
+              />
             ))}
           </section>
         )}

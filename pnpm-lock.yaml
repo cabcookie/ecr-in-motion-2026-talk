@@ -145,6 +145,21 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  packages/mail-infra:
+    devDependencies:
+      '@types/node':
+        specifier: 22.20.0
+        version: 22.20.0
+      aws-cdk-lib:
+        specifier: 2.257.0
+        version: 2.257.0
+      constructs:
+        specifier: 10.6.0
+        version: 10.6.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   packages/presentation:
     dependencies:
       '@aws-blocks/blocks':

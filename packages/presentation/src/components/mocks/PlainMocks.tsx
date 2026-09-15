@@ -1,4 +1,5 @@
 import type {
+  BildMock,
   DiffMock,
   ListMock,
   QuoteMock,
@@ -151,5 +152,39 @@ export function DiffView({ m }: { m: DiffMock }) {
         </p>
       )}
     </div>
+  );
+}
+
+/**
+ * Ein Bild, das für sich steht.
+ *
+ * Volle Breite, aber nie höher als die Folie — sonst schiebt ein hochformatiger
+ * Screenshot die Überschrift heraus. Der weiße Rahmen ist Absicht: Der
+ * Screenshot kommt hell aus einer hellen Anwendung, und ohne Rahmen franst er
+ * auf der dunklen Folie aus, statt wie ein Beleg zu wirken.
+ */
+export function BildView({ m }: { m: BildMock }) {
+  return (
+    <figure className="m-0 flex w-full flex-col items-center">
+      <img
+        src={m.src}
+        alt={m.alt}
+        /*
+          Die Hoehe begrenzen, nicht die Breite.
+
+          Ohne Grenze meldet das Bild seine Naturgroesse, FitBox skaliert auf
+          0,65 — und weil der Inhalt dabei mittig sitzt, ragt er oben aus der
+          Flaeche heraus und die erste Zeile des Screenshots wird abgeschnitten.
+          62vh ist die Flaechenhoehe dieser Folie (667 von 1080); damit passt
+          das Bild aus eigener Kraft und FitBox muss nichts mehr tun.
+        */
+        className="h-auto max-h-[62vh] w-auto max-w-full rounded-xl border border-hair bg-white"
+      />
+      {m.caption && (
+        <figcaption className="mt-[26px] text-center font-mono text-[23px] leading-[1.5] text-fg-3">
+          {m.caption}
+        </figcaption>
+      )}
+    </figure>
   );
 }

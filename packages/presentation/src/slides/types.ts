@@ -144,6 +144,21 @@ export interface SteppedMock {
   frames: Mock[];
 }
 
+/**
+ * Ein Bild, das für sich steht.
+ *
+ * Für Belege, die als Beleg aussehen müssen: ein Screenshot beglaubigt stärker
+ * als derselbe Text neu gesetzt. Wer ihn nachgebaut sieht, fragt sich, ob er
+ * stimmt; wer das Original sieht, fragt sich das nicht.
+ */
+export interface BildMock {
+  t: "bild";
+  /** Pfad im public-Verzeichnis. */
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
 /** QR-Code auf die Zuschauersicht, mit kurzer Anleitung daneben. */
 export interface QrMock {
   t: "qr";
@@ -178,7 +193,20 @@ export interface ResultsMock {
   qr?: boolean;
 }
 
+/**
+ * Das vereinfachte Architekturbild.
+ *
+ * Dreistufig: Eingänge und Agent, dann seine Werkzeuge, dann die simulierten
+ * Systeme. `alt` beschreibt das Bild für alles, was kein Bild lesen kann.
+ */
+export interface ArchitekturMock {
+  t: "architektur";
+  alt: string;
+}
+
 export type Mock =
+  | BildMock
+  | ArchitekturMock
   | TShapeMock
   | MailThreadMock
   | RevealMock
@@ -206,20 +234,40 @@ export interface PollQuestion {
 }
 
 /**
+ * Ein Satz Zusammenhang, der über der Interaktion steht.
+ *
+ * Auf dem Handy fehlt alles, was gerade auf der Leinwand zu sehen ist: Wer eine
+ * Frage beantworten soll, sieht nur die Frage. Dieser Satz stellt her, worauf
+ * sie sich bezieht. Optional, weil die meisten Fragen für sich stehen — und
+ * dann ist jeder zusätzliche Satz nur eine Hürde vor der Antwort.
+ */
+interface MitZusammenhang {
+  message?: string;
+}
+
+/**
  * Was die Teilnehmer auf dem Handy sehen und tun. Pro Klick-Schritt höchstens
  * eine Interaktion — die Zuschauersicht zeigt immer nur die eine, die gerade
  * dran ist.
  */
-export type Interaction =
+export type Interaction = MitZusammenhang &
   /** Mehrere Fragen auf einmal — der Vortragende klickt dazwischen nicht weiter. */
-  | { kind: "poll"; id: string; questions: PollQuestion[]; persist?: boolean }
-  | {
+  (| { kind: "poll"; id: string; questions: PollQuestion[]; persist?: boolean }
+    | {
       kind: "text";
       id: string;
       prompt: string;
       placeholder: string;
       examples: string[];
       persist?: boolean;
+      /**
+       * Mehrere Antworten statt einer.
+       *
+       * Auf „Welche Aufgaben hast Du abgegeben?" gibt es selten nur eine
+       * Antwort. Ohne dies überschriebe die zweite Eingabe die erste, und die
+       * Leinwand zeigte am Ende weniger, als der Raum beigetragen hat.
+       */
+      mehrfach?: boolean;
     }
   | {
       kind: "mailto";
@@ -238,6 +286,15 @@ export type Interaction =
       persist?: boolean;
       /** Bis wann der Knopf angeboten wird, als HH:MM Ortszeit. */
       until?: string;
+      /**
+       * Jedem Teilnehmer eine Rolle zuteilen und den Entwurf dazu vorfüllen.
+       *
+       * Ohne das schreibt jeder ins Blaue: Man weiß weder, für welche Marke man
+       * steht, noch was Nordkorb davon führt. Bewusst nicht überall an — in
+       * Abschnitt 15 soll der Text ausdrücklich unverändert bleiben, dort wäre
+       * ein Briefing das Gegenteil des Punktes.
+       */
+      briefing?: boolean;
     }
   /**
    * Gespräch mit dem Agenten auf dem Handy. Der Systemprompt ist einsehbar —
@@ -253,7 +310,8 @@ export type Interaction =
       suggestions?: string[];
       persist?: boolean;
     }
-  | { kind: "wait"; id: string; message: string; persist?: boolean };
+    /** Zwischen zwei Interaktionen — hier IST der Zusammenhang der ganze Inhalt. */
+    | { kind: "wait"; id: string; message: string; persist?: boolean });
 
 /**
  * Eine Stufe innerhalb eines Abschnitts.

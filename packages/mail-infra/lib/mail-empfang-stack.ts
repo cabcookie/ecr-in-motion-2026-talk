@@ -1,12 +1,29 @@
 /**
- * Beispiel für Konto A — das Konto, in dem carstenbkoch.de liegt.
+ * Die E-Mail-Infrastruktur — der Teil, der im Domain-Konto lebt.
  *
- * Dieser Stack gehört NICHT in dieses Repository-Deployment. Er ist die Vorlage
- * für den Teil, der im Domain-Konto aufgesetzt wird: SES nimmt die Mail an,
- * legt sie in S3, meldet das über SNS — und eine Rolle erlaubt dem Vortrags-
- * konto, die Mail zu lesen und die Antwort zu verschicken.
+ * **Dieser Stack ist in diesem Repository NICHT verdrahtet.** Er wird von
+ * nichts hier aufgerufen, und `pnpm run deploy` rollt ihn nicht aus. Er steht
+ * hier, weil das Architekturbild ihn als „E-Mail-Infrastruktur" zeigt und
+ * jemand, der das Ganze nachbauen will, wissen muss, was dahintersteckt.
  *
- * Die Reihenfolge und die auszutauschenden Werte stehen in der README daneben.
+ * Der Grund für die Trennung ist keine Architekturvorliebe: Die Adresse des
+ * Agenten liegt auf der ÜBERGEORDNETEN Domain, nicht auf der Subdomain des
+ * Vortrags. Empfang braucht MX-Eintrag und Domainprüfung in der Zone dieser
+ * Domain — und diese Zone liegt in einem anderen AWS-Konto als der Vortrag.
+ *
+ * Wer beides im selben Konto hat, braucht die Trennung nicht: Dann entfallen die
+ * Cross-Account-Rolle und ihre Konto-ID, und der Stack wird einfacher.
+ *
+ * SES nimmt die Mail an, legt sie in S3, meldet das über SNS. Eine einzige
+ * Rolle erlaubt dem Vortragskonto beides: die Rohmail zu lesen und die Antwort
+ * als die verifizierte Identität zu senden. Eine statt zweier Berechtigungs-
+ * wege, weil der EmailClient-Baustein von AWS Blocks kein `SourceArn`
+ * durchreicht.
+ *
+ * Bevor jemand das ausrollt: Die README neben dieser Datei nennt zwei Dinge,
+ * die den Abend sonst kosten — die SES-Sandbox, die den VERSAND auf
+ * verifizierte Adressen beschränkt, und das Receipt Rule Set, von dem je Konto
+ * und Region nur eines aktiv sein kann.
  */
 import { Duration, RemovalPolicy, Stack, StackProps, CfnOutput } from "aws-cdk-lib";
 import { AccountPrincipal, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
@@ -37,7 +54,7 @@ export interface MailEmpfangProps extends StackProps {
  * Name der Rolle im Vortragskonto, die diese Rolle hier annehmen darf.
  *
  * Fest verdrahtet und auf beiden Seiten gleich. Der Grund ist ein Henne-Ei:
- * Konto A muss der Lambda-Rolle vertrauen, bevor es sie gibt; das Vortragskonto
+ * Diese Rolle muss der Lambda-Rolle vertrauen, bevor es sie gibt; das Vortragskonto
  * braucht die ARN der Rolle hier, bevor es deployt. Ein abgesprochener Name
  * bricht den Kreis — deshalb vergibt das Vortragskonto den Rollennamen
  * ausdrücklich selbst statt ihn CDK überlassen.

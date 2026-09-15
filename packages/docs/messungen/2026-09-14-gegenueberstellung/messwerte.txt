@@ -1,0 +1,30 @@
+$ tsx scripts/gegenueberstellung.ts
+roh       .....
+probe     .....
+prompt    .....
+voll      .....
+gestoert  .....
+
+AUSSTATTUNG  ZAHLEN  GEDECKT  QUOTE  SYSTEME  AN LISA   TOKEN   CENT
+roh            1.8      1.8   100%      0.0      0.0     602   0.69
+probe          8.8      6.0    68%      0.0      0.0    1032   1.15
+prompt        17.0      7.2    42%      0.0      0.0    2045   2.10
+voll           9.6      9.6   100%      6.8      1.6   12638   5.78
+gestoert       8.8      8.8   100%      7.0      1.6   12394   5.78
+
+Nicht belegte Zahlen je Ausstattung (die erfundenen):
+  roh        keine
+  probe      1.6, 35.6, 160, 356
+  prompt     1, 1.6, 2, 5, 10, 13, 14, 17, 19, 20, 30, 35.6, 41, 42, 45, 97, 160, 356, 2025, 77423
+  voll       keine
+  gestoert   keine
+
+Streuung der genannten Zahlen (wie viele verschiedene über 5 Läufe):
+  roh        2 verschiedene, davon 1 in jedem Lauf
+  probe      10 verschiedene, davon 8 in jedem Lauf
+  prompt     28 verschiedene, davon 13 in jedem Lauf
+  voll       13 verschiedene, davon 8 in jedem Lauf
+  gestoert   12 verschiedene, davon 6 in jedem Lauf
+
+Antworten und Rohdaten: /tmp/claude-504/v455
+Gesamtkosten: 77.5 Cent

@@ -1,16 +1,25 @@
 /**
- * Die Systeme, in denen Lisas Assistent nachschlägt.
+ * Die Systeme, in denen der Agent nachschlägt.
  *
  * Sie sind simuliert, und der Vortrag sagt das auch so: „Die Systeme sind
  * simuliert. Die Arbeit des Agenten ist es nicht." Die Entscheidung aus den
  * Zahlen trifft das Modell selbst, und genau die ist echt.
  *
- * Was hier steht, sind nur noch Adapter: Werkzeugschema hinein, Portaufruf
- * hinaus. Die Kalkulation ist umgestellt und rechnet auf die Argumente, die
- * das Modell übergibt. Die übrigen vier geben noch feste Werte zurück und
- * ignorieren ihre Argumente — das ist `zsqk`.
+ * Was hier steht, sind nur Adapter: Werkzeugschema hinein, Portaufruf hinaus.
+ * Die Ports liegen in `@ecr-talk/handelswelt` und rechnen auf die Argumente,
+ * die das Modell übergibt — vorher gaben sie bei jeder Frage dasselbe zurück.
  */
-import { marge } from "@ecr-talk/handelswelt";
+import {
+  anforderungen,
+  artikel,
+  flaechen,
+  kategorie,
+  marge,
+  platz,
+  segment,
+  ziele,
+  type Befund,
+} from "@ecr-talk/handelswelt";
 
 export interface Werkzeug {
   readonly name: string;
@@ -19,7 +28,7 @@ export interface Werkzeug {
   /**
    * Bekommt die Argumente, die das Modell aufgerufen hat.
    *
-   * Dass hier bisher nichts ankam, war der eigentliche Fehler: Ein Werkzeug,
+   * Dass hier lange nichts ankam, war der eigentliche Fehler: Ein Werkzeug,
    * das seine Argumente nicht sieht, antwortet auf jede Frage dasselbe.
    */
   readonly antwort: (args: Record<string, unknown>) => Record<string, unknown>;
@@ -27,57 +36,165 @@ export interface Werkzeug {
 
 /** Eine Zahl aus dem Werkzeugaufruf — das Modell schickt sie mal als Zahl, mal als Text. */
 function zahl(wert: unknown): number {
-  if (typeof wert === 'number') return wert;
-  if (typeof wert === 'string') return Number(wert.replace(',', '.').replace(/[^0-9.\-]/g, ''));
+  if (typeof wert === "number") return wert;
+  if (typeof wert === "string") return Number(wert.replace(",", ".").replace(/[^0-9.\-]/g, ""));
   return Number.NaN;
+}
+
+function text(wert: unknown): string {
+  return typeof wert === "string" ? wert : "";
 }
 
 /** Anteil als deutsche Prozentangabe — so, wie es in der Antwortmail stehen soll. */
 function prozent(anteil: number): string {
-  return `${(anteil * 100).toFixed(1).replace('.', ',')} %`;
+  return `${(anteil * 100).toFixed(1).replace(".", ",")} %`;
+}
+
+function punkte(wert: number): string {
+  return `${wert.toFixed(1).replace(".", ",")} %`;
+}
+
+function euro(wert: number): string {
+  return `${wert.toFixed(2).replace(".", ",")} €`;
+}
+
+/**
+ * Übersetzt einen Befund in das, was das Modell sieht.
+ *
+ * Ein Fehlschlag wird NICHT zum Fehler, sondern zu einer Antwort mit Grund und
+ * Hinweis. Das ist der ganze Punkt: Ein Fehler, den die Werkzeugschleife
+ * verschluckt, kommt als erfundene Zahl wieder heraus. Ein Grund, den der
+ * Agent lesen kann, wird zu einem Satz in der Mail.
+ *
+ * Und bei einem Treffer gehen `quelle` und `stand` immer mit. Daher kann der
+ * Agent sagen, woher die Zahl stammt — vorher lieferte es ihm niemand.
+ */
+function ausgabe<T>(befund: Befund<T>, umbau: (daten: T) => Record<string, unknown>): Record<string, unknown> {
+  if (!befund.ok) return { verfuegbar: false, grund: befund.grund, hinweis: befund.hinweis };
+  return { ...umbau(befund.daten), quelle: befund.quelle, stand: befund.stand };
 }
 
 const leer = { type: "object", properties: {}, required: [] as string[] };
+
+/**
+ * Der Name des Werkzeugs, mit dem der Agent sein eigenes Haus erreicht.
+ *
+ * Es steht hier bei den anderen, ist aber keines: Es schlägt nichts nach,
+ * sondern legt eine Frage auf den Tisch des Category-Teams. Die Werkzeugschleife in agent.ts
+ * greift es deshalb gesondert ab — die Frage ist ein ERGEBNIS des Laufs, keine
+ * Auskunft eines Systems.
+ */
+export const FRAGE_LISA = "frage_das_team";
+
+/**
+ * Der Name des Werkzeugs, mit dem die Antwort das Haus verlässt.
+ *
+ * Vorher gab es das nicht: Der letzte Modellzug WAR die Mail. Damit ging alles
+ * mit hinaus, was das Modell davor noch dachte — „Ich habe alle Systemabfragen
+ * abgeschlossen und kann Lisa nun eine Einschätzung geben" stand mit im Brief
+ * an den Lieferanten. Und der Betreff kam aus der eingehenden Mail, weshalb die
+ * selbstgeschriebene Betreffzeile im Rumpf landete.
+ *
+ * Mit einem Werkzeug ist die Trennung eindeutig: Was in `betreff` und `text`
+ * steht, geht hinaus. Alles andere bleibt Denkarbeit.
+ */
+export const ANTWORTE = "antworte_per_mail";
 
 export const WERKZEUGE: readonly Werkzeug[] = [
   {
     name: "warenwirtschaft_kategorie",
     beschreibung:
-      "Entwicklung der Kategorie Schokolade & Pralinen in den letzten zwölf Monaten, samt schwächstem Artikel.",
+      "Entwicklung der Kategorie Schokolade & Pralinen in den letzten zwölf Monaten, samt schwächstem und stärkstem Artikel.",
     schema: leer,
-    antwort: () => ({
-      kategorie: "Schokolade & Pralinen",
-      entwicklung: "+3,2 % gegenüber Vorjahr",
-      schwaechsterArtikel: "Nocturne Mini",
-      entwicklungSchwaechster: "-12 %",
-    }),
+    antwort: () =>
+      ausgabe(kategorie(), (d) => ({
+        kategorie: d.kategorie,
+        artikelzahl: d.artikelzahl,
+        absatzJahr: d.absatzJahr,
+        entwicklung: `${d.entwicklung > 0 ? "+" : ""}${punkte(d.entwicklung)} gegenüber Vorjahr`,
+        schwaechsterArtikel: d.schwaechster.artikel,
+        entwicklungSchwaechster: `${punkte(d.schwaechster.entwicklung)}`,
+        schwaechsterIstEigenmarke: d.schwaechster.eigenmarke,
+        staerksterArtikel: d.staerkster.artikel,
+        entwicklungStaerkster: `+${punkte(d.staerkster.entwicklung)}`,
+      })),
+  },
+  {
+    name: "warenwirtschaft_artikel",
+    beschreibung:
+      "Schlägt einen einzelnen Artikel im Artikelstamm nach — Absatz, Entwicklung, Preise, Regalzone. Sagt auch, wenn ein Produkt nicht in diese Kategorie gehört.",
+    schema: {
+      type: "object",
+      properties: { suche: { type: "string", description: "Artikel- oder Markenname" } },
+      required: ["suche"],
+    },
+    antwort: (args) =>
+      ausgabe(artikel(text(args.suche)), (d) => ({
+        artikel: d.artikel,
+        artikelnummer: d.nummer,
+        regalzone: d.zone,
+        eigenmarke: d.eigenmarke,
+        absatzJahr: d.absatzJahr,
+        entwicklung: `${d.entwicklung > 0 ? "+" : ""}${punkte(d.entwicklung)}`,
+        ekPreis: euro(d.ekPreis),
+        vkPreis: euro(d.vkPreis),
+      })),
   },
   {
     name: "marktdaten_segment",
-    beschreibung: "Marktentwicklung des Segments, in das ein Produkt fällt.",
+    beschreibung:
+      "In welches Marktsegment ein Produkt fällt, wie das Segment im Markt läuft und wie unsere eigenen Artikel darin laufen. Das Produkt muss nicht gelistet sein.",
     schema: {
       type: "object",
       properties: { produkt: { type: "string", description: "Produktname" } },
       required: ["produkt"],
     },
-    antwort: () => ({
-      segment: "Crispy / gefüllte Riegel",
-      entwicklung: "zweistellig, deutlich schneller als die Gesamtkategorie",
-    }),
+    antwort: (args) =>
+      ausgabe(segment(text(args.produkt)), (d) => ({
+        segment: d.segment,
+        marktentwicklung: `${d.marktentwicklung > 0 ? "+" : ""}${punkte(d.marktentwicklung)}`,
+        eigeneEntwicklung:
+          d.eigeneEntwicklung === null
+            ? "Wir führen in diesem Segment keinen Artikel."
+            : `${d.eigeneEntwicklung > 0 ? "+" : ""}${punkte(d.eigeneEntwicklung)} über ${d.eigeneArtikel} Artikel`,
+        abstand:
+          d.abstandInPunkten === null
+            ? undefined
+            : `${d.abstandInPunkten.toFixed(1).replace(".", ",")} Punkte Unterschied zwischen Markt und eigenem Sortiment`,
+      })),
   },
   {
     name: "regalplanung_platz",
-    beschreibung: "Gibt es Regalplatz für eine Neulistung, und wer müsste dafür weichen?",
-    schema: leer,
-    antwort: () => ({
-      freierPlatz: false,
-      freiWenn: "Nocturne Mini ausgelistet wird",
-      hinweis: "Beide liegen in derselben Regalzone.",
-    }),
+    beschreibung:
+      "Belegung einer Regalzone (tafel, riegel oder pralinen) und welche Artikel bei einer Neulistung als Erste weichen würden.",
+    schema: {
+      type: "object",
+      properties: {
+        zone: { type: "string", description: "Regalzone: tafel, riegel oder pralinen" },
+      },
+      required: ["zone"],
+    },
+    antwort: (args) =>
+      ausgabe(platz(text(args.zone)), (d) => ({
+        zone: d.zone,
+        facingsKapazitaet: d.kapazitaet,
+        facingsBelegt: d.belegt,
+        facingsFrei: d.frei,
+        artikelInZone: d.artikel,
+        weichkandidaten: d.weichkandidaten.map((w) => ({
+          artikel: w.artikel,
+          facings: w.facings,
+          entwicklung: `${punkte(w.entwicklung)}`,
+          absatzJahr: w.absatzJahr,
+          eigenmarke: w.eigenmarke,
+          rohertrag: `${punkte(w.rohertrag)}`,
+        })),
+      })),
   },
   {
     name: "kalkulation_marge",
-    beschreibung: "Marge aus Einkaufs- und empfohlenem Verkaufspreis, gegen die Kategorievorgabe.",
+    beschreibung:
+      "Rohertrag aus Einkaufs- und empfohlenem Verkaufspreis, gegen die Kategorievorgabe. Rechnet auf den Netto-Verkaufspreis.",
     schema: {
       type: "object",
       properties: {
@@ -86,37 +203,134 @@ export const WERKZEUGE: readonly Werkzeug[] = [
       },
       required: ["ekPreis", "vkPreis"],
     },
-    antwort: (args) => {
-      const befund = marge(zahl(args.ekPreis), zahl(args.vkPreis));
-      if (!befund.ok) return { fehler: befund.grund, hinweis: befund.hinweis };
-      const d = befund.daten;
-      return {
-        marge: prozent(d.rohertrag),
-        gerechnetAus: `EK ${d.ekPreis.toFixed(2).replace(".", ",")} € / VK ${d.vkPreis
-          .toFixed(2)
-          .replace(".", ",")} € netto ${d.vkNetto.toFixed(2).replace(".", ",")} €`,
+    antwort: (args) =>
+      ausgabe(marge(zahl(args.ekPreis), zahl(args.vkPreis)), (d) => ({
+        rohertrag: prozent(d.rohertrag),
+        gerechnetAus: `EK ${euro(d.ekPreis)} / VK ${euro(d.vkPreis)}, netto ${euro(d.vkNetto)}`,
         kategorievorgabe: `mindestens ${prozent(d.mindestRohertrag)}`,
         erfuellt: d.erfuellt,
-        luft: `${d.luftInPunkten.toFixed(1).replace(".", ",")} Prozentpunkte`,
-        quelle: befund.quelle,
-        stand: befund.stand,
-      };
-    },
+        luft: `${punkte(d.luftInPunkten)} Punkte ${d.luftInPunkten >= 0 ? "über" : "unter"} der Vorgabe`,
+      })),
   },
   {
     name: "aktionskalender_zeitraum",
-    beschreibung: "Freie Aktionsflächen im Zeitraum um einen gewünschten Starttermin.",
+    beschreibung:
+      "Prüft einen Wunschtermin gegen die Vorlauffrist und nennt freie Aktionsflächen in seiner Nähe.",
     schema: {
       type: "object",
-      properties: { termin: { type: "string", description: "Wunschtermin, z. B. 15. Oktober" } },
+      properties: {
+        termin: { type: "string", description: "Wunschtermin, z. B. „15. Oktober“" },
+      },
       required: ["termin"],
     },
-    antwort: () => ({
-      datum: "22. Oktober",
-      maerkte: 12,
-      region: "Raum Hamburg",
-      flaeche: "Zweitplatzierung, Aufsteller",
-      grund: "Eine geplante Aktion wurde abgesagt.",
+    antwort: (args) =>
+      ausgabe(flaechen(text(args.termin)), (d) => ({
+        wunschtermin: d.wunschtermin,
+        vorlauf: `${d.vorlaufTage} Tage, nötig sind ${d.vorlaufNoetig}`,
+        fristErfuellt: d.fristErfuellt,
+        ...(d.fehlendeTage > 0 ? { fehlendeTage: d.fehlendeTage } : {}),
+        freieFlaechen: d.freieFlaechen.map((f) => ({
+          datum: f.datum,
+          maerkte: f.maerkte,
+          region: f.region,
+          flaeche: f.art,
+          grund: f.grund,
+          abstandZumWunschtermin: `${f.abstandZumWunsch > 0 ? "+" : ""}${f.abstandZumWunsch} Tage`,
+        })),
+        belegt: d.belegt,
+      })),
+  },
+  {
+    name: ANTWORTE,
+    beschreibung:
+      "Sendet die fertige Antwort an den ABSENDER der eingegangenen Mail. Das ist der " +
+      "einzige Weg, auf dem deine Antwort ihn erreicht — was du sonst schreibst, liest " +
+      "niemand. Der Absender ist ein Aussenstehender, oft ein Lieferant, der mit uns " +
+      "verhandelt: Schreibe ihn direkt an, nicht ueber ihn. Rufe das Werkzeug genau einmal " +
+      "auf, wenn du alles geprueft hast.",
+    schema: {
+      type: "object",
+      properties: {
+        betreff: { type: "string", description: "Betreff der Antwortmail" },
+        text: {
+          type: "string",
+          description:
+            "Die vollstaendige Mail als Fliesstext, mit Anrede und Grussformel, ohne Markdown " +
+            "und ohne Betreffzeile im Text",
+        },
+      },
+      required: ["betreff", "text"],
+    },
+    /* Der Versand geschieht ausserhalb der Schleife — hier wird nur quittiert. */
+    antwort: () => ({ gesendet: true }),
+  },
+  {
+    name: FRAGE_LISA,
+    beschreibung:
+      "Legt dem Category-Team eine Rückfrage vor. Nutze das für ALLES, was du von dort brauchst — " +
+      "interne Zahlen, Einschätzungen, Freigaben. Die Antwortmail geht an einen Außenstehenden; " +
+      "dort hat eine interne Rückfrage nichts zu suchen.",
+    schema: {
+      type: "object",
+      properties: {
+        frage: { type: "string", description: "Was du von Lisa wissen musst, als ganzer Satz" },
+        warum: { type: "string", description: "Wofür du die Angabe brauchst" },
+      },
+      required: ["frage", "warum"],
+    },
+    antwort: (args) => ({
+      vermerkt: true,
+      hinweis:
+        `Die Frage liegt dem Category-Team vor: „${text(args.frage)}". Es beantwortet sie nicht in ` +
+        `diesem Lauf. Schreibe dem Absender ohne sie — benenne die offene Stelle nur so weit, ` +
+        `wie er sie kennen darf, und erfinde keinen Wert an ihrer Stelle.`,
     }),
+  },
+  {
+    name: "listung_anforderungen",
+    beschreibung:
+      "Welche Tore eine Neulistung in dieser Kategorie passieren muss, welche Regel dahinter steht und wer jeweils entscheidet.",
+    schema: leer,
+    antwort: () =>
+      ausgabe(anforderungen(), (d) => ({
+        kategorie: d.kategorie,
+        tore: d.tore.map((t) => ({
+          tor: t.tor,
+          regel: t.regel,
+          entscheidet: t.entscheidet,
+          giltWenn: t.giltWenn,
+        })),
+      })),
+  },
+  {
+    /*
+      Das einzige Werkzeug, das nicht sagt, ob etwas GEHT, sondern ob es
+      GEWOLLT ist. Ohne es endet jede Pruefung beim Ja mit Auflagen.
+    */
+    name: "kategorie_ziele",
+    beschreibung:
+      "Die Ziele der Kategorie fuer das laufende Geschaeftsjahr, je Kaeufergruppe: welche Gruppe " +
+      "gehalten, gesteigert oder neu gewonnen werden soll, wo wir heute stehen und warum. Nutze das, " +
+      "bevor du eine Anfrage befuerwortest oder ablehnst - eine Anfrage kann zulaessig sein und " +
+      "trotzdem den Zielen widersprechen.",
+    schema: leer,
+    antwort: () =>
+      ausgabe(ziele(), (d) => ({
+        geschaeftsjahr: d.geschaeftsjahr,
+        imMonat: `${d.monat}. von 12 Monaten`,
+        kaeufergruppen: d.staende.map((s) => ({
+          gruppe: s.name,
+          anlass: s.anlass,
+          warumGekauftWird: s.warum,
+          richtung: s.richtung,
+          vorgabe: s.vorgabe,
+          begruendung: s.begruendung,
+          anteilFlaeche: `${s.anteilFlaeche} %`,
+          anteilAbsatz: `${s.anteilAbsatz} %`,
+          entwicklung: `${s.entwicklung} %`,
+          zielAnteilFlaeche: s.zielAnteilFlaeche === undefined ? undefined : `${s.zielAnteilFlaeche} %`,
+          lage: s.lage,
+        })),
+      })),
   },
 ];
