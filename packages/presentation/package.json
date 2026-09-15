@@ -20,7 +20,8 @@
     "sperr:test": "node scripts/sperr-test.mjs",
     "buehne:test": "node scripts/buehne-test.mjs",
     "gegenueberstellung": "tsx scripts/gegenueberstellung.ts",
-    "modell:test": "tsx scripts/modell-test.ts"
+    "modell:test": "tsx scripts/modell-test.ts",
+    "szenarien": "tsx scripts/szenarien-lauf.ts"
   },
   "dependencies": {
     "@aws-blocks/blocks": "0.5.0",

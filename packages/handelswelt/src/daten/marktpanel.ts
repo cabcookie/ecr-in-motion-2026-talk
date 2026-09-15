@@ -45,7 +45,14 @@ export const SEGMENTE: readonly Segment[] = [
     kennung: 'dunkel',
     name: 'Zartbitter und Kakaohochprozentig',
     marktentwicklung: 6.8,
-    erkennung: /bitter|dunkel|zartbitter|\d{2}\s?%|noir|nocturne/i,
+    /*
+      Der Kakaoanteil zaehlt erst ab 70 %. Vorher stand hier `\d{2}\s?%`, und
+      das traf JEDE zweistellige Prozentangabe: Eine Vollmilchtafel mit „38 %
+      Kakao" landete damit in „Zartbitter und Kakaohochprozentig". Aufgefallen
+      an einer echten Agentenantwort, die daraus die falsche Kaeufergruppe
+      ableitete.
+    */
+    erkennung: /bitter|dunkel|zartbitter|[7-9]\d\s?%|noir|nocturne/i,
   },
   {
     kennung: 'pralinen',

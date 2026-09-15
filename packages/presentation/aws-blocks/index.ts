@@ -94,12 +94,16 @@ const rtReset = new Realtime(scope, 'reset-live', {
 });
 
 /**
- * Der Agent aus Abschnitt 16.
+ * Der Agent im Handy-Chat.
  *
- * Er bekommt den Systemprompt — und bewusst keine Tools. Genau das ist der
- * Punkt der Stufe: Er weiß, welche Angaben ihm fehlen und in welchem System
- * sie stünden, kann sie aber nicht holen. Also fragt er die Teilnehmer.
- * Die sind seine Werkzeuge.
+ * Dieselbe Definition, die auch hinter dem Postfach steht — er kann nur eines
+ * nicht: eine Mail senden. Dafür antwortet er im Chat.
+ *
+ * ACHTUNG, hier stand bis zur Vereinheitlichung das Gegenteil: „bewusst keine
+ * Tools". Das stimmt nicht mehr. `chatAgent` bringt alle Fachwerkzeuge mit,
+ * einschließlich der Ziele. Der stufenweise Aufbau — erst Prompt, dann
+ * Werkzeuge einzeln dazu —, der den Unterschied auf dem Handy erlebbar machen
+ * soll, ist NOCH NICHT gebaut.
  *
  * Der Prompt kommt aus den Foliendaten, damit der Agent mit demselben Text
  * läuft, den das Publikum auf dem Handy aufklappen kann.
@@ -108,11 +112,6 @@ const rtReset = new Realtime(scope, 'reset-live', {
  * eingebauten Canned-Provider zurück. Die Antworten sind dann Attrappen, aber
  * Streaming, Verlauf und Wiederaufnahme lassen sich damit vollständig prüfen.
  */
-/*
-  Der Agent kommt aus `agent/` — dieselbe Definition, die auch hinter dem
-  Postfach steht. Was ihn hier unterscheidet, ist einzig sein Antwortwerkzeug:
-  Er kann im Chat antworten und keine Mail senden.
-*/
 const berater = chatAgent(scope);
 
 /**
