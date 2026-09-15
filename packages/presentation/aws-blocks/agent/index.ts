@@ -38,7 +38,23 @@ import { fachwerkzeuge } from './werkzeuge';
  * als keine.
  */
 const GEMEINSAM = {
-  model: { deployed: [BedrockModels.SMART, BedrockModels.FAST] },
+  model: {
+    deployed: [BedrockModels.SMART, BedrockModels.FAST],
+    /*
+      Lokal DASSELBE Modell wie ausgerollt.
+
+      Ohne diesen Eintrag fällt der Block auf seinen eingebauten
+      Attrappen-Provider zurück und antwortet „This is a canned mock response".
+      Für eine Probe ist das wertlos: Man prüft dann Streaming und Verlauf, aber
+      nie, was der Agent tatsächlich sagt.
+
+      Der Attrappen-Provider bleibt als letzter Rückfall dahinter — wer ohne
+      AWS-Zugangsdaten entwickelt, bekommt weiterhin etwas zu sehen. Der
+      Dev-Server braucht dafür AWS_PROFILE=ecrtag in seiner Umgebung, sonst
+      scheitert Bedrock still und die Attrappe übernimmt wieder.
+    */
+    local: [BedrockModels.SMART],
+  },
   systemPrompt: SYSTEM_PROMPT,
   toolContextSchema: vorgangskontext,
   streamingMode: 'token' as const,
