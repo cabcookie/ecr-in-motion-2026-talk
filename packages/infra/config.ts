@@ -68,7 +68,7 @@ export const DEPLOY_SUBJECTS = [
 
 /**
  * Adresse, die der Agent bedient. Sie liegt auf der übergeordneten Domain und
- * wird deshalb in einem anderen Konto empfangen — siehe examples/konto-a.
+ * wird deshalb in einem anderen Konto empfangen — siehe packages/mail-infra.
  */
 export const MAIL_FROM = "ecr2026@carstenbkoch.de";
 
@@ -78,7 +78,7 @@ export const MAIL_FROM = "ecr2026@carstenbkoch.de";
  * Fest vergeben statt von CDK erzeugt, und das mit Absicht: Die Rolle im
  * Domain-Konto muss dieser hier vertrauen, bevor es sie gibt. Ein abgesprochener
  * Name bricht das Henne-Ei. Auf der anderen Seite steht derselbe Name in
- * examples/konto-a/mail-empfang-stack.ts.
+ * packages/mail-infra/lib/mail-empfang-stack.ts.
  */
 export const MAIL_HANDLER_ROLE = "ecr2026-mail-handler";
 

@@ -47,13 +47,18 @@ export interface Werkzeugauswahl {
  * `SMART` ist Opus 4.8 — dasselbe Modell auf beiden Wegen. Bis hierher war das
  * eine Behauptung im Kommentar; jetzt ist es eine Zeile, die beide lesen.
  *
- * `FAST` (Haiku) bleibt als Rückfall: Wenn am Vortragsabend achtzig Handys
- * gleichzeitig schreiben und Opus drosselt, ist eine schnellere Antwort besser
- * als keine.
+ * `BALANCED` (Sonnet 4.6) steht als Rückfall dahinter: Blocks nimmt das erste
+ * Modell der Liste, das seine Gesundheitsprüfung besteht. Ist Opus nicht
+ * erreichbar, ist eine Antwort von Sonnet besser als keine. Haiku wäre ein zu
+ * großer Sprung nach unten.
+ *
+ * Sonnet hielt die Vertraulichkeit in den Messungen weniger zuverlässig als
+ * Opus (packages/docs/messungen/2026-09-15-opus). Der Rückfall ist also kein
+ * gleichwertiger Ersatz, sondern die bessere von zwei schlechten Lagen.
  */
 const GEMEINSAM = {
   model: {
-    deployed: [BedrockModels.SMART, BedrockModels.FAST],
+    deployed: [BedrockModels.SMART, BedrockModels.BALANCED],
     /*
       Lokal DASSELBE Modell wie ausgerollt.
 
@@ -141,41 +146,33 @@ export function chatAgent(scope: Scope, auswahl: Werkzeugauswahl = {}): Agent<an
 /**
  * Der Agent auf der untersten Stufe: das nackte Modell.
  *
- * Kein Systemprompt, keine Fachwerkzeuge — nur die Trainingsdaten. Das ist der
+ * Kein Fachprompt, keine Fachwerkzeuge — nur die Trainingsdaten und ein
+ * Systemprompt von drei Absätzen, der ihn zum Antworten bringt (unten). Das ist der
  * hochmotivierte Abiturient aus Abschnitt 14: klug, schnell, hilfsbereit, und
  * er war noch nie in diesem Unternehmen. Er wird trotzdem antworten, und die
  * Zahlen darin wird er erfinden.
  *
- * Und er bekommt GAR KEIN Werkzeug, auch keines zum Antworten. Sein Text ist
- * die Antwort, unmittelbar. Mit einem Antwortwerkzeug schrieb er den Brief
- * hinein und danach noch einen Satz darüber — und im Chat erschien nicht der
- * Brief, sondern „Ich habe dem Lieferanten geantwortet: …". Dieselbe Falle wie
- * im Mailweg, hier aber ohne Nutzen: Es gibt nichts zu trennen, wenn alles, was
- * er sagt, ohnehin direkt beim Gegenüber landet.
+ * Sein einziges Werkzeug ist `antworte_dem_absender`, und das schlägt nichts
+ * nach: Es trennt nur die Antwort von dem, was er daneben über seinen Weg
+ * schreibt — wie `antworte_im_chat` beim vollen Agenten. Der Name nennt den
+ * Empfänger mit Absicht (siehe `antworteImChat`).
  */
 export function rohChatAgent(scope: Scope): Agent<any> {
   return new Agent(scope, 'roh', {
     ...GEMEINSAM,
     /*
-      Verwandt mit dem Prompt, mit dem der fruehere Probe-Mailweg gemessen wurde.
+      Der kürzeste Prompt, der noch funktioniert.
 
       „Du bist ein hilfsbereiter Assistent" reichte nicht: Opus 4.8 antwortete
       damit ehrlich — „Ich bin ein KI-Assistent und habe keinen Zugriff" — und
       genau das ist NICHT die Vorführung. Der Abschnitt will zeigen, was
-      passiert, wenn ein Modell trotzdem antwortet. Der Satz „Frage auch nicht
-      nach" ist deshalb kein Beiwerk, sondern der Auslöser.
+      passiert, wenn ein Modell trotzdem antwortet. „Frag nicht nach" ist
+      deshalb kein Beiwerk, sondern der Auslöser. Fachlichen Kontext braucht es
+      dafür keinen; er antwortet auch, ohne zu wissen, worum es geht.
 
       Das ist eine ehrliche Vorführung und kein Trick: Genau so verhalten sich
       Assistenten, die man ohne Werkzeuge in einen Arbeitsablauf hängt und zum
       Antworten verpflichtet.
-    */
-    /*
-      Der kuerzeste Prompt, der noch funktioniert.
-
-      „Frag nicht nach" ist der Ausloeser: Ohne ihn antwortet Opus 4.8 ehrlich,
-      dass es keinen Zugriff habe — und die Vorfuehrung waere hin. Fachlicher
-      Kontext braucht es dafuer keinen; er antwortet auch ohne zu wissen, worum
-      es geht.
 
       Was danach kommt, ist reine Darstellung und kein Fachkontext: ohne den
       Hinweis auf Fliesstext schreibt das Modell Markdown, und der Chat zeigt

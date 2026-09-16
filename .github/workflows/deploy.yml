@@ -122,14 +122,13 @@ jobs:
           # über backendConfig gesetzt werden — das landet in einer öffentlich
           # lesbaren config.json.
           DECK_TOKEN: ${{ secrets.DECK_TOKEN }}
-          # Der Mailempfang liegt im Konto der Domain (siehe examples/konto-a).
-          # Von dort kommen diese vier Werte zurück. Keine Geheimnisse im engeren
+          # Der Mailempfang liegt im Konto der Domain (siehe packages/mail-infra).
+          # Von dort kommen diese drei Werte zurück. Keine Geheimnisse im engeren
           # Sinn — eine ARN erlaubt nichts —, aber sie nennen Konto-IDs, und die
           # muss man nicht veröffentlichen.
           MAIL_ACCESS_ROLE_ARN: ${{ secrets.MAIL_ACCESS_ROLE_ARN }}
           MAIL_BUCKET: ${{ secrets.MAIL_BUCKET }}
           MAIL_TOPIC_ARN: ${{ secrets.MAIL_TOPIC_ARN }}
-          MAIL_IDENTITY_ARN: ${{ secrets.MAIL_IDENTITY_ARN }}
         # `pnpm run deploy`, nicht `pnpm deploy`: Letzteres ist ein eingebauter
         # pnpm-Befehl und verdeckt das Skript aus der package.json.
         run: pnpm --filter @ecr-talk/presentation run deploy

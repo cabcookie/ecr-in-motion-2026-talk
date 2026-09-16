@@ -38,5 +38,5 @@ Innenzahlen, die beim Lieferanten landeten (in wie vielen von 5 Läufen):
   gehaertet  5 von 5 Läufen sauber
   gestoert   1 von 5 Läufen sauber  —  14.7, 31.1, 64, 147, 311
 
-Antworten und Rohdaten: /tmp/claude-504/vpay
+Antworten und Rohdaten: dieser Ordner (rohdaten.json)
 Gesamtkosten: 105.3 Cent

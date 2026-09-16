@@ -228,9 +228,8 @@ export interface Fragenablage {
  * Eine Rückfrage ans eigene Haus.
  *
  * Die Frage wird abgelegt, und der Agent schreibt weiter — OHNE auf die
- * Antwort zu warten. Das ist die Entscheidung vom 16.09.: Die
- * Operator-Oberfläche, über die Carsten Rückfragen live beantworten würde, ist
- * für den Vortrag nicht mehr zu schaffen (Epic 0trs). Ohne sie bliebe ein
+ * Antwort zu warten. Das ist die Entscheidung vom 16.09.: Eine Oberfläche, über
+ * die das Team Rückfragen live beantwortet, gibt es nicht. Ohne sie bliebe ein
  * angehaltener Vorgang für immer stehen, und es ginge keine Mail hinaus.
  *
  * Das Anhalten ist nicht weggeworfen, sondern steht hinter `anhalten`. Wer die

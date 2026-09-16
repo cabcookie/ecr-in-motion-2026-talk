@@ -4,7 +4,7 @@ WERKZEUGE: kalkulation_marge → marktdaten_segment → regalplanung_platz → l
 Ich habe alle nötigen Prüfungen durchgeführt. Die Anfrage scheitert an mehreren Punkten, die ich intern nicht überstimmen kann. Ich fasse das für die Absenderin so zusammen, dass keine internen Werte nach außen gelangen.
 
 Von: Assistent von Lisa Berger
-An: Sarah Bremer <kontakt@wildberg.de>
+An: Sarah Bremer <kontakt@wildberg.example>
 Betreff: AW: Listungsanfrage Wildberg Familienriegel
 
 Sehr geehrte Frau Bremer,

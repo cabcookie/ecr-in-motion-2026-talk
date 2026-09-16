@@ -23,6 +23,9 @@
     "gegenueberstellung": "tsx scripts/gegenueberstellung.ts",
     "modell:test": "tsx scripts/modell-test.ts",
     "szenarien": "tsx scripts/szenarien-lauf.ts",
+    "ziele:gegentest": "tsx scripts/ziele-gegentest.ts",
+    "postfach": "tsx scripts/postfach-lauf.ts",
+    "marke": "python3 scripts/markenmaterial.py",
     "papier:test": "tsx pruefung/papier-test.ts",
     "pdf": "node scripts/pdf.mjs"
   },

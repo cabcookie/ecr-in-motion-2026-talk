@@ -5,9 +5,13 @@ Das ist Absicht — kein Category Manager im Saal interessiert sich dafür, übe
 welche AWS-Dienste eine Mail hereinkommt. Wer es doch wissen will, findet es
 hier.
 
-> **In diesem Repository ist dieser Stack nicht verdrahtet.** Kein Skript ruft
-> ihn auf, `pnpm run deploy` rollt ihn nicht aus. Er steht hier als Vorlage für
-> alle, die den Mailweg mit aufsetzen wollen.
+> **Dieses Repository rollt den Stack nicht aus.** Es gibt keine CDK-App und
+> kein Skript dafür; `pnpm run deploy` fasst das Domain-Konto nicht an. Der
+> Stack steht hier als Vorlage für das Konto, in dem die Domain liegt.
+>
+> Die andere Hälfte ist dagegen verdrahtet: `packages/presentation/aws-blocks/index.cdk.ts`
+> legt die Mail-Lambda im Vortragskonto an, sobald die drei Ausgabewerte
+> dieses Stacks als Secrets gesetzt sind.
 
 ## Warum der Mailweg in einem eigenen Konto liegt
 
@@ -103,10 +107,11 @@ Generalprobe und trägt nicht für den Vortrag.
 
 ### Dann: das Rule Set
 
-**Pro Konto und Region ist genau ein SES-Receipt-Rule-Set aktiv.** Ein
-bedingungsloses `SetActiveReceiptRuleSet` verdrängt ein bestehendes — und kippt
-damit den Mailempfang einer ganz anderen Domain im selben Konto, ohne dass
-irgendwo etwas rot wird.
+**Pro Konto und Region ist genau ein SES-Receipt-Rule-Set aktiv.** Der Stack
+legt ein eigenes an (`ecr2026`) und hängt die Regel dort ein. Aktivieren tut
+er es **nicht** — das bleibt ein Handgriff, und das ist Absicht: Ein
+Aktivieren verdrängt ein bestehendes Set und kippt damit den Mailempfang einer
+ganz anderen Domain im selben Konto, ohne dass irgendwo etwas rot wird.
 
 Vor dem ersten Deploy also nachsehen:
 
@@ -114,38 +119,54 @@ Vor dem ersten Deploy also nachsehen:
 AWS_PROFILE=<dein-profil> aws ses describe-active-receipt-rule-set --region eu-central-1
 ```
 
-- **Kein aktives Set:** Der Stack darf eines anlegen und aktivieren.
-- **Ein aktives Set vorhanden:** Dessen Namen konfigurieren — der Stack hängt
-  sich dort nur ein und aktiviert nichts.
-
-Und das ist eine Entscheidung für den **allerersten** Deploy, keine, die man
-später gefahrlos nachträgt: Trägt man den fremden Namen nachträglich in einen
-Stack ein, der bisher sein eigenes Set aktiviert hatte, entfernt CloudFormation
-die eigene Aktivierung und hängt die Regel in das andere, dabei aber nicht
-aktive Set. Ergebnis: gar kein aktives Set mehr, und der Empfang stoppt still.
+- **Kein aktives Set:** Den Stack so ausrollen und danach das neue Set
+  aktivieren:
+  `aws ses set-active-receipt-rule-set --rule-set-name ecr2026 --region eu-central-1`
+- **Ein aktives Set vorhanden:** Dann nichts aktivieren. Stattdessen im Code
+  das bestehende Set mit `ReceiptRuleSet.fromReceiptRuleSetName` holen und die
+  Regel dort einhängen — ein Schalter dafür ist nicht eingebaut. Sonst steht
+  das eigene Set zwar da, ist aber inaktiv, und es kommt nichts an.
 
 ### Die Schritte
 
 1. **MX-Eintrag** für die Domain auf den SES-Endpunkt der Region setzen, und die
    Domain als SES-Identität verifizieren (Easy DKIM).
-2. **Diesen Stack ausrollen** — er braucht die Konto-ID des Vortragskontos, die
-   Adressen, die er bedienen soll, und gegebenenfalls den Namen eines bereits
-   aktiven Rule Sets. Läuft beides im selben Konto, entfallen die
-   Cross-Account-Rolle und ihre Konto-ID.
-3. **Die vier Ausgabewerte** als GitHub-Secrets im Vortrags-Repository
+2. **Diesen Stack ausrollen**, aus einer eigenen CDK-App im Domain-Konto. Er
+   braucht die Konto-ID des Vortragskontos, die Adressen, die er bedienen
+   soll, und die verifizierte Domain:
+
+   ```ts
+   new MailEmpfangStack(app, "Ecr2026MailEmpfang", {
+     env: { account: "<domain-konto>", region: "eu-central-1" },
+     vortragsKonto: "<vortragskonto>",
+     adressen: ["ecr2026@example.org"],
+     domain: "example.org",
+   });
+   ```
+
+   Läuft beides im selben Konto, entfallen die Cross-Account-Rolle und ihre
+   Konto-ID — dann den Stack entsprechend vereinfachen.
+3. **Das Rule Set aktivieren** oder die Regel in ein bestehendes hängen (siehe
+   oben).
+4. **Drei Ausgabewerte** als GitHub-Secrets im Vortrags-Repository
    hinterlegen:
 
-   | Secret | Was |
-   |---|---|
-   | `MAIL_ACCESS_ROLE_ARN` | die Rolle, die das Vortragskonto annimmt |
-   | `MAIL_BUCKET` | der Bucket mit `eingang/` |
-   | `MAIL_TOPIC_ARN` | das SNS-Topic, das den Eingang meldet |
-   | `MAIL_IDENTITY_ARN` | die verifizierte SES-Identität zum Senden |
+   | Secret | Ausgabe | Was |
+   |---|---|---|
+   | `MAIL_ACCESS_ROLE_ARN` | `AccessRoleArn` | die Rolle, die das Vortragskonto annimmt |
+   | `MAIL_BUCKET` | `BucketName` | der Bucket mit `eingang/` |
+   | `MAIL_TOPIC_ARN` | `TopicArn` | das SNS-Topic, das den Eingang meldet |
 
-4. **Deployen.** `packages/presentation/aws-blocks/index.cdk.ts` legt den
-   Mail-Handler nur an, wenn alle vier Werte da sind. Fehlt einer, passiert
-   nichts — kein Fehler, kein Handler. Das ist gewollt: Ein halb verdrahteter
+   Die vierte Ausgabe, `IdentityArn`, ist nur zur Auskunft; niemand liest sie.
+
+5. **Deployen.** `packages/presentation/aws-blocks/index.cdk.ts` legt die
+   Mail-Lambda nur an, wenn alle drei Werte da sind. Fehlt einer, passiert
+   nichts — kein Fehler, keine Lambda. Das ist gewollt: Ein halb verdrahteter
    Mailweg wäre schlimmer als gar keiner.
+
+Die Adresse des Postfachs steht außerdem im Code des Vortrags, nicht nur
+hier: `packages/presentation/aws-blocks/mail/konfig.ts`. Wer eine andere
+Domain nimmt, ändert sie dort mit.
 
 Die abgesprochenen Rollennamen lösen dabei ein Henne-Ei-Problem. Die Rolle hier
 muss der Lambda im Vortragskonto vertrauen, bevor es sie gibt. Beide Namen
@@ -154,9 +175,10 @@ stehen deshalb fest und an einer Stelle: `ecr2026-mail-access` hier,
 
 ## Zwei Dinge, die sonst überraschen
 
-- **Der Bucket steht auf `RETAIN`, ohne Lifecycle-Regel.** Er ist der einzige
-  Ort, an dem eine eingegangene Mail liegt. Stilles Löschen wäre hier der
-  schlimmste Fehler.
+- **Eingegangene Mails leben sieben Tage.** Eine Lifecycle-Regel löscht sie
+  danach, und der Bucket hängt am Stack (`DESTROY`, samt Inhalt): Wer den
+  Stack entfernt, entfernt alle Mails darin. Wer sie länger braucht, ändert
+  beides vor dem ersten Deploy.
 - **SES weist Mail über 40 MB ab**, bevor sie den Bucket erreicht. Der Absender
   bekommt einen Bounce, `eingang/` bleibt leer. Eine fehlende große Mail ist
   also kein Zeichen für einen kaputten Empfang.

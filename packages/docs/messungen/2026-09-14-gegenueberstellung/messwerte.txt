@@ -26,5 +26,5 @@ Streuung der genannten Zahlen (wie viele verschiedene über 5 Läufe):
   voll       13 verschiedene, davon 8 in jedem Lauf
   gestoert   12 verschiedene, davon 6 in jedem Lauf
 
-Antworten und Rohdaten: /tmp/claude-504/v455
+Antworten und Rohdaten: dieser Ordner (rohdaten.json)
 Gesamtkosten: 77.5 Cent

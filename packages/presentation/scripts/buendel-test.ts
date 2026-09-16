@@ -1,14 +1,15 @@
 /**
- * Bündelt den Mail-Handler genauso, wie es NodejsFunction beim Deployment tut.
+ * Bündelt die Mail-Lambda genauso, wie es NodejsFunction beim Deployment tut.
  *
- * Der Grund für dieses Skript: `packages/handelswelt` ist ein zweites
- * Workspace-Paket, und esbuild muss es über den pnpm-Symlink finden und seine
- * TypeScript-Quellen mit ins Bündel nehmen. Ob das geht, zeigt sich sonst erst
- * beim Deployment — und am Vortragsabend ist das die schlechteste Stelle für
- * eine Überraschung (siehe die Notiz `blocks-deployment-fallen`).
+ * Die Lambda nimmt nur noch Mail an und sendet sie; der Agent läuft in
+ * AgentCore (aws-blocks/agent). Was sie dafür braucht — S3, SES, die
+ * angenommene Rolle im Domain-Konto und den MIME-Leser — muss im Bündel
+ * stecken: Die Lambda-Laufzeit bringt nicht zwingend jedes SDK-Modul mit,
+ * und ein fehlendes zeigt sich erst beim ersten Aufruf. Am Vortragsabend ist
+ * das die schlechteste Stelle für eine Überraschung.
  *
- * Geprüft wird dreierlei: dass das Bündel entsteht, dass die Handelswelt
- * wirklich darin gelandet ist, und dass sie darin rechnet.
+ * Und umgekehrt: Handelswelt und Bedrock gehören NICHT hinein. Tauchen sie
+ * wieder auf, rechnet die Lambda wieder selbst, und es gibt zwei Agenten.
  */
 import { build } from 'esbuild';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
@@ -53,48 +54,18 @@ try {
   const groesse = (buendel.length / 1024 / 1024).toFixed(1);
 
   pruefe('Das Bündel ist entstanden', buendel.length > 0);
-  /*
-    Marker aus `handelswelt`, die esbuild nicht wegkürzen kann und die es
-    sonst nirgends gibt. Nicht auf den Text „Kalkulation Schokolade &
-    Pralinen" prüfen — der wird erst zur Laufzeit zusammengesetzt.
-  */
-  pruefe('Die Handelswelt ist mit im Bündel', buendel.includes('mindestRohertrag'));
-  pruefe('Die Kategorievorgabe ist mit im Bündel', buendel.includes('vorlaufWochen'));
-  pruefe('Die feste Marge ist verschwunden', !buendel.includes('34,2 %'));
-
-  /*
-    Und das, wovor der Kommentar in index.cdk.ts warnt: Die Lambda-Laufzeit
-    bringt nicht zwingend client-bedrock-runtime mit, und ein fehlendes Modul
-    zeigt sich erst beim ersten Aufruf. `externalModules: []` soll das
-    verhindern — hier steht, ob es das tut.
-  */
-  pruefe('Das Bedrock-SDK ist mit im Bündel', buendel.includes('BedrockRuntimeClient'));
+  pruefe('Der S3-Client ist mit im Bündel', buendel.includes('S3Client'));
+  pruefe('Der SES-Client ist mit im Bündel', buendel.includes('SESv2Client'));
+  pruefe('Die Rolle im Domain-Konto lässt sich annehmen', buendel.includes('AssumeRoleCommand'));
   pruefe('Der MIME-Leser ist mit im Bündel', buendel.includes('postal-mime') || buendel.includes('PostalMime'));
+  pruefe('Die Lambda fragt nach dem Vortragsfenster', buendel.includes('api.vortragsfenster'));
 
-  /*
-    Und rechnet sie auch? Aus dem Bündel selbst lässt sich das nicht aufrufen,
-    ohne den Handler zu starten — deshalb hier gegen die Quelle, mit den Zahlen
-    des Szenarios.
-  */
-  const { marge } = await import('@ecr-talk/handelswelt');
-  const befund = marge(2.89, 4.49);
-  pruefe('Die Kalkulation antwortet', befund.ok);
-  if (befund.ok) {
-    const prozent = (befund.daten.rohertrag * 100).toFixed(1);
-    pruefe(`Rohertrag 31,1 % statt 34,2 % (gerechnet: ${prozent} %)`, prozent === '31.1');
-    pruefe('Die Vorgabe ist erfüllt, aber knapp', befund.daten.erfuellt && befund.daten.luftInPunkten < 2);
-  }
-
-  const andere = marge(1.89, 2.19);
-  pruefe(
-    'Andere Preise ergeben eine andere Marge',
-    andere.ok && !andere.daten.erfuellt,
-  );
-  pruefe('Unsinnige Preise ergeben einen Grund, keine Zahl', !marge(0, 4.49).ok);
+  /* Marker, die es nur in der Handelswelt und im Bedrock-SDK gibt. */
+  pruefe('Die Handelswelt ist NICHT im Bündel', !buendel.includes('mindestRohertrag'));
+  pruefe('Das Bedrock-SDK ist NICHT im Bündel', !buendel.includes('BedrockRuntimeClient'));
 
   console.log(`\nBündel: ${groesse} MB`);
   if (fehler > 0) process.exitCode = 1;
 } finally {
   await rm(ordner, { recursive: true, force: true });
 }
-

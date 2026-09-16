@@ -91,7 +91,7 @@ console.log("\nPostfach erkannt");
 pruefe(postfachFuer(["ecr2026@carstenbkoch.de"]).adresse === "ecr2026@carstenbkoch.de", "ecr2026 → Assistent");
 pruefe(
   postfachFuer(["ecr2026-probe@carstenbkoch.de"]).adresse === "ecr2026@carstenbkoch.de",
-  "das entfallene Probe-Postfach fällt auf den Assistenten zurück",
+  "das entfallene Postfach ecr2026-probe@ fällt auf ecr2026@ zurück",
 );
 pruefe(postfachFuer([]).adresse === "ecr2026@carstenbkoch.de", "ohne Empfänger → Assistent");
 
@@ -249,7 +249,7 @@ const rohRumpf = roh.split("\r\n\r\n").slice(1).join("\r\n\r\n").replace(/\r\n/g
 pruefe(Buffer.from(rohRumpf, "base64").toString("utf8").includes("Kalkulation — Marge"), "Rumpf lesbar zurück");
 
 /*
-  Außerhalb des Vortragsfensters (x1eb): kein Agent, kein Zitat, nur der
+  Außerhalb des Vortragsfensters: kein Agent, kein Zitat, nur der
   Hinweis und der feste Teil. So baut die Mail-Lambda sie zusammen.
 */
 console.log("\nFeste Antwort außerhalb des Vortragsfensters");

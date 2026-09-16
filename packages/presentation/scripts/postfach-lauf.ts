@@ -6,7 +6,7 @@
  * Das Modell ist echt: Der Blocks-Agent läuft lokal gegen Bedrock, sobald
  * AWS-Zugangsdaten da sind.
  *
- *   AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation exec tsx scripts/postfach-lauf.ts
+ *   AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation postfach
  *
  * Ohne Argumente beantwortet er die Hallbach-Mail aus den Folien und druckt,
  * was hinausginge.

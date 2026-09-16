@@ -1,26 +1,30 @@
 /**
- * Die Gegenüberstellung (v455, seit 16.09. gegen den Blocks-Agenten).
+ * Die Gegenüberstellung: dieselbe Mail von Hallbach, mehrere Ausstattungen,
+ * jede fünfmal.
  *
- * Bis zum 16.09. lief sie über die eigene Werkzeugschleife mit sechs
- * Ausstattungen, vom nackten Modell bis zur gehärteten Fassung. Die Schleife
- * gibt es nicht mehr; gemessen wird jetzt der Postfach-Agent, wie er
- * ausgerollt ist — einmal mit allen Fachwerkzeugen, einmal ohne die Ziele.
- * Die älteren Ergebnisse stehen in packages/docs/messungen.
+ * Gemessen wird der Postfach-Agent, wie er ausgerollt ist — einmal mit allen
+ * Fachwerkzeugen (`post`), einmal ohne die Kategorieziele (`ohneZiele`).
  *
- * Die Folien behaupten, was der Unterschied zwischen einem Agenten mit und
- * ohne Systemzugriff ausmacht. Nachgerechnet hat das bisher niemand. Also:
- * dieselbe Mail von Hallbach, vier Ausstattungen, jede fünfmal.
+ * Bis zum 16.09. lief das Skript gegen eine eigene Werkzeugschleife und
+ * verglich bis zu sechs Ausstattungen, vom nackten Modell bis zur gehärteten
+ * Fassung des Prompts. Die Schleife gibt es nicht mehr; die Ergebnisse von
+ * damals liegen in packages/docs/messungen und lassen sich mit diesem Skript
+ * nicht mehr erzeugen.
  *
- * Fünfmal und nicht einmal, weil bei `temperature: 0.3` ein einzelner Lauf
- * eine Anekdote ist. Und die Behauptung der Folie — „die Zahlen gehen zwischen
- * zwei Antworten auseinander" — ist eine Aussage über Streuung.
+ * Fünfmal und nicht einmal, weil ein einzelner Lauf eine Anekdote ist. Und die
+ * Behauptung der Folie — „die Zahlen gehen zwischen zwei Antworten
+ * auseinander" — ist eine Aussage über Streuung.
  *
  * Was dabei gemessen wird, ist die ZAHLENDECKUNG: Jede Zahl in der Antwort
  * muss sich auf eine Systemauskunft oder auf die eingehende Mail zurückführen
  * lassen. Was übrig bleibt, hat der Agent erfunden. Der Systemprompt sagt
- * „Erfinde keine Zahlen" — das ist heute eine Bitte, hier wird es eine Messung.
+ * „Erfinde keine Zahlen" — das ist eine Bitte, hier wird es eine Messung.
  *
  *   AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation gegenueberstellung
+ *
+ * Schreibt je Lauf eine Textdatei und `ergebnis.json` nach ORDNER (Standard:
+ * /tmp/gegenueberstellung), die Tabelle auf die Konsole. LAEUFE setzt die
+ * Zahl der Läufe je Ausstattung.
  */
 import { mkdir, writeFile } from "node:fs/promises";
 import type { Werkzeugauswahl } from "../aws-blocks/agent";

@@ -1,10 +1,11 @@
 /**
  * Die E-Mail-Infrastruktur — der Teil, der im Domain-Konto lebt.
  *
- * **Dieser Stack ist in diesem Repository NICHT verdrahtet.** Er wird von
- * nichts hier aufgerufen, und `pnpm run deploy` rollt ihn nicht aus. Er steht
- * hier, weil das Architekturbild ihn als „E-Mail-Infrastruktur" zeigt und
- * jemand, der das Ganze nachbauen will, wissen muss, was dahintersteckt.
+ * **Dieses Repository rollt den Stack nicht aus.** Es gibt keine CDK-App, die
+ * ihn anlegt, und `pnpm run deploy` fasst das Domain-Konto nicht an. Die
+ * andere Hälfte — die Mail-Lambda im Vortragskonto — ist dagegen verdrahtet
+ * (packages/presentation/aws-blocks/index.cdk.ts) und springt an, sobald die
+ * drei Ausgabewerte dieses Stacks als Secrets gesetzt sind.
  *
  * Der Grund für die Trennung ist keine Architekturvorliebe: Die Adresse des
  * Agenten liegt auf der ÜBERGEORDNETEN Domain, nicht auf der Subdomain des
@@ -39,11 +40,9 @@ export interface MailEmpfangProps extends StackProps {
   /**
    * Adressen, die der Vortrag bedient.
    *
-   * Zwei, nicht eine: Abschnitt 6 schreibt an Lisas Assistenten (mit
-   * Systemprompt und Werkzeugen), Abschnitt 15 an einen Agenten, der nichts hat
-   * als sein Training. Unterschieden wird über die Adresse und nicht über den
-   * Betreff — beim ersten fordern wir die Teilnehmer ausdrücklich auf, den Text
-   * zu ändern, und wer dabei den Betreff anfasst, bekäme den falschen Agenten.
+   * Heute eine: `ecr2026@`. Eine Liste bleibt es, weil die Regel mehrere
+   * annehmen kann; was die Mail-Lambda nicht kennt, beantwortet sie aus dem
+   * ersten Postfach (packages/presentation/aws-blocks/mail/konfig.ts).
    */
   readonly adressen: readonly string[];
   /** Domain, die in SES verifiziert ist. */
@@ -69,8 +68,12 @@ export class MailEmpfangStack extends Stack {
     /*
       Die Rohmails. Bewusst mit SSE-S3 und nicht mit KMS: ein KMS-Schlüssel
       bräuchte eine dritte Handreichung (Key Policy für das fremde Konto,
-      kms:Decrypt in dessen Rolle), und für Mails, die nach einem Tag gelöscht
-      werden, ist der Gegenwert gering.
+      kms:Decrypt in dessen Rolle), und für Mails, die nach sieben Tagen
+      gelöscht werden, ist der Gegenwert gering.
+
+      Eine Lifecycle-Regel löscht jede Rohmail nach sieben Tagen. Der Bucket
+      selbst hängt am Stack (DESTROY mit autoDeleteObjects): Wer den Stack
+      entfernt, entfernt auch alle Mails darin.
     */
     const bucket = new Bucket(this, "MailBucket", {
       encryption: BucketEncryption.S3_MANAGED,
@@ -177,6 +180,8 @@ export class MailEmpfangStack extends Stack {
     new CfnOutput(this, "BucketName", { value: bucket.bucketName });
     new CfnOutput(this, "TopicArn", { value: topic.topicArn });
     new CfnOutput(this, "AccessRoleArn", { value: zugriff.roleArn });
+    // Nur zur Auskunft: Die Mail-Lambda liest diesen Wert nicht, die Rolle
+    // oben darf ohnehin nur als diese Identität senden.
     new CfnOutput(this, "IdentityArn", {
       value: `arn:aws:ses:${this.region}:${this.account}:identity/${domain}`,
     });

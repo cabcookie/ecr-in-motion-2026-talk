@@ -1242,7 +1242,7 @@ const SECTIONS = [
           "persist": true,
           "label": "Chat starten",
           "hint": "Du bekommst die Mail von Hallbach. Der Agent fragt Dich nach den Daten, die ihm fehlen — die Tools bist Du.",
-          "systemPrompt": "Du bist Lisa Berger, der KI-Agent für Category Management Schokolade & Pralinen bei der Lebensmittelkette Nordkorb. Du entscheidest selbst, und du zeichnest mit deinem Namen.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann lege die Frage dem Category-Team vor. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n7. Halte dich kurz. Deine Antwort wird auf einem Handy gelesen: ein kurzer Absatz, bei Bedarf drei Stichpunkte.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
+          "systemPrompt": "Du bist Lisa Berger, der KI-Agent für Category Management Schokolade & Pralinen bei der Lebensmittelkette Nordkorb. Du entscheidest selbst, und du zeichnest mit deinem Namen.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann lege die Frage dem Category-Team vor. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
           "suggestions": [
             "Die Kategorie wächst um 3,2 %",
             "Underperformer ist Nocturne Mini mit −12 %",
@@ -1783,13 +1783,31 @@ const SECTIONS = [
           "text": "ecr2026.carstenbkoch.de/vortrag",
           "after": "Die Folien als PDF. Dieselbe Adresse steht in der Antwort-Mail."
         },
-        "say": "Und wenn Du heute Abend mitschreiben wolltest: musst Du nicht. Unter dieser Adresse liegen die Folien als PDF — mit den Zahlen, die wir gemessen haben, und den Links, die Dich weiterbringen. Mach einfach ein Foto. Dieselbe Adresse steht auch unten in der Mail, die Du von Lisa bekommen hast. Vielen Dank.",
+        "say": "Und wenn Du heute Abend mitschreiben wolltest: musst Du nicht. Unter dieser Adresse liegen die Folien als PDF — mit den Zahlen, die wir gemessen haben, und den Links, die Dich weiterbringen. Mach einfach ein Foto. Dieselbe Adresse steht auch unten in der Mail, die Du von Lisa bekommen hast.",
         "papier": {
-          "text": "Diese Seite bleibt am Ende stehen, damit man sie fotografieren kann. Was dahinter liegt, steht auf der letzten Seite dieses Dokuments."
+          "text": "Diese Folie bleibt stehen, damit man sie fotografieren kann."
         }
       }
     ],
     "n": 27
+  },
+  {
+    "b": 4,
+    "kind": "Abspann",
+    "title": "Damit Du nicht bei null anfängst.",
+    "panels": [
+      {
+        "at": "19:00",
+        "mock": {
+          "t": "abspann"
+        },
+        "say": "Und damit Du nicht bei null anfangen musst, habe ich Dir vier Wege mitgebracht — je nachdem, wer Du bist. Wer selbst ausprobieren will, fängt links oben an: Amazon Quick kostet nichts und braucht kein AWS-Konto. Wer es erst verstehen will, hat rechts zwei kostenlose Kurse. Wer es bauen lassen will, gibt die Links links unten an seine IT weiter. Und wer es nicht allein anfangen möchte, findet rechts unten den Partner dafür. Du musst nichts abschreiben — genau das steht auch in der Mail, die Du von Lisa bekommst. Vielen Dank.",
+        "papier": {
+          "weg": true
+        }
+      }
+    ],
+    "n": 28
   }
 ];
 

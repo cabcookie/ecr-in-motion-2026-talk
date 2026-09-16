@@ -35,7 +35,7 @@ interface Ergebnis {
 async function einLauf(i: number): Promise<Ergebnis> {
   const b = BRIEFINGS[i];
   const mail = {
-    absender: `kontakt@${b.marke.toLowerCase().replace(/[^a-z]/g, "")}.de`,
+    absender: `kontakt@${b.marke.toLowerCase().replace(/[^a-z]/g, "")}.example`,
     absenderName: NAMEN[i],
     betreff: b.betreff,
     text: b.text.replace("[Dein Name]", NAMEN[i]),

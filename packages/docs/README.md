@@ -26,3 +26,12 @@ ihnen lässt sich bis auf eine dieser Dateien zurückführen.
 Sie werden nicht neu erzeugt, wenn jemand das Repo baut. Ein Messlauf kostet
 Geld und liefert andere Zahlen; was hier liegt, ist der Stand, auf den sich
 der Vortrag beruft.
+
+Jeder Messordner nennt den Befehl, der ihn erzeugt hat. Die drei hier
+entstanden mit früheren Fassungen von `scripts/gegenueberstellung.ts`; was das
+Skript heute misst, steht in seinem Kopfkommentar.
+
+Ein Wort, das hier anders gemeint ist als im übrigen Repo: `probe` ist in
+diesen Messungen eine **Ausstattung** — ein Agent ohne Werkzeuge, der zum
+Raten aufgefordert wird. Mit den Proben des Vortrags (`src/probe/`) hat das
+nichts zu tun.

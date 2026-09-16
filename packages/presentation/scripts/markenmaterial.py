@@ -2,7 +2,7 @@
 """
 Markenmaterial von AWS ins Web-Verzeichnis holen: Schrift und Logo.
 
-    python3 scripts/markenmaterial.py
+    pnpm --filter @ecr-talk/presentation marke
 
 Schrift und Logo gehören Amazon und liegen deshalb nicht im Repository.
 Wer das Repo klont und dieses Skript nicht laufen lässt, bekommt die

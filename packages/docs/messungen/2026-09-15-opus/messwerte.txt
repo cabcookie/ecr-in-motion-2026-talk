@@ -38,5 +38,5 @@ Innenzahlen, die beim Lieferanten landeten (in wie vielen von 5 Läufen):
   gehaertet  5 von 5 Läufen sauber
   gestoert   4 von 5 Läufen sauber  —  14.7, 147
 
-Antworten und Rohdaten: /tmp/claude-504/opus2
+Antworten und Rohdaten: dieser Ordner (rohdaten.json)
 Gesamtkosten: 221.5 Cent

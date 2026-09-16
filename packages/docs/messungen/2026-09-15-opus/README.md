@@ -1,18 +1,21 @@
 # Dieselbe Messung auf Opus 4.8, 15.09.2026
 
 Modellwechsel von Sonnet 4.6 auf Opus 4.8. Sonst unverändert — gleiche Mail,
-gleiche sechs Ausstattungen, je fünf Läufe.
+gleiche sechs Ausstattungen wie in den [zwei Prompts](../2026-09-14-zwei-prompts/),
+je fünf Läufe, erzeugt mit demselben Befehl
+(`pnpm --filter @ecr-talk/presentation gegenueberstellung`, Fassung vom 15.09.).
 
-## Was der Wechsel zuerst kostete
+Das Modell stand damals als Konstante in der Werkzeugschleife des Mailwegs.
+Heute steht es an einer Stelle für alle Agenten: `GEMEINSAM.model` in
+`packages/presentation/aws-blocks/agent/index.ts` (`BedrockModels.SMART` ist
+Opus 4.8).
 
-**Alle 30 Läufe scheiterten.** `` `temperature` is deprecated for this model. ``
-Opus nimmt den Parameter nicht an, den `agent.ts` seit jeher mitschickte — und
-zwar bei jedem Aufruf, nicht bei manchen.
+## Die Lehre vor den Zahlen
 
-`mail:test` blieb dabei grün, weil er gegen eine Attrappe läuft. Aufgefallen
-wäre es erst am Vortragsabend, bei der ersten Teilnehmer-Mail. Seitdem gibt es
-`modell:test`: ein einziger echter Aufruf mit genau der Konfiguration des
-Agenten, für weniger als einen Zehntelcent.
+Beim ersten Versuch scheiterten alle 30 Läufe: Opus nimmt den Parameter
+`temperature` nicht mehr an. Die Tests gegen Attrappen blieben grün. Deshalb
+gibt es `modell:test` — ein echter Lauf mit genau der Konfiguration des
+Agenten, bevor ein Modellwechsel ausgerollt wird.
 
 ## Die Zahlen
 

@@ -98,13 +98,12 @@ const rtReset = new Realtime(scope, 'reset-live', {
  * Der Agent im Handy-Chat.
  *
  * Dieselbe Definition, die auch hinter dem Postfach steht — er kann nur eines
- * nicht: eine Mail senden. Dafür antwortet er im Chat.
+ * nicht: eine Mail senden. Dafür antwortet er im Chat. Er bringt alle
+ * Fachwerkzeuge mit, einschließlich der Ziele.
  *
- * ACHTUNG, hier stand bis zur Vereinheitlichung das Gegenteil: „bewusst keine
- * Tools". Das stimmt nicht mehr. `chatAgent` bringt alle Fachwerkzeuge mit,
- * einschließlich der Ziele. Der stufenweise Aufbau — erst Prompt, dann
- * Werkzeuge einzeln dazu —, der den Unterschied auf dem Handy erlebbar machen
- * soll, ist NOCH NICHT gebaut.
+ * Auf dem Handy gibt es zwei Stufen: diesen Agenten (`voll`) und das nackte
+ * Modell (`roh`, unten). Stufen dazwischen — erst der Prompt, dann Werkzeug
+ * für Werkzeug — gibt es nicht.
  *
  * Der Prompt kommt aus den Foliendaten, damit der Agent mit demselben Text
  * läuft, den das Publikum auf dem Handy aufklappen kann.
@@ -116,7 +115,7 @@ const rtReset = new Realtime(scope, 'reset-live', {
 const berater = chatAgent(scope);
 
 /*
-  Die unterste Stufe, für Abschnitt 14: das nackte Modell ohne Systemprompt und
+  Die unterste Stufe, für Abschnitt 14: das nackte Modell ohne Fachprompt und
   ohne Fachwerkzeuge. Ein eigener Agent und kein Schalter am bestehenden —
   Blocks führt den Verlauf je Agent, und zwei Stufen im selben Gespräch wären
   nicht zu trennen.
@@ -259,8 +258,8 @@ const ablegen = async (f: OffeneFrage) => {
 /*
   Ein Postfach, ein Agent, alle Fachwerkzeuge.
 
-  Bis zum 16.09. gab es daneben 'probe' — derselbe Agent ohne Werkzeuge, für
-  Abschnitt 15. Das Postfach ist entfallen; die Stufe ohne Werkzeuge zeigt
+  Bis zum 16.09. gab es daneben ein zweites Postfach für denselben Agenten
+  ohne Werkzeuge. Es ist entfallen; die Stufe ohne Werkzeuge zeigt
   rohChatAgent im Chat.
 */
 const postfach = postfachAgent(scope, 'post', perMailLambda, ablegen);
@@ -558,7 +557,7 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
    * Mail ist längst draußen, wenn hier jemand antwortet. Die Antwort bleibt
    * deshalb als Beleg an der Frage stehen.
    *
-   * Wer die Operator-Oberfläche aus Epic 0trs baut, schaltet in
+   * Wer eine Oberfläche baut, über die das Team live antwortet, schaltet in
    * `frageLisa(…, anhalten = true)` das Anhalten ein und setzt hier den Zug
    * fort:
    *

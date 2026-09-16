@@ -1,7 +1,21 @@
 # Gegenüberstellung, 14.09.2026
 
-Dieselbe Mail von Hallbach Süßwaren, fünf Ausstattungen, jede fünfmal.
-Erzeugt mit `AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation gegenueberstellung`.
+Dieselbe Mail von Hallbach Süßwaren, fünf Ausstattungen, jede fünfmal, auf
+Claude Sonnet 4.6.
+
+Erzeugt mit
+
+```bash
+AWS_PROFILE=<dein-profil> pnpm --filter @ecr-talk/presentation gegenueberstellung
+```
+
+— in der Fassung des Skripts vom 14.09. Damals lief der Mailweg über eine
+eigene Werkzeugschleife, und das Skript verglich die fünf Ausstattungen unten.
+Seit dem 16.09. misst es den ausgerollten Postfach-Agenten mit und ohne
+Kategorieziele; diese Tabelle lässt sich damit nicht mehr eins zu eins
+erzeugen. Das Skript schreibt nach `/tmp/gegenueberstellung/` (änderbar über
+`ORDNER`); die Datei, die dort `ergebnis.json` heißt, liegt hier als
+`rohdaten.json`.
 
 ## Was hier liegt
 

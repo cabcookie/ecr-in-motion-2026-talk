@@ -1,7 +1,13 @@
 # Zwei Prompts nebeneinander, 14.09.2026
 
-Dieselbe Mail, sechs Ausstattungen, jede fünfmal. Der Unterschied zwischen
-`voll` und `gehaertet` ist **ein Absatz im Systemprompt** — sonst nichts.
+Dieselbe Mail, sechs Ausstattungen, jede fünfmal, auf Claude Sonnet 4.6. Der
+Unterschied zwischen `voll` und `gehaertet` ist **ein Absatz im Systemprompt** —
+sonst nichts.
+
+Erzeugt wie die [Gegenüberstellung vom selben Tag](../2026-09-14-gegenueberstellung/)
+mit `pnpm --filter @ecr-talk/presentation gegenueberstellung`, nachdem die
+Ausstattung `gehaertet` dazugekommen war. Auch hier gilt: Das Skript misst
+heute etwas anderes, und `rohdaten.json` ist dessen `ergebnis.json`.
 
 ## Der Messwert, um den es hier geht
 

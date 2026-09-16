@@ -105,7 +105,7 @@ if (!sandboxMode && mailRolle && mailBucket && mailTopic) {
     Der Rollenname ist fest vergeben, nicht von CDK erzeugt. Die Rolle im
     Domain-Konto muss ihr vertrauen, bevor es sie gibt — ein abgesprochener Name
     bricht dieses Henne-Ei. Auf der anderen Seite steht derselbe Name in
-    examples/konto-a/mail-empfang-stack.ts.
+    packages/mail-infra/lib/mail-empfang-stack.ts.
   */
   const rolle = new Role(blocksStack, 'MailHandlerRole', {
     roleName: MAIL_HANDLER_ROLE,
