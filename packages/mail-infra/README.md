@@ -61,8 +61,9 @@ in diesem Konto neu auszurollen.
 
 1. SES legt die Mail in S3 ab und meldet sie über SNS.
 2. Die Mail-Lambda `ecr2026-mail-handler` im Vortragskonto liest sie mit der
-   Zugriffsrolle und übergibt sie über die API `mailEingang` an den Agenten
-   (geschützt mit `DECK_TOKEN`).
+   Zugriffsrolle. Im Vortragsfenster übergibt sie sie über die API
+   `mailEingang` an den Agenten (geschützt mit `DECK_TOKEN`); außerhalb sendet
+   sie selbst eine feste Antwort ohne Agent und ohne Zitat.
 3. Der Agent arbeitet in AgentCore und ruft zum Senden die Mail-Lambda auf.
    Nur deren Rolle ist hier zugelassen, deshalb sendet er nicht selbst.
 4. Die Lambda hängt Abspann und Zitat an und sendet über SES.

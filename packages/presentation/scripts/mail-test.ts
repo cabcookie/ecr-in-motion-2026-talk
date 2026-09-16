@@ -19,6 +19,7 @@ import { fachwerkzeuge } from "../aws-blocks/agent/werkzeuge";
 import { baueRohmail, baueRumpf, lies, mitAnhang } from "../aws-blocks/mail/brief";
 import { postfachFuer } from "../aws-blocks/mail/konfig";
 import { anhangStruktur, anhangText } from "../aws-blocks/mail/anhang";
+import { RUHE_HINWEIS, ruheRumpf } from "../aws-blocks/mail/ruhe";
 
 /*
   Der feste Teil der Mail kommt aus anhang.md. Unter tsx gibt es kein
@@ -246,5 +247,25 @@ pruefe(mitUmlaut.includes("Subject: =?UTF-8?B?"), "Betreff mit Umlauten kodiert 
 pruefe(mitUmlaut.includes("From: =?UTF-8?B?"), "Anzeigename mit Sonderzeichen kodiert");
 const rohRumpf = roh.split("\r\n\r\n").slice(1).join("\r\n\r\n").replace(/\r\n/g, "");
 pruefe(Buffer.from(rohRumpf, "base64").toString("utf8").includes("Kalkulation — Marge"), "Rumpf lesbar zurück");
+
+/*
+  Außerhalb des Vortragsfensters (x1eb): kein Agent, kein Zitat, nur der
+  Hinweis und der feste Teil. So baut die Mail-Lambda sie zusammen.
+*/
+console.log("\nFeste Antwort außerhalb des Vortragsfensters");
+const ruhe = mitAnhang(ruheRumpf(), ANHANG);
+pruefe(ruhe.includes("Lisa ist im Moment nicht aktiv."), "Hinweis, dass Lisa nicht aktiv ist");
+pruefe(ruhe.includes("frag gerne eine Präsentation bei Euch an"), "Einladung, eine Präsentation anzufragen");
+pruefe(RUHE_HINWEIS.split("\n").includes("https://carstenbkoch.de/"), "Verweis auf carstenbkoch.de, allein auf der Zeile");
+pruefe(ruhe.includes("von einem KI-Agenten"), "Kennzeichnung als automatische Antwort bleibt");
+pruefe(ruhe.includes("ecr2026.carstenbkoch.de/vortrag"), "Link zum Vortrag");
+for (const abschnitt of ABSPANN.abschnitte) {
+  for (const e of abschnitt.eintraege) pruefe(ruhe.includes(e.url), `Material verlinkt: ${e.was}`);
+}
+pruefe(!ruhe.includes("> "), "kein Zitat");
+pruefe(!ruhe.includes("schrieb"), "keine Zitatzeile");
+pruefe(!ruhe.includes(eingang.text.split("\n")[2] ?? "Crispy Bites"), "kein Wort aus der eingegangenen Mail");
+pruefe(!/Lisa Berger|abgefragt/.test(ruhe), "keine Unterschrift und keine Schrittfolge des Agenten");
+pruefe(!/^#|^- \[|\]\(http|^</m.test(ruhe), "keine Markdown-Zeichen");
 
 console.log(process.exitCode ? "\nMit Fehlern." : "\nAlles grün.");

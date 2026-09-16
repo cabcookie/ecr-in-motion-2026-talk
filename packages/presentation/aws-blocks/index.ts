@@ -11,6 +11,7 @@
 import { ApiNamespace, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
 import { chatAgent, postfachAgent, rohChatAgent } from './agent';
 import { perMailLambda } from './agent/versand';
+import { fensterstand, heuteAbend, INAKTIV, istAktiv, type Fensterstand } from './fenster';
 import { z } from 'zod';
 
 const scope = new Scope('ecr-masterclass');
@@ -126,6 +127,12 @@ const roh = rohChatAgent(scope);
 const CHATS = { voll: berater, roh } as const;
 type Chatstufe = keyof typeof CHATS;
 
+/** Die Stufe kommt vom Handy; nur die beiden bekannten gelten. */
+function chat(stufe: Chatstufe) {
+  if (stufe !== 'voll' && stufe !== 'roh') throw new Error(`Unbekannte Stufe: ${String(stufe)}`);
+  return CHATS[stufe];
+}
+
 /**
  * Eine Frage, die der Agent Lisa vorgelegt hat und die noch offen ist.
  *
@@ -192,6 +199,58 @@ const plaene = new KVStore(scope, 'zeitplan', { schema: zeitplan });
 /** Es gibt genau einen geltenden Plan. Ältere zu behalten hieße, sie zu verwalten. */
 const PLAN = 'aktuell';
 
+/**
+ * Wann das Vortragsfenster begonnen hat (siehe fenster.ts).
+ *
+ * Ein absoluter Zeitpunkt, geschrieben vom Steuerpult. Fehlt er, ist die
+ * Anwendung gesperrt — der sichere Zustand nach einem frischen Deployment.
+ */
+const fensterBeginn = z.object({ start: z.number(), gesetzt: z.number() });
+
+const fenster = new KVStore(scope, 'vortragsfenster', { schema: fensterBeginn });
+const FENSTER = 'aktuell';
+
+/**
+ * Kurz gemerkt, damit nicht jeder Aufruf erst den Speicher fragt. Nach
+ * „Start jetzt" kann eine andere, warme Instanz also bis zu fünf Sekunden
+ * lang noch den alten Stand sehen.
+ */
+const MERKEN_MS = 5_000;
+let gemerkt: { start: number | null; bis: number } | null = null;
+
+async function fensterBeginnLesen(): Promise<number | null> {
+  const jetzt = Date.now();
+  if (gemerkt && gemerkt.bis > jetzt) return gemerkt.start;
+  const start = (await fenster.get(FENSTER))?.start ?? null;
+  gemerkt = { start, bis: jetzt + MERKEN_MS };
+  return start;
+}
+
+/**
+ * Die Sperre. Steht als ERSTE Zeile in jedem Endpunkt, der Teilnehmerdaten
+ * liest oder schreibt oder ein Modell ruft — vor jedem Parsen, Lesen und
+ * Schreiben.
+ *
+ * Offen bleiben nur Folienstand, Zeitplan und der Fensterstand selbst: Die
+ * Leinwand hängt schon vor 18:00 am Beamer und muss der Steuerung folgen,
+ * und darin steht nichts, was ein Teilnehmer eingegeben hat.
+ */
+async function nurImFenster(): Promise<void> {
+  if (!istAktiv(await fensterBeginnLesen(), Date.now())) throw new Error(INAKTIV);
+}
+
+/** Obergrenzen für Freitext von außen. Eine Chatfrage passt locker hinein. */
+const MAX_NACHRICHT = 2_000;
+const MAX_ANTWORT = 500;
+const MAX_KENNUNG = 100;
+
+function begrenze(wert: unknown, max: number, was: string): string {
+  if (typeof wert !== 'string' || wert.length > max) {
+    throw new Error(`${was} fehlt oder ist länger als ${max} Zeichen.`);
+  }
+  return wert;
+}
+
 const ablegen = async (f: OffeneFrage) => {
   await fragen.put(f.id, f);
   await rtFragen.publish('fragen', CHANNEL, f);
@@ -244,10 +303,42 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
     return { protected: CONTROL_TOKEN !== '' };
   },
 
+  // ─── Vortragsfenster ──────────────────────────────────────────────────────
+
+  /**
+   * Läuft der Vortrag gerade? Offen, denn die Teilnehmerseite entscheidet
+   * danach, ob sie mitspielt oder die Abschlussseite zeigt — und die
+   * Mail-Lambda, ob der Agent antwortet.
+   */
+  async vortragsfenster(): Promise<Fensterstand> {
+    return fensterstand(await fensterBeginnLesen(), Date.now());
+  },
+
+  /**
+   * Das Fenster öffnen, geschützt wie ein Folienwechsel.
+   *
+   * `jetzt` beginnt sofort, `abend` heute um 18:00 Uhr in Bonn. Den Zeitpunkt
+   * rechnet der Server aus, nicht der Browser: Eine falsch gehende Uhr am
+   * Steuerpult soll das Fenster nicht verschieben.
+   */
+  async fensterOeffnen(art: 'jetzt' | 'abend', token = ''): Promise<Fensterstand> {
+    assertMayControl(token);
+    if (art !== 'jetzt' && art !== 'abend') throw new Error(`Unbekannter Beginn: ${String(art)}`);
+    const jetzt = Date.now();
+    const start = art === 'jetzt' ? jetzt : heuteAbend(jetzt);
+    await fenster.put(FENSTER, { start, gesetzt: jetzt });
+    gemerkt = { start, bis: jetzt + MERKEN_MS };
+    return fensterstand(start, jetzt);
+  },
+
   // ─── Publikumsinteraktion ──────────────────────────────────────────────────
 
   /** Antwort eines Teilnehmers festhalten. Bewusst ohne Anmeldung. */
   async submitAnswer(interactionId: string, participantId: string, value: string) {
+    await nurImFenster();
+    begrenze(interactionId, MAX_KENNUNG, 'Die Interaktion');
+    begrenze(participantId, MAX_KENNUNG, 'Die Teilnehmerkennung');
+    begrenze(value, MAX_ANTWORT, 'Die Antwort');
     const entry: Answer = { interactionId, participantId, value, at: Date.now() };
     await answers.put(`${interactionId}:${participantId}`, entry);
     await rtAnswers.publish('answers', 'main', entry);
@@ -256,6 +347,7 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Eigene Antworten wiederherstellen, wenn das Handy zwischendurch gesperrt war. */
   async myAnswers(participantId: string) {
+    await nurImFenster();
     const mine: Answer[] = [];
     for await (const entry of answers.scan()) {
       if (entry.value.participantId === participantId) mine.push(entry.value);
@@ -265,6 +357,7 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Alle Antworten zu einer Interaktion — für die Auswertung auf der Leinwand. */
   async answersFor(interactionId: string) {
+    await nurImFenster();
     const all: Answer[] = [];
     for await (const entry of answers.scan()) {
       if (entry.value.interactionId === interactionId) all.push(entry.value);
@@ -274,6 +367,7 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Kanal, über den neue Antworten live auf die Leinwand kommen. */
   async subscribeAnswers() {
+    await nurImFenster();
     return rtAnswers.getChannel('answers', 'main');
   },
 
@@ -361,7 +455,9 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Neues Gespräch beginnen. */
   async chatStart(participantId: string, stufe: Chatstufe = 'voll') {
-    return { conversationId: await CHATS[stufe].createConversationId(participantId) };
+    await nurImFenster();
+    begrenze(participantId, MAX_KENNUNG, 'Die Teilnehmerkennung');
+    return { conversationId: await chat(stufe).createConversationId(participantId) };
   },
 
   /**
@@ -375,7 +471,10 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
     participantId: string,
     stufe: Chatstufe = 'voll',
   ) {
-    await CHATS[stufe].stream(message, {
+    await nurImFenster();
+    begrenze(message, MAX_NACHRICHT, 'Die Nachricht');
+    begrenze(participantId, MAX_KENNUNG, 'Die Teilnehmerkennung');
+    await chat(stufe).stream(message, {
       conversationId,
       channelId,
       userId: participantId,
@@ -386,12 +485,14 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Verlauf — damit ein gesperrtes Handy sein Gespräch wiederfindet. */
   async chatHistory(conversationId: string, stufe: Chatstufe = 'voll') {
-    return { messages: await CHATS[stufe].getConversation(conversationId) };
+    await nurImFenster();
+    return { messages: await chat(stufe).getConversation(conversationId) };
   },
 
   /** Kanal, über den die Antwort Stück für Stück hereinkommt. */
   async chatChannel(channelId: string, stufe: Chatstufe = 'voll') {
-    return CHATS[stufe].getChannel(channelId);
+    await nurImFenster();
+    return chat(stufe).getChannel(channelId);
   },
 
   /**
@@ -407,6 +508,12 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
    */
   async mailEingang(token: string, daten: z.infer<typeof mailEingangDaten>) {
     assertMayControl(token);
+    /*
+      Die Mail-Lambda fragt vorher selbst nach dem Fenster und antwortet
+      außerhalb fest. Hier steht die Sperre trotzdem: Der Agent soll auch dann
+      nicht anlaufen, wenn jemand mit dem Geheimnis direkt ruft.
+    */
+    await nurImFenster();
     const mail = mailEingangDaten.parse(daten);
     const kanal = `mail-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     /* Mit Absender: Ohne den Namen schrieb der Agent „Sehr geehrte Damen und Herren“. */
@@ -430,6 +537,7 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Was der Agent gerade von Lisa wissen möchte. Der Indikator liest das. */
   async lisaFragen() {
+    await nurImFenster();
     const offen: OffeneFrage[] = [];
     for await (const eintrag of fragen.scan()) {
       if (!eintrag.value.antwort) offen.push(eintrag.value);
@@ -439,6 +547,7 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
 
   /** Kanal für den Indikator — damit er aufleuchtet, statt gepollt zu werden. */
   async lisaKanal() {
+    await nurImFenster();
     return rtFragen.getChannel('fragen', CHANNEL);
   },
 

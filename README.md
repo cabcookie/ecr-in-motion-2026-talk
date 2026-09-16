@@ -134,6 +134,15 @@ Zwei Parameter, die an jeder dieser Adressen gelten:
   Vortragsabend das Netz ausfällt. Die Teilnehmer sind dann außen vor, der
   Vortrag läuft weiter.
 
+**Die Teilnehmersicht ist nur im Vortragsfenster aktiv.** Das Fenster öffnet
+sich im Steuerpult: „Start jetzt" ab sofort, „18:00" heute von 18 bis 20 Uhr
+(Europe/Berlin). Zwei Stunden nach dem Start schließt es von selbst. Außerhalb
+zeigt die Wurzel eine Abschlussseite mit PDF und Material aus
+`aws-blocks/mail/anhang.md`, und das Backend lehnt Antworten, Chat und
+Mailagent ab, ohne ein Modell zu rufen. Folienstand und Zeitplan bleiben lesbar,
+damit die Leinwand schon vor dem Start der Steuerung folgt. Nach einem frischen
+Deployment ist das Fenster zu.
+
 Beide Fenster halten sich über einen `BroadcastChannel` synchron — kein Server
 nötig, solange sie im selben Browser laufen. Wer klickt, ist egal.
 
@@ -300,6 +309,7 @@ pnpm --filter @ecr-talk/handelswelt run ports:test      # die Systeme gegen die 
 pnpm --filter @ecr-talk/handelswelt run daten:test      # tragen die Daten die Zahlen der Folien?
 pnpm --filter @ecr-talk/presentation run buendel:test   # bündelt der Handler?
 pnpm --filter @ecr-talk/presentation run mail:test      # der Mailweg, gegen eine Attrappe
+pnpm --filter @ecr-talk/presentation run fenster:test   # außerhalb des Vortragsfensters ist alles zu
 pnpm --filter @ecr-talk/presentation run buehne:test    # sitzt die Bühne auf jedem Format?
 pnpm --filter @ecr-talk/presentation run papier:test    # trägt jede Folie auch im PDF?
 pnpm --filter @ecr-talk/presentation run sperr:test     # folgt das Handy nach dem Sperren wieder?
