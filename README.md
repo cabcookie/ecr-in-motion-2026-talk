@@ -1,6 +1,6 @@
 # Warum Dein KI-Agent noch keine Aufgaben für Dich übernimmt
 
-**…und wie Du dahin kommst.** — Vortrag auf der ECR in Motion 2026, Hamburg,
+**…und wie Du dahin kommst.** — Vortrag auf der ECR in Motion 2026, Bonn,
 16. September 2026.
 
 Lisa Berger ist Category Managerin für Schokolade & Pralinen bei einer
