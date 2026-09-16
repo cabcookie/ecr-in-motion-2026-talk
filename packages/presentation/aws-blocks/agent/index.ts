@@ -16,8 +16,9 @@
  * ist geteilt. Wer den Agenten ändern will, ändert ihn an einer Stelle.
  */
 import { Agent, BedrockModels, type Scope } from '@aws-blocks/blocks';
-import { ANTWORT_MARKE, SYSTEM_PROMPT } from '../../src/slides/agent';
+import { SYSTEM_PROMPT } from '../../src/slides/agent';
 import {
+  antworteImChat,
   antworteVerMail,
   frageLisa,
   vorgangskontext,
@@ -109,16 +110,15 @@ export function postfachAgent(
 /**
  * Derselbe Agent, im Chat.
  *
- * Er antwortet in Klartext statt über ein Werkzeug — und das ist eine
- * Korrektur, keine Vereinfachung. Mit `antworte_im_chat` steckte die Antwort im
- * Werkzeugaufruf, und der Chat zeigte stattdessen den letzten Modellzug: „Ich
- * habe dem Lieferanten geantwortet: …". Der Verlauf von Blocks führt je
- * Nachricht EINEN zusammengesetzten Text; was in ein Werkzeug geht, kommt dort
- * nie an.
+ * Er antwortet über `antworte_im_chat`, und das ist die saubere Trennung: Was
+ * ins Werkzeug geht, ist die Antwort; alles, was er daneben schreibt, ist sein
+ * Arbeitsweg. Keine Marke im Text, an die er sich halten muss.
  *
- * Damit die Zwischenüberlegungen trotzdem vom Ergebnis trennbar bleiben, setzt
- * er eine Marke davor. Hält er sich nicht daran, zeigt die App alles als
- * Antwort — lieber Denken zu sehen als die Antwort zu verlieren.
+ * Ein Zwischenstand hatte es mit einer Trennmarke im Fließtext versucht. Das
+ * funktionierte, sprang aber: Solange die Marke nicht angekommen war, hielt die
+ * App den laufenden Text für die Antwort und ordnete ihn danach um. Der
+ * Werkzeugaufruf kommt als eigenes Ereignis — die Antwort erscheint auf einmal
+ * und an der richtigen Stelle.
  */
 export function chatAgent(scope: Scope): Agent<any> {
   return new Agent(scope, 'berater', {
@@ -128,8 +128,14 @@ export function chatAgent(scope: Scope): Agent<any> {
       'Du antwortest hier im Chat, nicht per Mail. Dein Gegenüber gehört zum Category-Team, ' +
       'also zum eigenen Haus: Zahlen aus unseren Systemen sind ihm gegenüber keine Interna, ' +
       'sondern genau das, wofür es dich fragt. Nenne sie mit Quelle und Stand.\n\n' +
-      `Schreibe zuerst, was du gerade tust und worauf du hinauswillst. Setze dann in eine eigene Zeile ${ANTWORT_MARKE} und darunter deine eigentliche Antwort. Alles unterhalb der Marke wird angezeigt, alles darüber ist nur dein Arbeitsweg.`,
-    tools: (tool) => fachwerkzeuge(tool),
+      'Schreibe ruhig mit, was du gerade tust und worauf du hinauswillst — das ist dein ' +
+      'Arbeitsweg und wird getrennt angezeigt. Deine eigentliche Antwort gibst du ' +
+      'ausschliesslich mit dem Werkzeug antworte_im_chat, ohne sie vorher anzukuendigen. ' +
+      'Nur was dort steht, bekommt dein Gegenüber zu lesen.',
+    tools: (tool) => ({
+      ...fachwerkzeuge(tool),
+      antworte_im_chat: antworteImChat(tool),
+    }),
   });
 }
 
@@ -174,15 +180,19 @@ export function rohChatAgent(scope: Scope): Agent<any> {
 
       Was danach kommt, ist reine Darstellung und kein Fachkontext: ohne den
       Hinweis auf Fliesstext schreibt das Modell Markdown, und der Chat zeigt
-      die Sternchen roh an. Und ohne die Trennmarke gibt es nichts aufzuklappen
-      — dabei ist gerade hier interessant, WORAUF er seine erfundenen Zahlen
-      stuetzt.
+      die Sternchen roh an. Und ohne die Aufforderung mitzuschreiben gibt es
+      nichts aufzuklappen — dabei ist gerade hier interessant, WORAUF er seine
+      erfundenen Zahlen stuetzt.
     */
     systemPrompt:
       'Du beantwortest Anfragen. Frag nicht nach — beantworte die Anfrage mit dem, was du hast.\n\n' +
       'Halte dich kurz, es wird auf einem Handy gelesen. Reiner Fliesstext, kein Markdown.\n\n' +
-      `Schreibe zuerst in zwei, drei Saetzen, wie du zu deiner Einschaetzung kommst und worauf du dich dabei stuetzt. Setze dann in eine eigene Zeile ${ANTWORT_MARKE} und darunter deine Antwort.`,
-    tools: () => ({}),
+      'Schreibe zuerst in zwei, drei Saetzen, wie du zu deiner Einschaetzung kommst und worauf ' +
+      'du dich dabei stuetzt. Deine Antwort gibst du dann mit dem Werkzeug antworte_im_chat — ' +
+      'ohne sie vorher anzukuendigen.',
+    tools: (tool) => ({
+      antworte_im_chat: antworteImChat(tool, false),
+    }),
   });
 }
 

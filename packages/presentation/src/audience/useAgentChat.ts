@@ -62,6 +62,16 @@ export function useAgentChat(
   const [started, setStarted] = useState(() => readConversation(interactionId) !== null);
   const chat = useRef<ChatInstance | null>(null);
 
+  /*
+    Die Antworten, die der Agent über sein Werkzeug gegeben hat — je Zug eine.
+
+    Sie stehen getrennt von `messages`, weil der Verlauf von Blocks je Nachricht
+    EINEN zusammengesetzten Text führt: Was in ein Werkzeug geht, kommt dort nie
+    an. Der Strom liefert es aber als eigenes Ereignis, und genau das macht die
+    Trennung sauber — Werkzeug ist Antwort, alles andere ist Arbeitsweg.
+  */
+  const [antworten, setAntworten] = useState<string[]>([]);
+
   useEffect(() => {
     /**
      * Anlegen und Aufräumen gehören in denselben Effekt. Im StrictMode läuft
@@ -78,6 +88,16 @@ export function useAgentChat(
       subscribe: async (channelId, handler) => {
         const channel = await api.chatChannel(channelId, stufe);
         return channel.subscribe(handler);
+      },
+      /*
+        Jeder Chunk läuft hier durch. Nur der Aufruf des Antwortwerkzeugs
+        interessiert; die Fachwerkzeuge gehören zum Arbeitsweg und werden im
+        Text ohnehin erwähnt.
+      */
+      onChunk: (chunk) => {
+        if (chunk.type !== "tool-call" || chunk.toolName !== "antworte_im_chat") return;
+        const text = (chunk.input as { text?: string } | undefined)?.text;
+        if (text) setAntworten((a) => [...a, text]);
       },
       onMessagesChange: setMessages,
       onLoadingChange: setLoading,
@@ -129,5 +149,5 @@ export function useAgentChat(
     await send(seed);
   }, [send, started, seed]);
 
-  return { messages, loading, error, started, start, send, seed };
+  return { messages, antworten, loading, error, started, start, send, seed };
 }

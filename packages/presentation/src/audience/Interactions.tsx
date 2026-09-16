@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import type { Interaction } from "@/slides/types";
 import { SEED_MAIL } from "@/slides/agent";
 import { briefingFuer, gruppenName, type Briefing } from "@/slides/briefing";
-import { ANTWORT_MARKE as MARKE } from "@/slides/agent";
 import { participantId } from "./participant";
 import { useAgentChat } from "./useAgentChat";
 
@@ -354,7 +353,7 @@ function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "ma
  * Lerninhalt, und es ist derselbe Text, mit dem der Agent tatsächlich läuft.
  */
 function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat" }> }) {
-  const { messages, loading, error, started, start, send, seed } = useAgentChat(
+  const { messages, antworten, loading, error, started, start, send, seed } = useAgentChat(
     interaction.id,
     { stufe: interaction.stufe, auftakt: interaction.auftakt },
   );
@@ -373,6 +372,8 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
 
   // Die erste Nachricht ist die eingegangene Mail, nicht etwas Getipptes.
   const thread = messages.filter((m, i) => !(i === 0 && m.content === seed));
+  /* Zählt die Züge des Agenten mit, damit jeder seine eigene Antwort bekommt. */
+  let agentenzug = 0;
 
   return (
     <div className={CARD}>
@@ -403,7 +404,12 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
                 {m.content}
               </div>
             ) : (
-              <Agentenzug key={m.id} inhalt={m.content} />
+              <Agentenzug
+                key={m.id}
+                arbeitsweg={m.content}
+                antwort={antworten[agentenzug++]}
+                laeuftNoch={loading}
+              />
             ),
           )}
 
@@ -487,25 +493,36 @@ function EigeneAnfrage({ text }: { text: string }) {
 }
 
 /**
- * Was der Agent zurückschickt: erst sein Arbeitsweg, dann die Antwort.
+ * Was der Agent zurückschickt: sein Arbeitsweg und seine Antwort.
  *
- * Der Verlauf liefert beides in EINEM Text, getrennt durch eine Marke, die der
- * Agent setzt. Gezeigt wird die Antwort; der Weg dorthin steckt zugeklappt
- * darüber — wer mag, sieht nach, wie er gedacht hat.
+ * Die Antwort kommt aus dem Werkzeug `antworte_im_chat`, der Arbeitsweg ist
+ * alles, was er daneben geschrieben hat. Das ist die saubere Trennung — vorher
+ * stand beides in einem Text, getrennt durch eine Marke, und solange die nicht
+ * angekommen war, zeigte die App den laufenden Arbeitsweg als Antwort und
+ * ordnete ihn danach um. Es sprang.
  *
- * Fehlt die Marke, gilt alles als Antwort. Der schlechtere Fehler wäre, die
- * Antwort zu verbergen, weil das Modell ein Wort vergessen hat.
+ * Solange keine Antwort da ist, steht hier nichts als der aufklappbare
+ * Arbeitsweg: Er ist im Gange, das genügt. Kommt am Ende gar keine — weil das
+ * Modell das Werkzeug vergessen hat —, tritt der Arbeitsweg an ihre Stelle.
+ * Lieber Denken zeigen als gar nichts.
  */
-function Agentenzug({ inhalt }: { inhalt: string }) {
+function Agentenzug({
+  arbeitsweg,
+  antwort,
+  laeuftNoch,
+}: {
+  arbeitsweg: string;
+  antwort?: string;
+  laeuftNoch: boolean;
+}) {
   const [offen, setOffen] = useState(false);
-  const stelle = inhalt.indexOf(MARKE);
-  const hatDenken = stelle > 0;
-  const denken = hatDenken ? entklebe(inhalt.slice(0, stelle).trim()) : "";
-  const antwort = (hatDenken ? inhalt.slice(stelle + MARKE.length) : inhalt).trim();
+  const weg = entklebe(arbeitsweg.trim());
+  const fehlgeschlagen = !antwort && !laeuftNoch && weg !== "";
+  const zeigt = antwort ?? (fehlgeschlagen ? weg : undefined);
 
   return (
     <div className="grid max-w-[92%] justify-self-start gap-1.5">
-      {hatDenken && (
+      {weg !== "" && !fehlgeschlagen && (
         <>
           <button
             type="button"
@@ -517,14 +534,16 @@ function Agentenzug({ inhalt }: { inhalt: string }) {
           </button>
           {offen && (
             <div className="rounded-2xl border border-dashed border-hair px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap text-fg-3">
-              {denken}
+              {weg}
             </div>
           )}
         </>
       )}
-      <div className="rounded-2xl rounded-bl-sm border border-hair bg-stage px-4 py-3 text-base leading-relaxed whitespace-pre-wrap text-fg">
-        {antwort}
-      </div>
+      {zeigt !== undefined && (
+        <div className="rounded-2xl rounded-bl-sm border border-hair bg-stage px-4 py-3 text-base leading-relaxed whitespace-pre-wrap text-fg">
+          {zeigt}
+        </div>
+      )}
     </div>
   );
 }
