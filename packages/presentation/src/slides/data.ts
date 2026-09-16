@@ -790,15 +790,8 @@ export const SECTIONS: Section[] = [
           systemPrompt: LISA_PROMPT,
         },
         app: "Chat mit Systemprompt, ohne Tools. Das Gespräch beginnt mit der Mail von Hallbach aus Abschnitt 2. Keine Antwortvorschläge: Die Teilnehmer tippen selbst, was sie dem Agenten sagen. Der Systemprompt ist einsehbar — es ist derselbe, mit dem der Agent läuft.",
-        papier: {
-          statt: {
-            t: "statement",
-            text: "Er bittet Dich um Rat.",
-            after:
-              "Im Saal führte das Publikum dieses Gespräch auf dem eigenen Handy — mit dem Systemprompt, aber ohne Systemzugriff.",
-          },
-          text: "Der Agent hat jetzt den Systemprompt, aber keine Werkzeuge. Er weiß, welche Zahlen ihm fehlen und wo sie stünden — also fragt er sein Gegenüber. Im Saal waren das die Teilnehmenden.",
-        },
+        /* Im PDF nicht: Hier fand der Chat auf dem Handy statt, und ein Ersatzbild erzählte etwas anderes. */
+        papier: { weg: true },
       },
     ],
     n: 16,
@@ -831,32 +824,8 @@ export const SECTIONS: Section[] = [
           systemPrompt: LISA_PROMPT,
         },
         app: "Chat mit Systemprompt und den Tools der Systeme, noch ohne die Kategorieziele. Das Gespräch beginnt wieder mit der Mail von Hallbach; der Agent zeigt, welche Systeme er befragt.",
-        papier: {
-          statt: {
-            t: "chat",
-            app: "Agent — mit Tools",
-            msgs: [
-              {
-                who: "Lisa",
-                role: "user",
-                text: "Was liegt an?",
-              },
-              {
-                who: "Agent",
-                role: "agent",
-                tools: [
-                  "outlook.lies_mails",
-                  "warenwirtschaft.kategorie",
-                  "marktdaten.segment",
-                  "regalplanung.platz",
-                  "aktionskalender.zeitraum",
-                ],
-                text: "Kategorie wächst +3,2 %. Underperformer: Nocturne Mini (−12 %). Regalplatz frei, wenn Nocturne Mini geht. Rohertrag 31,1 % — über Vorgabe, aber nur mit gut einem Punkt Luft. Und: Am 22. Oktober werden in 12 Hamburger Märkten Aufsteller frei.",
-              },
-            ],
-          },
-          text: "Im Saal führte das Publikum dasselbe Gespräch noch einmal — jetzt mit einem Agenten, der selbst in den Systemen nachschlägt.",
-        },
+        /* Im PDF nicht: Hier fand der Chat auf dem Handy statt, und ein Ersatzbild erzählte etwas anderes. */
+        papier: { weg: true },
       },
       {
         at: "18:34",
