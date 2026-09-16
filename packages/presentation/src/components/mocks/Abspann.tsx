@@ -9,7 +9,7 @@ import anhangRoh from "../../../aws-blocks/mail/anhang.md?raw";
  * eine zu viel gewesen: Sie veraltet, und man merkt es erst, wenn jemand auf
  * einen toten Link klickt.
  *
- * Der Kopf der Datei — Dank, die drei Adressen, der Satz zur geloeschten
+ * Der Kopf der Datei — Dank, die drei Adressen, der Satz zur
  * Mailadresse — bleibt hier draussen. Er gehoert in ein Postfach, nicht auf
  * eine Leinwand; `anhangStruktur` trennt das schon.
  *

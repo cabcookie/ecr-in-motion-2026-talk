@@ -48,7 +48,7 @@ export interface Abschnitt {
  * Der Abspann, zerlegt.
  *
  * `kopf` ist alles vor der ersten Ueberschrift und geht NUR in die Mail: Dank,
- * die drei Adressen, der Satz zur geloeschten Mailadresse. Das gehoert in ein
+ * die drei Adressen, der Satz zur Mailadresse. Das gehoert in ein
  * Postfach, nicht auf eine Leinwand.
  */
 export interface Anhang {

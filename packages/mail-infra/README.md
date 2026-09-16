@@ -9,6 +9,13 @@ hier.
 > kein Skript dafür; `pnpm run deploy` fasst das Domain-Konto nicht an. Der
 > Stack steht hier als Vorlage für das Konto, in dem die Domain liegt.
 >
+> Ausgerollt ist beim Vortrag eine eigene, erweiterte Fassung aus einem
+> privaten Repository. Sie unterscheidet sich in zwei Punkten, die man
+> kennen sollte: Die Regel nimmt Mail für die **ganze** Domain an (der Bucket
+> ist zugleich ein privates Postfach), und der Bucket behält Mail ohne
+> Ablauf (`RETAIN`). Die Mail-Lambda beantwortet deshalb nur Mail an die
+> Postfächer aus `aws-blocks/mail/konfig.ts` und übergeht alles andere.
+>
 > Die andere Hälfte ist dagegen verdrahtet: `packages/presentation/aws-blocks/index.cdk.ts`
 > legt die Mail-Lambda im Vortragskonto an, sobald die drei Ausgabewerte
 > dieses Stacks als Secrets gesetzt sind.

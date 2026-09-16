@@ -23,7 +23,7 @@ WAS DU SCHREIBEN KANNST, und mehr versteht der Leser nicht:
   <adresse>                          eine nackte Adresse, allein auf der Zeile
 
 ALLES VOR DER ERSTEN ## IST NUR FUER DIE MAIL. Der Dank, die drei Adressen und
-der Satz zur geloeschten Mailadresse gehoeren in ein Postfach, nicht auf eine
+der Satz zur Mailadresse gehoeren in ein Postfach, nicht auf eine
 Leinwand. Folie und PDF beginnen bei der ersten Ueberschrift.
 
 DEN ERSTEN SATZ bitte stehen lassen. Abschnitt 23 des Vortrags erklaert am
@@ -47,6 +47,13 @@ keine — das sagt die Zeile dann auch, statt es offenzulassen.
 Vier Abschnitte passen nebeneinander auf die Folie. Ein fuenfter waere zu
 viel; davor bricht 'pnpm papier:test' ab.
 
+DER SATZ ZUR MAILADRESSE muss stimmen. Die Adresse liegt in der Rohmail
+(S3 im Domain-Konto, ohne Ablauf - der Bucket ist zugleich ein privates
+Postfach), im Verlauf des Agenten (DynamoDB und Sitzungs-Bucket, ohne
+Ablauf) und im Protokoll der Mail-Lambda (sieben Tage). Die ersten beiden
+loescht Carsten nach dem Vortrag von Hand. Wer daran etwas aendert, aendert
+den Satz mit.
+
 Dieser Kommentar geht nicht mit raus.
 -->
 
@@ -62,8 +69,10 @@ Der Quelltext für Präsentation, Agent und AWS-Infrastruktur — falls
 Du es in Deinem Unternehmen nachbauen willst:
 <https://github.com/cabcookie/ecr-in-motion-2026-talk>
 
-Deine E-Mail-Adresse wurde nur für diese eine Antwort verwendet und
-ist damit gelöscht.
+Deine E-Mail-Adresse habe ich nur für diese Antwort verwendet — für
+keinen Newsletter und keine Werbung. Gespeichert ist sie trotzdem:
+zusammen mit Deiner Mail und dem Verlauf des Agenten in meinem
+AWS-Konto. Ich lösche diese Daten nach dem Vortrag.
 
 ## Fang einfach an
 

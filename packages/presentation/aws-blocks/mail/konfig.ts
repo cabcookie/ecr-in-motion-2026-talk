@@ -6,9 +6,10 @@
  * entfallen (Entscheidung Carsten, 16.09.) — die Stufe ohne Werkzeuge zeigt im
  * Vortrag der rohe Agent im Chat.
  *
- * Die Liste bleibt eine Liste, weil die SES-Regel im Domain-Konto mehrere
- * Adressen annimmt: Was dort an eine Adresse geht, die hier fehlt, beantwortet
- * das erste Postfach. Eine Antwort vom Standardpostfach ist besser als keine.
+ * Die SES-Regel im Domain-Konto nimmt Mail für die GANZE Domain an und meldet
+ * jede davon hierher — auch Mail an Adressen, die mit dem Vortrag nichts zu
+ * tun haben. Beantwortet wird deshalb nur, was an eines der Postfächer hier
+ * oder an einen Alias geht. Alles andere bleibt unbeantwortet.
  */
 export interface Postfach {
   readonly adresse: string;
@@ -21,12 +22,27 @@ export const POSTFAECHER: readonly Postfach[] = [
   { adresse: `ecr2026@${DOMAIN}`, anzeigename: "Lisa Berger · Nordkorb" },
 ];
 
-/** Welches Postfach ist gemeint? Fällt auf das erste zurück. */
-export function postfachFuer(empfaenger: readonly string[]): Postfach {
-  const klein = empfaenger.map((e) => e.toLowerCase());
+/**
+ * Adressen, die es nicht mehr gibt, deren Mail aber noch ankommen kann. Sie
+ * werden aus dem ersten Postfach beantwortet.
+ */
+const ALIASE: readonly string[] = [`ecr2026-probe@${DOMAIN}`];
+
+/** `"Name <a@b>"` und `"a@b"` auf `a@b`, klein geschrieben. */
+function adresseAus(eintrag: string): string {
+  return (/<([^>]+)>/.exec(eintrag)?.[1] ?? eintrag).trim().toLowerCase();
+}
+
+/**
+ * Welches Postfach ist gemeint? `undefined`, wenn die Mail an keines geht —
+ * dann antwortet niemand. Verglichen wird die ganze Adresse, nicht ein
+ * Teilstück: `xecr2026@` ist nicht `ecr2026@`.
+ */
+export function postfachFuer(empfaenger: readonly string[]): Postfach | undefined {
+  const adressen = empfaenger.map(adresseAus);
   return (
-    POSTFAECHER.find((p) => klein.some((e) => e.includes(p.adresse.toLowerCase()))) ??
-    POSTFAECHER[0]
+    POSTFAECHER.find((p) => adressen.includes(p.adresse.toLowerCase())) ??
+    (adressen.some((a) => ALIASE.includes(a)) ? POSTFAECHER[0] : undefined)
   );
 }
 

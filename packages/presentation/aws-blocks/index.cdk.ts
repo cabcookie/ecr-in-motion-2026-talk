@@ -132,6 +132,12 @@ if (!sandboxMode && mailRolle && mailBucket && mailTopic) {
     timeout: Duration.minutes(1),
     memorySize: 1024,
     /*
+      Das Protokoll enthält Absenderadressen. Seine Aufbewahrung steht auf
+      sieben Tagen, von Hand gesetzt (aws logs put-retention-policy), weil die
+      Log-Gruppe älter ist als dieser Stack. Die Antwortmail beruft sich
+      darauf (siehe mail/anhang.md) — wer neu aufsetzt, setzt sie mit.
+    */
+    /*
       Alles mit ins Bündel, auch das AWS-SDK.
 
       Die Lambda-Laufzeit bringt zwar ein SDK v3 mit, aber nicht zwingend

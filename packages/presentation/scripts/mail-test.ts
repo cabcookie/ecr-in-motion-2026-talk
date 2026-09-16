@@ -88,12 +88,23 @@ pruefe(eingang.text.includes("Wunschtermin"), "Umlaute unbeschädigt");
 pruefe(eingang.messageId === "<abc123@example.com>", "Message-ID für den Gesprächsfaden");
 
 console.log("\nPostfach erkannt");
-pruefe(postfachFuer(["ecr2026@carstenbkoch.de"]).adresse === "ecr2026@carstenbkoch.de", "ecr2026 → Assistent");
+pruefe(postfachFuer(["ecr2026@carstenbkoch.de"])?.adresse === "ecr2026@carstenbkoch.de", "ecr2026 → Assistent");
+pruefe(postfachFuer(["ECR2026@carstenbkoch.de"])?.adresse === "ecr2026@carstenbkoch.de", "Groß- und Kleinschreibung egal");
 pruefe(
-  postfachFuer(["ecr2026-probe@carstenbkoch.de"]).adresse === "ecr2026@carstenbkoch.de",
+  postfachFuer(["Lisa <ecr2026@carstenbkoch.de>"])?.adresse === "ecr2026@carstenbkoch.de",
+  "Adresse mit Anzeigename",
+);
+pruefe(
+  postfachFuer(["ecr2026-probe@carstenbkoch.de"])?.adresse === "ecr2026@carstenbkoch.de",
   "das entfallene Postfach ecr2026-probe@ fällt auf ecr2026@ zurück",
 );
-pruefe(postfachFuer([]).adresse === "ecr2026@carstenbkoch.de", "ohne Empfänger → Assistent");
+pruefe(
+  postfachFuer(["andere@carstenbkoch.de", "ecr2026@carstenbkoch.de"])?.adresse === "ecr2026@carstenbkoch.de",
+  "mehrere Empfänger, einer davon der Vortrag",
+);
+pruefe(postfachFuer(["carsten@carstenbkoch.de"]) === undefined, "fremde Adresse der Domain → keine Antwort");
+pruefe(postfachFuer(["xecr2026@carstenbkoch.de"]) === undefined, "Teilstück reicht nicht");
+pruefe(postfachFuer([]) === undefined, "ohne Empfänger → keine Antwort");
 
 console.log("\nFachwerkzeuge schreiben mit");
 const kanal = "test-kanal";
@@ -186,7 +197,8 @@ pruefe(text.indexOf("> wir möchten") > text.indexOf("von einem KI-Agenten"), "Z
   kaeme dort als ## an.
 */
 pruefe(!/^#|^- \[|\]\(http|^</m.test(text), "keine Markdown-Zeichen in der Mail");
-pruefe(text.includes("gelöscht"), "Hinweis zur Adresse");
+pruefe(text.includes("Ich lösche diese Daten"), "Ehrlicher Hinweis zur Adresse");
+pruefe(!text.includes("ist damit gelöscht"), "Kein Versprechen, das der Betrieb nicht hält");
 
 for (const abschnitt of ABSPANN.abschnitte) {
   for (const e of abschnitt.eintraege) {

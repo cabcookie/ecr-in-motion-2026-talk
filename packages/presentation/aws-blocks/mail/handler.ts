@@ -113,7 +113,16 @@ async function uebergib(meldung: SesMeldung): Promise<void> {
   if (!schluessel) throw new Error("Die Meldung nennt kein Objekt in S3.");
   if (!API_URL) throw new Error("API_URL fehlt - ich weiss nicht, wo der Agent steht.");
 
+  /*
+    Vor allem anderen: Geht die Mail überhaupt an den Vortrag? Die Regel im
+    Domain-Konto meldet jede Mail an die Domain. Was nicht an ein Postfach des
+    Vortrags geht, wird nicht gelesen und nicht beantwortet.
+  */
   const postfach = postfachFuer(empfaenger);
+  if (!postfach) {
+    console.log(`Mail an ${empfaenger.length} fremde Adresse(n) übergangen.`);
+    return;
+  }
 
   const objekt = await s3.send(
     new GetObjectCommand({
