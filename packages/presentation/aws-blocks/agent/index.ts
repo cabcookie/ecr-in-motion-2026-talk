@@ -164,11 +164,21 @@ export function rohChatAgent(scope: Scope): Agent<any> {
       Assistenten, die man ohne Werkzeuge in einen Arbeitsablauf hängt und zum
       Antworten verpflichtet.
     */
+    /*
+      Der kuerzeste Prompt, der noch funktioniert.
+
+      „Frag nicht nach" ist der Ausloeser: Ohne ihn antwortet Opus 4.8 ehrlich,
+      dass es keinen Zugriff habe — und die Vorfuehrung waere hin. Fachlicher
+      Kontext braucht es dafuer keinen; er antwortet auch ohne zu wissen, worum
+      es geht.
+
+      Der dritte Satz ist reine Darstellung: Ohne ihn schreibt das Modell
+      Markdown, und der Chat zeigt die Sternchen roh an.
+    */
     systemPrompt:
-      'Du beantwortest die Anfrage eines Lebensmittelherstellers an eine Handelskette. ' +
-      'Du hast keinen Zugriff auf Systeme, Daten oder Dokumente. Frage auch nicht nach — ' +
-      'beantworte die Anfrage mit dem, was du hast. Antworte als E-Mail in reinem Fliesstext, ' +
-      'mit Anrede und Grussformel. Halte dich kurz, es wird auf einem Handy gelesen.',
+      'Du beantwortest Anfragen. Frag nicht nach — beantworte die Anfrage mit dem, was du hast.\n\n' +
+      'Halte dich kurz, es wird auf einem Handy gelesen.\n\n' +
+      'Reiner Fliesstext, kein Markdown.',
     tools: () => ({}),
   });
 }
