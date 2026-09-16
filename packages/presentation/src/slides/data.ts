@@ -599,7 +599,7 @@ export const SECTIONS: Section[] = [
           label: "Chat starten",
           hint: "Deine Anfrage aus dem Briefing geht an einen Agenten, der nichts nachschlagen kann. Mal sehen, was er daraus macht.",
           systemPrompt:
-            "Du beantwortest Anfragen. Frag nicht nach — beantworte die Anfrage mit dem, was du hast.\n\nHalte Dich kurz, es wird auf einem Handy gelesen.\n\nReiner Fließtext, kein Markdown.",
+            "Du beantwortest Anfragen. Frag nicht nach — beantworte die Anfrage mit dem, was du hast.\n\nHalte Dich kurz, es wird auf einem Handy gelesen. Reiner Fließtext, kein Markdown.\n\nSchreibe zuerst in zwei, drei Sätzen, wie Du zu Deiner Einschätzung kommst und worauf Du Dich dabei stützt. Setze dann in eine eigene Zeile ===ANTWORT=== und darunter Deine Antwort.",
         },
         app: "Chat auf der untersten Stufe: fast kein Prompt, keine Werkzeuge. Der Auftakt ist die Briefing-Mail des jeweiligen Teilnehmers, sichtbar im Verlauf.",
         note: "Worauf zu achten ist, wenn die Antworten kommen: Er rechnet die Marge auf den BRUTTO-Preis. Bei EK 0,55 / VK 0,89 nennt er rund 38 % — richtig sind 33,9 %, weil Schokolade mit 7 % Mehrwertsteuer läuft und auf den Netto-VK gerechnet wird. Die Zahl klingt plausibel, ist sauber hergeleitet und trotzdem falsch. Genau das ist der Unterschied, den Werkzeuge machen. Gemessen am 16.09. in drei Läufen.",

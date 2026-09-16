@@ -172,13 +172,16 @@ export function rohChatAgent(scope: Scope): Agent<any> {
       Kontext braucht es dafuer keinen; er antwortet auch ohne zu wissen, worum
       es geht.
 
-      Der dritte Satz ist reine Darstellung: Ohne ihn schreibt das Modell
-      Markdown, und der Chat zeigt die Sternchen roh an.
+      Was danach kommt, ist reine Darstellung und kein Fachkontext: ohne den
+      Hinweis auf Fliesstext schreibt das Modell Markdown, und der Chat zeigt
+      die Sternchen roh an. Und ohne die Trennmarke gibt es nichts aufzuklappen
+      — dabei ist gerade hier interessant, WORAUF er seine erfundenen Zahlen
+      stuetzt.
     */
     systemPrompt:
       'Du beantwortest Anfragen. Frag nicht nach — beantworte die Anfrage mit dem, was du hast.\n\n' +
-      'Halte dich kurz, es wird auf einem Handy gelesen.\n\n' +
-      'Reiner Fliesstext, kein Markdown.',
+      'Halte dich kurz, es wird auf einem Handy gelesen. Reiner Fliesstext, kein Markdown.\n\n' +
+      `Schreibe zuerst in zwei, drei Saetzen, wie du zu deiner Einschaetzung kommst und worauf du dich dabei stuetzt. Setze dann in eine eigene Zeile ${ANTWORT_MARKE} und darunter deine Antwort.`,
     tools: () => ({}),
   });
 }
