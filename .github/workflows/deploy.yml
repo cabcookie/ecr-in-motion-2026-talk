@@ -135,10 +135,15 @@ jobs:
         #
         # Das Skript bricht ab, wenn eine Seite überliefe. Ein Überlauf im PDF
         # schneidet ab, ohne dass irgendwo etwas rot wird.
+        #
+        # Der Zielpfad ist relativ zum PAKET, nicht zum Repository: `pnpm exec`
+        # läuft im Paketverzeichnis. Mit dem Repo-Pfad landete das PDF unter
+        # packages/presentation/packages/presentation/dist/ — erzeugt wurde es,
+        # gefunden hat es danach niemand.
         run: |
           pnpm --filter @ecr-talk/presentation exec node scripts/pdf.mjs \
             https://ecr2026.carstenbkoch.de \
-            packages/presentation/dist/ecr-in-motion-2026.pdf
+            dist/ecr-in-motion-2026.pdf
 
       - name: PDF aufbewahren
         uses: actions/upload-artifact@v4

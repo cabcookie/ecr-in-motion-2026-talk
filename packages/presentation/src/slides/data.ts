@@ -644,7 +644,13 @@ export const SECTIONS: Section[] = [
           after: "Er will unbedingt antworten. Er kann es nur nicht.",
         },
         say: "Das dauert jetzt ein paar Minuten — die Mail muss verarbeitet und zurückgeschickt werden. Nutzen wir die Zeit für ein Bild: Stell Dir einen Abiturienten vor. Hochmotiviert, klug, liest schnell. Aber er war noch nie in Deinem Unternehmen. Er kennt Deine Kategorievorgaben nicht, Deine Lieferanten nicht, Deinen Regalplatz nicht. Und trotzdem will er unbedingt eine Antwort geben.",
-        papier: { weg: true },
+        /*
+          Bleibt im PDF, obwohl der ganze Abschnitt sonst wegfällt: Das Bild
+          vom Abiturienten braucht keinen Saal. Es erklärt in zwei Zeilen, was
+          ein Modell ohne Systeme ist — klug, schnell, hilfsbereit und noch nie
+          in diesem Unternehmen gewesen.
+        */
+        papier: { behalten: true },
       },
       {
         at: "18:25",
