@@ -148,8 +148,8 @@ Zwei Parameter, die an jeder dieser Adressen gelten:
   Vortrag läuft weiter.
 
 **Die Teilnehmersicht ist nur im Vortragsfenster aktiv.** Das Fenster öffnet
-sich im Steuerpult: „Start jetzt" ab sofort, „18:00" heute von 18 bis 20 Uhr
-(Europe/Berlin). Zwei Stunden nach dem Start schließt es von selbst. Außerhalb
+sich im Steuerpult: „Start jetzt" ab sofort, „18:00" heute von 17:50 bis
+19:50 Uhr (Europe/Berlin) — zehn Minuten Vorlauf vor dem Vortrag. Zwei Stunden nach dem Start schließt es von selbst. Außerhalb
 zeigt die Wurzel eine Abschlussseite mit PDF und Material aus
 `aws-blocks/mail/anhang.md`, und das Backend lehnt Antworten, Chat und
 Mailagent ab, ohne ein Modell zu rufen. Folienstand und Zeitplan bleiben lesbar,

@@ -17,9 +17,15 @@
 /** Wie lange das Fenster nach dem Start offen ist. */
 export const FENSTER_DAUER_MS = 2 * 60 * 60 * 1000;
 
-/** Der Vortrag beginnt um 18:00 Uhr in Bonn. */
+/**
+ * Der Vortrag beginnt um 18:00 Uhr in Bonn — das Fenster zehn Minuten früher.
+ *
+ * Um 17:50 steht die Seite auf den Handys schon bereit. Stockt dann etwas,
+ * fällt es vor dem Beginn auf und nicht in der ersten Minute des Vortrags.
+ */
 export const ZEITZONE = 'Europe/Berlin';
-export const ABEND_STUNDE = 18;
+export const ABEND_STUNDE = 17;
+export const ABEND_MINUTE = 50;
 
 /**
  * Die Meldung, mit der jeder gesperrte Endpunkt ablehnt.
@@ -51,14 +57,14 @@ export function fensterstand(start: number | null | undefined, jetzt: number): F
 }
 
 /**
- * Heute 18:00 Uhr in Bonn, als Epoch-ms.
+ * Heute 17:50 Uhr in Bonn, als Epoch-ms — der Beginn hinter dem Knopf „18:00".
  *
  * „Heute" ist der Kalendertag in Berlin, nicht in UTC: Die Lambda läuft in
  * UTC, und kurz nach Mitternacht deutscher Zeit wäre dort noch gestern.
  *
  * Der Versatz zu UTC wird am Zieltag selbst bestimmt, damit Sommer- und
- * Winterzeit stimmen. Um 18:00 wechselt die Uhr nie, eine Korrekturrunde
- * reicht also.
+ * Winterzeit stimmen. Am frühen Abend wechselt die Uhr nie, eine
+ * Korrekturrunde reicht also.
  */
 export function heuteAbend(jetzt: number): number {
   const teile = Object.fromEntries(
@@ -71,7 +77,7 @@ export function heuteAbend(jetzt: number): number {
       .formatToParts(new Date(jetzt))
       .map((t) => [t.type, t.value]),
   );
-  const alsUtc = Date.UTC(Number(teile.year), Number(teile.month) - 1, Number(teile.day), ABEND_STUNDE);
+  const alsUtc = Date.UTC(Number(teile.year), Number(teile.month) - 1, Number(teile.day), ABEND_STUNDE, ABEND_MINUTE);
   return alsUtc - versatzMs(alsUtc);
 }
 

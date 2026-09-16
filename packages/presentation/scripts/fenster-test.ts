@@ -40,11 +40,11 @@ pruefe(!istAktiv(t0, t0 - 1), "vor dem Start gesperrt");
 pruefe(fensterstand(t0, t0).ende === t0 + FENSTER_DAUER_MS, "Ende = Start + 2 h");
 
 /* 16.09.2026 ist Sommerzeit (UTC+2), 16.01.2026 Winterzeit (UTC+1). */
-pruefe(heuteAbend(Date.UTC(2026, 8, 16, 9, 0)) === Date.UTC(2026, 8, 16, 16, 0), "18:00 im Sommer = 16:00 UTC");
-pruefe(heuteAbend(Date.UTC(2026, 0, 16, 9, 0)) === Date.UTC(2026, 0, 16, 17, 0), "18:00 im Winter = 17:00 UTC");
+pruefe(heuteAbend(Date.UTC(2026, 8, 16, 9, 0)) === Date.UTC(2026, 8, 16, 15, 50), "17:50 im Sommer = 15:50 UTC");
+pruefe(heuteAbend(Date.UTC(2026, 0, 16, 9, 0)) === Date.UTC(2026, 0, 16, 16, 50), "17:50 im Winter = 16:50 UTC");
 /* 23:30 UTC am 16.09. ist in Berlin schon der 17.09. */
 pruefe(
-  heuteAbend(Date.UTC(2026, 8, 16, 23, 30)) === Date.UTC(2026, 8, 17, 16, 0),
+  heuteAbend(Date.UTC(2026, 8, 16, 23, 30)) === Date.UTC(2026, 8, 17, 15, 50),
   "„heute“ ist der Kalendertag in Berlin, nicht in UTC",
 );
 

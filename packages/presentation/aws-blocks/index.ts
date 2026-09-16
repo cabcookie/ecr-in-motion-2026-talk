@@ -328,7 +328,8 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /**
    * Das Fenster öffnen, geschützt wie ein Folienwechsel.
    *
-   * `jetzt` beginnt sofort, `abend` heute um 18:00 Uhr in Bonn. Den Zeitpunkt
+   * `jetzt` beginnt sofort, `abend` heute um 17:50 Uhr in Bonn — zehn Minuten
+   * vor dem Vortrag, damit die Handys bereitstehen. Den Zeitpunkt
    * rechnet der Server aus, nicht der Browser: Eine falsch gehende Uhr am
    * Steuerpult soll das Fenster nicht verschieben.
    */
