@@ -18,6 +18,26 @@ export type Ansicht = "teilnehmer" | "leinwand" | "operator" | "papier";
 
 const pfad = location.pathname.replace(/\/+$/, "").toLowerCase();
 
+/**
+ * `/vortrag` fuehrt auf das PDF.
+ *
+ * Die Adresse, die man jemandem zurufen kann — kein Dateiname mit Jahreszahl
+ * und keine Endung. Sie muss hier stehen und nicht in der Auslieferung: Vor
+ * dem Eimer sitzt eine CloudFront-Funktion, die JEDEN Pfad ohne Punkt im
+ * letzten Segment auf `/index.html` umschreibt. Genau das laesst `/audience`
+ * und `/papier` funktionieren, und genau deshalb kaeme eine Datei namens
+ * `vortrag` dort nie an — der Pfad ist ersetzt, bevor S3 ihn sieht.
+ *
+ * Also faengt die Anwendung den Ruf ab und schickt weiter. `replace`, damit
+ * der Zurueck-Knopf nicht zwischen Vortrag und PDF hin und her springt.
+ *
+ * Das Ziel traegt den langen Namen, weil er der Dateiname im Download-Ordner
+ * des Zuhoerers wird. `vortrag.pdf` waere dort in einer Woche nicht mehr
+ * zuzuordnen.
+ */
+export const PDF_DATEI = "/ecr-in-motion-2026.pdf";
+if (pfad === "/vortrag") location.replace(PDF_DATEI);
+
 export function ansicht(): Ansicht {
   if (pfad === "/audience") return "leinwand";
   if (pfad === "/operator") return "operator";

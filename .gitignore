@@ -59,3 +59,9 @@ packages/presentation/public/brand/
 # Kontonummer, und dieses Repository wird öffentlich. Die CI schlägt die
 # Hosted Zone bei jedem Lauf selbst nach — sie hat die Rolle dafür.
 packages/presentation/cdk.context.json
+
+# Das PDF entsteht im Bau (Schritt "PDF erzeugen") und liegt danach in public/,
+# damit es mit ausgerollt wird und unter /vortrag abrufbar ist. Es gehoert
+# damit zum Ergebnis, nicht zur Quelle — eine Megabyte-Binaerdatei, die sich
+# bei jeder Folienaenderung komplett aendert, will niemand im Verlauf haben.
+packages/presentation/public/ecr-in-motion-2026.pdf
