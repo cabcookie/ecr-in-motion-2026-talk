@@ -14,7 +14,9 @@
  *
  *   pnpm --filter @ecr-talk/presentation papier:test
  */
+import { readFileSync } from "node:fs";
 import { SECTIONS } from "../src/slides/data";
+import { anhangEinstiege } from "../aws-blocks/mail/anhang";
 
 /**
  * Folienarten, die ohne den laufenden Vortrag nichts zeigen.
@@ -64,6 +66,32 @@ for (const abschnitt of SECTIONS) {
       gruende,
     });
   }
+}
+
+/*
+  Die letzte Seite des PDFs liest ihre Liste aus aws-blocks/mail/anhang.md —
+  derselben Datei, aus der die Antwortmail ihren festen Teil nimmt. Das ist
+  gewollt, hat aber eine Kante: Die Mail kippt den Text aus und ueberlebt jede
+  Formatierung, das Blatt braucht Gruppen und erkennt sie an der Einrueckung.
+  Wer beim Bearbeiten das Muster verlaesst, merkt es in der Mail NICHT — und im
+  PDF stuende dann eine leere Seite.
+
+  Deshalb hier: Wir zaehlen, was herauskommt. Vier Gruppen sind es heute; die
+  Schwelle steht bei zwei, damit ein Umbau der Liste nicht sofort anschlaegt,
+  ein zerbrochenes Muster aber schon.
+*/
+const einstiege = anhangEinstiege(
+  readFileSync(new URL("../aws-blocks/mail/anhang.md", import.meta.url), "utf8"),
+);
+const punkte = einstiege.reduce((n, b) => n + b.punkte.length, 0);
+console.log(`Anhang: ${einstiege.length} Gruppen, ${punkte} Adressen.`);
+if (einstiege.length < 2 || punkte < 4) {
+  console.log(
+    "\nDie Einstiegsliste in aws-blocks/mail/anhang.md ist so nicht lesbar.\n" +
+      "Erwartet wird je Gruppe eine Zeile am Zeilenanfang mit Doppelpunkt und\n" +
+      "darunter eingerückt je zwei Zeilen: Beschreibung, dann Adresse.",
+  );
+  process.exit(1);
 }
 
 console.log(`${geprueft} Panels geprüft.`);

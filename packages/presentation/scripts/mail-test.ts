@@ -8,10 +8,21 @@
  * die Antwortmail die Belege trägt, die der Vortrag verspricht. Das Modell ist
  * dabei durch eine Attrappe ersetzt.
  */
+import { readFileSync } from "node:fs";
 import { beantworte } from "../aws-blocks/mail/agent";
 import { FRAGE_LISA } from "../aws-blocks/mail/werkzeuge";
 import { baueAntwort, baueRohmail, lies } from "../aws-blocks/mail/brief";
-import { EINSTIEGE, postfachFuer } from "../aws-blocks/mail/konfig";
+import { postfachFuer } from "../aws-blocks/mail/konfig";
+import { anhangEinstiege, anhangText } from "../aws-blocks/mail/anhang";
+
+/*
+  Der feste Teil der Mail kommt aus anhang.md. Unter tsx gibt es kein
+  __dirname, deshalb ueber import.meta.url - in der Lambda liest der Handler
+  dieselbe Datei auf seinem Weg. Eine Quelle, drei Laufzeiten.
+*/
+const ROH = readFileSync(new URL("../aws-blocks/mail/anhang.md", import.meta.url), "utf8");
+const ANHANG = anhangText(ROH);
+const EINSTIEGE = anhangEinstiege(ROH);
 
 const ROHMAIL = [
   "Return-Path: <andreas.walter@example.com>",
@@ -122,20 +133,20 @@ const ohne = await beantworte("probe", eingang.text, attrappe(false) as any);
 pruefe(ohne.schritte.length === 0, "kein System abgefragt");
 
 console.log("\nAntwortmail");
-const text = baueAntwort("assistent", mit);
+const text = baueAntwort("assistent", mit, ANHANG);
 pruefe(text.includes("Warenwirtschaft — Kategorieentwicklung"), "Schrittfolge im Klartext");
 pruefe(text.includes("ecr2026.carstenbkoch.de"), "Link zum Vortrag");
 pruefe(text.includes("github.com/cabcookie"), "Link zum Quelltext");
 pruefe(text.includes("von einem KI-Agenten"), "Kennzeichnung als Maschine");
 pruefe(text.includes("gelöscht"), "Hinweis zur Adresse");
-pruefe(!baueAntwort("probe", ohne).includes("Was ich dafür abgefragt"), "Probe ohne Systemliste");
+pruefe(!baueAntwort("probe", ohne, ANHANG).includes("Was ich dafür abgefragt"), "Probe ohne Systemliste");
 
 /*
   Die Einstiege stehen unter JEDER Antwort — auch unter der des Agenten ohne
   Werkzeuge. Wer gerade eine erfundene Marge gelesen hat, ist der beste Leser
   für den Hinweis, wie es richtig geht.
 */
-const probe = baueAntwort("probe", ohne);
+const probe = baueAntwort("probe", ohne, ANHANG);
 for (const block of EINSTIEGE) {
   for (const p of block.punkte) {
     pruefe(text.includes(p.url) && probe.includes(p.url), `Einstieg verlinkt: ${p.was}`);
@@ -167,7 +178,7 @@ pruefe(
 */
 console.log("\nAdressatentrennung");
 const mitFrage = await beantworte("assistent", eingang.text, attrappe(true, true) as any);
-const mailAnWalter = baueAntwort("assistent", mitFrage);
+const mailAnWalter = baueAntwort("assistent", mitFrage, ANHANG);
 
 pruefe(mitFrage.fragenAnLisa.length === 1, "Die interne Rückfrage ist im Lauf vermerkt");
 pruefe(
@@ -185,7 +196,7 @@ pruefe(
   "Dass eine Rückfrage läuft, darf der Absender erfahren",
 );
 pruefe(
-  baueAntwort("assistent", mit).includes("interne Rückfrage") === false,
+  baueAntwort("assistent", mit, ANHANG).includes("interne Rückfrage") === false,
   "Ohne Rückfrage steht der Satz auch nicht da",
 );
 

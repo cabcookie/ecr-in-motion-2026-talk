@@ -1,5 +1,5 @@
 import PostalMime from "postal-mime";
-import { CODE_URL, EINSTIEGE, PDF_URL, type Modus } from "./konfig";
+import type { Modus } from "./konfig";
 import type { Lauf } from "./agent";
 
 /** Was wir aus einer eingegangenen Mail brauchen. */
@@ -141,7 +141,7 @@ function heute(): string {
  * Abschnitt 24 vom EU AI Act her fordert. Dass eine Maschine geantwortet hat,
  * steht ebenfalls dort und nicht im Kleingedruckten.
  */
-export function baueAntwort(modus: Modus, lauf: Lauf, eingang?: Eingang): string {
+export function baueAntwort(modus: Modus, lauf: Lauf, anhang: string, eingang?: Eingang): string {
   /*
     Der Brief ist das, was der Agent dem Sendewerkzeug übergeben hat — nicht
     sein letzter Modellzug. Der trug die Vorrede mit („Ich habe alle
@@ -205,57 +205,22 @@ export function baueAntwort(modus: Modus, lauf: Lauf, eingang?: Eingang): string
     teile.push("", "— — —", "", ...zitat(eingang));
   }
 
-  teile.push(
-    "",
-    "— — —",
-    "",
-    "Diese Antwort kommt von einem KI-Agenten, nicht von einem Menschen.",
-    "",
-    /*
-      Die anklickbare Fassung des Vortrags wird nach dem Abend abgeschaltet.
-      Sie hier zu nennen hiesse, jemandem eine Adresse mitzugeben, die in ein
-      paar Tagen ins Leere laeuft — schlimmer als gar kein Hinweis. Was bleibt,
-      ist das PDF und der Quelltext.
-    */
-    `Die Folien als PDF:  ${PDF_URL}`,
-    `Der Quelltext dazu:  ${CODE_URL}`,
-    /*
-      Hier standen zwei Belege gegen die Massenarbeitslosigkeit. Sie sind raus:
-      Die Links fuehrten nur auf die Startseiten der beiden Aemter, nicht auf
-      die Tabellen. Ein Beleg, den der Empfaenger selbst suchen muss, ist
-      keiner — und in einer Mail, die ohnehin von der Sache handelt, war der
-      Exkurs auch deplatziert.
-    */
-    "",
-    "Ihre E-Mail-Adresse wurde nur für diese eine Antwort verwendet und ist",
-    "damit gelöscht.",
-  );
+  /*
+    Der feste Teil steht in anhang.md und wird WORTWOERTLICH angehaengt.
 
-  teile.push("", "— — —", "", ...einstiege());
+    Er stand frueher hier als Folge von push()-Zeilen, und das war die falsche
+    Stelle: Es ist Text fuer einen Empfaenger, kein Programm. Wer ihn aendern
+    wollte, musste eine TypeScript-Datei oeffnen, auf Anfuehrungszeichen achten
+    und danach uebersetzen. Jetzt oeffnet er eine Textdatei und sieht genau
+    das, was ankommt.
+
+    Die Datei kommt von aussen herein, statt hier gelesen zu werden: Diese
+    Funktion laeuft in der Lambda, unter tsx und im Browser, und jede der drei
+    Laufzeiten holt Dateien anders. Reine Zeichenketten laufen ueberall.
+  */
+  teile.push("", "— — —", "", anhang);
 
   return teile.join("\n");
-}
-
-/**
- * Der Weg, den die Teilnehmer selbst gehen können.
- *
- * Steht unter JEDER Antwort, auch unter der des Agenten ohne Werkzeuge: Wer in
- * Abschnitt 15 gerade gesehen hat, wie eine erfundene Marge aussieht, hat den
- * besten Grund von allen, sich anzusehen, wie man es richtig macht.
- *
- * Die URL steht auf einer eigenen Zeile und nie hinter dem Text. Ein
- * Mailprogramm, das eine lange Zeile umbricht, zerlegt sonst den Link — und ein
- * Link, den man von Hand zusammensetzen muss, klickt niemand.
- */
-function einstiege(): string[] {
-  const zeilen = ["Wenn Sie selbst anfangen möchten:"];
-  for (const block of EINSTIEGE) {
-    zeilen.push("", block.gruppe);
-    for (const p of block.punkte) {
-      zeilen.push(`  ${p.was}`, `  ${p.url}`);
-    }
-  }
-  return zeilen;
 }
 
 /** RFC 2047 für Kopfzeilen mit Umlauten. */

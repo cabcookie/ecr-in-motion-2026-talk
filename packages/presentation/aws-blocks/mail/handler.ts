@@ -2,8 +2,29 @@ import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
 import { beantworte } from "./agent";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { anhangText } from "./anhang";
 import { baueAntwort, baueRohmail, lies } from "./brief";
 import { postfachFuer } from "./konfig";
+
+/**
+ * Der feste Teil der Mail, einmal beim Kaltstart gelesen.
+ *
+ * anhang.md liegt neben dem Bundle — index.cdk.ts legt sie dort ab, und wenn
+ * das misslingt, bricht schon das Deployment ab. Hier wird trotzdem
+ * aufgefangen: Eine Antwort ohne Fusszeile ist schlecht, eine Lambda, die beim
+ * Laden stirbt und gar nichts schickt, ist schlimmer. Der Fehler steht dann im
+ * Protokoll, und der Abend laeuft weiter.
+ */
+const ANHANG = (() => {
+  try {
+    return anhangText(readFileSync(join(__dirname, "anhang.md"), "utf8"));
+  } catch (fehler) {
+    console.error("anhang.md nicht lesbar - die Antwort geht ohne Fusszeile raus:", fehler);
+    return "Diese Antwort kommt von einem KI-Agenten, nicht von einem Menschen.";
+  }
+})();
 
 /**
  * Der Postfach-Agent.
@@ -98,7 +119,7 @@ async function verarbeite(meldung: SesMeldung): Promise<void> {
                 Modell selbst geschriebene Betreffzeile landete im Rumpf.
               */
               betreff: lauf.antwort?.betreff || eingang.betreff,
-              text: baueAntwort(postfach.modus, lauf, eingang),
+              text: baueAntwort(postfach.modus, lauf, ANHANG, eingang),
               inAntwortAuf: eingang.messageId,
             }),
             "utf8",

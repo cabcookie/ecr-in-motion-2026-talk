@@ -2,14 +2,22 @@ import { SECTIONS } from "@/slides/data";
 import type { Panel, Section } from "@/slides/types";
 import { SectionView } from "./SectionView";
 import { Logo } from "./Logo";
+import { CODE_URL, PDF_URL } from "../../aws-blocks/mail/konfig";
 /*
-  Dieselbe Quelle wie die Antwortmail — nicht eine zweite Liste.
+  Dieselbe Datei wie die Antwortmail — nicht eine zweite Liste.
 
-  Was hier steht, hat jeder Teilnehmer am Abend auch per Mail bekommen. Zwei
-  gepflegte Fassungen davon waeren eine zu viel: Die eine veraltet, und man
-  merkt es erst, wenn jemand auf einen toten Link klickt.
+  Was auf der letzten Seite steht, hat jeder Teilnehmer am Abend auch per Mail
+  bekommen. Zwei gepflegte Fassungen davon waeren eine zu viel: Die eine
+  veraltet, und man merkt es erst, wenn jemand auf einen toten Link klickt.
+
+  Die Mail kippt den Text aus, das Blatt braucht Spalten — deshalb liest
+  `anhangEinstiege` die Gruppen aus demselben Text heraus. `?raw` bettet die
+  Datei beim Bauen ein; im Browser gibt es kein Dateisystem.
 */
-import { CODE_URL, EINSTIEGE, PDF_URL } from "../../aws-blocks/mail/konfig";
+import anhangRoh from "../../aws-blocks/mail/anhang.md?raw";
+import { anhangEinstiege } from "../../aws-blocks/mail/anhang";
+
+const EINSTIEGE = anhangEinstiege(anhangRoh);
 
 
 /** Die Bühne, auf der jede Folie entworfen ist. */

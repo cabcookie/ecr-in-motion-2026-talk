@@ -146,7 +146,25 @@ if (!sandboxMode && mailRolle && mailBucket && mailTopic) {
       schlechteste Stelle für eine Überraschung. Ein paar Megabyte mehr und ein
       paar Millisekunden Kaltstart sind der Preis.
     */
-    bundling: { externalModules: [] },
+    bundling: {
+      externalModules: [],
+      /*
+        anhang.md muss neben dem Bundle liegen.
+
+        esbuild buendelt nur, was importiert wird, und eine Textdatei wird
+        nicht importiert - der Handler liest sie zur Laufzeit aus __dirname.
+        Ohne diesen Schritt faende er dort nichts. `cp` bricht ab, wenn die
+        Quelle fehlt, und damit bricht das Deployment ab statt still eine
+        Lambda ohne Fusszeile auszurollen.
+      */
+      commandHooks: {
+        beforeBundling: () => [],
+        beforeInstall: () => [],
+        afterBundling: (quelle: string, ziel: string) => [
+          `cp ${join(quelle, 'packages', 'presentation', 'aws-blocks', 'mail', 'anhang.md')} ${ziel}`,
+        ],
+      },
+    },
     environment: {
       MAIL_ACCESS_ROLE_ARN: mailRolle,
       MAIL_BUCKET: mailBucket,
