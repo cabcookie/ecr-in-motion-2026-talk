@@ -105,6 +105,7 @@ export const SECTIONS: Section[] = [
         },
         say: "Es ist Freitagnachmittag, kurz nach zwei. Lisa Berger erhält diese Email von Hallbach Süßwaren. Lisa ist Category Managerin bei Nordkorb, einer Lebensmittelkette mit Schwerpunkt im Norden. Lisa entscheidet über das Sortiment von Schokoladen und Pralinen. Andreas Walter von Hallbach Süßwaren will ein neues Produkt exklusiv mit Nordkorb einführen: die Hallbach Crispy Bites. EK 2,89 Euro, empfohlener VK 4,49. Mindestabnahme 500 Verkaufseinheiten. Wunschtermin für den Start: der 15. Oktober. Die Rückmeldung erwartet er bis Ende nächster Woche. Keine sieben Minuten später geht diese Antwort raus.",
         app: "Outlook-Oberfläche, aus 15 Metern lesbar.",
+        papier: { text: "Eine Anfrage kommt herein: Ein Hersteller möchte ein neues Produkt exklusiv einführen." },
       },
       {
         at: "18:01",
@@ -130,7 +131,7 @@ export const SECTIONS: Section[] = [
         },
         say: "Wir können listen — aber nicht zum 15. Oktober, sondern eine Woche später, am 22. In zwölf Märkten im Raum Hamburg werden an diesem Tag Zweitplatzierungsflächen frei, die sich für eine Einführungsaktion nutzen lassen. Lisa erwartet aber fünfzehn Prozent Einführungsrabatt für die ersten vier Wochen. Und jetzt das Besondere: Kein Mensch war beteiligt. Auch Lisa nicht — denn Lisa ist kein Mensch. Lisa ist ein KI-Agent. Sie hat die E-Mail analysiert, sich einen Plan gemacht, Daten aus den Systemen geholt, sie gegeneinandergestellt, ausgewertet, Entscheidungen getroffen, die Antwort formuliert und abgeschickt. Alles innerhalb von sieben Minuten und mit unter einem Euro Kosten. Zwei Stunden später bestätigt Hallbach.",
         /* „Im Raum Hamburg“ meint die Region, nicht das Publikum. */
-        papier: {},
+        papier: { text: "Binnen sieben Minuten ist sie beantwortet — von einem KI-Agenten." },
       },
       {
         at: "18:02",
@@ -161,6 +162,7 @@ export const SECTIONS: Section[] = [
         },
         say: "Und wieder übernimmt Lisa. Sie bucht Bestellungen im Warenwirtschaftssystem, aktualisiert das Planogramm für die Aufsteller in den 12 Märkten. Sie informiert die Logistik über den neuen Lieferrhythmus und die zwölf Marktleiter über den Displaywechsel am 22. Oktober. Vier Systeme, alles parallel. Auch das ohne eine einzige Rückfrage.",
         app: "Vier Systeme quittieren sichtbar. Die zwölf Marktleiter als echte Liste, nicht als Zahl.",
+        papier: { text: "Die Bestätigung des Herstellers geht ein, und der Agent arbeitet den Vorgang in den Systemen ab." },
       },
     ],
     n: 2,
@@ -220,6 +222,7 @@ export const SECTIONS: Section[] = [
           ],
         },
         say: "Und jetzt stell Dir vor, Lisa wäre ein Mensch. Dann sähe derselbe Vorgang wahrscheinlich so aus. Sie hätte die Mail gelesen und sich zunächst einen Plan gemacht. Sie hätte überlegt, welche Datenbasis sie benötigt, hätte in der Warenwirtschaft nachgesehen, wie die Kategorie läuft und wer Underperformer ist. Sie hätte Marktdaten zum Segment geprüft und sich angeschaut, welche Angebote gerade von anderen Händlern und Anbietern existieren. Sie hätte die Regalplanung geprüft, um zu wissen, ob überhaupt Platz für die Aktionsware da ist oder wer dafür weichen müsste. Sie hätte die Marge gerechnet und in der Aktionsplanung nachgesehen, ob es eine Gelegenheit für die Aktion gibt. Und dann wird es zäh: Sie fragt die Logistik — und wartet. Sie fragt die Marktleitung — und wartet. Sie fragt die Einkaufsleitung — und wartet wieder. Niemand von denen sitzt da und wartet auf diese eine Anfrage. Realistisch reden wir nicht von Minuten, sondern von Tagen, eher von Wochen, bevor eine Antwort an Hallbach überhaupt möglich geworden wäre. Unser KI-Agent Lisa hat dafür sieben Minuten gebraucht. Und dabei...",
+        papier: { text: "Das alles hätte Lisa tun müssen, wäre sie ein Mensch — keine Arbeit von Minuten, eher von Tagen." },
       },
     ],
     n: 3,
@@ -269,7 +272,7 @@ export const SECTIONS: Section[] = [
           message: "Gleich geht es los. Lass diese Seite offen.",
         },
         /* Die Wartekachel auf dem Handy hat auf Papier keine Entsprechung — und fehlt dort auch nicht. */
-        papier: {},
+        papier: { text: "Mit 11 Jahren das erste Mal programmiert, 27 Jahre in der IT, und eine Passion für Technologie." },
       },
     ],
     n: 5,
@@ -419,6 +422,7 @@ export const SECTIONS: Section[] = [
           alt: "Screenshot einer Unterhaltung auf X. Ein Nutzer fragt, warum Anthropic über 100 offene Entwicklerstellen ausschreibt, wenn Claude Code inzwischen 100 % des eigenen Codes schreibt. Boris Cherny, der Erfinder von Claude Code, antwortet: Jemand müsse die Modelle anleiten, mit Kunden sprechen, sich mit anderen Teams abstimmen und entscheiden, was als Nächstes gebaut wird — Engineering verändere sich, und gute Entwickler seien wichtiger denn je.",
         },
         say: "Ein Nutzer fragt: Wenn Claude Code inzwischen hundert Prozent des eigenen Codes schreibt — warum hat Anthropic dann über hundert offene Entwicklerstellen? Und Boris Cherny, der Erfinder von Claude Code, zeichnet ein ganz anderes Bild als sein Chef. Er sagt: Jemand muss die Modelle anleiten, mit Kunden sprechen, sich mit anderen Teams abstimmen, entscheiden, was als Nächstes gebaut wird. Engineering verändert sich — und gute Entwickler sind wichtiger denn je. Aus demselben Haus, über dasselbe Produkt, zwei völlig verschiedene Bilder. Haben wir das nicht schon einmal gehört, dass eine Technologie zur Massenarbeitslosigkeit führen würde?",
+        papier: { text: "Es gibt noch einen Job für uns." },
       },
     ],
     n: 7,
@@ -478,6 +482,7 @@ export const SECTIONS: Section[] = [
           which: "agriculture",
         },
         say: "Aber: die Propheten hatten recht. Die Jobs sind wirklich verschwunden. Die US-Landwirtschaft beschäftigte 1900 41% aller Erwerbstätigen. Im Jahr 2000 waren es 2%. Millionen von Arbeitsplätzen — weg. Nur: Eine dauerhafte Massenarbeitslosigkeit ist daraus nie geworden. In Deutschland stieg die Arbeitslosenquote während der Weltwirtschaftskrise, der Nachkriegszeit, während der Ölkrise und nach der Wiedervereinigung. Keine einzige dieser Spitzen kam von einer neuen Technologie.",
+        papier: { text: "Die Landwirtschaft in den USA: 1900 arbeiteten dort 41 % aller Beschäftigten, im Jahr 2000 noch 2 %." },
       },
     ],
     n: 9,
@@ -602,7 +607,7 @@ export const SECTIONS: Section[] = [
           im Hintergrund, und wer diese Seite nie gesehen hat, weiß nicht, was
           die graue Form bedeutet.
         */
-        papier: { behalten: true },
+        papier: { behalten: true, text: "Ein Mensch bringt Wissen in der Breite mit, aus verschiedenen Disziplinen, und Spezialwissen in seinem eigenen Arbeitsbereich." },
       },
       {
         at: "18:21",
@@ -621,6 +626,7 @@ export const SECTIONS: Section[] = [
           alt: "Über dem menschlichen T liegt der deutlich breitere und dickere Balken des Modells, durchscheinend",
         },
         say: "Ein Sprachmodell hat in der Regel ein breiteres und leicht tieferes Allgemeinwissen. Es bezieht das Wissen aus frei zugänglichen Informationen zum Beispiel über das Internet. All diese Informationen landen in den Trainingsdaten der Modelle. Und deshalb können sie etwas über Logistik erzählen, über Lebensmittelrecht, über Preispsychologie und auch über Category Management. Aber das Modell hat nicht das Spezialwissen einer Category Managerin, um diesen Job ausführen zu können — und schon gar nicht das Wissen Eures Hauses: Konditionen, Regale, Lieferanten, Erfahrungen aus zehn Jahren. Der Agent kann also brillant reden und Deine Aufgabe trotzdem nicht erledigen.",
+        papier: { text: "Ein Sprachmodell bringt dagegen nur Allgemeinwissen mit — sehr breit, aber ohne das Spezialwissen Deines Arbeitsbereichs." },
       },
     ],
     n: 13,
@@ -985,6 +991,7 @@ export const SECTIONS: Section[] = [
         },
         say: "Unten stehen die Systeme, in denen er nachschlägt: Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender und Listung. Für heute Abend sind sie simuliert, das steht auch auf dem Bild. Nicht simuliert ist, was der Agent damit macht: welche Systeme er befragt, in welcher Reihenfolge und welche Schlüsse er daraus zieht. Das entscheidet er selbst. Und wenn er dazu unsere Ziele kennt, ist er bereits so gut, dass er auch umsetzen könnte. Und da kommen wir zur...",
         app: "Stufe 3 — die simulierten Systeme. Vollbild.",
+        papier: { text: "Der Quelltext für Präsentation, Agent und AWS-Infrastruktur: github.com/cabcookie/ecr-in-motion-2026-talk" },
       },
     ],
     n: 19,
