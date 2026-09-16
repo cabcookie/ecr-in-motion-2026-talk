@@ -1,5 +1,5 @@
 import PostalMime from "postal-mime";
-import { CODE_URL, VORTRAG_URL, type Modus } from "./konfig";
+import { CODE_URL, EINSTIEGE, VORTRAG_URL, type Modus } from "./konfig";
 import type { Lauf } from "./agent";
 
 /** Was wir aus einer eingegangenen Mail brauchen. */
@@ -225,7 +225,31 @@ export function baueAntwort(modus: Modus, lauf: Lauf, eingang?: Eingang): string
     "damit gelöscht.",
   );
 
+  teile.push("", "— — —", "", ...einstiege());
+
   return teile.join("\n");
+}
+
+/**
+ * Der Weg, den die Teilnehmer selbst gehen können.
+ *
+ * Steht unter JEDER Antwort, auch unter der des Agenten ohne Werkzeuge: Wer in
+ * Abschnitt 15 gerade gesehen hat, wie eine erfundene Marge aussieht, hat den
+ * besten Grund von allen, sich anzusehen, wie man es richtig macht.
+ *
+ * Die URL steht auf einer eigenen Zeile und nie hinter dem Text. Ein
+ * Mailprogramm, das eine lange Zeile umbricht, zerlegt sonst den Link — und ein
+ * Link, den man von Hand zusammensetzen muss, klickt niemand.
+ */
+function einstiege(): string[] {
+  const zeilen = ["Wenn Sie selbst anfangen möchten:"];
+  for (const block of EINSTIEGE) {
+    zeilen.push("", block.gruppe);
+    for (const p of block.punkte) {
+      zeilen.push(`  ${p.was}`, `  ${p.url}`);
+    }
+  }
+  return zeilen;
 }
 
 /** RFC 2047 für Kopfzeilen mit Umlauten. */

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { chooseTransport, type TransportKind } from "@/sync";
 import type { SyncTransport } from "@/sync/types";
-import { panelsOf } from "@/slides/data";
+import { SECTIONS, panelsOf } from "@/slides/data";
+import { ZIEL } from "@/routen";
 
 export interface Navigation {
   index: number;
@@ -74,6 +75,49 @@ export function useNavigation(
 
   const goto = useCallback((i: number, s = 0) => apply(i, s, true), [apply]);
 
+  /*
+    `?slide=13.1` beim Laden anfahren.
+
+    Einmalig und mit Verzögerung: Die Verbindung meldet kurz nach dem Aufbau den
+    gespeicherten Stand, und der überschriebe ein sofortiges Springen wieder.
+    Erst danach gilt, was in der Adresse steht — ab dann die gewöhnliche
+    Steuerung.
+
+    Auch in der Zuschauersicht, dort aber ohne zu senden: Sie darf den Vortrag
+    nicht steuern. Sie zeigt dann, was in IHRER Adresse steht, während Leinwand
+    und Handys weiterlaufen — genau das, was man beim Prüfen einer einzelnen
+    Folie braucht.
+  */
+  const zielAngefahren = useRef(false);
+  /** Gesetzt, sobald `?slide=` eine Ansicht auf eine Folie festgelegt hat. */
+  const gepinnt = useRef(false);
+  useEffect(() => {
+    const ziel = ZIEL;
+    if (!ziel || zielAngefahren.current) return;
+    zielAngefahren.current = true;
+    const i = SECTIONS.findIndex((abschnitt) => abschnitt.n === ziel.abschnitt);
+    if (i < 0) return;
+    /*
+      Kein Aufräumen des Timers.
+
+      Mit `return () => clearTimeout(t)` hat der Sprung nie stattgefunden: Der
+      Effekt lief bei jedem Rendern erneut, räumte dabei den Timer ab — und die
+      Sperre oben verhinderte, dass ein neuer gestellt wurde. Innerhalb von 900
+      Millisekunden rendert diese Ansicht mehrfach, allein schon wenn die
+      Verbindung steht. Der Timer läuft jetzt durch; `apply` begrenzt ohnehin
+      auf gültige Folien, ein später Schuss richtet also keinen Schaden an.
+    */
+    setTimeout(() => {
+      /*
+        Nur die mitlesende Ansicht wird festgenagelt. Das Steuerpult springt
+        hin und steuert danach ganz normal weiter — dort ist der Parameter eine
+        Abkürzung, keine Fessel.
+      */
+      if (readOnly) gepinnt.current = true;
+      apply(i, ziel.panel - 1, !readOnly);
+    }, 900);
+  }, [apply, readOnly]);
+
   const next = useCallback(() => {
     const { index: i, step: s } = cursorRef.current;
     if (s + 1 < panelsOf(i)) apply(i, s + 1, true);
@@ -99,6 +143,16 @@ export function useNavigation(
 
     const off = t.subscribe((msg) => {
       if (msg.type === "goto") {
+        /*
+          Eine festgenagelte Ansicht folgt nicht mehr.
+
+          `?slide=13.1` in der Zuschauersicht heißt: Zeig mir genau diese Folie.
+          Der Server meldet beim Verbinden seinen gespeicherten Stand, und ohne
+          diese Sperre käme er nach dem Sprung an und zöge die Ansicht zurück —
+          je nach Netz mal vor, mal nach dem Sprung. Das Ergebnis wäre eine
+          Ansicht, die manchmal tut, was in ihrer Adresse steht.
+        */
+        if (gepinnt.current) return;
         apply(msg.index, msg.step ?? 0, false);
       } else if (msg.type === "hello" && !readOnly) {
         const { index: i, step: s } = cursorRef.current;

@@ -11,7 +11,7 @@
 import { beantworte } from "../aws-blocks/mail/agent";
 import { FRAGE_LISA } from "../aws-blocks/mail/werkzeuge";
 import { baueAntwort, baueRohmail, lies } from "../aws-blocks/mail/brief";
-import { postfachFuer } from "../aws-blocks/mail/konfig";
+import { EINSTIEGE, postfachFuer } from "../aws-blocks/mail/konfig";
 
 const ROHMAIL = [
   "Return-Path: <andreas.walter@example.com>",
@@ -129,6 +129,34 @@ pruefe(text.includes("github.com/cabcookie"), "Link zum Quelltext");
 pruefe(text.includes("von einem KI-Agenten"), "Kennzeichnung als Maschine");
 pruefe(text.includes("gelöscht"), "Hinweis zur Adresse");
 pruefe(!baueAntwort("probe", ohne).includes("Was ich dafür abgefragt"), "Probe ohne Systemliste");
+
+/*
+  Die Einstiege stehen unter JEDER Antwort — auch unter der des Agenten ohne
+  Werkzeuge. Wer gerade eine erfundene Marge gelesen hat, ist der beste Leser
+  für den Hinweis, wie es richtig geht.
+*/
+const probe = baueAntwort("probe", ohne);
+for (const block of EINSTIEGE) {
+  for (const p of block.punkte) {
+    pruefe(text.includes(p.url) && probe.includes(p.url), `Einstieg verlinkt: ${p.was}`);
+  }
+}
+/*
+  Eine umgebrochene URL ist keine. Die Links der Einstiege sind lang — der
+  Lernplan für Entscheider allein über hundert Zeichen —, und ein Mailprogramm,
+  das eine Zeile umbricht, zerlegt sie. Deshalb steht dort nur die URL und
+  nichts sonst; die Prüfung schlägt an, sobald jemand Text danebenzieht.
+
+  Die beiden kurzen Zeilen darüber (Vortrag, Quelltext) sind bewusst anders
+  gesetzt und ausgenommen: Sie bleiben mit Beschriftung unter siebzig Zeichen.
+*/
+const langeZeilen = text
+  .split("\n")
+  .filter((z) => EINSTIEGE.some((b) => b.punkte.some((p) => z.includes(p.url))));
+pruefe(
+  langeZeilen.length > 0 && langeZeilen.every((z) => z.trim().startsWith("http")),
+  "Jede URL der Einstiege steht allein auf ihrer Zeile",
+);
 
 /*
   Der Adressat (zn2m).
