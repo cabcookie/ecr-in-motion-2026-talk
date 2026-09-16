@@ -596,6 +596,7 @@ export const SECTIONS: Section[] = [
           stufe: "roh",
           auftakt: "briefing",
           auftaktZeigen: true,
+          einmalig: true,
           label: "Chat starten",
           hint: "Deine Anfrage aus dem Briefing geht an einen Agenten, der nichts nachschlagen kann. Mal sehen, was er daraus macht.",
           systemPrompt:

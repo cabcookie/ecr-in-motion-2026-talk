@@ -419,7 +419,7 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
 
           <div ref={bottom} />
 
-          {interaction.suggestions && !loading && (
+          {interaction.suggestions && !loading && !interaction.einmalig && (
             <div className="flex flex-wrap gap-2">
               {interaction.suggestions.map((sug) => (
                 <button
@@ -434,24 +434,31 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
             </div>
           )}
 
-          <div className="flex items-end gap-2">
-            <textarea
-              id={`chat-${interaction.id}`}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="Antworte ihm …"
-              rows={2}
-              className="w-full resize-none rounded-xl border border-hair bg-stage px-4 py-3 text-base text-fg placeholder:text-fg-3 focus:border-[color:var(--accent)] focus:outline-none"
-            />
-            <button
-              type="button"
-              disabled={!draft.trim() || loading}
-              onClick={() => submit(draft)}
-              className="shrink-0 rounded-xl bg-[color:var(--accent)] px-4 py-3 text-base font-semibold text-stage disabled:opacity-30"
-            >
-              Senden
-            </button>
-          </div>
+          {/*
+            Kein Eingabefeld, wo es nichts zu antworten gibt. In Abschnitt 14
+            geht es um EINE Antwort; ein Feld darunter lüde zum Weiterreden ein,
+            während vorn schon der nächste Punkt läuft.
+          */}
+          {!interaction.einmalig && (
+            <div className="flex items-end gap-2">
+              <textarea
+                id={`chat-${interaction.id}`}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="Antworte ihm …"
+                rows={2}
+                className="w-full resize-none rounded-xl border border-hair bg-stage px-4 py-3 text-base text-fg placeholder:text-fg-3 focus:border-[color:var(--accent)] focus:outline-none"
+              />
+              <button
+                type="button"
+                disabled={!draft.trim() || loading}
+                onClick={() => submit(draft)}
+                className="shrink-0 rounded-xl bg-[color:var(--accent)] px-4 py-3 text-base font-semibold text-stage disabled:opacity-30"
+              >
+                Senden
+              </button>
+            </div>
+          )}
         </div>
       )}
 

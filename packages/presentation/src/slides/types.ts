@@ -345,6 +345,15 @@ export type Interaction = MitZusammenhang &
       auftakt?: "hallbach" | "briefing";
       /** Zeigt die erste Nachricht an, statt sie stumm zu schicken. */
       auftaktZeigen?: boolean;
+      /**
+       * Ein Zug, kein Gespräch: kein Eingabefeld, keine Vorschläge.
+       *
+       * In Abschnitt 14 geht es nur darum, EINE Antwort zu sehen — die eines
+       * Agenten, der nichts nachschlagen kann. Ein Eingabefeld darunter lädt
+       * zum Weiterreden ein und zieht die Aufmerksamkeit von dem ab, was gerade
+       * auf der Leinwand besprochen wird.
+       */
+      einmalig?: boolean;
       /** Vorgeschlagene Antworten, damit niemand lange tippen muss */
       suggestions?: string[];
       persist?: boolean;
