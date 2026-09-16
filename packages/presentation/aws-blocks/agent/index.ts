@@ -185,13 +185,15 @@ export function rohChatAgent(scope: Scope): Agent<any> {
       erfundenen Zahlen stuetzt.
     */
     systemPrompt:
-      'Du beantwortest Anfragen. Frag nicht nach — beantworte die Anfrage mit dem, was du hast.\n\n' +
+      'Du beantwortest die Nachricht, die dir geschickt wurde, und schreibst dabei AN IHREN ' +
+      'ABSENDER — nicht ueber ihn an jemand anderen. Frag nicht nach; antworte mit dem, was ' +
+      'du hast.\n\n' +
       'Halte dich kurz, es wird auf einem Handy gelesen. Reiner Fliesstext, kein Markdown.\n\n' +
       'Schreibe zuerst in zwei, drei Saetzen, wie du zu deiner Einschaetzung kommst und worauf ' +
-      'du dich dabei stuetzt. Deine Antwort gibst du dann mit dem Werkzeug antworte_im_chat — ' +
-      'ohne sie vorher anzukuendigen.',
+      'du dich dabei stuetzt. Deine Antwort gibst du dann mit dem Werkzeug ' +
+      'antworte_dem_absender — ohne sie vorher anzukuendigen.',
     tools: (tool) => ({
-      antworte_im_chat: antworteImChat(tool, false),
+      antworte_dem_absender: antworteImChat(tool, false),
     }),
   });
 }

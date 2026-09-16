@@ -113,12 +113,18 @@ export function antworteImChat(tool: ToolFactory<Vorgangskontext>, intern = true
         'sondern genau das, wofür sie dich fragt. Nenne sie mit Quelle und Stand.'
       : /*
           Die unterste Stufe weiss nichts von einem Haus, einem Team oder
-          Interna. Bekäme sie die obige Beschreibung, hielte sie ihr Gegenüber
-          für eine Kollegin und schriebe eine interne Einschätzung — obwohl
-          dort der Lieferant sitzt, der gerade geschrieben hat.
+          Interna. Ohne einen deutlichen Hinweis auf den Empfänger schrieb sie
+          eine interne Einschätzung — „Kurzeinschätzung: Marge ca. 40 %, hier
+          nachverhandeln" —, weil die Nachricht an eine dritte Person adressiert
+          ist und das Modell sich für deren Zuarbeiter hielt.
+
+          Deshalb steht der Empfänger im Werkzeugnamen UND hier. Der Name ist
+          für ein Modell die auffälligste Angabe; die Beschreibung stützt ihn
+          nur ab.
         */
-        'Antwortet der Person, die dir geschrieben hat. Das ist der einzige Weg, auf dem ' +
-        'deine Antwort sie erreicht.',
+        'Schickt deine Antwort an den ABSENDER der Nachricht, die du bekommen hast. Er liest ' +
+        'sie unmittelbar — schreibe ihn also direkt an, mit Anrede, und nicht über ihn an ' +
+        'jemand anderen. Das ist der einzige Weg, auf dem deine Antwort ihn erreicht.',
     parameters: z.object({
       text: z.string().describe('Die Antwort. Kurz — sie wird auf dem Handy gelesen.'),
     }),

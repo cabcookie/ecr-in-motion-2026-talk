@@ -53,3 +53,15 @@ export const SEED_MESSAGE = [
     ? ["", ...SEED_MAIL.facts.map(([k, v]) => `${k}: ${v}`)]
     : []),
 ].join("\n");
+
+/**
+ * Die Werkzeuge, mit denen ein Agent im Chat antwortet.
+ *
+ * Zwei Namen, weil die Stufen verschiedene Gegenüber haben: Auf der untersten
+ * schreibt der Absender der Nachricht selbst, weiter oben eine Kollegin aus dem
+ * Category-Team. Der Name ist für das Modell die wichtigste Angabe darüber, an
+ * wen es schreibt — deutlicher als jede Beschreibung darunter.
+ *
+ * Die App horcht auf beide: Was durch eines davon geht, ist die Antwort.
+ */
+export const ANTWORT_WERKZEUGE = ["antworte_im_chat", "antworte_dem_absender"];

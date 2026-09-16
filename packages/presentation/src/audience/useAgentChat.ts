@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "aws-blocks";
 import { useChat, type ChatInstance, type ChatMessage } from "@aws-blocks/bb-agent/client";
-import { SEED_MESSAGE } from "@/slides/agent";
+import { ANTWORT_WERKZEUGE, SEED_MESSAGE } from "@/slides/agent";
 import { briefingFuer } from "@/slides/briefing";
 import { participantId } from "./participant";
 
@@ -95,7 +95,8 @@ export function useAgentChat(
         Text ohnehin erwähnt.
       */
       onChunk: (chunk) => {
-        if (chunk.type !== "tool-call" || chunk.toolName !== "antworte_im_chat") return;
+        if (chunk.type !== "tool-call") return;
+        if (!ANTWORT_WERKZEUGE.includes(chunk.toolName ?? "")) return;
         const text = (chunk.input as { text?: string } | undefined)?.text;
         if (text) setAntworten((a) => [...a, text]);
       },
