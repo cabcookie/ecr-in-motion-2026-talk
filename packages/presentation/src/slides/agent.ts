@@ -53,3 +53,12 @@ export const SEED_MESSAGE = [
     ? ["", ...SEED_MAIL.facts.map(([k, v]) => `${k}: ${v}`)]
     : []),
 ].join("\n");
+
+/**
+ * Die Trennmarke zwischen Arbeitsweg und Antwort.
+ *
+ * Steht hier, weil beide Seiten sie brauchen: Der Agent setzt sie, die App
+ * teilt daran. Zwei Schreibweisen an zwei Orten gingen beim ersten Umbenennen
+ * auseinander, und dann stünde der ganze Gedankengang als Antwort im Chat.
+ */
+export const ANTWORT_MARKE = "===ANTWORT===";

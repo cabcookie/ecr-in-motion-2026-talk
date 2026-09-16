@@ -16,9 +16,8 @@
  * ist geteilt. Wer den Agenten ändern will, ändert ihn an einer Stelle.
  */
 import { Agent, BedrockModels, type Scope } from '@aws-blocks/blocks';
-import { SYSTEM_PROMPT } from '../../src/slides/agent';
+import { ANTWORT_MARKE, SYSTEM_PROMPT } from '../../src/slides/agent';
 import {
-  antworteImChat,
   antworteVerMail,
   frageLisa,
   vorgangskontext,
@@ -107,14 +106,30 @@ export function postfachAgent(
   });
 }
 
-/** Derselbe Agent, im Chat. Er kann hier nur eines nicht: eine Mail senden. */
+/**
+ * Derselbe Agent, im Chat.
+ *
+ * Er antwortet in Klartext statt über ein Werkzeug — und das ist eine
+ * Korrektur, keine Vereinfachung. Mit `antworte_im_chat` steckte die Antwort im
+ * Werkzeugaufruf, und der Chat zeigte stattdessen den letzten Modellzug: „Ich
+ * habe dem Lieferanten geantwortet: …". Der Verlauf von Blocks führt je
+ * Nachricht EINEN zusammengesetzten Text; was in ein Werkzeug geht, kommt dort
+ * nie an.
+ *
+ * Damit die Zwischenüberlegungen trotzdem vom Ergebnis trennbar bleiben, setzt
+ * er eine Marke davor. Hält er sich nicht daran, zeigt die App alles als
+ * Antwort — lieber Denken zu sehen als die Antwort zu verlieren.
+ */
 export function chatAgent(scope: Scope): Agent<any> {
   return new Agent(scope, 'berater', {
     ...GEMEINSAM,
-    tools: (tool) => ({
-      ...fachwerkzeuge(tool),
-      antworte_im_chat: antworteImChat(tool),
-    }),
+    systemPrompt:
+      `${SYSTEM_PROMPT}\n\n` +
+      'Du antwortest hier im Chat, nicht per Mail. Dein Gegenüber gehört zum Category-Team, ' +
+      'also zum eigenen Haus: Zahlen aus unseren Systemen sind ihm gegenüber keine Interna, ' +
+      'sondern genau das, wofür es dich fragt. Nenne sie mit Quelle und Stand.\n\n' +
+      `Schreibe zuerst, was du gerade tust und worauf du hinauswillst. Setze dann in eine eigene Zeile ${ANTWORT_MARKE} und darunter deine eigentliche Antwort. Alles unterhalb der Marke wird angezeigt, alles darüber ist nur dein Arbeitsweg.`,
+    tools: (tool) => fachwerkzeuge(tool),
   });
 }
 

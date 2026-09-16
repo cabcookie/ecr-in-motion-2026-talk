@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Interaction } from "@/slides/types";
 import { SEED_MAIL } from "@/slides/agent";
 import { briefingFuer, gruppenName, type Briefing } from "@/slides/briefing";
+import { ANTWORT_MARKE as MARKE } from "@/slides/agent";
 import { participantId } from "./participant";
 import { useAgentChat } from "./useAgentChat";
 
@@ -393,24 +394,20 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
             <SeedMail />
           )}
 
-          {thread.map((m) => (
-            <div
-              key={m.id}
-              className={
-                m.role === "user"
-                  ? "justify-self-end rounded-2xl rounded-br-sm bg-[color:var(--accent)]/15 px-4 py-3 text-base leading-relaxed text-fg max-w-[85%]"
-                  : "justify-self-start rounded-2xl rounded-bl-sm border border-hair bg-stage px-4 py-3 text-base leading-relaxed whitespace-pre-wrap text-fg max-w-[92%]"
-              }
-            >
-              {m.content}
-            </div>
-          ))}
-
-          {loading && (
-            <p className="m-0 justify-self-start font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
-              Der Agent schreibt …
-            </p>
+          {thread.map((m) =>
+            m.role === "user" ? (
+              <div
+                key={m.id}
+                className="max-w-[85%] justify-self-end rounded-2xl rounded-br-sm bg-[color:var(--accent)]/15 px-4 py-3 text-base leading-relaxed text-fg"
+              >
+                {m.content}
+              </div>
+            ) : (
+              <Agentenzug key={m.id} inhalt={m.content} />
+            ),
           )}
+
+          {loading && <Arbeitet />}
 
           {error && <p className="m-0 text-sm leading-relaxed text-b1">{error}</p>}
 
@@ -485,6 +482,80 @@ function EigeneAnfrage({ text }: { text: string }) {
       <p className="m-0 mt-2 text-sm leading-relaxed whitespace-pre-wrap text-fg-2">
         {rest.join("\n").trim()}
       </p>
+    </div>
+  );
+}
+
+/**
+ * Was der Agent zurückschickt: erst sein Arbeitsweg, dann die Antwort.
+ *
+ * Der Verlauf liefert beides in EINEM Text, getrennt durch eine Marke, die der
+ * Agent setzt. Gezeigt wird die Antwort; der Weg dorthin steckt zugeklappt
+ * darüber — wer mag, sieht nach, wie er gedacht hat.
+ *
+ * Fehlt die Marke, gilt alles als Antwort. Der schlechtere Fehler wäre, die
+ * Antwort zu verbergen, weil das Modell ein Wort vergessen hat.
+ */
+function Agentenzug({ inhalt }: { inhalt: string }) {
+  const [offen, setOffen] = useState(false);
+  const stelle = inhalt.indexOf(MARKE);
+  const hatDenken = stelle > 0;
+  const denken = hatDenken ? entklebe(inhalt.slice(0, stelle).trim()) : "";
+  const antwort = (hatDenken ? inhalt.slice(stelle + MARKE.length) : inhalt).trim();
+
+  return (
+    <div className="grid max-w-[92%] justify-self-start gap-1.5">
+      {hatDenken && (
+        <>
+          <button
+            type="button"
+            onClick={() => setOffen((o) => !o)}
+            aria-expanded={offen}
+            className="justify-self-start rounded-full border border-hair px-3 py-1 font-mono text-[10px] tracking-[0.12em] text-fg-3 uppercase active:bg-stage-3"
+          >
+            {offen ? "▲ Gedankengang" : "▼ Gedankengang"}
+          </button>
+          {offen && (
+            <div className="rounded-2xl border border-dashed border-hair px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap text-fg-3">
+              {denken}
+            </div>
+          )}
+        </>
+      )}
+      <div className="rounded-2xl rounded-bl-sm border border-hair bg-stage px-4 py-3 text-base leading-relaxed whitespace-pre-wrap text-fg">
+        {antwort}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Der Verlauf klebt die Textblöcke einer Nachricht ohne Trenner aneinander —
+ * „…Category-Kontakt.Ich habe dem Lieferanten…". Hier wird zwischen Satzende
+ * und nächstem Großbuchstaben wieder ein Absatz eingesetzt. Nur für den
+ * Gedankengang: Dort ist das Gedrängel störend und eine falsch gesetzte
+ * Trennung folgenlos.
+ */
+function entklebe(text: string): string {
+  return text.replace(/([.!?])([A-ZÄÖÜ])/g, "$1\n\n$2");
+}
+
+/** Dass er noch arbeitet, soll man sehen, ohne auf Text zu warten. */
+function Arbeitet() {
+  return (
+    <div className="flex items-center gap-2 justify-self-start rounded-2xl border border-hair bg-stage px-4 py-3">
+      <span className="flex gap-1" aria-hidden>
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className="size-2 animate-bounce rounded-full bg-[color:var(--accent)]"
+            style={{ animationDelay: `${i * 140}ms`, animationDuration: "900ms" }}
+          />
+        ))}
+      </span>
+      <span className="font-mono text-[11px] tracking-[0.12em] text-fg-3 uppercase">
+        Der Agent arbeitet
+      </span>
     </div>
   );
 }
