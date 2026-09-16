@@ -80,11 +80,11 @@ export const SECTIONS: Section[] = [
     hero: true,
     panels: [
       {
-        at: "18:01",
+        at: "18:00",
         say: "KI wird uns unsere Jobs wegnehmen. Lasst mich an einem Beispiel verdeutlichen, warum das passieren könnte.",
       },
       {
-        at: "18:02",
+        at: "18:00",
         mock: {
           t: "mail",
           app: "Microsoft Outlook — Posteingang",
@@ -107,7 +107,7 @@ export const SECTIONS: Section[] = [
         app: "Outlook-Oberfläche, aus 15 Metern lesbar.",
       },
       {
-        at: "18:03",
+        at: "18:01",
         mock: {
           t: "mail",
           app: "Microsoft Outlook — Gesendet",
@@ -133,7 +133,7 @@ export const SECTIONS: Section[] = [
         papier: {},
       },
       {
-        at: "18:04",
+        at: "18:02",
         mock: {
           t: "fan",
           cells: [
@@ -172,7 +172,7 @@ export const SECTIONS: Section[] = [
     sub: "Lisa ist kein Mensch.",
     panels: [
       {
-        at: "18:05",
+        at: "18:03",
         mock: {
           t: "list",
           ordered: false,
@@ -191,7 +191,7 @@ export const SECTIONS: Section[] = [
         say: "Kurz zu Lisa, denn um ihre Arbeit geht es heute Abend. Lisa Berger verantwortet bei Nordkorb die Kategorie Schokolade und Pralinen. Sie entscheidet über Listungen und Auslistungen, verhandelt Konditionen, plant Regale und Aktionen. Das ist eine vollwertige Stelle mit einer vollwertigen Verantwortung — und Lisa ist kein Mensch. Lisa ist der Agent, den wir gerade gesehen haben. Wir wollen uns heute Abend damit beschäftigen, wie wir einen Agenten bauen, der so gut die Arbeit eines Categor Managers unterstützen kann.",
       },
       {
-        at: "18:06",
+        at: "18:03",
         mock: {
           t: "list",
           ordered: true,
@@ -232,13 +232,13 @@ export const SECTIONS: Section[] = [
     hero: true,
     panels: [
       {
-        at: "18:07",
+        at: "18:05",
         say: "...wurde kein Mensch gefragt. Alle wurden nur informiert. Und damit steht die Frage klar im Raum:",
         /* „Die Frage steht im Raum“ ist eine Redewendung, kein Saalbezug. */
         papier: {},
       },
       {
-        at: "18:07",
+        at: "18:05",
         mock: {
           t: "statement",
           text: "Braucht man uns dann noch?",
@@ -255,7 +255,7 @@ export const SECTIONS: Section[] = [
     title: "Der Sprecher für heute",
     panels: [
       {
-        at: "18:08",
+        at: "18:06",
         mock: {
           t: "bio",
           photo: "/carsten.jpg",
@@ -280,7 +280,7 @@ export const SECTIONS: Section[] = [
     title: "Mach mit",
     panels: [
       {
-        at: "18:08",
+        at: "18:06",
         mock: {
           t: "qr",
           caption: "Das hier ist keine PowerPoint.",
@@ -295,7 +295,7 @@ export const SECTIONS: Section[] = [
         papier: { weg: true },
       },
       {
-        at: "18:09",
+        at: "18:06",
         mock: {
           t: "results",
           of: "sorge",
@@ -398,11 +398,11 @@ export const SECTIONS: Section[] = [
     hero: true,
     panels: [
       {
-        at: "18:11",
+        at: "18:12",
         say: "Wir haben jetzt so einen Agenten auch mal live gesehen. Ihr solltet inzwischen eine Email zurück bekommen haben. Es ist beunruhigend und spannend zugleich. Dario Amodei, Mitgründer und Chef von Anthropic sagte im Mai 2025:",
       },
       {
-        at: "18:11",
+        at: "18:12",
         mock: {
           t: "quote",
           text: "KI könnte die Hälfte aller Einstiegsjobs im Bürobereich vernichten und die Arbeitslosigkeit binnen ein bis fünf Jahren auf 10 bis 20 Prozent treiben.",
@@ -412,7 +412,7 @@ export const SECTIONS: Section[] = [
         note: 'Quelle: Interview mit Jim VandeHei und Mike Allen, Axios, 28. Mai 2025. „White-collar bloodbath" ist die Formulierung von Axios, nicht von Amodei.',
       },
       {
-        at: "18:12",
+        at: "18:13",
         mock: {
           t: "bild",
           src: "/tweet-on-claude.png",
@@ -430,11 +430,11 @@ export const SECTIONS: Section[] = [
     hero: true,
     panels: [
       {
-        at: "18:13",
+        at: "18:14",
         say: "Vor Dario gab es schon diese Propheten und sie lagen alle falsch",
       },
       {
-        at: "18:13",
+        at: "18:14",
         mock: {
           t: "quote",
           text: "Jahrzehnt des Ruins",
@@ -451,7 +451,7 @@ export const SECTIONS: Section[] = [
         },
       },
       {
-        at: "18:13",
+        at: "18:15",
         mock: {
           t: "quote",
           text: "Das Ende der Arbeit",
@@ -472,7 +472,7 @@ export const SECTIONS: Section[] = [
     sub: "Millionen Arbeitsplätze verschwanden tatsächlich.",
     panels: [
       {
-        at: "18:13",
+        at: "18:15",
         mock: {
           t: "chart",
           which: "agriculture",
@@ -489,7 +489,7 @@ export const SECTIONS: Section[] = [
     sub: 'David Frederick Schloss prägte 1891 den Begriff der „Lump of Labor Fallacy".',
     panels: [
       {
-        at: "18:14",
+        at: "18:15",
         mock: {
           t: "list",
           ordered: false,
@@ -510,7 +510,7 @@ export const SECTIONS: Section[] = [
     title: "Welche Aufgaben hast Du heute schon an KI abgegeben?",
     panels: [
       {
-        at: "18:15",
+        at: "18:17",
         mock: {
           t: "results",
           of: "abgegeben",
@@ -557,7 +557,7 @@ export const SECTIONS: Section[] = [
     sub: "Und warum ist das noch nicht die Regel?",
     panels: [
       {
-        at: "18:16",
+        at: "18:19",
         mock: {
           t: "mail",
           app: "Microsoft Outlook — Gesendet",
@@ -589,7 +589,7 @@ export const SECTIONS: Section[] = [
     title: "Wie arbeitet so ein Modell überhaupt?",
     panels: [
       {
-        at: "18:17",
+        at: "18:20",
         mock: {
           t: "tshape",
           stufe: 0,
@@ -605,6 +605,7 @@ export const SECTIONS: Section[] = [
         papier: { behalten: true },
       },
       {
+        at: "18:21",
         mock: {
           t: "tshape",
           stufe: 1,
@@ -613,7 +614,7 @@ export const SECTIONS: Section[] = [
         say: "So sieht es bei uns aus. Wie sieht das nun bei einem Sprachmodell aus?",
       },
       {
-        at: "18:19",
+        at: "18:21",
         mock: {
           t: "tshape",
           stufe: 2,
@@ -630,7 +631,7 @@ export const SECTIONS: Section[] = [
     title: "Machen wir die Probe.",
     panels: [
       {
-        at: "18:21",
+        at: "18:22",
         mock: {
           t: "qr",
           caption: "Schreib ihm selbst.",
@@ -655,7 +656,7 @@ export const SECTIONS: Section[] = [
         papier: { weg: true },
       },
       {
-        at: "18:23",
+        at: "18:25",
         mock: {
           t: "statement",
           text: "Wie ein hochmotivierter Abiturient.",
@@ -679,7 +680,7 @@ export const SECTIONS: Section[] = [
     title: "Was dem Agenten fehlt.",
     panels: [
       {
-        at: "18:28",
+        at: "18:26",
         mock: {
           t: "tshape",
           stufe: 3,
@@ -689,6 +690,7 @@ export const SECTIONS: Section[] = [
         say: "Was fehlt, ist also der Stamm. Und den kann man ihm geben. Wenn wir einen Agent geschickt steuern, dann ist sein Spezialwissen etwas breiter als unseres — ein Agent kann mehr Fälle abdecken als eine einzelne Person, weil er nicht müde wird und nicht in den Urlaub fährt. Aber er ist auch flacher. Er reicht nichts so tief wie zehn Jahre Erfahrung in einer Kategorie. Das ist einer der Gründe, warum wir Menschen immer noch gebraucht werden.",
       },
       {
+        at: "18:26",
         mock: {
           t: "tshape",
           stufe: 4,
@@ -698,6 +700,7 @@ export const SECTIONS: Section[] = [
         say: "Vier Bausteine machen diesen Stamm. Der erste ist der Systemprompt. Das ist die Einarbeitung: Wer bin ich, für wen arbeite ich, welche Regeln gelten in diesem Haus, und was darf ich nicht. Ein Satz Text — und er verändert alles, wie wir gleich sehen werden.",
       },
       {
+        at: "18:27",
         mock: {
           t: "tshape",
           stufe: 5,
@@ -707,6 +710,7 @@ export const SECTIONS: Section[] = [
         say: "Der zweite sind Tools. Werkzeuge, mit denen der Agent in Deine Systeme sehen kann. Er sucht jetzt also nach Fakten.",
       },
       {
+        at: "18:27",
         mock: {
           t: "tshape",
           stufe: 6,
@@ -716,6 +720,7 @@ export const SECTIONS: Section[] = [
         say: "Der dritte ist Memory. Ohne Memory startet der Agent bei jedem Vorgang bei null. Memory gibt ihm ein Gedächtnis, das über den einzelnen Vorgang hinausreicht. Was Du ihm einmal korrigiert hast, soll er beim nächsten Mal schon wissen. Und — darauf kommen wir später noch einmal zurück — er soll sich auch merken, was er beim letzten Mal beiseitegelegt hat.",
       },
       {
+        at: "18:28",
         mock: {
           t: "tshape",
           stufe: 7,
@@ -733,7 +738,7 @@ export const SECTIONS: Section[] = [
     title: "Der Systemprompt",
     panels: [
       {
-        at: "18:31",
+        at: "18:28",
         mock: {
           t: "list",
           ordered: false,
@@ -759,7 +764,7 @@ export const SECTIONS: Section[] = [
         say: "Der Systemprompt ist die Einarbeitung. Er kommt vor der ersten Nachricht und bleibt bei jeder weiteren dabei. Hier steht, wer der Agent ist, für wen er arbeitet und welche Regeln in diesem Haus gelten. Und — das ist der wichtigste Teil — hier steht auch, was er nicht weiß. Ein Agent, der sagt „diese Zahl habe ich nicht, sie steht in der Warenwirtschaft“, ist deutlich nützlicher als einer, der sie erfindet.",
       },
       {
-        at: "18:33",
+        at: "18:29",
         mock: {
           t: "qr",
           caption: "Der Agent hat nun eine Rolle & Anweisungen",
@@ -798,7 +803,7 @@ export const SECTIONS: Section[] = [
     title: "Tools",
     panels: [
       {
-        at: "18:41",
+        at: "18:32",
         mock: {
           t: "qr",
           caption: "Der Agent bekommt jetzt Werkzeuge",
@@ -848,7 +853,7 @@ export const SECTIONS: Section[] = [
         },
       },
       {
-        at: "18:44",
+        at: "18:34",
         mock: {
           t: "list",
           ordered: false,
@@ -878,6 +883,7 @@ export const SECTIONS: Section[] = [
     title: "Zulässig ist nicht dasselbe wie gewollt.",
     panels: [
       {
+        at: "18:35",
         mock: {
           t: "statement",
           text: "Sechs Werkzeuge sagen, ob etwas geht.",
@@ -886,6 +892,7 @@ export const SECTIONS: Section[] = [
         say: "Alle Werkzeuge, die Du bisher gesehen hast, haben eines gemeinsam: Sie schlagen etwas nach. Was kostet das, passt das ins Regal, hält der Termin die Frist. Damit kann der Agent prüfen, ob etwas zulässig ist. Was er damit nicht kann, ist beurteilen, ob wir es überhaupt wollen. Und damit antwortet er tendentiell mit einem Ja.",
       },
       {
+        at: "18:36",
         /*
           Auf der Leinwand nur die Aussage. Die Zitate aus den Läufen stehen im
           PDF, wo man sie in Ruhe liest.
@@ -929,6 +936,7 @@ export const SECTIONS: Section[] = [
         note: "Sechs Läufe gegen Bedrock, Opus 4.8, 206 Cent. Antworten vollständig in packages/presentation/messungen/ziele-gegentest/. Geurteilt wurde durch Lesen, nicht per Regex — der automatische Klassifikator hielt zwei eindeutige Absagen für unklar bzw. für ein Ja.",
       },
       {
+        at: "18:37",
         mock: {
           t: "statement",
           text: "Und er verschenkt die Aktionsfläche.",
@@ -950,6 +958,7 @@ export const SECTIONS: Section[] = [
     sub: "Ein Agent, zwei Eingänge, sechs simulierte Systeme.",
     panels: [
       {
+        at: "18:38",
         mock: {
           t: "architektur",
           alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen zwei Antwortwerkzeuge ab: antworte_per_mail und antworte_im_chat. Darunter die sechs simulierten Systeme.",
@@ -960,6 +969,7 @@ export const SECTIONS: Section[] = [
         papier: {},
       },
       {
+        at: "18:38",
         mock: {
           t: "architektur",
           alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen zwei Antwortwerkzeuge ab: antworte_per_mail und antworte_im_chat. Darunter die sechs simulierten Systeme.",
@@ -968,6 +978,7 @@ export const SECTIONS: Section[] = [
         app: "Stufe 2 — die drei Werkzeuge. Der Pfeil zum Operator zeigt, wo die Rückfrage landet.",
       },
       {
+        at: "18:38",
         mock: {
           t: "architektur",
           alt: "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen zwei Antwortwerkzeuge ab: antworte_per_mail und antworte_im_chat. Darunter die sechs simulierten Systeme.",
@@ -986,11 +997,11 @@ export const SECTIONS: Section[] = [
     hero: true,
     panels: [
       {
-        at: "18:47",
+        at: "18:39",
         say: "...Autonomie. Der KI Agent hat bereits alle Tools, um an die Systeme zu kommen, um Handlungen auszuführen.",
       },
       {
-        at: "18:48",
+        at: "18:39",
         mock: {
           t: "fan",
           cells: [
@@ -1027,6 +1038,7 @@ export const SECTIONS: Section[] = [
     title: "Wie wird der Agent besser?",
     panels: [
       {
+        at: "18:40",
         mock: {
           t: "results",
           of: "flaeche",
@@ -1078,6 +1090,7 @@ export const SECTIONS: Section[] = [
         },
       },
       {
+        at: "18:42",
         mock: {
           t: "statement",
           text: "Euch hat er die Fläche auch angeboten.",
@@ -1090,6 +1103,7 @@ export const SECTIONS: Section[] = [
         },
       },
       {
+        at: "18:43",
         mock: {
           t: "statement",
           text: "Das ist die Arbeit, die bleibt.",
@@ -1109,11 +1123,11 @@ export const SECTIONS: Section[] = [
     hero: true,
     panels: [
       {
-        at: "18:51",
+        at: "18:45",
         say: "Wie lege ich konkret los? Meine Empfehlung: ...",
       },
       {
-        at: "18:52",
+        at: "18:45",
         mock: {
           t: "list",
           ordered: true,
@@ -1135,7 +1149,7 @@ export const SECTIONS: Section[] = [
         say: "1. Du schickst ab sofort jede eingehende Mail durch den Agenten — auch die, die Du in dreißig Sekunden selbst beantwortet hättest. 2. Und Du antwortest nicht mehr selbst. Du lässt ihn einen Vorschlag machen. Und dann nimmst Du den nicht einfach an: Du fragst zurück, Du korrigierst, Du formulierst um. 3. Das ist die Rückkopplung. So entstehen die Erinnerungen, die der Agent benötigt und beim nächsten Mal wieder anwenden kann.",
       },
       {
-        at: "18:53",
+        at: "18:45",
         mock: {
           t: "list",
           ordered: true,
@@ -1165,7 +1179,7 @@ export const SECTIONS: Section[] = [
     title: "So machen wir den Agenten schlau.",
     panels: [
       {
-        at: "18:55",
+        at: "18:46",
         mock: {
           t: "tshape",
           stufe: 7,
@@ -1184,7 +1198,7 @@ export const SECTIONS: Section[] = [
     hero: true,
     panels: [
       {
-        at: "18:57",
+        at: "18:47",
         mock: {
           t: "statement",
           text: "Ja. Aber nicht so wie heute.",
@@ -1192,7 +1206,7 @@ export const SECTIONS: Section[] = [
         say: "Damit sind wir zurück bei der Frage vom Anfang. Braucht man uns dann noch? Meine Antwort ist ja. Aber nicht so wie heute.",
       },
       {
-        at: "18:58",
+        at: "18:47",
         mock: {
           t: "statement",
           text: "Wir bauen die Rahmenbedingungen, damit ausgeführt werden kann.",
@@ -1200,7 +1214,7 @@ export const SECTIONS: Section[] = [
         say: "Was Du heute Abend gesehen hast: Die KI kann erstaunlich viel — wenn man ihr die Rahmenbedingungen gibt. Und genau das ist unsere neue Aufgabe. Wir sind nicht mehr die, die ausführen. Wir sind die, die den Rahmen bauen, in dem ausgeführt werden kann. Aus dem operativ arbeitenden Mitarbeiter wird jemand, der Agenten anleitet.",
       },
       {
-        at: "18:58",
+        at: "18:47",
         mock: {
           t: "statement",
           text: "Die Arbeit wird nicht weniger.",
@@ -1217,7 +1231,7 @@ export const SECTIONS: Section[] = [
     title: "Was Du damit anfangen kannst.",
     panels: [
       {
-        at: "18:59",
+        at: "18:48",
         mock: {
           t: "list",
           ordered: true,
@@ -1253,7 +1267,7 @@ export const SECTIONS: Section[] = [
     sub: "„Was funktioniert, was nicht — KI-Erfahrungen unter Entscheidern“ · 17. September, 8:00–8:45 Uhr",
     panels: [
       {
-        at: "19:00",
+        at: "18:49",
         mock: {
           t: "statement",
           text: "Komm und hör, was andere schon tun.",
@@ -1270,7 +1284,7 @@ export const SECTIONS: Section[] = [
     sub: "ecr2026.carstenbkoch.de",
     panels: [
       {
-        at: "19:00",
+        at: "18:49",
         /*
           Der Abspann traegt keine eigenen Daten: Er liest
           aws-blocks/mail/anhang.md — dieselbe Datei, aus der die Antwortmail
