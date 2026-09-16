@@ -156,7 +156,7 @@ export function chatAgent(
  *
  * Derselbe Prompt wie der volle Agent, aber kein einziges Fachwerkzeug. Er
  * weiß also, wer er ist, wofür er arbeitet und was er nicht darf — und muss
- * jede Zahl bei der Person im Chat erfragen. „Die Tools bist Du", sagt das
+ * jede Zahl bei der Person im Chat erfragen. „Er bittet Dich um Rat", sagt das
  * Handy dazu.
  *
  * Ohne diese Stufe lief Abschnitt 16 auf dem vollen Agenten, und der hatte

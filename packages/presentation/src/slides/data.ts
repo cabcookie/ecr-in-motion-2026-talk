@@ -763,7 +763,7 @@ export const SECTIONS: Section[] = [
         mock: {
           t: "qr",
           caption: "Starte den Chat.",
-          hint: "Der Agent hat jetzt den Systemprompt — aber immer noch keine Systeme. Die Tools bist Du.",
+          hint: "Der Agent hat jetzt den Systemprompt — aber immer noch keine Systeme. Er bittet Dich um Rat.",
         },
         say: "Jetzt Du. Auf Deinem Handy kannst Du einen Chat starten. Wir simulieren, dass Du die Mail von Hallbach bekommen hast. Der Agent fasst nicht nur zusammen, er gibt eine Handlungsempfehlung — und er deutet an, was er tun würde, wenn er die Tools selbst hätte. Hat er aber nicht. Also fragt er Dich. Bitte antworte ihm. Und schau Dir den Systemprompt an, er ist in der App einsehbar.",
         audience: {
@@ -775,7 +775,7 @@ export const SECTIONS: Section[] = [
           /* Systemprompt ja, Systeme nein — die Zahlen kommen vom Teilnehmer. */
           stufe: "prompt",
           label: "Chat starten",
-          hint: "Du bekommst die Mail von Hallbach. Der Agent fragt Dich nach den Daten, die ihm fehlen — die Tools bist Du.",
+          hint: "Du bekommst die Mail von Hallbach. Der Agent fragt Dich nach den Daten, die ihm fehlen — er bittet Dich um Rat.",
           systemPrompt: LISA_PROMPT,
           suggestions: [
             "Die Kategorie wächst um 3,2 %",
@@ -788,7 +788,7 @@ export const SECTIONS: Section[] = [
         papier: {
           statt: {
             t: "statement",
-            text: "Die Tools bist Du.",
+            text: "Er bittet Dich um Rat.",
             after:
               "Im Saal führte das Publikum dieses Gespräch auf dem eigenen Handy — mit dem Systemprompt, aber ohne Systemzugriff.",
           },
