@@ -284,14 +284,7 @@ export const SECTIONS: Section[] = [
           id: "bereit",
           message: "Schön, dass Du da bist. Gleich kommen zwei Fragen.",
         },
-        papier: {
-          statt: {
-            t: "statement",
-            text: "Das hier ist keine PowerPoint.",
-            after: "Sondern eine Webanwendung — das Publikum war auf dem eigenen Handy dabei.",
-          },
-          text: "Der Vortrag lief als Webanwendung. Auf dem Handy sah man nicht die Folie, sondern das, was gerade zu tun war — eine Frage, ein Gespräch, eine vorbereitete Mail.",
-        },
+        papier: { weg: true },
       },
       {
         at: "18:09",
@@ -351,17 +344,7 @@ export const SECTIONS: Section[] = [
           ],
         },
         app: "Live-Matrix aus den Antworten. Beide Fragen laufen gleichzeitig, die Matrix füllt sich sukzessive.",
-        papier: {
-          statt: {
-            t: "list",
-            ordered: false,
-            items: [
-              ["Beunruhigt Dich dieses Beispiel?", "Ja · Ein wenig · Nein"],
-              ["Freust Du Dich darauf, dass es Realität wird?", "Ja · Ein wenig · Nein"],
-            ],
-          },
-          text: "Beide Fragen gleichzeitig, denn sie schließen sich nicht aus: Man kann beunruhigt sein und sich trotzdem freuen.",
-        },
+        papier: { weg: true },
       },
       {
         at: "18:09",
@@ -394,14 +377,7 @@ export const SECTIONS: Section[] = [
           privacy:
             "Ich speichere Deine E-Mail-Adresse nur, bis die Antwort versendet ist. Ich hebe sie nicht auf.",
         },
-        papier: {
-          statt: {
-            t: "statement",
-            text: "Du bist jetzt Lieferant.",
-            after: "Jede Teilnehmerin und jeder Teilnehmer bekam ein eigenes Briefing — eine Marke, ihr Bestand bei Nordkorb, ein Ziel und ein Haken.",
-          },
-          text: "Ab hier vertrat das Publikum einen Hersteller: eigene Marke, echte Zahlen aus dem Sortiment, ein Anliegen — und ein Haken, den der Agent finden würde. Vierzehn Rollen, zufällig zugeteilt.",
-        },
+        papier: { weg: true },
       },
     ],
     n: 6,

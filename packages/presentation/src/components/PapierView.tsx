@@ -50,11 +50,30 @@ function nurZwischenstufe(abschnitt: Section, i: number): boolean {
   return abschnitt.panels[i + 1]?.mock?.t === art;
 }
 
+/**
+ * Eine Seite, die nur den Titel zeigt — und die nächste zeigt ihn auch.
+ *
+ * Auf der Leinwand ist das ein Moment: Der Satz steht groß und allein, der
+ * Vortragende lässt ihn wirken, dann kommt der Beleg. Auf Papier steht
+ * derselbe Satz zweimal untereinander, einmal groß und einmal als
+ * Seitenüberschrift — und liest sich wie ein Druckfehler.
+ */
+function nurTitelblatt(abschnitt: Section, i: number): boolean {
+  if (abschnitt.panels[i].papier?.behalten) return false;
+  if (abschnitt.panels[i].mock) return false;
+  return i + 1 < abschnitt.panels.length;
+}
+
 export function PapierView() {
   const seiten = SECTIONS.flatMap((abschnitt, index) =>
     abschnitt.panels
       .map((panel, i) => ({ abschnitt, panel, index, schritt: i }))
-      .filter(({ panel, schritt }) => !panel.papier?.weg && !nurZwischenstufe(abschnitt, schritt)),
+      .filter(
+        ({ panel, schritt }) =>
+          !panel.papier?.weg &&
+          !nurZwischenstufe(abschnitt, schritt) &&
+          !nurTitelblatt(abschnitt, schritt),
+      ),
   );
 
   return (
