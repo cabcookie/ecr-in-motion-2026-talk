@@ -520,14 +520,13 @@ export const SECTIONS: Section[] = [
           ],
         },
         app: "Freitext vom Handy, Antworten erscheinen live auf der Leinwand.",
-        papier: {
-          statt: {
-            t: "statement",
-            text: "Welche Aufgaben hast Du heute schon an KI abgegeben?",
-            after: "Die Antworten aus dem Saal erschienen live auf der Leinwand.",
-          },
-          text: "Fast jeder im Saal konnte etwas nennen: zusammenfassen, formulieren, recherchieren, auswerten, übersetzen. Aufgaben, die vor drei Jahren noch von Hand erledigt wurden.",
-        },
+        /*
+          Nicht ins PDF. Die Seite bestand aus der Frage und den Antworten, die
+          live auf der Leinwand erschienen — ohne den Saal bleibt eine Frage
+          ohne Antwort stehen. Was dabei herauskam, gehört in den Vortrag, nicht
+          in ein Dokument.
+        */
+        papier: { weg: true },
       },
     ],
     n: 11,
