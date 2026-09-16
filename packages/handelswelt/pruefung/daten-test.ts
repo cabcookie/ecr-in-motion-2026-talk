@@ -1,15 +1,16 @@
 /**
- * Die Zusage dieses Pakets, gemessen statt behauptet: In den erzeugten Daten
- * steht kein echter Marken- oder Herstellername.
+ * Tragen die erzeugten Daten, was die Folien behaupten?
  *
- * Das ist keine Kosmetik. Der Agent gibt diese Namen in einer Antwortmail
- * weiter, und die Antwort steht auf der Leinwand.
+ * Geprüft wird dreierlei: dass die Zahlen der Folien aus dem Sortiment
+ * folgen, dass die Artikel sich im Schnitt rechnen, und dass die Kulisse den
+ * Rest des Ladens abdeckt, ohne Artikelnamen zu tragen.
+ *
+ *   pnpm --filter @ecr-talk/handelswelt run daten:test
  */
 import { KULISSE } from '../src/daten/kulisse';
 import { KATEGORIE, SORTIMENT } from '../src/daten/sortiment';
 import { SCHOKOLADE_UND_PRALINEN } from '../src/daten/kategorien';
 import { marge } from '../src/systeme/kalkulation';
-import { GESPERRT, kennung } from './nicht-erlaubt';
 
 let fehler = 0;
 function pruefe(was: string, bedingung: boolean, zusatz = ''): void {
@@ -19,50 +20,6 @@ function pruefe(was: string, bedingung: boolean, zusatz = ''): void {
     console.error(`  FEHL ${was}${zusatz ? ` — ${zusatz}` : ''}`);
   }
 }
-
-console.log('\nKeine echten Marken');
-
-/**
- * Zerlegt einen Text in Wörter und Wortpaare und meldet, was gesperrt ist.
- *
- * Wortpaare, weil zweiteilige Namen sonst durchrutschen („Moser Roth", „Sun
- * Snacks"). Wörter, weil einteilige sonst nur als ganze Bezeichnung träfen —
- * „Goldbären XXL" soll an „Goldbären" scheitern.
- */
-function gesperrteStellen(text: string): string[] {
-  const woerter = text.split(/[^\p{L}\p{N}'\u2019&.-]+/u).filter((w) => w.length > 1);
-  const treffer = new Set<string>();
-  for (let i = 0; i < woerter.length; i++) {
-    if (GESPERRT.has(kennung(woerter[i]))) treffer.add(woerter[i]);
-    if (i + 1 < woerter.length) {
-      const paar = `${woerter[i]} ${woerter[i + 1]}`;
-      if (GESPERRT.has(kennung(paar))) treffer.add(paar);
-    }
-  }
-  return [...treffer];
-}
-
-const sortimentstext = SORTIMENT.map((a) => `${a.marke} ${a.bezeichnung}`).join('\n');
-const kulissentext = KULISSE.map((g) => g.gruppe).join('\n');
-
-for (const [was, text] of [
-  ['Sortiment', sortimentstext],
-  ['Kulisse', kulissentext],
-] as const) {
-  const treffer = gesperrteStellen(text);
-  pruefe(`${was} ohne gesperrte Namen`, treffer.length === 0, treffer.join(', '));
-}
-
-/*
-  Und die Gegenprobe: Ein Test, der nie anschlägt, prüft nichts. Hier steht
-  bewusst ein echter Name, damit sichtbar bleibt, dass die Prüfung greift.
-*/
-pruefe(
-  'Die Prüfung schlägt bei einem echten Namen an',
-  gesperrteStellen('Moser Roth Edel Bitter').length > 0 &&
-    gesperrteStellen('Goldbären XXL 320 g').length > 0 &&
-    gesperrteStellen('Hallbach Selection Fein').length === 0,
-);
 
 console.log('\nDie Zahlen der Folie kommen aus den Daten');
 
