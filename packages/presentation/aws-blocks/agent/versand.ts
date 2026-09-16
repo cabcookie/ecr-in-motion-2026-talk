@@ -2,85 +2,74 @@
  * Der Versand — was `antworte_per_mail` tatsächlich tut.
  *
  * Steht getrennt vom Werkzeug, weil es der einzige Teil ist, der AWS braucht.
- * Im Sandkasten und im Test steckt stattdessen eine Attrappe im selben
- * Werkzeug, und die Werkzeugbeschreibung bleibt Wort für Wort dieselbe.
+ * Im Test steckt stattdessen eine Attrappe im selben Werkzeug, und die
+ * Werkzeugbeschreibung bleibt Wort für Wort dieselbe.
  *
- * Die Rolle liegt in einem anderen Konto: Die Adresse des Agenten hängt an der
- * übergeordneten Domain, und der Empfang läuft deshalb dort. Eine Rolle statt
- * zweier Berechtigungswege — sie darf sowohl die Rohmail aus S3 lesen als auch
- * als die verifizierte Identität senden.
+ * Gesendet wird NICHT von hier aus, sondern von der Mail-Lambda. Der Grund
+ * liegt im anderen Konto: Die Adresse des Agenten hängt an der übergeordneten
+ * Domain, und die Rolle dort, die als verifizierte Identität senden darf,
+ * vertraut genau einer Rolle in diesem Konto — der der Mail-Lambda. Der Agent
+ * läuft in AgentCore unter der gemeinsamen Blocks-Rolle und bekäme
+ * AccessDenied. Statt das fremde Konto umzubauen, reicht er den fertigen
+ * Brief an die Lambda weiter, die ohnehin die Rohmail liest.
  */
-import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
-import { fromTemporaryCredentials } from '@aws-sdk/credential-providers';
-import { baueRohmail } from '../mail/brief';
-import { POSTFAECHER } from '../mail/konfig';
-import type { Versand, Vorgangskontext } from './antwort';
+import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
+import { baueRumpf } from '../mail/brief';
+import { MAIL_FUNKTION, POSTFAECHER, type Sendeauftrag } from '../mail/konfig';
+import type { Versand } from './antwort';
 
-const ROLLE = process.env.MAIL_ACCESS_ROLE_ARN ?? '';
 const REGION = process.env.AWS_REGION ?? 'eu-central-1';
 
-/*
-  Erst beim ersten Versand aufgebaut, nicht beim Laden des Moduls: Ohne
-  gesetzte Rolle soll der Agent trotzdem starten — nur senden kann er dann
-  nicht, und das sagt er auch.
-*/
-let ses: SESv2Client | undefined;
-
-function client(): SESv2Client {
-  if (!ses) {
-    ses = new SESv2Client({
-      region: REGION,
-      credentials: fromTemporaryCredentials({
-        params: { RoleArn: ROLLE, RoleSessionName: 'ecr2026-agent-versand' },
-      }),
-    });
-  }
-  return ses;
-}
+let lambda: LambdaClient | undefined;
 
 /**
- * Sendet als das Postfach, an das geschrieben wurde.
+ * Übergibt den Brief der Mail-Lambda.
  *
- * `inAntwortAuf` hängt die Antwort an den Gesprächsfaden — sonst erscheint sie
- * im Postfach des Teilnehmers als neue Mail und nicht als Antwort auf seine.
+ * Synchron aufgerufen und nicht als Ereignis: Scheitert der Versand, soll der
+ * Agent es als Fehler seines Werkzeugs sehen — und nicht glauben, die Mail sei
+ * draußen.
  */
-export const perSes: Versand = async (kontext: Vorgangskontext, betreff, text) => {
-  if (!ROLLE) {
-    throw new Error(
-      'Ohne MAIL_ACCESS_ROLE_ARN kann ich keine Mail senden. Der Entwurf ist fertig, der Weg hinaus fehlt.',
-    );
-  }
-
+export const perMailLambda: Versand = async (kontext, brief, akte) => {
   /*
     Welches Postfach geantwortet hat, steht im Kontext des Vorgangs. Fällt auf
-    das erste zurück — dieselbe Regel wie beim Empfang, und aus demselben Grund:
-    Eine Antwort von der falschen Adresse ist schlimmer als eine vom
-    Standardpostfach.
+    das erste zurück — dieselbe Regel wie beim Empfang.
   */
   const postfach =
     POSTFAECHER.find((p) => p.adresse === kontext.postfach) ?? POSTFAECHER[0];
 
-  await client().send(
-    new SendEmailCommand({
-      FromEmailAddress: postfach.adresse,
-      Destination: { ToAddresses: [kontext.absender] },
-      Content: {
-        Raw: {
-          Data: Buffer.from(
-            baueRohmail({
-              von: postfach.adresse,
-              vonName: postfach.anzeigename,
-              an: kontext.absender,
-              betreff,
-              text,
-              inAntwortAuf: kontext.nachrichtId,
-            }),
-            'utf8',
-          ),
-        },
-      },
+  const auftrag: Sendeauftrag = {
+    art: 'senden',
+    postfach: postfach.adresse,
+    an: kontext.absender,
+    betreff: brief.betreff,
+    rumpf: baueRumpf(brief, akte),
+    inAntwortAuf: kontext.nachrichtId,
+    eingang: kontext.eingang
+      ? { absender: kontext.absender, absenderName: kontext.absenderName, text: kontext.eingang }
+      : undefined,
+  };
+
+  /*
+    Lokal gibt es keine Mail-Lambda. Der Brief geht dann ins Protokoll — der
+    Agent läuft trotzdem vollständig durch, und man sieht, was er geschickt
+    hätte.
+  */
+  if (!process.env.BLOCKS_CONFIG_BUCKET) {
+    console.log(`[lokal, nicht gesendet] an ${auftrag.an}: ${auftrag.betreff}\n\n${auftrag.rumpf}`);
+    return;
+  }
+
+  lambda ??= new LambdaClient({ region: REGION });
+  const antwort = await lambda.send(
+    new InvokeCommand({
+      FunctionName: MAIL_FUNKTION,
+      InvocationType: 'RequestResponse',
+      Payload: Buffer.from(JSON.stringify(auftrag), 'utf8'),
     }),
   );
-
-  console.log(`[${postfach.adresse}] Antwort an ${kontext.absender} gesendet.`);
+  if (antwort.FunctionError) {
+    const grund = antwort.Payload ? Buffer.from(antwort.Payload).toString('utf8') : '';
+    throw new Error(`Die Mail-Lambda konnte nicht senden: ${antwort.FunctionError} ${grund}`);
+  }
+  console.log(`[${postfach.adresse}] Antwort an ${auftrag.an} übergeben.`);
 };

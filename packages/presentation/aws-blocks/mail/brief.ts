@@ -1,6 +1,6 @@
 import PostalMime from "postal-mime";
-import type { Modus } from "./konfig";
-import type { Lauf } from "./agent";
+import type { Akte } from "../agent/akte";
+import type { Brief } from "../agent/antwort";
 
 /** Was wir aus einer eingegangenen Mail brauchen. */
 export interface Eingang {
@@ -98,7 +98,7 @@ function ergebnisSatz(system: string, e: Record<string, unknown>): string {
 
     case "aktionskalender_zeitraum":
       return e.fristErfuellt
-        ? Number(e.anzahlFreierFlaechen ?? 1) > 0
+        ? Array.isArray(e.freieFlaechen) && e.freieFlaechen.length > 0
           ? "Der Wunschtermin hält unsere Vorlauffrist, und es gibt freie Aktionsflächen in seiner Nähe."
           : "Der Wunschtermin hält unsere Vorlauffrist."
         : "Der Wunschtermin unterschreitet unsere Vorlauffrist für Aktionsflächen.";
@@ -134,92 +134,95 @@ function heute(): string {
 }
 
 /**
- * Die Antwortmail.
+ * Der Brief, wie er hinausgeht — ohne den festen Anhang.
  *
  * Unter der Antwort des Agenten steht, was er dafür getan hat — das ist der
  * Beleg, den Abschnitt 6 verspricht, und zugleich die Nachvollziehbarkeit, die
  * Abschnitt 24 vom EU AI Act her fordert. Dass eine Maschine geantwortet hat,
  * steht ebenfalls dort und nicht im Kleingedruckten.
+ *
+ * Der Brief kommt in Teilen vom Werkzeug `antworte_per_mail`, und die
+ * Unterschrift setzt dieser Code, nicht das Modell. So steht unter jeder Mail
+ * derselbe Name, und eine Vorrede („Ich habe alle Systemabfragen
+ * abgeschlossen …") hat keinen Platz, an dem sie landen könnte.
  */
-export function baueAntwort(modus: Modus, lauf: Lauf, anhang: string, eingang?: Eingang): string {
-  /*
-    Der Brief ist das, was der Agent dem Sendewerkzeug übergeben hat — nicht
-    sein letzter Modellzug. Der trug die Vorrede mit („Ich habe alle
-    Systemabfragen abgeschlossen …") und damit Denkarbeit in einen Brief an
-    einen Lieferanten.
+export function baueRumpf(brief: Brief, akte: Akte): string {
+  const teile = [
+    brief.anrede.trim(),
+    "",
+    brief.text.trim(),
+    "",
+    brief.grussformel.trim(),
+    "Lisa Berger",
+    "",
+    "— — —",
+    "",
+  ];
 
-    `lauf.text` bleibt als Rückfall: Hat der Agent nie abgeschickt, ist eine
-    Antwort mit Vorrede immer noch besser als gar keine.
-  */
-  const teile = [(lauf.antwort?.text ?? lauf.text).trim(), ""];
-
-  if (modus === "assistent") {
-    teile.push("— — —", "");
-    if (lauf.schritte.length > 0) {
-      teile.push("Was ich dafür abgefragt habe, und warum:", "");
-      /*
-        Die Begründung stammt vom Agenten selbst, gegeben BEVOR er das Ergebnis
-        kannte. Fehlt sie — etwa weil ein älterer Lauf sie nicht mitführte —,
-        bleibt der Systemname allein stehen, statt dass hier eine erfunden wird.
-      */
-      lauf.schritte.forEach((system, i) => {
-        const beleg = lauf.belege.filter((b) => b.system === system)[0];
-        teile.push(`  ${i + 1}. ${SYSTEMNAMEN[system] ?? system}`);
-        if (beleg?.warum) teile.push(`     ${beleg.warum.trim()}`);
-        if (beleg) teile.push(`     → ${ergebnisSatz(system, beleg.ergebnis)}`);
-        teile.push("");
-      });
-      teile.pop();
-    } else {
-      teile.push("Ich habe für diese Antwort kein System abgefragt.");
-    }
-
+  if (akte.schritte.length > 0) {
+    teile.push("Was ich dafür abgefragt habe, und warum:", "");
     /*
-      Dass eine interne Rückfrage läuft, darf der Absender wissen — WAS gefragt
-      wurde, nicht. Deshalb steht hier eine Zahl und kein Wortlaut: Die Fragen
-      an Lisa sind der einzige Teil des Laufs, der diese Mail nicht verlässt.
+      Die Begründung stammt vom Agenten selbst, gegeben BEVOR er das Ergebnis
+      kannte. Fehlt sie, bleibt der Systemname allein stehen, statt dass hier
+      eine erfunden wird.
     */
-    if (lauf.fragenAnLisa.length > 0) {
-      teile.push(
-        "",
-        lauf.fragenAnLisa.length === 1
-          ? "Zu einem Punkt habe ich eine interne Rückfrage angestoßen."
-          : `Zu ${lauf.fragenAnLisa.length} Punkten habe ich interne Rückfragen angestoßen.`,
-      );
-    }
-
-    teile.push(
-      "",
-      "Die Systeme dahinter sind für diesen Abend simuliert. Die Arbeit des",
-      "Agenten ist es nicht: Welche Systeme er befragt und was er daraus",
-      "schließt, entscheidet er selbst.",
-    );
+    akte.schritte.forEach((schritt, i) => {
+      teile.push(`  ${i + 1}. ${SYSTEMNAMEN[schritt.system] ?? schritt.system}`);
+      if (schritt.warum?.trim()) teile.push(`     ${schritt.warum.trim()}`);
+      teile.push(`     → ${ergebnisSatz(schritt.system, schritt.ergebnis)}`, "");
+    });
+    teile.pop();
+  } else {
+    teile.push("Ich habe für diese Antwort kein System abgefragt.");
   }
 
   /*
-    Der feste Teil steht in anhang.md und wird WORTWOERTLICH angehaengt.
-
-    Er stand frueher hier als Folge von push()-Zeilen, und das war die falsche
-    Stelle: Es ist Text fuer einen Empfaenger, kein Programm. Wer ihn aendern
-    wollte, musste eine TypeScript-Datei oeffnen, auf Anfuehrungszeichen achten
-    und danach uebersetzen. Jetzt oeffnet er eine Textdatei und sieht genau
-    das, was ankommt.
-
-    Die Datei kommt von aussen herein, statt hier gelesen zu werden: Diese
-    Funktion laeuft in der Lambda, unter tsx und im Browser, und jede der drei
-    Laufzeiten holt Dateien anders. Reine Zeichenketten laufen ueberall.
+    Dass eine interne Rückfrage läuft, darf der Absender wissen — WAS gefragt
+    wurde, nicht. Deshalb steht hier eine Zahl und kein Wortlaut.
   */
-  teile.push("", "— — —", "", anhang);
+  if (akte.fragen.length > 0) {
+    teile.push(
+      "",
+      akte.fragen.length === 1
+        ? "Zu einem Punkt habe ich eine interne Rückfrage angestoßen."
+        : `Zu ${akte.fragen.length} Punkten habe ich interne Rückfragen angestoßen.`,
+    );
+  }
+
+  teile.push(
+    "",
+    "Die Systeme dahinter sind für diesen Abend simuliert. Die Arbeit des",
+    "Agenten ist es nicht: Welche Systeme er befragt und was er daraus",
+    "schließt, entscheidet er selbst.",
+  );
+
+  return teile.join("\n");
+}
+
+/**
+ * Hängt den festen Teil und das Zitat an.
+ *
+ * Getrennt vom Rumpf, weil beides an verschiedenen Orten entsteht: Den Rumpf
+ * baut der Agent in AgentCore, denn nur dort liegt die Akte. Anhang und Zitat
+ * setzt die Mail-Lambda davor, denn nur neben ihr liegt anhang.md.
+ */
+export function mitAnhang(
+  rumpf: string,
+  anhang: string,
+  eingang?: { absenderName?: string; absender: string; text: string },
+): string {
+  /*
+    Der feste Teil steht in anhang.md und wird WORTWOERTLICH angehaengt. Es ist
+    Text fuer einen Empfaenger, kein Programm: Wer ihn aendern will, oeffnet
+    eine Textdatei und sieht genau das, was ankommt.
+  */
+  const teile = [rumpf.trimEnd(), "", "— — —", "", anhang];
 
   /*
-    Das Zitat ganz zum Schluss — nach dem Anhang, nicht davor.
-
-    So macht es jedes Mailprogramm, und es hat einen Grund: Das Zitat ist
-    Gedaechtnisstuetze, nicht Inhalt. Wer die Antwort oeffnet, will die Antwort
-    lesen und danach, was er selbst tun kann; was er vor zwei Stunden selbst
-    geschrieben hat, braucht er hoechstens zum Nachschlagen. Stand es davor,
-    schob es den nuetzlichen Teil unter die eigene alte Mail — und dort sucht
-    ihn niemand.
+    Das Zitat ganz zum Schluss — nach dem Anhang, nicht davor. So macht es
+    jedes Mailprogramm: Das Zitat ist Gedaechtnisstuetze, nicht Inhalt. Stand
+    es davor, schob es den nuetzlichen Teil unter die eigene alte Mail — und
+    dort sucht ihn niemand.
   */
   if (eingang?.text?.trim()) {
     teile.push("", "— — —", "", ...zitat(eingang));

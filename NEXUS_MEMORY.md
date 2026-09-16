@@ -5,8 +5,9 @@
 
 > **You have already been given the index below** — all of it, or as much of it as a session start could carry. It is the same index `nxm prime` replays, which stops at the byte budget the host delivers and says so when it does (`nxm index` prints the whole of it), so there is nothing to gain by reading it again here. Underneath it stands the FULL TEXT of each memory — that is what `nxm recall <key>` serves, and it is meant to be read one memory at a time, when the index tells you a particular one matters. Reading this file end to end is the expensive way to obtain what you already have.
 
-## Index (6)
+## Index (7)
 
+- **mailweg-aufbau**: Mailweg (seit 2gqm, 16.09.): SES/S3/SNS im Domain-Konto -> Mail-Lambda -> API mailEingang -> Blocks-Agent 'post' -> Invoke Mail-Lambda -> SES. Nur ecr2026-mail-handler darf senden.
 - **vortrag-szenario-entscheidung**: Der Vortrag folgt dem Lisa-Berger-Listungsszenario (Hallbach Crispy Bites gegen Nocturne Mini).
 - **blocks-email-empfang**: AWS Blocks kann E-Mails senden (EmailClient/SES), aber nicht empfangen — Empfang über SES-Regel und Lambda in der CDK-Schicht.
 - **blocks-deployment-fallen**: Vor jedem Blocks-Deployment pruefen: Bucketnamen unter 63 Zeichen, esbuild im Wurzelpaket, stackId in .blocks/config.json.
@@ -15,6 +16,22 @@
 - **demo-daten-keine-echten-marken**: Keine echten Marken in Vortrag und Daten; Vorlage, Zuordnung und Erzeuger liegen ausserhalb des Repos, die Sperrliste darin nur als Hashes.
 
 ## Full text
+
+### `mailweg-aufbau`
+
+Wie E-Mail integriert ist (Stand nach Ticket 2gqm, 16.09.2026).
+
+ZWEI KONTEN. Domain carstenbkoch.de und SES-Empfang liegen im Domain-Konto (Konto A, packages/mail-infra/lib/mail-empfang-stack.ts; die App mit den Props liegt NICHT im Repo): Empfangsregel -> S3 (Praefix eingang/) + SNS-Topic. Dort steht die Zugriffsrolle (Secret MAIL_ACCESS_ROLE_ARN), die Rohmail lesen und als verifizierte Identitaet per SES senden darf. Sie vertraut NUR aws:PrincipalArn = role/ecr2026-mail-handler im Vortragskonto. Die gemeinsame Blocks-Ausfuehrungsrolle (Handler UND AgentCore-Container) bekaeme AccessDenied. Aenderung daran = Deployment in Konto A. ecr2026-probe@ steht dort vermutlich noch in 'adressen' und faellt auf ecr2026@ zurueck.
+
+VORTRAGSKONTO (packages/presentation/aws-blocks/index.cdk.ts): Lambda mit festem Namen ecr2026-mail-handler (MAIL_FUNKTION in mail/konfig.ts) und fester Rolle ecr2026-mail-handler; nur angelegt, wenn MAIL_ACCESS_ROLE_ARN, MAIL_BUCKET, MAIL_TOPIC_ARN gesetzt sind. Env: API_URL = blocksStack.apiUrl, MAIL_EINGANG_TOKEN = DECK_TOKEN. Die Blocks-Rolle darf die Lambda aufrufen (ARN aus dem festen Namen gebaut; grantInvoke erzeugt einen Zirkel ueber API_URL).
+
+ABLAUF: (1) mail/handler.ts liest das S3-Objekt, parst mit postal-mime, POSTet JSON-RPC api.mailEingang(token, {absender, absenderName, betreff, text, nachrichtId, postfach}) an API_URL. (2) index.ts prueft das Token und startet postfachAgent 'post' (agent/index.ts, SYSTEM_PROMPT aus den Folien, alle Fachwerkzeuge) mit userId=absender und Kontext inkl. kanal und eingang. (3) Fachwerkzeuge (agent/werkzeuge.ts) haben Pflichtfeld warum und schreiben pro kanal in eine In-Memory-Akte (agent/akte.ts). frage_das_team legt ab und haelt NICHT an. (4) antworte_per_mail (agent/antwort.ts; Vertraulichkeitsregel steht hier, nicht im Prompt) nimmt betreff/anrede/text/grussformel, sperrt Doppelversand, baut per baueRumpf (mail/brief.ts) Brief + Unterschrift + Begruendungsfusszeile und ruft die Lambda synchron mit einem Sendeauftrag auf (agent/versand.ts). (5) Die Lambda haengt anhang.md und das Zitat an (mitAnhang) und sendet per SES mit In-Reply-To. Lokal (ohne BLOCKS_CONFIG_BUCKET) druckt versand.ts nur.
+
+WERKZEUGE IM AGENTCORE-CONTAINER bekommen nur BB_AGENT_ID, BLOCKS_STACK_NAME, BLOCKS_CONFIG_BUCKET/KEY als Umgebung; Umgebungsvariablen des Handlers kommen dort nicht an.
+
+PRUEFEN: pnpm mail:test (offline), AWS_PROFILE=ecrtag pnpm modell:test (ein echter Lauf, ca. 1 min), scripts/postfach-lauf.ts (Laeufer fuer Messungen), gegenueberstellung (post vs. ohneZiele). Logs: /aws/lambda/ecr2026-mail-handler und die AgentCore-Runtime 'post'.
+
+---
 
 ### `vortrag-szenario-entscheidung`
 

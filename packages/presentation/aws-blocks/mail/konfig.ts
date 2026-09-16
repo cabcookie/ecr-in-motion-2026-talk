@@ -1,32 +1,27 @@
 /**
- * Zwei Postfächer, zwei Agenten.
+ * Das Postfach des Agenten.
  *
- * Der Vortrag braucht beide: In Abschnitt 6 schreiben die Teilnehmer an Lisas
- * Assistenten — der hat einen Systemprompt und Werkzeuge und arbeitet den
- * Vorgang ab. In Abschnitt 15 schreiben sie an einen Agenten, der nichts hat
- * als sein Training; dass der eine Marge erfindet, ist der Punkt der Folie.
+ * Bis zum 16.09. waren es zwei: `ecr2026@` für den Assistenten mit Werkzeugen
+ * und `ecr2026-probe@` für denselben Agenten ohne. Das zweite ist ersatzlos
+ * entfallen (Entscheidung Carsten, 16.09.) — die Stufe ohne Werkzeuge zeigt im
+ * Vortrag der rohe Agent im Chat.
  *
- * Unterschieden wird über die Empfängeradresse und nicht über den Betreff:
- * Beim ersten Postfach fordern wir die Teilnehmer ausdrücklich auf, den Text
- * zu ändern. Wer dabei auch den Betreff anfasst, bekäme sonst den falschen
- * Agenten — und würde die Folie nicht verstehen.
+ * Die Liste bleibt eine Liste, weil die SES-Regel im Domain-Konto mehrere
+ * Adressen annimmt: Was dort an eine Adresse geht, die hier fehlt, beantwortet
+ * das erste Postfach. Eine Antwort vom Standardpostfach ist besser als keine.
  */
-export type Modus = "assistent" | "probe";
-
 export interface Postfach {
   readonly adresse: string;
-  readonly modus: Modus;
   readonly anzeigename: string;
 }
 
 const DOMAIN = "carstenbkoch.de";
 
 export const POSTFAECHER: readonly Postfach[] = [
-  { adresse: `ecr2026@${DOMAIN}`, modus: "assistent", anzeigename: "Lisa Berger · Nordkorb" },
-  { adresse: `ecr2026-probe@${DOMAIN}`, modus: "probe", anzeigename: "Lisa Berger · Nordkorb" },
+  { adresse: `ecr2026@${DOMAIN}`, anzeigename: "Lisa Berger · Nordkorb" },
 ];
 
-/** Welcher Agent ist gemeint? Fällt auf den Assistenten zurück. */
+/** Welches Postfach ist gemeint? Fällt auf das erste zurück. */
 export function postfachFuer(empfaenger: readonly string[]): Postfach {
   const klein = empfaenger.map((e) => e.toLowerCase());
   return (
@@ -34,6 +29,16 @@ export function postfachFuer(empfaenger: readonly string[]): Postfach {
     POSTFAECHER[0]
   );
 }
+
+/**
+ * Der feste Name der Mail-Lambda.
+ *
+ * Fest statt von CDK erzeugt, weil der Agent sie zum Versenden aufruft — und
+ * der Agent läuft in AgentCore, wohin keine Umgebungsvariable des Stacks
+ * gelangt. Derselbe Grund wie beim Rollennamen: ein abgesprochener Name statt
+ * einer Verdrahtung.
+ */
+export const MAIL_FUNKTION = "ecr2026-mail-handler";
 
 /*
   Hier stand die Adresse der anklickbaren Fassung. Sie ist raus, weil die
@@ -61,3 +66,19 @@ export const PDF_URL = "https://ecr2026.carstenbkoch.de/vortrag";
   einmal im Kommentar standen und teuer erkauft waren, stehen jetzt als
   Kommentar in der Datei selbst, wo sie derjenige sieht, der sie braucht.
 */
+
+/**
+ * Was der Agent der Mail-Lambda zum Versenden übergibt.
+ *
+ * Der Rumpf ist fertig bis auf den festen Anhang und das Zitat; beides setzt
+ * die Lambda davor, weil anhang.md nur neben ihr liegt.
+ */
+export interface Sendeauftrag {
+  readonly art: "senden";
+  readonly postfach: string;
+  readonly an: string;
+  readonly betreff: string;
+  readonly rumpf: string;
+  readonly inAntwortAuf?: string;
+  readonly eingang?: { readonly absender: string; readonly absenderName?: string; readonly text: string };
+}

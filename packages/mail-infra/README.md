@@ -46,20 +46,26 @@ Identität senden. **Eine** Rolle statt zweier Berechtigungswege — der
 EmailClient-Baustein von AWS Blocks reicht kein `SourceArn` durch, also wäre der
 getrennte Weg gar nicht nutzbar.
 
-## Zwei Adressen, ein Postfach
+## Eine Adresse, ein Agent
 
-Die Regel greift für die ganze Domain, nicht für eine Einzeladresse. Der Vortrag
-bedient zwei:
+Der Vortrag bedient eine Adresse: `ecr2026@`. Dahinter steht der Blocks-Agent
+aus `packages/presentation/aws-blocks/agent` mit allen Fachwerkzeugen.
 
-| Adresse | Der Agent hat … |
-|---|---|
-| `ecr2026@` | Systemprompt **und** die sechs Fachwerkzeuge |
-| `ecr2026-probe@` | denselben Systemprompt, **keine** Fachwerkzeuge |
+Bis zum 16.09. gab es daneben `ecr2026-probe@` für denselben Agenten ohne
+Werkzeuge. Das Postfach ist entfallen; die Stufe ohne Werkzeuge zeigt der Chat.
+Steht die Adresse noch in `adressen`, kommt eine Mail dorthin trotzdem an und
+wird vom Standardpostfach `ecr2026@` beantwortet. Entfernen heißt, diesen Stack
+in diesem Konto neu auszurollen.
 
-Unterschieden wird über die **Empfängeradresse**, nicht über den Betreff: In
-Abschnitt 6 werden die Teilnehmer ausdrücklich aufgefordert, den Mailtext zu
-ändern. Wer dabei den Betreff anfasst, bekäme sonst den falschen Agenten — und
-würde die Folie nicht verstehen.
+### Wer was tut
+
+1. SES legt die Mail in S3 ab und meldet sie über SNS.
+2. Die Mail-Lambda `ecr2026-mail-handler` im Vortragskonto liest sie mit der
+   Zugriffsrolle und übergibt sie über die API `mailEingang` an den Agenten
+   (geschützt mit `DECK_TOKEN`).
+3. Der Agent arbeitet in AgentCore und ruft zum Senden die Mail-Lambda auf.
+   Nur deren Rolle ist hier zugelassen, deshalb sendet er nicht selbst.
+4. Die Lambda hängt Abspann und Zitat an und sendet über SES.
 
 ---
 

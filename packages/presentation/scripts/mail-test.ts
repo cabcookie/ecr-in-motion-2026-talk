@@ -1,17 +1,22 @@
 /**
- * Probelauf des Postfach-Agenten ohne AWS.
+ * Probelauf des Mailwegs ohne AWS und ohne Modell.
  *
  *   pnpm --filter @ecr-talk/presentation mail:test
  *
  * Geprüft wird, was ohne Konto prüfbar ist: dass eine echte Rohmail zerlegt
- * wird, dass die Werkzeugschleife die simulierten Systeme abarbeitet und dass
- * die Antwortmail die Belege trägt, die der Vortrag verspricht. Das Modell ist
- * dabei durch eine Attrappe ersetzt.
+ * wird, dass die Werkzeuge des Postfach-Agenten mitschreiben, was sie
+ * gefunden haben, und dass die Antwortmail die Belege trägt, die der Vortrag
+ * verspricht — ohne die internen Rückfragen. Die Werkzeuge werden dafür direkt
+ * aufgerufen, so wie das Modell sie aufriefe.
+ *
+ * Ob das Modell sie auch so aufruft, prüft `scripts/postfach-lauf.ts` gegen
+ * echtes Bedrock.
  */
 import { readFileSync } from "node:fs";
-import { beantworte } from "../aws-blocks/mail/agent";
-import { FRAGE_LISA } from "../aws-blocks/mail/werkzeuge";
-import { baueAntwort, baueRohmail, lies } from "../aws-blocks/mail/brief";
+import { antworteVerMail, frageLisa, type Brief } from "../aws-blocks/agent/antwort";
+import { akteFuer, type Akte } from "../aws-blocks/agent/akte";
+import { fachwerkzeuge } from "../aws-blocks/agent/werkzeuge";
+import { baueRohmail, baueRumpf, lies, mitAnhang } from "../aws-blocks/mail/brief";
 import { postfachFuer } from "../aws-blocks/mail/konfig";
 import { anhangStruktur, anhangText } from "../aws-blocks/mail/anhang";
 
@@ -43,62 +48,26 @@ const ROHMAIL = [
   "Andreas Walter",
 ].join("\r\n");
 
-/**
- * Attrappe: ruft erst Werkzeuge auf, dann antwortet sie.
- *
- * `mitFrageAnLisa` stellt den Fall nach, um den es in zn2m geht: Der Agent
- * braucht etwas von Lisa. Die Frage darf den Absender nie erreichen.
- */
-function attrappe(mitWerkzeugen: boolean, mitFrageAnLisa = false) {
-  let runde = 0;
-  return {
-    send: async (befehl: { input: { messages: unknown[]; toolConfig?: unknown } }) => {
-      const hatWerkzeuge = Boolean(befehl.input.toolConfig);
-      if (hatWerkzeuge !== mitWerkzeugen) {
-        throw new Error(`Werkzeuge erwartet: ${mitWerkzeugen}, bekommen: ${hatWerkzeuge}`);
-      }
-      runde += 1;
-      if (mitWerkzeugen && runde === 1) {
-        return {
-          stopReason: "tool_use",
-          output: {
-            message: {
-              content: [
-                { toolUse: { toolUseId: "t1", name: "warenwirtschaft_kategorie", input: {} } },
-                { toolUse: { toolUseId: "t2", name: "kalkulation_marge", input: {} } },
-                ...(mitFrageAnLisa
-                  ? [
-                      {
-                        toolUse: {
-                          toolUseId: "t3",
-                          name: FRAGE_LISA,
-                          input: {
-                            frage: GEHEIME_FRAGE,
-                            warum: "Für die Bewertung der Mindestabnahme.",
-                          },
-                        },
-                      },
-                    ]
-                  : []),
-              ],
-            },
-          },
-        };
-      }
-      return {
-        stopReason: "end_turn",
-        output: { message: { content: [{ text: "Guten Tag Herr Walter,\n\nwir können listen.\n\nMit freundlichen Grüßen" }] } },
-      };
-    },
-  };
-}
+/*
+  Die Werkzeugfabrik von Blocks gibt die Definition mit einer Marke zurück.
+  Für den Test reicht die Definition selbst: Ihr `handler` ist genau das, was
+  das Rahmenwerk beim Aufruf ausführt.
+*/
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const tool = ((definition: unknown) => definition) as any;
+type Aufrufbar = {
+  handler: (args: { input: Record<string, unknown>; context: Record<string, unknown>; interrupt: () => never }) => Promise<unknown>;
+  parameters: { shape: Record<string, unknown> };
+};
+const unterbrochen = (): never => {
+  throw new Error("interrupt() aufgerufen - der Mailweg darf nicht anhalten");
+};
 
 /**
- * Der Wortlaut, den die Attrappe an Lisa richtet.
+ * Der Wortlaut einer Frage an das Team, der NIE in einer Mail stehen darf.
  *
- * Er ist absichtlich unverwechselbar: Taucht er oder ein Stück davon in der
- * Mail an Andreas Walter auf, ist der Adressat vertauscht — und genau das ist
- * der Fehler, den zn2m beseitigt.
+ * Bewusst unverwechselbar gewählt: Taucht dieser Satz in der Mail an Andreas
+ * Walter auf, ist der Adressat vertauscht (zn2m).
  */
 const GEHEIME_FRAGE =
   "Wie hoch ist unsere interne Absatzerwartung für die Riegelzone im vierten Quartal?";
@@ -111,61 +80,121 @@ function pruefe(bedingung: boolean, was: string) {
 const eingang = await lies(new TextEncoder().encode(ROHMAIL));
 console.log("Rohmail zerlegt");
 pruefe(eingang.absender === "andreas.walter@example.com", "Absender gelesen");
+pruefe(eingang.absenderName === "Andreas Walter", "Anzeigename gelesen");
 pruefe(eingang.betreff === "Anfrage an das Category Management", "Betreff entschlüsselt (RFC 2047)");
 pruefe(eingang.text.includes("Crispy Bites"), "Text gelesen");
 pruefe(eingang.text.includes("Wunschtermin"), "Umlaute unbeschädigt");
 pruefe(eingang.messageId === "<abc123@example.com>", "Message-ID für den Gesprächsfaden");
 
 console.log("\nPostfach erkannt");
-pruefe(postfachFuer(["ecr2026@carstenbkoch.de"]).modus === "assistent", "ecr2026 → Assistent");
-pruefe(postfachFuer(["ecr2026-probe@carstenbkoch.de"]).modus === "probe", "ecr2026-probe → Probe");
-pruefe(postfachFuer([]).modus === "assistent", "ohne Empfänger → Assistent");
+pruefe(postfachFuer(["ecr2026@carstenbkoch.de"]).adresse === "ecr2026@carstenbkoch.de", "ecr2026 → Assistent");
+pruefe(
+  postfachFuer(["ecr2026-probe@carstenbkoch.de"]).adresse === "ecr2026@carstenbkoch.de",
+  "das entfallene Probe-Postfach fällt auf den Assistenten zurück",
+);
+pruefe(postfachFuer([]).adresse === "ecr2026@carstenbkoch.de", "ohne Empfänger → Assistent");
 
-console.log("\nAssistent mit Werkzeugen");
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mit = await beantworte("assistent", eingang.text, attrappe(true) as any);
-pruefe(mit.schritte.length === 2, `zwei Systeme abgefragt (${mit.schritte.join(", ")})`);
-pruefe(mit.text.includes("listen"), "Antworttext übernommen");
+console.log("\nFachwerkzeuge schreiben mit");
+const kanal = "test-kanal";
+const kontext = {
+  absender: eingang.absender,
+  absenderName: eingang.absenderName,
+  betreff: eingang.betreff,
+  eingang: eingang.text,
+  kanal,
+};
+const werkzeuge = fachwerkzeuge(tool) as unknown as Record<string, Aufrufbar>;
+pruefe(Object.keys(werkzeuge).length === 8, `acht Fachwerkzeuge (${Object.keys(werkzeuge).join(", ")})`);
+pruefe(
+  Object.values(werkzeuge).every((w) => "warum" in w.parameters.shape),
+  "jedes Fachwerkzeug verlangt ein warum",
+);
+const ohneZiele = fachwerkzeuge(tool, ["kategorie_ziele"]);
+pruefe(!("kategorie_ziele" in ohneZiele) && Object.keys(ohneZiele).length === 7, "ohne nimmt ein Werkzeug heraus");
 
-console.log("\nProbe ohne Werkzeuge");
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ohne = await beantworte("probe", eingang.text, attrappe(false) as any);
-pruefe(ohne.schritte.length === 0, "kein System abgefragt");
+await werkzeuge.kalkulation_marge.handler({
+  input: { ekPreis: 2.89, vkPreis: 4.49, warum: "Ich prüfe, ob die Konditionen tragen." },
+  context: kontext,
+  interrupt: unterbrochen,
+});
+await werkzeuge.regalplanung_platz.handler({
+  input: { zone: "riegel", warum: "Ich prüfe, ob im Regal Platz ist." },
+  context: kontext,
+  interrupt: unterbrochen,
+});
+/* Der Chat hat keinen Kanal und schreibt nichts mit. */
+await werkzeuge.warenwirtschaft_kategorie.handler({
+  input: { warum: "Chatfrage" },
+  context: { absender: "teilnehmer-1" },
+  interrupt: unterbrochen,
+});
+const akte = akteFuer(kanal);
+pruefe(akte.schritte.length === 2, `zwei Systeme in der Akte (${akte.schritte.map((s) => s.system).join(", ")})`);
+pruefe(akte.schritte[0]?.warum === "Ich prüfe, ob die Konditionen tragen.", "das warum steht in der Akte");
+
+console.log("\nRückfrage an das Team hält nicht an");
+const abgelegt: string[] = [];
+const frage = frageLisa(tool, async (f) => {
+  abgelegt.push(f.frage);
+}) as unknown as Aufrufbar;
+const frageErgebnis = (await frage.handler({
+  input: { frage: GEHEIME_FRAGE, warum: "Für die Mindestabnahme." },
+  context: kontext,
+  interrupt: unterbrochen,
+})) as { vermerkt?: boolean };
+pruefe(frageErgebnis.vermerkt === true, "die Frage kommt sofort zurück, ohne interrupt()");
+pruefe(abgelegt.length === 1, "die Frage liegt in der Ablage");
+pruefe(akte.fragen.length === 1, "die Frage steht in der Akte");
+
+console.log("\nVersand");
+const gesendet: { brief: Brief; akte: Akte }[] = [];
+const mail = antworteVerMail(tool, async (_k, brief, a) => {
+  gesendet.push({ brief, akte: a });
+}) as unknown as Aufrufbar;
+const brief: Brief = {
+  betreff: "Ihre Anfrage zu Hallbach Crispy Bites",
+  anrede: "Guten Tag Herr Walter,",
+  text: "wir möchten Hallbach Crispy Bites listen, allerdings erst zum 22. Oktober.",
+  grussformel: "Viele Grüße",
+};
+await mail.handler({ input: { ...brief }, context: kontext, interrupt: unterbrochen });
+const zweiter = (await mail.handler({ input: { ...brief }, context: kontext, interrupt: unterbrochen })) as {
+  gesendet: boolean;
+};
+pruefe(gesendet.length === 1, "genau eine Mail, auch bei zwei Aufrufen");
+pruefe(zweiter.gesendet === false, "der zweite Aufruf erfährt, dass schon gesendet ist");
 
 console.log("\nAntwortmail");
-const text = baueAntwort("assistent", mit, ANHANG);
-pruefe(text.includes("Warenwirtschaft — Kategorieentwicklung"), "Schrittfolge im Klartext");
+const rumpf = baueRumpf(brief, akte);
+const text = mitAnhang(rumpf, ANHANG, eingang);
+pruefe(text.startsWith("Guten Tag Herr Walter,"), "beginnt mit der Anrede, ohne Vorrede");
+pruefe(text.includes("Viele Grüße\nLisa Berger"), "Unterschrift vom Code gesetzt");
+pruefe(text.includes("Kalkulation — Marge"), "Schrittfolge im Klartext");
+pruefe(text.includes("Ich prüfe, ob die Konditionen tragen."), "Begründung des Agenten in der Fusszeile");
+pruefe(text.includes("erfüllt unsere Kategorievorgabe"), "Ergebnis als Befund");
+pruefe(!/\d+,\d+ ?%/.test(rumpf), "keine Prozentwerte in Brief und Fusszeile");
+pruefe(!/Nocturne|Facings/i.test(rumpf), "weder Weichkandidat noch Facings in der Fusszeile");
 pruefe(text.includes("ecr2026.carstenbkoch.de"), "Link zum Vortrag");
 pruefe(text.includes("github.com/cabcookie"), "Link zum Quelltext");
 pruefe(text.includes("von einem KI-Agenten"), "Kennzeichnung als Maschine");
+pruefe(text.includes("> wir möchten unser neues Produkt"), "Zitat der Anfrage");
+pruefe(text.indexOf("> wir möchten") > text.indexOf("von einem KI-Agenten"), "Zitat nach dem Anhang");
 /*
-  Markdown darf den Empfaenger nie erreichen. Die Datei ist jetzt Markdown,
-  weil Folie und PDF ihre Struktur brauchen — die Mail ist reiner Text, und
-  ein ## kaeme dort als ## an.
+  Markdown darf den Empfaenger nie erreichen. Die Datei ist Markdown, weil
+  Folie und PDF ihre Struktur brauchen — die Mail ist reiner Text, und ein ##
+  kaeme dort als ## an.
 */
 pruefe(!/^#|^- \[|\]\(http|^</m.test(text), "keine Markdown-Zeichen in der Mail");
 pruefe(text.includes("gelöscht"), "Hinweis zur Adresse");
-pruefe(!baueAntwort("probe", ohne, ANHANG).includes("Was ich dafür abgefragt"), "Probe ohne Systemliste");
 
-/*
-  Die Einstiege stehen unter JEDER Antwort — auch unter der des Agenten ohne
-  Werkzeuge. Wer gerade eine erfundene Marge gelesen hat, ist der beste Leser
-  für den Hinweis, wie es richtig geht.
-*/
-const probe = baueAntwort("probe", ohne, ANHANG);
 for (const abschnitt of ABSPANN.abschnitte) {
   for (const e of abschnitt.eintraege) {
-    pruefe(text.includes(e.url) && probe.includes(e.url), `Einstieg verlinkt: ${e.was}`);
+    pruefe(text.includes(e.url), `Einstieg verlinkt: ${e.was}`);
   }
 }
 /*
-  Eine umgebrochene URL ist keine. Die Links der Einstiege sind lang — der
-  Lernplan für Entscheider allein über hundert Zeichen —, und ein Mailprogramm,
-  das eine Zeile umbricht, zerlegt sie. Deshalb steht dort nur die URL und
-  nichts sonst; die Prüfung schlägt an, sobald jemand Text danebenzieht.
-
-  Die beiden kurzen Zeilen darüber (Vortrag, Quelltext) sind bewusst anders
-  gesetzt und ausgenommen: Sie bleiben mit Beschriftung unter siebzig Zeichen.
+  Eine umgebrochene URL ist keine. Deshalb steht dort nur die URL und nichts
+  sonst; die Prüfung schlägt an, sobald jemand Text danebenzieht.
 */
 const alleAdressen = ABSPANN.abschnitte.flatMap((a) => a.eintraege.map((e) => e.url));
 const langeZeilen = text.split("\n").filter((z) => alleAdressen.some((u) => z.includes(u)));
@@ -175,33 +204,15 @@ pruefe(
 );
 
 /*
-  Der Adressat (zn2m).
-
-  Der Systemprompt weist den Agenten an, Lisa zu fragen, wenn ihm etwas fehlt.
-  Die Antwort geht aber an den ABSENDER. Ohne Trennung landete jede Lisa-Frage
-  bei Hallbach — der Agent fragte den Lieferanten nach den eigenen Zahlen.
+  Der Adressat (zn2m): Die Frage an das Team darf den Absender nie erreichen.
 */
 console.log("\nAdressatentrennung");
-const mitFrage = await beantworte("assistent", eingang.text, attrappe(true, true) as any);
-const mailAnWalter = baueAntwort("assistent", mitFrage, ANHANG);
-
-pruefe(mitFrage.fragenAnLisa.length === 1, "Die interne Rückfrage ist im Lauf vermerkt");
+pruefe(!text.includes(GEHEIME_FRAGE), "Der Wortlaut der Frage steht NICHT in der Mail");
+pruefe(!/Absatzerwartung|vierten Quartal/i.test(text), "Auch kein Bruchstück davon steht in der Mail");
+pruefe(!text.includes("frage_das_team"), "Der Werkzeugname steht nicht in der Mail");
+pruefe(text.includes("interne Rückfrage"), "Dass eine Rückfrage läuft, darf der Absender erfahren");
 pruefe(
-  mitFrage.schritte.length === 2 && !mitFrage.schritte.includes(FRAGE_LISA),
-  `${FRAGE_LISA} zählt nicht als abgefragtes System (${mitFrage.schritte.join(", ")})`,
-);
-pruefe(!mailAnWalter.includes(GEHEIME_FRAGE), "Der Wortlaut der Frage steht NICHT in der Mail");
-pruefe(
-  !/Absatzerwartung|Riegelzone|vierten Quartal/i.test(mailAnWalter),
-  "Auch kein Bruchstück davon steht in der Mail",
-);
-pruefe(!mailAnWalter.includes(FRAGE_LISA), "Der Werkzeugname steht nicht in der Mail");
-pruefe(
-  mailAnWalter.includes("interne Rückfrage"),
-  "Dass eine Rückfrage läuft, darf der Absender erfahren",
-);
-pruefe(
-  baueAntwort("assistent", mit, ANHANG).includes("interne Rückfrage") === false,
+  !baueRumpf(brief, { schritte: [], fragen: [], gesendet: false }).includes("interne Rückfrage"),
   "Ohne Rückfrage steht der Satz auch nicht da",
 );
 
@@ -233,7 +244,7 @@ const mitUmlaut = baueRohmail({
 });
 pruefe(mitUmlaut.includes("Subject: =?UTF-8?B?"), "Betreff mit Umlauten kodiert (RFC 2047)");
 pruefe(mitUmlaut.includes("From: =?UTF-8?B?"), "Anzeigename mit Sonderzeichen kodiert");
-const rumpf = roh.split("\r\n\r\n").slice(1).join("\r\n\r\n").replace(/\r\n/g, "");
-pruefe(Buffer.from(rumpf, "base64").toString("utf8").includes("Warenwirtschaft"), "Rumpf lesbar zurück");
+const rohRumpf = roh.split("\r\n\r\n").slice(1).join("\r\n\r\n").replace(/\r\n/g, "");
+pruefe(Buffer.from(rohRumpf, "base64").toString("utf8").includes("Kalkulation — Marge"), "Rumpf lesbar zurück");
 
 console.log(process.exitCode ? "\nMit Fehlern." : "\nAlles grün.");

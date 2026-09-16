@@ -1,19 +1,21 @@
 /**
  * Der Agent. Einer.
  *
- * Bis zum 15.09. waren es zwei: eine selbstgeschriebene Werkzeugschleife für
+ * Bis zum 16.09. waren es zwei: eine selbstgeschriebene Werkzeugschleife für
  * den Mailweg und der Blocks-Agent für den Handy-Chat. Zwei Prompts, zwei
- * Modelle, zwei Konfigurationen — und als das Modell wechselte, zerbrach genau
- * der eine, den kein Test berührte.
+ * Werkzeugsätze, zwei Codewege — und beide drifteten.
  *
- * Jetzt gibt es eine Definition. Was die beiden Eingangswege unterscheidet,
- * ist ausschließlich, **womit der Agent antworten kann**:
+ * Jetzt gibt es eine Definition und einen Systemprompt. Was die beiden
+ * Eingangswege unterscheidet, ist ausschließlich, **womit der Agent antworten
+ * kann**:
  *
- *   Postfach  →  antworte_per_mail (Entwurf, Mensch bestätigt) + frage_das_team
+ *   Postfach  →  antworte_per_mail + frage_das_team
  *   Chat      →  antworte_im_chat
  *
- * Alles andere — Modell, Systemprompt, die sechs Fachwerkzeuge, die Grenzen —
- * ist geteilt. Wer den Agenten ändern will, ändert ihn an einer Stelle.
+ * Empfänger, Form und Vertraulichkeit stehen am jeweiligen Antwortwerkzeug.
+ * Alles andere — Modell, Prompt, die Fachwerkzeuge, die Grenzen — ist geteilt.
+ * Welche Fachwerkzeuge ein Einsatz bekommt, regelt `Werkzeugauswahl`, für
+ * beide Wege gleich.
  */
 import { Agent, BedrockModels, type Scope } from '@aws-blocks/blocks';
 import { SYSTEM_PROMPT } from '../../src/slides/agent';
@@ -25,7 +27,19 @@ import {
   type Fragenablage,
   type Versand,
 } from './antwort';
-import { fachwerkzeuge } from './werkzeuge';
+import { fachwerkzeuge, type Fachwerkzeug } from './werkzeuge';
+
+/**
+ * Welche Fachwerkzeuge ein Einsatz bekommt.
+ *
+ * Abgewählt statt aufgezählt: Wer ein neues System anschließt, soll es nicht an
+ * jeder Stelle einzeln freischalten müssen. Ein abgewähltes Werkzeug wird gar
+ * nicht erst angeboten — es existiert für den Agenten nicht. Das ist etwas
+ * anderes als ein gestörtes System, das er kennt und nicht erreicht.
+ */
+export interface Werkzeugauswahl {
+  readonly ohne?: readonly Fachwerkzeug[];
+}
 
 /**
  * Was für beide gilt.
@@ -61,11 +75,9 @@ const GEMEINSAM = {
   /** Ein Saal voller Handys — der Verlauf soll nicht unbegrenzt mitwachsen. */
   conversation: { strategy: 'sliding-window' as const, windowSize: 20 },
   /*
-    Sieben Fachwerkzeuge, ein Antwortwerkzeug, dazu Runden zum Nachdenken.
-    Großzügiger als beim alten Mail-Agenten (dort acht), weil eine Rückfrage an
-    Lisa mitten im Zug liegt und das Budget über die Unterbrechung hinweg
-    weiterzählt — ein zu enger Deckel würde den Vorgang nach ihrer Antwort
-    abwürgen.
+    Acht Fachwerkzeuge, ein Antwortwerkzeug, dazu Runden zum Nachdenken. Der
+    alte Mail-Agent kam mit acht Runden aus; die Luft darüber ist für Züge, in
+    denen er ein System zweimal befragt.
   */
   maxLlmCalls: 14,
   maxToolIterations: 20,
@@ -77,30 +89,22 @@ const GEMEINSAM = {
  * Kurze Kennung mit Absicht: Der Name des S3-Buckets für die Sitzungsstände
  * wird aus Stack- und Blockkennung zusammengesetzt und darf 63 Zeichen nicht
  * überschreiten.
+ *
+ * Von Anfang an mit ALLEN Fachwerkzeugen, einschließlich der Ziele: Die
+ * Teilnehmer sollen als erste Antwort eine sehr gute Mail sehen, keine
+ * Vorstufe.
  */
 export function postfachAgent(
   scope: Scope,
   kennung: string,
   versende: Versand,
   lege: Fragenablage,
-  /*
-    Ob der Agent die Systeme der Handelswelt befragen darf.
-
-    Das ist der ganze Unterschied zwischen den beiden Postfächern — und der
-    Kern von Abschnitt 15. Derselbe Agent, derselbe Systemprompt, dieselben
-    Grenzen; ihm fehlen nur die Werkzeuge. Dann KANN er nichts nachschlagen und
-    muss fragen.
-
-    Vorher war der Vergleich schwächer und angreifbar: Das zweite Postfach hatte
-    einen ANDEREN Prompt, der ausdrücklich zum Raten aufforderte. Wer das merkt,
-    hat die Folie widerlegt.
-  */
-  mitFachwerkzeugen: boolean,
+  auswahl: Werkzeugauswahl = {},
 ): Agent<any> {
   return new Agent(scope, kennung, {
     ...GEMEINSAM,
     tools: (tool) => ({
-      ...(mitFachwerkzeugen ? fachwerkzeuge(tool) : {}),
+      ...fachwerkzeuge(tool, auswahl.ohne),
       antworte_per_mail: antworteVerMail(tool, versende),
       frage_das_team: frageLisa(tool, lege),
     }),
@@ -119,21 +123,16 @@ export function postfachAgent(
  * App den laufenden Text für die Antwort und ordnete ihn danach um. Der
  * Werkzeugaufruf kommt als eigenes Ereignis — die Antwort erscheint auf einmal
  * und an der richtigen Stelle.
+ *
+ * Kein eigener Prompt mehr: Was hier bis zum 16.09. angehängt war — das
+ * Gegenüber gehört zum Haus, Arbeitsweg und Antwort sind getrennt —, steht
+ * jetzt am Werkzeug `antworte_im_chat`.
  */
-export function chatAgent(scope: Scope): Agent<any> {
+export function chatAgent(scope: Scope, auswahl: Werkzeugauswahl = {}): Agent<any> {
   return new Agent(scope, 'berater', {
     ...GEMEINSAM,
-    systemPrompt:
-      `${SYSTEM_PROMPT}\n\n` +
-      'Du antwortest hier im Chat, nicht per Mail. Dein Gegenüber gehört zum Category-Team, ' +
-      'also zum eigenen Haus: Zahlen aus unseren Systemen sind ihm gegenüber keine Interna, ' +
-      'sondern genau das, wofür es dich fragt. Nenne sie mit Quelle und Stand.\n\n' +
-      'Schreibe ruhig mit, was du gerade tust und worauf du hinauswillst — das ist dein ' +
-      'Arbeitsweg und wird getrennt angezeigt. Deine eigentliche Antwort gibst du ' +
-      'ausschliesslich mit dem Werkzeug antworte_im_chat, ohne sie vorher anzukuendigen. ' +
-      'Nur was dort steht, bekommt dein Gegenüber zu lesen.',
     tools: (tool) => ({
-      ...fachwerkzeuge(tool),
+      ...fachwerkzeuge(tool, auswahl.ohne),
       antworte_im_chat: antworteImChat(tool),
     }),
   });
@@ -158,7 +157,7 @@ export function rohChatAgent(scope: Scope): Agent<any> {
   return new Agent(scope, 'roh', {
     ...GEMEINSAM,
     /*
-      Derselbe Prompt, mit dem der Probe-Mailweg gemessen wurde.
+      Verwandt mit dem Prompt, mit dem der fruehere Probe-Mailweg gemessen wurde.
 
       „Du bist ein hilfsbereiter Assistent" reichte nicht: Opus 4.8 antwortete
       damit ehrlich — „Ich bin ein KI-Assistent und habe keinen Zugriff" — und

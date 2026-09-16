@@ -7,9 +7,8 @@
  *
  *   AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation szenarien
  */
-import { BedrockRuntimeClient } from "@aws-sdk/client-bedrock-runtime";
 import { mkdir, writeFile } from "node:fs/promises";
-import { beantworteMit, AUSSTATTUNGEN } from "../aws-blocks/mail/agent";
+import { laufePostfach } from "./postfach-lauf";
 import { BRIEFINGS } from "../src/slides/briefing";
 
 const ORDNER = "messungen/szenarien";
@@ -22,7 +21,6 @@ const NAMEN = [
   "Frank Dettmer", "Nora Alsleben", "Bernd Quast", "Céline Marchand",
 ];
 
-const client = new BedrockRuntimeClient({});
 await mkdir(ORDNER, { recursive: true });
 
 interface Ergebnis {
@@ -31,26 +29,26 @@ interface Ergebnis {
   gruppe?: string;
   schritte: string[];
   text: string;
-  ein: number;
-  aus: number;
   fehler?: string;
 }
 
 async function einLauf(i: number): Promise<Ergebnis> {
   const b = BRIEFINGS[i];
-  const mail =
-    `Von: ${NAMEN[i]} <kontakt@${b.marke.toLowerCase().replace(/[^a-z]/g, "")}.de>\n` +
-    `Betreff: ${b.betreff}\n\n` +
-    b.text.replace("[Dein Name]", NAMEN[i]);
+  const mail = {
+    absender: `kontakt@${b.marke.toLowerCase().replace(/[^a-z]/g, "")}.de`,
+    absenderName: NAMEN[i],
+    betreff: b.betreff,
+    text: b.text.replace("[Dein Name]", NAMEN[i]),
+  };
   try {
-    const l = await beantworteMit(AUSSTATTUNGEN.gehaertet, mail, client);
+    const l = await laufePostfach(mail);
+    if (!l.rumpf || !l.akte) throw new Error("Der Agent hat nicht gesendet.");
     return {
       id: b.id, typ: b.typ, gruppe: b.produkt?.gruppe,
-      schritte: [...l.schritte], text: l.text,
-      ein: l.verbrauch.ein, aus: l.verbrauch.aus,
+      schritte: l.akte.schritte.map((s) => s.system), text: l.rumpf,
     };
   } catch (e) {
-    return { id: b.id, typ: b.typ, schritte: [], text: "", ein: 0, aus: 0, fehler: String(e) };
+    return { id: b.id, typ: b.typ, schritte: [], text: "", fehler: String(e) };
   }
 }
 
@@ -74,6 +72,4 @@ for (let start = 0; start < BRIEFINGS.length; start += PARALLEL) {
 }
 
 await writeFile(`${ORDNER}/ergebnis.json`, JSON.stringify(alle, null, 2), "utf8");
-const ein = alle.reduce((s, e) => s + e.ein, 0);
-const aus = alle.reduce((s, e) => s + e.aus, 0);
-console.log(`\n${alle.length} Läufe · ${(((ein / 1e6) * 15 + (aus / 1e6) * 75) * 100).toFixed(0)} ct`);
+console.log(`\n${alle.length} Läufe, ${alle.filter((e) => e.fehler).length} gescheitert`);

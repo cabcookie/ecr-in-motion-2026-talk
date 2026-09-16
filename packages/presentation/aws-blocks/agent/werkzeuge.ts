@@ -9,10 +9,10 @@
  * Jetzt ist es ein Agent. Der Unterschied zwischen den Eingangswegen liegt
  * allein darin, womit er antworten kann:
  *
- *   E-Mail  →  `antworte_per_mail` (Entwurf, der Mensch bestätigt) + `frage_das_team`
+ *   E-Mail  →  `antworte_per_mail` + `frage_das_team`
  *   Chat    →  `antworte_im_chat`
  *
- * Die sechs Fachwerkzeuge teilen sich beide. Sie sind dünne Adapter über die
+ * Die acht Fachwerkzeuge teilen sich beide. Sie sind dünne Adapter über die
  * Ports in `@ecr-talk/handelswelt` — Werkzeugschema hinein, Portaufruf hinaus.
  */
 import {
@@ -28,6 +28,8 @@ import {
 } from '@ecr-talk/handelswelt';
 import { z } from 'zod';
 import type { JSONValue, ToolFactory } from '@aws-blocks/bb-agent';
+import { akteFuer } from './akte';
+import type { Vorgangskontext } from './antwort';
 
 /* ------------------------------------------------------------- Darstellung */
 
@@ -66,10 +68,67 @@ function ohneLeere(objekt: Record<string, unknown>): Record<string, JSONValue> {
 
 /* ------------------------------------------------------- Die Fachwerkzeuge */
 
-/** Die sechs Systeme der Handelswelt. Beide Eingangswege bekommen sie. */
-export function fachwerkzeuge(tool: ToolFactory<any>) {
-  return {
-    warenwirtschaft_kategorie: tool({
+/*
+  Das Pflichtfeld `warum` an jedem Fachwerkzeug.
+
+  Der Grund wird im Moment des Aufrufs erfragt, nicht hinterher rekonstruiert.
+  Das ist der Unterschied zwischen einer Begründung und einer Nacherzählung:
+  Was der Agent nach dem Ergebnis aufschreibt, ist immer plausibel. Was er
+  vorher sagt, ist eine Vorhersage, die danebengehen kann — und genau das
+  macht sie überprüfbar. Im Mailweg steht der Satz in der Fusszeile.
+*/
+const WARUM = z
+  .string()
+  .describe(
+    'In EINEM kurzen Satz: Warum fragst du dieses System jetzt, und was willst du damit klären? ' +
+      'Der Satz kann in einer Antwort an Außenstehende stehen — schreibe ihn so, dass man ihn ' +
+      'ohne Vorwissen versteht, und nenne darin keine internen Werte.',
+  );
+
+/** Die Namen der Fachwerkzeuge — die Stellschraube, mit der ein Einsatz einzelne abwählt. */
+export type Fachwerkzeug = keyof ReturnType<typeof fachwerkzeuge>;
+
+/**
+ * Die Systeme der Handelswelt. Beide Eingangswege bekommen sie.
+ *
+ * `ohne` nimmt einzelne heraus; sie werden dann gar nicht erst angeboten und
+ * existieren für den Agenten nicht. Ein vertippter Name kompiliert nicht.
+ */
+export function fachwerkzeuge(
+  tool: ToolFactory<Vorgangskontext>,
+  ohne: readonly string[] = [],
+) {
+  /*
+    Jedes Fachwerkzeug geht hier durch: bekommt `warum`, und was es liefert,
+    landet in der Akte des Vorgangs — sofern der Zug einen Kanal hat. Der Chat
+    hat keinen und schreibt deshalb nichts mit.
+  */
+  const werkzeug = <P extends z.ZodObject<z.ZodRawShape>>(
+    name: string,
+    definition: {
+      description: string;
+      parameters: P;
+      handler: (args: { input: z.infer<P> }) => Promise<Record<string, JSONValue>>;
+    },
+  ) =>
+    tool({
+      description: definition.description,
+      parameters: definition.parameters.extend({ warum: WARUM }),
+      handler: async ({ input, context }) => {
+        const ergebnis = await definition.handler({ input: input as z.infer<P> });
+        if (context.kanal) {
+          akteFuer(context.kanal).schritte.push({
+            system: name,
+            warum: typeof input.warum === 'string' ? input.warum : undefined,
+            ergebnis,
+          });
+        }
+        return ergebnis;
+      },
+    });
+
+  const alle = {
+    warenwirtschaft_kategorie: werkzeug('warenwirtschaft_kategorie', {
       description:
         'Entwicklung der Kategorie Schokolade & Pralinen in den letzten zwölf Monaten, samt schwächstem und stärkstem Artikel.',
       parameters: z.object({}),
@@ -87,7 +146,7 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
         })),
     }),
 
-    warenwirtschaft_artikel: tool({
+    warenwirtschaft_artikel: werkzeug('warenwirtschaft_artikel', {
       description:
         'Schlägt einen einzelnen Artikel im Artikelstamm nach. Sagt auch, wenn ein Produkt nicht in diese Kategorie gehört.',
       parameters: z.object({ suche: z.string().describe('Artikel- oder Markenname') }),
@@ -104,7 +163,7 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
         })),
     }),
 
-    marktdaten_segment: tool({
+    marktdaten_segment: werkzeug('marktdaten_segment', {
       description:
         'In welches Marktsegment ein Produkt fällt, wie das Segment im Markt läuft und wie unsere eigenen Artikel darin laufen. Das Produkt muss nicht gelistet sein.',
       parameters: z.object({ produkt: z.string().describe('Produktname') }),
@@ -123,7 +182,7 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
         })),
     }),
 
-    regalplanung_platz: tool({
+    regalplanung_platz: werkzeug('regalplanung_platz', {
       description:
         'Belegung einer Regalzone (tafel, riegel oder pralinen) und welche Artikel bei einer Neulistung als Erste weichen würden.',
       parameters: z.object({ zone: z.string().describe('tafel, riegel oder pralinen') }),
@@ -145,7 +204,7 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
         })),
     }),
 
-    kalkulation_marge: tool({
+    kalkulation_marge: werkzeug('kalkulation_marge', {
       description:
         'Rohertrag aus Einkaufs- und empfohlenem Verkaufspreis, gegen die Kategorievorgabe. Rechnet auf den Netto-Verkaufspreis.',
       parameters: z.object({
@@ -162,7 +221,7 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
         })),
     }),
 
-    aktionskalender_zeitraum: tool({
+    aktionskalender_zeitraum: werkzeug('aktionskalender_zeitraum', {
       description:
         'Prüft einen Wunschtermin gegen die Vorlauffrist und nennt freie Aktionsflächen in seiner Nähe.',
       parameters: z.object({ termin: z.string().describe('Wunschtermin, z. B. „15. Oktober"') }),
@@ -184,7 +243,7 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
         })),
     }),
 
-    listung_anforderungen: tool({
+    listung_anforderungen: werkzeug('listung_anforderungen', {
       description:
         'Welche Tore eine Neulistung passieren muss, welche Regel dahintersteht und wer jeweils entscheidet.',
       parameters: z.object({}),
@@ -206,7 +265,7 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
       nur Marge, Platz und Frist kennt, hat keinen Grund, etwas Zulässiges
       abzulehnen.
     */
-    kategorie_ziele: tool({
+    kategorie_ziele: werkzeug('kategorie_ziele', {
       description:
         'Die Ziele der Kategorie für das laufende Geschäftsjahr, je Käufergruppe: ' +
         'welche Gruppe gehalten, gesteigert oder neu gewonnen werden soll, wo wir heute ' +
@@ -235,4 +294,8 @@ export function fachwerkzeuge(tool: ToolFactory<any>) {
         })),
     }),
   };
+
+  return Object.fromEntries(
+    Object.entries(alle).filter(([name]) => !ohne.includes(name)),
+  ) as typeof alle;
 }

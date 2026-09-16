@@ -1,12 +1,30 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 import { fromTemporaryCredentials } from "@aws-sdk/credential-providers";
-import { beantworte } from "./agent";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { anhangText } from "./anhang";
-import { baueAntwort, baueRohmail, lies } from "./brief";
-import { postfachFuer } from "./konfig";
+import { baueRohmail, lies, mitAnhang } from "./brief";
+import { POSTFAECHER, postfachFuer, type Sendeauftrag } from "./konfig";
+
+/**
+ * Die Mail-Lambda — Ein- und Ausgang des Postfachs, aber nicht mehr der Agent.
+ *
+ * Bis zum 16.09. lief hier eine eigene Werkzeugschleife. Jetzt beantwortet
+ * der Blocks-Agent die Mail (aws-blocks/agent), und diese Lambda tut die zwei
+ * Dinge, die nur sie kann:
+ *
+ *   1. EINGANG. Ausgelöst über SNS aus dem Konto, in dem die Domain liegt. SES
+ *      hat die Mail dort in S3 abgelegt; die Lambda liest sie und übergibt sie
+ *      über die API `mailEingang` an den Agenten.
+ *
+ *   2. AUSGANG. Der Agent ruft sie mit einem `Sendeauftrag` auf, und sie sendet
+ *      als die verifizierte Identität.
+ *
+ * Beides läuft über EINE angenommene Rolle im fremden Konto, und die vertraut
+ * genau der Rolle dieser Lambda (siehe packages/mail-infra). Deshalb sendet
+ * der Agent nicht selbst: Unter seiner Rolle bekäme er AccessDenied.
+ */
 
 /**
  * Der feste Teil der Mail, einmal beim Kaltstart gelesen.
@@ -14,8 +32,7 @@ import { postfachFuer } from "./konfig";
  * anhang.md liegt neben dem Bundle — index.cdk.ts legt sie dort ab, und wenn
  * das misslingt, bricht schon das Deployment ab. Hier wird trotzdem
  * aufgefangen: Eine Antwort ohne Fusszeile ist schlecht, eine Lambda, die beim
- * Laden stirbt und gar nichts schickt, ist schlimmer. Der Fehler steht dann im
- * Protokoll, und der Abend laeuft weiter.
+ * Laden stirbt und gar nichts schickt, ist schlimmer.
  */
 const ANHANG = (() => {
   try {
@@ -26,25 +43,23 @@ const ANHANG = (() => {
   }
 })();
 
-/**
- * Der Postfach-Agent.
- *
- * Ausgelöst über SNS aus dem Konto, in dem die Domain liegt. SES hat die Mail
- * dort schon in S3 abgelegt; die Benachrichtigung nennt den Schlüssel.
- *
- * Alles, was das fremde Konto betrifft — die Rohmail lesen und die Antwort als
- * die verifizierte Identität senden —, läuft über EINE angenommene Rolle.
- * Details und Begründung in examples/konto-a/README.md.
- */
-
 const ROLLE = process.env.MAIL_ACCESS_ROLE_ARN ?? "";
 const BUCKET = process.env.MAIL_BUCKET ?? "";
 const PRAEFIX = process.env.MAIL_PREFIX ?? "eingang/";
+/** Der RPC-Endpunkt des Blocks-Backends, von CDK gesetzt. */
+const API_URL = process.env.API_URL ?? "";
+/**
+ * Das Geheimnis, mit dem `mailEingang` geschützt ist.
+ *
+ * Ohne Schutz könnte jeder über die öffentliche API einen Agentenlauf mit
+ * beliebigem Absender anstoßen — und der Agent schickte seine Antwort an eine
+ * Adresse, die nie geschrieben hat.
+ */
+const TOKEN = process.env.MAIL_EINGANG_TOKEN ?? "";
 
 /**
  * Anmeldedaten des fremden Kontos. Einmal gebaut und wiederverwendet: Der
- * Provider hält die Sitzung und erneuert sie erst, wenn sie abläuft — bei einem
- * Saal, der gleichzeitig schreibt, spart das ein AssumeRole je Mail.
+ * Provider hält die Sitzung und erneuert sie erst, wenn sie abläuft.
  */
 const fremd = fromTemporaryCredentials({
   params: { RoleArn: ROLLE, RoleSessionName: "ecr2026-mail" },
@@ -59,14 +74,23 @@ interface SesMeldung {
   readonly receipt?: { readonly action?: { readonly objectKey?: string } };
 }
 
-export async function handler(event: {
-  Records?: Array<{ Sns?: { Message?: string } }>;
-}): Promise<void> {
-  for (const satz of event.Records ?? []) {
+type Ereignis = { Records?: Array<{ Sns?: { Message?: string } }> } | Sendeauftrag;
+
+export async function handler(event: Ereignis): Promise<{ gesendet: boolean } | void> {
+  if ("art" in event && event.art === "senden") {
+    /*
+      Hier NICHT fangen: Scheitert der Versand, soll der Agent das als Fehler
+      seines Werkzeugs sehen und nicht glauben, die Mail sei draußen.
+    */
+    await sende(event);
+    return { gesendet: true };
+  }
+
+  for (const satz of ("Records" in event ? event.Records : undefined) ?? []) {
     const roh = satz.Sns?.Message;
     if (!roh) continue;
     try {
-      await verarbeite(JSON.parse(roh) as SesMeldung);
+      await uebergib(JSON.parse(roh) as SesMeldung);
     } catch (fehler) {
       /*
         Eine Mail, die scheitert, darf die nächsten nicht mitreißen — und ein
@@ -79,10 +103,11 @@ export async function handler(event: {
   }
 }
 
-async function verarbeite(meldung: SesMeldung): Promise<void> {
+async function uebergib(meldung: SesMeldung): Promise<void> {
   const schluessel = meldung.receipt?.action?.objectKey;
   const empfaenger = meldung.mail?.destination ?? [];
   if (!schluessel) throw new Error("Die Meldung nennt kein Objekt in S3.");
+  if (!API_URL) throw new Error("API_URL fehlt - ich weiss nicht, wo der Agent steht.");
 
   const postfach = postfachFuer(empfaenger);
 
@@ -98,29 +123,70 @@ async function verarbeite(meldung: SesMeldung): Promise<void> {
   const eingang = await lies(bytes);
   if (!eingang.absender) throw new Error("Die Mail hat keinen brauchbaren Absender.");
 
-  console.log(`[${postfach.modus}] von ${eingang.absender}: ${eingang.betreff}`);
+  console.log(`[${postfach.adresse}] von ${eingang.absender}: ${eingang.betreff}`);
 
-  const lauf = await beantworte(postfach.modus, briefing(eingang.betreff, eingang.text));
+  /*
+    JSON-RPC, so wie der generierte Client im Browser auch aufruft. Die Antwort
+    kommt sofort: Der Agent läuft danach in AgentCore weiter, und das Senden
+    ist sein eigenes Werkzeug.
+  */
+  const antwort = await fetch(API_URL, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "api.mailEingang",
+      params: [
+        TOKEN,
+        {
+          absender: eingang.absender,
+          absenderName: eingang.absenderName,
+          betreff: eingang.betreff,
+          text: eingang.text,
+          nachrichtId: eingang.messageId,
+          postfach: postfach.adresse,
+        },
+      ],
+    }),
+  });
+  const ergebnis = (await antwort.json().catch(() => ({}))) as {
+    result?: { kanal?: string };
+    error?: { message?: string };
+  };
+  if (!antwort.ok || ergebnis.error) {
+    throw new Error(
+      `mailEingang abgelehnt (${antwort.status}): ${ergebnis.error?.message ?? "ohne Grund"}`,
+    );
+  }
+  console.log(`[${postfach.adresse}] an den Agenten übergeben, Kanal ${ergebnis.result?.kanal}`);
+}
+
+async function sende(auftrag: Sendeauftrag): Promise<void> {
+  /*
+    Nur als eines der eigenen Postfächer. Wer die Lambda aufrufen darf, soll
+    damit nicht als beliebige Adresse der Domain schreiben können.
+  */
+  const postfach = POSTFAECHER.find((p) => p.adresse === auftrag.postfach) ?? POSTFAECHER[0];
+  /* Die Adresse landet in einer Kopfzeile; ein Zeilenumbruch darin schriebe eigene. */
+  if (!/^[^\s<>@]+@[^\s<>@]+$/.test(auftrag.an)) {
+    throw new Error(`Keine brauchbare Empfängeradresse: ${JSON.stringify(auftrag.an)}`);
+  }
 
   await ses.send(
     new SendEmailCommand({
       FromEmailAddress: postfach.adresse,
-      Destination: { ToAddresses: [eingang.absender] },
+      Destination: { ToAddresses: [auftrag.an] },
       Content: {
         Raw: {
           Data: Buffer.from(
             baueRohmail({
               von: postfach.adresse,
               vonName: postfach.anzeigename,
-              an: eingang.absender,
-              /*
-                Der Betreff kommt vom Agenten, wenn er einen gesetzt hat.
-                Vorher wurde immer der eingehende gespiegelt — und die vom
-                Modell selbst geschriebene Betreffzeile landete im Rumpf.
-              */
-              betreff: lauf.antwort?.betreff || eingang.betreff,
-              text: baueAntwort(postfach.modus, lauf, ANHANG, eingang),
-              inAntwortAuf: eingang.messageId,
+              an: auftrag.an,
+              betreff: auftrag.betreff,
+              text: mitAnhang(auftrag.rumpf, ANHANG, auftrag.eingang),
+              inAntwortAuf: auftrag.inAntwortAuf,
             }),
             "utf8",
           ),
@@ -129,20 +195,5 @@ async function verarbeite(meldung: SesMeldung): Promise<void> {
     }),
   );
 
-  console.log(`[${postfach.modus}] beantwortet, ${lauf.schritte.length} Systeme abgefragt`);
-
-  /*
-    Die Fragen an Lisa gehen nicht mit der Mail hinaus — sie hätten dort auch
-    nichts zu suchen. Bis es einen Weg zu ihr gibt, landen sie wenigstens im
-    Protokoll, statt still verlorenzugehen. Ein Agent, der etwas braucht und es
-    niemandem sagen kann, ist schlimmer als einer, der nichts braucht.
-  */
-  for (const f of lauf.fragenAnLisa) {
-    console.log(`[an Lisa] ${f.frage} — ${f.warum}`);
-  }
-}
-
-/** Betreff und Text so vorlegen, wie sie im Postfach stünden. */
-function briefing(betreff: string, text: string): string {
-  return `Betreff: ${betreff}\n\n${text}`;
+  console.log(`[${postfach.adresse}] Antwort an ${auftrag.an} gesendet.`);
 }
