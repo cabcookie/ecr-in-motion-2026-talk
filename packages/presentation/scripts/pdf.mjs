@@ -9,7 +9,7 @@
  *   node scripts/pdf.mjs [baseUrl] [ziel]
  */
 import { chromium } from "playwright";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
 const BASE = process.argv[2] ?? "http://localhost:5180";
@@ -26,12 +26,14 @@ await page.goto(`${BASE}/papier`, { waitUntil: "networkidle" });
 await page.waitForSelector(".papier-seite");
 /* Ohne geladene Schriften druckt der Browser den Rückfall — auf Papier bleibt das. */
 await page.evaluate(() => document.fonts.ready);
-/* Warten, bis jede Seite in ihre Höhe gepasst wurde — sonst druckt der Browser
-   den Zwischenstand und schneidet ab. */
-await page.waitForFunction(() => document.body.dataset.papierFertig === "ja", null, {
-  timeout: 30_000,
-});
-await page.waitForTimeout(400);
+/*
+  Kurz warten, bis das Layout steht.
+
+  Der Maßstab ist fest gerechnet, es gibt also nichts einzupassen — aber die
+  Folien bauen sich zum Teil in Schritten auf, und wer zu früh druckt, erwischt
+  den halben Aufbau.
+*/
+await page.waitForTimeout(1500);
 
 const ueberlauf = await page.evaluate(() =>
   [...document.querySelectorAll(".papier-seite")]
@@ -44,15 +46,54 @@ if (ueberlauf.length) {
   process.exit(1);
 }
 
-const seiten = await page.locator(".papier-seite").count();
+const abschnitte = await page.locator(".papier-seite").count();
 
 await page.pdf({
   path: ZIEL,
   printBackground: true,
-  preferCSSPageSize: true,
+  /*
+    Das Seitenmaß hier und nicht über @page.
+
+    Mit `preferCSSPageSize` kamen aus zweiundsechzig Abschnitten acht Seiten:
+    Die Regel aus dem eingebetteten <style> wurde beim Drucken nicht
+    berücksichtigt, und Chromium wählte eine eigene, riesige Seite. Angegeben
+    ist es eindeutig.
+  */
+  width: "297mm",
+  height: "210mm",
+  margin: { top: "0", right: "0", bottom: "0", left: "0" },
 });
 
 await browser.close();
+
+/*
+  Die Seiten im FERTIGEN PDF zählen, nicht die Abschnitte im DOM.
+
+  Das ist nicht dasselbe, und die Verwechslung hat einmal teuer gemeldet: Das
+  Skript sagte „62 Seiten", während im PDF zwei standen — der Rest war
+  abgeschnitten, weil die Seite nicht wachsen durfte. Eine Zahl, die man nicht
+  am Ergebnis misst, beruhigt nur.
+*/
+const roh = (await readFile(ZIEL)).toString("latin1");
+/*
+  Der GRÖSSTE /Count-Eintrag, nicht der erste.
+
+  Der Seitenbaum eines PDF hat Zwischenknoten, und jeder trägt seinen eigenen
+  Count. Der erste Treffer war hier acht — ein Teilbaum —, während die Wurzel
+  zweiundsechzig sagte. Die Prüfung hat damit einen fehlerfreien Bau
+  abgebrochen; eine falsche Kontrolle ist schlimmer als keine, weil man ihr
+  glaubt.
+*/
+const zaehler = [...roh.matchAll(/\/Count\s+(\d+)/g)].map((m) => Number(m[1]));
+const seiten = zaehler.length ? Math.max(...zaehler) : 0;
+
+if (seiten !== abschnitte) {
+  console.error(
+    `Das PDF hat ${seiten} Seiten, die Druckfassung aber ${abschnitte} Abschnitte. ` +
+      "Da geht etwas verloren.",
+  );
+  process.exit(1);
+}
 
 if (fehler.length) {
   console.error("Fehler beim Aufbau der Druckfassung:\n  " + fehler.join("\n  "));
