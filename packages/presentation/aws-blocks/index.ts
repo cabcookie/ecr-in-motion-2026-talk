@@ -101,9 +101,9 @@ const rtReset = new Realtime(scope, 'reset-live', {
  * nicht: eine Mail senden. Dafür antwortet er im Chat. Er bringt alle
  * Fachwerkzeuge mit, einschließlich der Ziele.
  *
- * Auf dem Handy gibt es drei Stufen: das nackte Modell (`roh`, Abschnitt 14),
- * den Systemprompt ohne Systeme (`prompt`, Abschnitt 16) und diesen Agenten
- * (`voll`). Werkzeug für Werkzeug dazwischen gibt es nicht.
+ * Auf dem Handy gibt es vier Stufen: das nackte Modell (`roh`, Abschnitt 14),
+ * den Systemprompt ohne Systeme (`prompt`, Abschnitt 16), die Systeme ohne die
+ * Kategorieziele (`werkzeuge`, Abschnitt 17) und diesen Agenten (`voll`).
  *
  * Der Prompt kommt aus den Foliendaten, damit der Agent mit demselben Text
  * läuft, den das Publikum auf dem Handy aufklappen kann.
@@ -125,8 +125,15 @@ const roh = rohChatAgent(scope);
 /* Abschnitt 16: der Systemprompt ohne Systeme. */
 const prompt = promptChatAgent(scope);
 
+/*
+  Abschnitt 17: alle Systeme, aber ohne die Ziele der Kategorie. Abschnitt 18
+  zeigt danach, dass ein Agent ohne Ziele zwar prüft, ob etwas geht, aber
+  nicht entscheidet, ob es gewollt ist — mit Zielen nähme der Chat das vorweg.
+*/
+const werkzeuge = chatAgent(scope, { ohne: ['kategorie_ziele'] }, 'werkzeuge');
+
 /** Welche Stufe ein Chat anspricht. */
-const CHATS = { voll: berater, prompt, roh } as const;
+const CHATS = { voll: berater, werkzeuge, prompt, roh } as const;
 type Chatstufe = keyof typeof CHATS;
 
 /** Die Stufe kommt vom Handy; nur die bekannten gelten. */

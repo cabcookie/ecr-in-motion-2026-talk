@@ -816,13 +816,16 @@ export const SECTIONS: Section[] = [
           id: "tools-chat",
           persist: true,
           bisAbschnitt: 18,
-          /* Der volle Agent: Systemprompt und alle Fachwerkzeuge. */
-          stufe: "voll",
+          /*
+            Alle Systeme, aber OHNE die Kategorieziele — die kommen erst in
+            Abschnitt 18. Mit ihnen sagte der Agent hier schon ab.
+          */
+          stufe: "werkzeuge",
           label: "Chat starten",
           hint: "Wieder die Mail von Hallbach. Diesmal fragt der Agent Dich nicht — er schlägt selbst in den Systemen nach.",
           systemPrompt: LISA_PROMPT,
         },
-        app: "Chat mit Systemprompt und allen Tools. Das Gespräch beginnt wieder mit der Mail von Hallbach; der Agent zeigt, welche Systeme er befragt.",
+        app: "Chat mit Systemprompt und den Tools der Systeme, noch ohne die Kategorieziele. Das Gespräch beginnt wieder mit der Mail von Hallbach; der Agent zeigt, welche Systeme er befragt.",
         papier: {
           statt: {
             t: "chat",

@@ -132,9 +132,17 @@ export function postfachAgent(
  * Kein eigener Prompt mehr: Was hier bis zum 16.09. angehängt war — das
  * Gegenüber gehört zum Haus, Arbeitsweg und Antwort sind getrennt —, steht
  * jetzt am Werkzeug `antworte_im_chat`.
+ *
+ * `kennung` unterscheidet Stufen mit anderer Werkzeugauswahl: Blocks verlangt
+ * je Agent eine eigene, und daraus entsteht auch sein Bucketname (höchstens
+ * 63 Zeichen samt Stackname — kurz halten).
  */
-export function chatAgent(scope: Scope, auswahl: Werkzeugauswahl = {}): Agent<any> {
-  return new Agent(scope, 'berater', {
+export function chatAgent(
+  scope: Scope,
+  auswahl: Werkzeugauswahl = {},
+  kennung = 'berater',
+): Agent<any> {
+  return new Agent(scope, kennung, {
     ...GEMEINSAM,
     tools: (tool) => ({
       ...fachwerkzeuge(tool, auswahl.ohne),

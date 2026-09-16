@@ -347,10 +347,11 @@ export type Interaction = MitZusammenhang &
        * daraus macht.
        *
        * `prompt` ist der Systemprompt ohne Systeme (Abschnitt 16): Der Agent
-       * weiß, wer er ist, und muss jede Zahl im Chat erfragen. Ohne Angabe
-       * antwortet `voll`, der Agent mit allen Fachwerkzeugen.
+       * weiß, wer er ist, und muss jede Zahl im Chat erfragen. `werkzeuge`
+       * hat alle Systeme außer den Kategoriezielen (Abschnitt 17). Ohne
+       * Angabe antwortet `voll`, der Agent mit allen Fachwerkzeugen.
        */
-      stufe?: "voll" | "prompt" | "roh";
+      stufe?: "voll" | "werkzeuge" | "prompt" | "roh";
       /**
        * Womit das Gespräch beginnt.
        *
