@@ -152,7 +152,7 @@ importers:
         version: 22.20.0
       aws-cdk-lib:
         specifier: 2.257.0
-        version: 2.257.0
+        version: 2.257.0(constructs@10.6.0)
       constructs:
         specifier: 10.6.0
         version: 10.6.0
@@ -169,6 +169,9 @@ importers:
         specifier: 0.3.0
         version: 0.3.0(aws-cdk-lib@2.257.0(constructs@10.6.0))(constructs@10.6.0)(typescript@5.9.3)
       '@aws-sdk/client-bedrock-runtime':
+        specifier: 3.1131.0
+        version: 3.1131.0
+      '@aws-sdk/client-lambda':
         specifier: 3.1131.0
         version: 3.1131.0
       '@aws-sdk/client-s3':
@@ -492,6 +495,10 @@ packages:
 
   '@aws-sdk/client-dynamodb@3.1131.0':
     resolution: {integrity: sha512-o0iuLR+wTo6+PnC/IhJL0xdryniu70lU/CGENJWLkm9JbXeMlwwfhNmOsPgvCv1CoWDtKRLSolLduSzkRU3EtQ==}
+    engines: {node: '>=20.0.0'}
+
+  '@aws-sdk/client-lambda@3.1131.0':
+    resolution: {integrity: sha512-EJ9FMnKzig4L+EBBqhu+FE+9PbebeimayKRRINN++cFbzDBn6xJzYKLW10hrQBTB22Hm30mFQesct8rE0Z/EmQ==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-rds-data@3.1131.0':
@@ -3539,6 +3546,17 @@ snapshots:
       '@aws-sdk/credential-provider-node': 3.972.83
       '@aws-sdk/dynamodb-codec': 3.973.45
       '@aws-sdk/middleware-endpoint-discovery': 3.972.30
+      '@aws-sdk/types': 3.974.5
+      '@smithy/core': 3.34.1
+      '@smithy/fetch-http-handler': 5.8.0
+      '@smithy/node-http-handler': 4.12.1
+      '@smithy/types': 4.18.0
+      tslib: 2.8.1
+
+  '@aws-sdk/client-lambda@3.1131.0':
+    dependencies:
+      '@aws-sdk/core': 3.978.0
+      '@aws-sdk/credential-provider-node': 3.972.83
       '@aws-sdk/types': 3.974.5
       '@smithy/core': 3.34.1
       '@smithy/fetch-http-handler': 5.8.0

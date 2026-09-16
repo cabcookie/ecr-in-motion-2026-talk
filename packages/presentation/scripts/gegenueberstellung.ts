@@ -1,5 +1,11 @@
 /**
- * Die Gegenüberstellung (v455).
+ * Die Gegenüberstellung (v455, seit 16.09. gegen den Blocks-Agenten).
+ *
+ * Bis zum 16.09. lief sie über die eigene Werkzeugschleife mit sechs
+ * Ausstattungen, vom nackten Modell bis zur gehärteten Fassung. Die Schleife
+ * gibt es nicht mehr; gemessen wird jetzt der Postfach-Agent, wie er
+ * ausgerollt ist — einmal mit allen Fachwerkzeugen, einmal ohne die Ziele.
+ * Die älteren Ergebnisse stehen in packages/docs/messungen.
  *
  * Die Folien behaupten, was der Unterschied zwischen einem Agenten mit und
  * ohne Systemzugriff ausmacht. Nachgerechnet hat das bisher niemand. Also:
@@ -16,15 +22,22 @@
  *
  *   AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation gegenueberstellung
  */
-import { BedrockRuntimeClient } from "@aws-sdk/client-bedrock-runtime";
 import { mkdir, writeFile } from "node:fs/promises";
-import { AUSSTATTUNGEN, beantworteMit, type Lauf } from "../aws-blocks/mail/agent";
+import type { Werkzeugauswahl } from "../aws-blocks/agent";
+import type { Schritt } from "../aws-blocks/agent/akte";
+import { laufePostfach } from "./postfach-lauf";
 
 const LAEUFE = Number(process.env.LAEUFE ?? 5);
 const ORDNER = process.env.ORDNER ?? "/tmp/gegenueberstellung";
 
-/** Preise je Million Token, Opus 4.8 auf Bedrock — wie in kostenrechnung.ts. */
-const PREIS = { ein: 5, aus: 25 };
+/**
+ * Was gemessen wird. Der Schlüssel steht in der Tabelle, der Wert ist die
+ * Werkzeugauswahl des Postfach-Agenten.
+ */
+const AUSSTATTUNGEN: Readonly<Record<string, Werkzeugauswahl>> = {
+  post: {},
+  ohneZiele: { ohne: ["kategorie_ziele"] },
+};
 
 const MAIL = [
   "Sehr geehrte Frau Berger,",
@@ -92,10 +105,10 @@ interface Deckung {
   readonly offen: readonly number[];
 }
 
-function zahlendeckung(antwort: string, lauf: Lauf): Deckung {
+function zahlendeckung(antwort: string, belege: readonly Schritt[]): Deckung {
   const quellen = new Set<number>();
   for (const wert of zahlen(MAIL)) mitRundungen(wert).forEach((w) => quellen.add(w));
-  for (const beleg of lauf.belege) {
+  for (const beleg of belege) {
     for (const wert of zahlen(JSON.stringify(beleg.ergebnis))) {
       mitRundungen(wert).forEach((w) => quellen.add(w));
     }
@@ -123,11 +136,11 @@ function zahlendeckung(antwort: string, lauf: Lauf): Deckung {
  * genannt wird. Ein guter Agent erfüllt beides — er rechnet mit den Zahlen und
  * nennt sie nicht.
  */
-function innenzahlen(antwort: string, lauf: Lauf): number[] {
+function innenzahlen(antwort: string, belege: readonly Schritt[]): number[] {
   const ausDerMail = new Set(zahlen(MAIL).flatMap(mitRundungen));
 
   const innen = new Set<number>();
-  for (const beleg of lauf.belege) {
+  for (const beleg of belege) {
     if (DARF_NACH_AUSSEN.has(beleg.system)) continue;
     for (const wert of zahlen(JSON.stringify(beleg.ergebnis))) {
       /*
@@ -155,27 +168,35 @@ interface Ergebnis {
   readonly fragenAnLisa: number;
   readonly deckung: Deckung;
   readonly innen: readonly number[];
-  readonly verbrauch: { ein: number; aus: number };
-  readonly kosten: number;
+  readonly dauerMs: number;
   readonly fehler?: string;
 }
 
-const client = new BedrockRuntimeClient({});
+const HALLBACH = {
+  absender: "andreas.walter@example.com",
+  absenderName: "Andreas Walter",
+  betreff: "Listungsanfrage Hallbach Crispy Bites",
+  text: MAIL,
+};
 
 async function einLauf(name: string, nummer: number): Promise<Ergebnis> {
   const leer = { gesamt: 0, gedeckt: 0, offen: [] as number[] };
   try {
-    const lauf = await beantworteMit(AUSSTATTUNGEN[name], MAIL, client);
+    const lauf = await laufePostfach(HALLBACH, AUSSTATTUNGEN[name]);
+    if (!lauf.rumpf || !lauf.akte) throw new Error("Der Agent hat nicht gesendet.");
+    /*
+      Gemessen wird, was hinausginge: der Brief UND die Fusszeile. Auch die
+      Begründungen darin schreibt der Agent selbst.
+    */
     return {
       ausstattung: name,
       nummer,
-      text: lauf.text,
-      schritte: lauf.schritte,
-      fragenAnLisa: lauf.fragenAnLisa.length,
-      deckung: zahlendeckung(lauf.text, lauf),
-      innen: innenzahlen(lauf.text, lauf),
-      verbrauch: lauf.verbrauch,
-      kosten: (lauf.verbrauch.ein * PREIS.ein + lauf.verbrauch.aus * PREIS.aus) / 1_000_000,
+      text: lauf.rumpf,
+      schritte: lauf.akte.schritte.map((s) => s.system),
+      fragenAnLisa: lauf.fragen.length,
+      deckung: zahlendeckung(lauf.rumpf, lauf.akte.schritte),
+      innen: innenzahlen(lauf.rumpf, lauf.akte.schritte),
+      dauerMs: lauf.dauerMs,
     };
   } catch (fehler) {
     return {
@@ -186,14 +207,13 @@ async function einLauf(name: string, nummer: number): Promise<Ergebnis> {
       fragenAnLisa: 0,
       deckung: leer,
       innen: [],
-      verbrauch: { ein: 0, aus: 0 },
-      kosten: 0,
+      dauerMs: 0,
       fehler: fehler instanceof Error ? fehler.message : String(fehler),
     };
   }
 }
 
-const REIHE = ["roh", "probe", "prompt", "voll", "gehaertet", "gestoert"] as const;
+const REIHE = Object.keys(AUSSTATTUNGEN);
 
 await mkdir(ORDNER, { recursive: true });
 const alle: Ergebnis[] = [];
@@ -213,7 +233,7 @@ for (const name of REIHE) {
 
 const schnitt = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 
-console.log(`\n${"AUSSTATTUNG".padEnd(10)} ${"ZAHLEN".padStart(7)} ${"GEDECKT".padStart(8)} ${"QUOTE".padStart(6)} ${"SYSTEME".padStart(8)} ${"AN LISA".padStart(8)} ${"INNEN".padStart(6)} ${"TOKEN".padStart(7)} ${"CENT".padStart(6)}`);
+console.log(`\n${"AUSSTATTUNG".padEnd(10)} ${"ZAHLEN".padStart(7)} ${"GEDECKT".padStart(8)} ${"QUOTE".padStart(6)} ${"SYSTEME".padStart(8)} ${"AN LISA".padStart(8)} ${"INNEN".padStart(6)} ${"SEK".padStart(5)}`);
 for (const name of REIHE) {
   const e = alle.filter((x) => x.ausstattung === name && !x.fehler);
   if (e.length === 0) {
@@ -228,8 +248,7 @@ for (const name of REIHE) {
       `${schnitt(e.map((x) => x.schritte.length)).toFixed(1).padStart(8)} ` +
       `${schnitt(e.map((x) => x.fragenAnLisa)).toFixed(1).padStart(8)} ` +
       `${schnitt(e.map((x) => x.innen.length)).toFixed(1).padStart(6)} ` +
-      `${Math.round(schnitt(e.map((x) => x.verbrauch.ein + x.verbrauch.aus))).toString().padStart(7)} ` +
-      `${(schnitt(e.map((x) => x.kosten)) * 100).toFixed(2).padStart(6)}`,
+      `${(schnitt(e.map((x) => x.dauerMs)) / 1000).toFixed(0).padStart(5)}`,
   );
 }
 
@@ -277,4 +296,3 @@ if (gescheitert.length > 0) {
 
 await writeFile(`${ORDNER}/ergebnis.json`, JSON.stringify(alle, null, 2), "utf8");
 console.log(`\nAntworten und Rohdaten: ${ORDNER}`);
-console.log(`Gesamtkosten: ${(alle.reduce((s, x) => s + x.kosten, 0) * 100).toFixed(1)} Cent`);

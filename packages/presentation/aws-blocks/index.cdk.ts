@@ -12,7 +12,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { getStackName } from '@aws-blocks/blocks/scripts';
 import { DOMAIN, MAIL_HANDLER_ROLE, REGION } from '../../infra/config';
-import { Duration } from 'aws-cdk-lib';
+import { MAIL_FUNKTION } from './mail/konfig';
+import { ArnFormat, Duration } from 'aws-cdk-lib';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -84,14 +85,16 @@ if (!sandboxMode) {
 }
 
 /*
-  Der Postfach-Agent.
+  Die Mail-Lambda.
 
-  Er hängt an einem SNS-Topic im Konto der Domain und nimmt dort eine Rolle an,
+  Sie hängt an einem SNS-Topic im Konto der Domain und nimmt dort eine Rolle an,
   um die Rohmail zu lesen und die Antwort als die verifizierte Identität zu
-  senden. Die vier Werte kommen aus den GitHub-Secrets; fehlen sie, bleibt der
-  Agent aus — der Rest des Vortrags läuft dann trotzdem.
+  senden. Die Mail selbst beantwortet der Blocks-Agent: Die Lambda übergibt sie
+  über die API `mailEingang`, und der Agent ruft die Lambda zum Senden auf.
+  Die Werte kommen aus den GitHub-Secrets; fehlen sie, bleibt der Mailweg aus —
+  der Rest des Vortrags läuft dann trotzdem.
 
-  Die Reihenfolge zwischen den Konten steht in examples/konto-a/README.md.
+  Die Reihenfolge zwischen den Konten steht in packages/mail-infra/README.md.
 */
 const mailRolle = process.env.MAIL_ACCESS_ROLE_ARN ?? '';
 const mailBucket = process.env.MAIL_BUCKET ?? '';
@@ -116,26 +119,17 @@ if (!sandboxMode && mailRolle && mailBucket && mailTopic) {
     }),
   );
   rolle.addToPolicy(new PolicyStatement({ actions: ['sts:AssumeRole'], resources: [mailRolle] }));
-  // Das Modell läuft in unserem Konto, nicht im fremden — der Agent ist unsere
-  // Arbeit, nur Postfach und Absenderidentität sind es nicht.
-  rolle.addToPolicy(
-    new PolicyStatement({
-      actions: ['bedrock:InvokeModel'],
-      resources: ['arn:aws:bedrock:*::foundation-model/anthropic.claude-*', 'arn:aws:bedrock:*:*:inference-profile/*'],
-    }),
-  );
-
-  const postfachAgent = new NodejsFunction(blocksStack, 'MailHandler', {
+  const mailLambda = new NodejsFunction(blocksStack, 'MailHandler', {
+    functionName: MAIL_FUNKTION,
     entry: join(__dirname, 'mail', 'handler.ts'),
     handler: 'handler',
     runtime: Runtime.NODEJS_22_X,
     role: rolle,
     /*
-      Großzügig bemessen: Ein Lauf mit Werkzeugen sind mehrere Modellaufrufe
-      nacheinander, und am Abend schreiben alle gleichzeitig. Lieber eine
-      Minute zu viel als eine abgeschnittene Antwort.
+      Der Agent läuft nicht mehr hier, nur Übergabe und Versand. Eine Minute
+      reicht dafür reichlich; SES und die API antworten in Sekunden.
     */
-    timeout: Duration.minutes(5),
+    timeout: Duration.minutes(1),
     memorySize: 1024,
     /*
       Alles mit ins Bündel, auch das AWS-SDK.
@@ -169,12 +163,42 @@ if (!sandboxMode && mailRolle && mailBucket && mailTopic) {
       MAIL_ACCESS_ROLE_ARN: mailRolle,
       MAIL_BUCKET: mailBucket,
       MAIL_PREFIX: 'eingang/',
+      API_URL: blocksStack.apiUrl,
+      /*
+        Dasselbe Geheimnis wie die Fernsteuerung. Ein zweites hiesse ein
+        zweites Repository-Secret, und beides schützt dasselbe: dass niemand
+        von aussen in den Vortrag greift.
+      */
+      MAIL_EINGANG_TOKEN: deckToken,
     },
   });
+
+  /*
+    Der Agent läuft in AgentCore unter der gemeinsamen Blocks-Rolle und ruft
+    die Lambda zum Senden auf. Nur diese eine Funktion, nur aufrufen.
+
+    Die ARN aus dem festen Namen, nicht `mailLambda.grantInvoke()`: Das hängte
+    die Policy der gemeinsamen Rolle an die Lambda, die Lambda über API_URL an
+    das Gateway, das Gateway an den Handler — und der Handler hängt an genau
+    dieser Policy. CloudFormation lehnt den Kreis ab.
+  */
+  blocksStack.executionRole.addToPrincipalPolicy(
+    new PolicyStatement({
+      actions: ['lambda:InvokeFunction'],
+      resources: [
+        blocksStack.formatArn({
+          service: 'lambda',
+          resource: 'function',
+          resourceName: MAIL_FUNKTION,
+          arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+        }),
+      ],
+    }),
+  );
 
   // Das Topic gehört dem anderen Konto; wir legen nur die Subscription an.
   // Dass wir das dürfen, steht in dessen Topic-Policy.
   Topic.fromTopicArn(blocksStack, 'MailTopic', mailTopic).addSubscription(
-    new LambdaSubscription(postfachAgent),
+    new LambdaSubscription(mailLambda),
   );
 }

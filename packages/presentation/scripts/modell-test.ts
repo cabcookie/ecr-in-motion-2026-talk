@@ -1,23 +1,20 @@
 /**
- * Ein einziger echter Aufruf gegen Bedrock — mit genau der Konfiguration, die
- * der Mail-Agent verwendet.
+ * Ein echter Lauf gegen Bedrock — mit genau dem Agenten, der hinter dem
+ * Postfach steht.
  *
- * Warum es diese Prüfung gibt: `mail:test` läuft gegen eine Attrappe und prüft
- * die Verrohrung. Als das Modell von Sonnet 4.6 auf Opus 4.8 wechselte, blieb
- * er grün — während in Wahrheit JEDER echte Aufruf scheiterte, weil Opus
- * `temperature` nicht mehr annimmt. Aufgefallen wäre das erst am Vortragsabend,
- * bei der ersten Teilnehmer-Mail.
+ * Warum es diese Prüfung gibt: `mail:test` ruft die Werkzeuge direkt auf und
+ * prüft die Verrohrung. Als das Modell von Sonnet 4.6 auf Opus 4.8 wechselte,
+ * blieb ein solcher Test grün — während in Wahrheit JEDER echte Aufruf
+ * scheiterte, weil Opus `temperature` nicht mehr annimmt. Aufgefallen wäre das
+ * erst am Vortragsabend, bei der ersten Teilnehmer-Mail.
  *
  * Eine Attrappe prüft, ob wir richtig verdrahtet haben. Sie kann nicht prüfen,
- * ob das Modell unsere Anfrage annimmt. Dafür braucht es einen echten Aufruf,
- * und der kostet hier weniger als ein Zehntel Cent.
+ * ob das Modell unsere Werkzeuge so benutzt, wie wir es vorsehen. Dafür
+ * braucht es einen echten Lauf.
  *
  *   AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation modell:test
  */
-import { BedrockRuntimeClient } from "@aws-sdk/client-bedrock-runtime";
-import { beantworteMit, AUSSTATTUNGEN } from "../aws-blocks/mail/agent";
-
-const client = new BedrockRuntimeClient({});
+import { HALLBACH, laufePostfach } from "./postfach-lauf";
 
 let fehler = 0;
 function pruefe(was: string, bedingung: boolean, zusatz = ""): void {
@@ -28,37 +25,26 @@ function pruefe(was: string, bedingung: boolean, zusatz = ""): void {
   }
 }
 
-console.log("\nDas Modell nimmt unsere Anfrage an");
-
-/*
-  Ohne Werkzeuge und mit einer kurzen Aufgabe: Geprüft wird das Modell und die
-  Inferenzkonfiguration, nicht die Werkzeugschleife. Die hat ihren eigenen Test.
-*/
-try {
-  const lauf = await beantworteMit(
-    { systemprompt: "Antworte in einem Satz.", werkzeuge: false },
-    "Bestätige kurz den Eingang dieser Nachricht.",
-    client,
-  );
-  pruefe("Ein Aufruf ohne Werkzeuge geht durch", lauf.text.length > 0);
-  pruefe("Token werden gezählt", lauf.verbrauch.ein > 0 && lauf.verbrauch.aus > 0);
-} catch (f) {
-  pruefe("Ein Aufruf ohne Werkzeuge geht durch", false, f instanceof Error ? f.message : String(f));
-}
+console.log("\nDer Postfach-Agent beantwortet die Hallbach-Mail");
 
 try {
-  const lauf = await beantworteMit(
-    AUSSTATTUNGEN.gehaertet,
-    "Guten Tag, wir möchten ein Produkt listen. Einkaufspreis 2,89 EUR, Verkaufspreis 4,49 EUR.",
-    client,
-  );
-  pruefe("Ein Aufruf MIT Werkzeugen geht durch", lauf.text.length > 0);
+  const lauf = await laufePostfach(HALLBACH);
+  const systeme = lauf.akte?.schritte.map((s) => s.system) ?? [];
+  pruefe(`Der Agent hat gesendet (${Math.round(lauf.dauerMs / 1000)} s)`, Boolean(lauf.rumpf));
+  pruefe(`Mindestens ein System wurde abgefragt (${systeme.join(", ") || "keins"})`, systeme.length > 0);
+  pruefe("Die Ziele der Kategorie wurden befragt", systeme.includes("kategorie_ziele"));
   pruefe(
-    `Mindestens ein System wurde abgefragt (${lauf.schritte.join(", ") || "keins"})`,
-    lauf.schritte.length > 0,
+    "Jede Abfrage trägt eine Begründung",
+    (lauf.akte?.schritte ?? []).every((s) => Boolean(s.warum?.trim())),
+  );
+  pruefe("Der Brief spricht Herrn Walter an", /Walter/.test(lauf.brief?.anrede ?? ""), lauf.brief?.anrede);
+  pruefe(
+    "Keine Prozentwerte im Brief",
+    !/\d+[.,]?\d* ?(%|Prozent)/.test(lauf.brief?.text ?? ""),
+    lauf.brief?.text.match(/\d+[.,]?\d* ?(%|Prozent)/)?.[0],
   );
 } catch (f) {
-  pruefe("Ein Aufruf MIT Werkzeugen geht durch", false, f instanceof Error ? f.message : String(f));
+  pruefe("Der Lauf geht durch", false, f instanceof Error ? f.message : String(f));
 }
 
 if (fehler > 0) process.exitCode = 1;

@@ -10,7 +10,7 @@
  */
 import { ApiNamespace, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
 import { chatAgent, postfachAgent, rohChatAgent } from './agent';
-import { perSes } from './agent/versand';
+import { perMailLambda } from './agent/versand';
 import { z } from 'zod';
 
 const scope = new Scope('ecr-masterclass');
@@ -129,9 +129,9 @@ type Chatstufe = keyof typeof CHATS;
 /**
  * Eine Frage, die der Agent Lisa vorgelegt hat und die noch offen ist.
  *
- * Sie liegt hier und nicht im Protokoll, weil sie beantwortet werden muss:
- * Solange sie offen ist, steht ein Vorgang still und eine Mail geht nicht
- * hinaus. Der Indikator auf der Folie liest genau diesen Speicher.
+ * Sie liegt hier und nicht im Protokoll, weil jemand sie beantworten soll.
+ * Den Vorgang hält sie nicht mehr an (siehe `frageLisa`): Die Mail geht
+ * trotzdem hinaus, und die Frage bleibt für das Team liegen.
  */
 const offeneFrage = z.object({
   id: z.string(),
@@ -139,7 +139,7 @@ const offeneFrage = z.object({
   warum: z.string(),
   absender: z.string(),
   betreff: z.string(),
-  /** Welchen Zug Lisas Antwort fortsetzt. */
+  /** Zu welchem Mailvorgang die Frage gehört. */
   kanal: z.string(),
   gestellt: z.number(),
   /** Gesetzt, sobald geantwortet wurde — die Frage bleibt als Beleg stehen. */
@@ -192,23 +192,29 @@ const plaene = new KVStore(scope, 'zeitplan', { schema: zeitplan });
 /** Es gibt genau einen geltenden Plan. Ältere zu behalten hieße, sie zu verwalten. */
 const PLAN = 'aktuell';
 
-/*
-  Zwei Postfächer, zwei Bestückungen, ein Agent.
-
-  Der Unterschied ist einzig, ob die Fachwerkzeuge dabei sind. Abschnitt 6
-  bekommt sie — dort soll der Agent fundiert antworten und selbst senden.
-  Abschnitt 15 bekommt sie nicht: Derselbe Agent, derselbe Prompt, aber er KANN
-  nichts nachschlagen. Also fragt er Lisa, und das ist der Punkt der Folie.
-*/
 const ablegen = async (f: OffeneFrage) => {
   await fragen.put(f.id, f);
   await rtFragen.publish('fragen', CHANNEL, f);
 };
 
-const postfaecher = {
-  assistent: postfachAgent(scope, 'post', perSes, ablegen, true),
-  probe: postfachAgent(scope, 'probe', perSes, ablegen, false),
-};
+/*
+  Ein Postfach, ein Agent, alle Fachwerkzeuge.
+
+  Bis zum 16.09. gab es daneben 'probe' — derselbe Agent ohne Werkzeuge, für
+  Abschnitt 15. Das Postfach ist entfallen; die Stufe ohne Werkzeuge zeigt
+  rohChatAgent im Chat.
+*/
+const postfach = postfachAgent(scope, 'post', perMailLambda, ablegen);
+
+/** Was die Mail-Lambda aus einer eingegangenen Mail übergibt. */
+const mailEingangDaten = z.object({
+  absender: z.string().email(),
+  absenderName: z.string().optional(),
+  betreff: z.string(),
+  text: z.string().max(50_000),
+  nachrichtId: z.string().optional(),
+  postfach: z.string(),
+});
 
 export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /**
@@ -391,22 +397,33 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
   /**
    * Eine eingegangene E-Mail übergeben.
    *
-   * Die Lambda am SNS-Topf parst die Rohmail und reicht sie hierher. Der Aufruf
-   * kehrt sofort zurück: Was danach geschieht — Systeme befragen, Lisa fragen,
+   * Die Mail-Lambda liest die Rohmail und reicht sie hierher. Der Aufruf kehrt
+   * sofort zurück: Was danach geschieht — Systeme befragen, das Team fragen,
    * antworten — läuft im Agenten, und das Senden ist sein eigenes Werkzeug.
+   *
+   * Geschützt wie ein Folienwechsel. Offen könnte jeder einen Lauf mit
+   * beliebigem Absender anstoßen, und der Agent schriebe an eine Adresse, die
+   * nie geschrieben hat.
    */
-  async mailEingang(
-    modus: 'assistent' | 'probe',
-    absender: string,
-    betreff: string,
-    text: string,
-    nachrichtId: string,
-    postfach: string,
-  ) {
+  async mailEingang(token: string, daten: z.infer<typeof mailEingangDaten>) {
+    assertMayControl(token);
+    const mail = mailEingangDaten.parse(daten);
     const kanal = `mail-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    await postfaecher[modus].stream(text, {
+    /* Mit Absender: Ohne den Namen schrieb der Agent „Sehr geehrte Damen und Herren“. */
+    const von = mail.absenderName ? `${mail.absenderName} <${mail.absender}>` : mail.absender;
+    await postfach.stream(`Von: ${von}\nBetreff: ${mail.betreff}\n\n${mail.text}`, {
       channelId: kanal,
-      context: { absender, betreff, nachrichtId, postfach, kanal },
+      /* Pflicht, solange der Agent den Verlauf speichert. */
+      userId: mail.absender,
+      context: {
+        absender: mail.absender,
+        absenderName: mail.absenderName,
+        betreff: mail.betreff,
+        nachrichtId: mail.nachrichtId,
+        postfach: mail.postfach,
+        eingang: mail.text,
+        kanal,
+      },
     });
     return { kanal };
   },
@@ -426,22 +443,27 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
   },
 
   /**
-   * Lisas Antwort — und damit läuft der Vorgang weiter.
+   * Lisas Antwort — festgehalten, aber (noch) ohne Fortsetzung.
    *
-   * `resume` setzt den angehaltenen Zug auf demselben Budget fort. Der Agent
-   * bekommt die Antwort als Ergebnis seines Werkzeugs und schreibt damit die
-   * Mail zu Ende.
+   * `frage_das_team` hält den Zug nicht mehr an (Entscheidung vom 16.09.): Die
+   * Mail ist längst draußen, wenn hier jemand antwortet. Die Antwort bleibt
+   * deshalb als Beleg an der Frage stehen.
+   *
+   * Wer die Operator-Oberfläche aus Epic 0trs baut, schaltet in
+   * `frageLisa(…, anhalten = true)` das Anhalten ein und setzt hier den Zug
+   * fort:
+   *
+   *   await postfach.resume(frage.kanal, [
+   *     { interruptId: 'frage-an-lisa', response: antwort },
+   *   ]);
    */
-  async lisaAntwortet(id: string, antwort: string, modus: 'assistent' | 'probe', token = '') {
+  async lisaAntwortet(id: string, antwort: string, token = '') {
     assertMayControl(token);
     const frage = await fragen.get(id);
     if (!frage) throw new Error(`Die Frage ${id} kenne ich nicht.`);
     if (frage.antwort) return { schon: true };
 
     await fragen.put(id, { ...frage, antwort });
-    await postfaecher[modus].resume(frage.kanal, [
-      { interruptId: 'frage-an-lisa', response: antwort },
-    ]);
-    return { fortgesetzt: true };
+    return { festgehalten: true };
   },
 }));
