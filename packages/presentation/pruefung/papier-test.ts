@@ -88,8 +88,9 @@ console.log(`Anhang: ${einstiege.length} Gruppen, ${punkte} Adressen.`);
 if (einstiege.length < 2 || punkte < 4) {
   console.log(
     "\nDie Einstiegsliste in aws-blocks/mail/anhang.md ist so nicht lesbar.\n" +
-      "Erwartet wird je Gruppe eine Zeile am Zeilenanfang mit Doppelpunkt und\n" +
-      "darunter eingerückt je zwei Zeilen: Beschreibung, dann Adresse.",
+      "Gelesen wird ab der Marke (ein Kommentar, der nur „liste“ enthält).\n" +
+      "Danach gilt je Absatz: endet er auf einer Adresse, ist er ein Eintrag —\n" +
+      "endet er nicht auf einer, ist er die Überschrift der Einträge darunter.",
   );
   process.exit(1);
 }

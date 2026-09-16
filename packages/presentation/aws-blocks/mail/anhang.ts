@@ -17,6 +17,20 @@
 const KOMMENTAR = /<!--[\s\S]*?-->/g;
 
 /**
+ * Wo die Einstiegsliste beginnt.
+ *
+ * Eine Marke und keine Heuristik, weil es beides gab und die Heuristik verlor.
+ * Der Anfang der Datei sieht aus wie eine Gruppe mit Eintraegen — ein Satz,
+ * darunter Absaetze mit Adressen — ist aber keine: Dank, Kontakt und die
+ * Adressen zum Vortrag gehoeren in die Mail, nicht in eine Liste mit der
+ * Ueberschrift „Wie es weitergeht". Kein Muster trennt das zuverlaessig, also
+ * sagt es die Datei selbst.
+ *
+ * Sie ist ein Kommentar und damit im Postfach unsichtbar.
+ */
+const LISTE_AB = /<!--\s*liste\s*-->/;
+
+/**
  * Der Text, wie ihn der Empfaenger liest.
  *
  * Wortwoertlich bis auf die Kommentare: Was in anhang.md steht, steht in der
@@ -24,7 +38,17 @@ const KOMMENTAR = /<!--[\s\S]*?-->/g;
  * Ueberschrift mit # kaeme beim Empfaenger als # an.
  */
 export function anhangText(roh: string): string {
-  return roh.replace(KOMMENTAR, "").trim();
+  return (
+    roh
+      .replace(KOMMENTAR, "")
+      /*
+        Ein entfernter Kommentar hinterlaesst die Leerzeilen, die ihn umgaben —
+        stand er zwischen zwei Absaetzen, klafft danach eine doppelte Luecke.
+        Im Quelltext sieht man das nicht, im Postfach schon.
+      */
+      .replace(/\n{3,}/g, "\n\n")
+      .trim()
+  );
 }
 
 /** Ein Block der Einstiegsliste: fuer wen, und wohin. */
@@ -37,77 +61,54 @@ export interface Einstieg {
  * Dieselbe Liste, aber als Daten — fuer die letzte Seite des PDFs.
  *
  * Die Mail kippt den Text aus; ein Blatt braucht Spalten, und dafuer muss es
- * wissen, was Gruppe und was Eintrag ist. Statt die Liste ein zweites Mal als
- * TypeScript zu fuehren, wird sie hier aus derselben Datei gelesen. Zwei
- * gepflegte Fassungen waeren eine zu viel: Die eine veraltet, und man merkt es
- * erst, wenn jemand auf einen toten Link klickt.
+ * wissen, was Ueberschrift und was Eintrag ist. Statt die Liste ein zweites
+ * Mal als TypeScript zu fuehren, wird sie hier aus derselben Datei gelesen.
+ * Zwei gepflegte Fassungen waeren eine zu viel: Die eine veraltet, und man
+ * merkt es erst, wenn jemand auf einen toten Link klickt.
  *
- * Die Form, auf die sich das stuetzt, ist die, in der der Text ohnehin schon
- * dasteht — nichts wurde fuer den Parser erfunden:
+ * Die Regel braucht keine Einrueckung und kein Sonderzeichen. Sie liest die
+ * Form, in der so ein Text ohnehin geschrieben wird — Absatz fuer Absatz:
  *
- *   Gruppe, am Zeilenanfang, mit Doppelpunkt:
- *     Wofuer dieser Eintrag gut ist
- *     https://die.adresse/
+ *   Endet ein Absatz auf einer Adresse, IST er ein Eintrag; was darueber
+ *   steht, ist seine Beschreibung.
+ *   Endet er nicht auf einer Adresse, ist er die Ueberschrift der Eintraege
+ *   darunter.
  *
- * Eine Gruppe erkennt man daran, dass die naechste nicht leere Zeile
- * EINGERUECKT ist. Das unterscheidet sie von der Einleitung ("Wenn Sie selbst
- * anfangen moechten:"), die aeusserlich genauso aussieht, aber keine Eintraege
- * hat.
+ * Eine frueher Fassung verlangte eingerueckte Zeilen. Das las sich in der Mail
+ * schlecht — Einrueckungen sehen auf einem Handy wie ein Fehler aus —, und ein
+ * Format, das den Text verschlechtert, damit ein Programm ihn versteht, hat
+ * die Aufgaben vertauscht.
  *
- * Was nicht in dieses Muster passt, wird stillschweigend uebergangen — der
- * Anfang der Datei (Hinweis auf den KI-Agenten, die beiden Adressen) soll hier
- * ja gerade NICHT als Einstieg auftauchen. Dass am Ende ueberhaupt etwas
- * herauskommt, prueft pruefung/papier-test.ts vor jedem Deployment.
+ * Was vor der ersten Ueberschrift steht, faellt heraus: Der Dank, die
+ * Adressen zum Vortrag und der Satz zur geloeschten Mailadresse gehoeren in
+ * die Mail, aber nicht in eine Liste mit der Ueberschrift „Wie es weitergeht".
+ * Dass am Ende ueberhaupt etwas herauskommt, prueft pruefung/papier-test.ts
+ * vor jedem Deployment.
  */
 export function anhangEinstiege(roh: string): Einstieg[] {
-  const zeilen = anhangText(roh).split("\n");
+  /* Vor der Marke steht Mailtext, kein Listeneintrag. Ohne Marke: alles. */
+  const ab = roh.split(LISTE_AB);
+  const text = anhangText(ab.length > 1 ? ab.slice(1).join("") : roh);
   const blocks: { gruppe: string; punkte: { was: string; url: string }[] }[] = [];
 
-  const eingerueckt = (z: string) => /^\s+\S/.test(z);
-  /** Die naechste Zeile mit Inhalt — Leerzeilen trennen, sie beenden nichts. */
-  const naechsteVolle = (ab: number) => {
-    for (let i = ab; i < zeilen.length; i++) if (zeilen[i].trim()) return zeilen[i];
-    return "";
-  };
+  for (const absatz of text.split(/\n\s*\n/)) {
+    const zeilen = absatz.trim().split("\n").map((z) => z.trim()).filter(Boolean);
+    if (zeilen.length === 0) continue;
 
-  for (let i = 0; i < zeilen.length; i++) {
-    const zeile = zeilen[i];
-    if (!zeile.trim()) continue;
-
-    if (!eingerueckt(zeile)) {
-      const kopf = zeile.trim();
-      /* Eine Gruppe ist eine Ueberschrift MIT Eintraegen darunter. */
-      if (kopf.endsWith(":") && eingerueckt(naechsteVolle(i + 1))) {
-        blocks.push({ gruppe: kopf, punkte: [] });
-      } else {
-        /* Alles andere beendet die laufende Gruppe. */
-        if (blocks.length && blocks[blocks.length - 1].punkte.length === 0) blocks.pop();
-        else if (blocks.length) blocks.push({ gruppe: "", punkte: [] });
-      }
+    const letzte = zeilen[zeilen.length - 1];
+    if (!/^https?:\/\//.test(letzte)) {
+      /* Eine Ueberschrift ohne Eintraege war keine — sie faellt gleich weg. */
+      if (blocks.length && blocks[blocks.length - 1].punkte.length === 0) blocks.pop();
+      blocks.push({ gruppe: zeilen.join(" ").replace(/:$/, ""), punkte: [] });
       continue;
     }
 
-    const inhalt = zeile.trim();
+    /* Ein Eintrag ohne Ueberschrift darueber gehoert nicht in die Liste. */
     const offen = blocks[blocks.length - 1];
-    if (!offen?.gruppe) continue;
-
-    /*
-      Die Adresse gehoert zum Eintrag darueber. Steht sie allein da, weil
-      jemand die Beschreibung vergessen hat, bekommt sie sich selbst als Text —
-      besser ein nackter Link als ein verschluckter.
-    */
-    if (/^https?:\/\//.test(inhalt)) {
-      const letzter = offen.punkte[offen.punkte.length - 1];
-      if (letzter && !letzter.url) letzter.url = inhalt;
-      else offen.punkte.push({ was: inhalt, url: inhalt });
-    } else {
-      offen.punkte.push({ was: inhalt, url: "" });
-    }
+    if (!offen) continue;
+    const was = zeilen.slice(0, -1).join(" ").replace(/:$/, "");
+    offen.punkte.push({ was: was || letzte, url: letzte });
   }
 
-  /* Eintraege ohne Adresse sind halbe Saetze und gehoeren nicht aufs Blatt. */
-  return blocks
-    .filter((b) => b.gruppe)
-    .map((b) => ({ gruppe: b.gruppe, punkte: b.punkte.filter((p) => p.url) }))
-    .filter((b) => b.punkte.length > 0);
+  return blocks.filter((b) => b.punkte.length > 0);
 }

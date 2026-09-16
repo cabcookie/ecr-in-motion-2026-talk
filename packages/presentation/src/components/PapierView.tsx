@@ -182,19 +182,26 @@ function Schluss() {
         </h2>
         <p className="mt-2 mb-0 max-w-[92ch] text-[10pt] leading-relaxed text-fg-2">
           Vier Wege, je nachdem, wer mitliest. Dieselbe Liste steht in der Antwort-Mail,
-          die Sie am Abend von Lisa Berger bekommen haben.
+          die Du am Abend von Lisa Berger bekommen hast.
         </p>
 
         <div className="mt-[7mm] grid grid-cols-2 gap-x-[12mm] gap-y-[6mm]">
           {EINSTIEGE.map((block) => (
             <div key={block.gruppe}>
-              <p className="m-0 font-mono text-[8.5pt] leading-snug tracking-[0.08em] text-fg-3 uppercase">
-                {block.gruppe.replace(/:$/, "")}
+              {/*
+                Ganze Saetze, keine Etiketten — deshalb Satzschrift und keine
+                Versalien. Die Ueberschriften standen hier einmal als kurze
+                Mono-Labels in Grossbuchstaben; seit sie aus der Mail kommen
+                („Wenn Du Unterstuetzung von Deiner IT brauchst ..."), waeren
+                das drei Zeilen Geschrei.
+              */}
+              <p className="m-0 max-w-[46ch] text-[9.5pt] leading-snug font-semibold text-fg">
+                {block.gruppe}
               </p>
               <ul className="mt-2 mb-0 list-none space-y-[2.5mm] p-0">
                 {block.punkte.map((punkt) => (
                   <li key={punkt.url}>
-                    <p className="m-0 text-[9.5pt] leading-snug">{punkt.was}</p>
+                    <p className="m-0 text-[9pt] leading-snug text-fg-2">{punkt.was}</p>
                     {/*
                       Die Adresse ausgeschrieben und nicht hinter dem Text
                       versteckt: Auf Papier ist ein Link, den man nicht lesen

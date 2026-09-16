@@ -2,79 +2,113 @@
 Der feste Teil jeder Antwortmail.
 
 Alles unterhalb dieses Kommentars geht WORTWOERTLICH raus — so, wie es hier
-steht, inklusive Zeilenumbruechen und Einrueckungen. Kein Markdown wird
-gerendert: Die Mail ist reiner Text, weil sie in jedem Programm gleich
-aussehen soll. Ueberschriften mit # oder Sternchen fuer fett wuerden beim
-Empfaenger als # und Sternchen ankommen.
+steht. Kein Markdown wird gerendert: Die Mail ist reiner Text, weil sie in
+jedem Programm gleich aussehen soll. Ueberschriften mit # oder Sternchen fuer
+fett kaemen beim Empfaenger als # und Sternchen an.
 
-Zwei Dinge, die dieser Text nicht weiss:
-- Was darueber steht (die Antwort des Agenten, seine Schrittfolge und das
-  Zitat der eingegangenen Mail) baut brief.ts zusammen.
-- Die Trennlinie "— — —" davor setzt ebenfalls brief.ts. Diese Datei faengt
-  mit dem ersten Satz an.
+Was darueber steht, baut brief.ts zusammen: die Antwort des Agenten und seine
+Schrittfolge. Was DARUNTER steht, ist die zitierte Mail des Empfaengers —
+dieser Anhang kommt davor, weil ein Zitat immer zuletzt kommt.
 
-Zeilen nicht laenger als etwa 72 Zeichen. Mailprogramme brechen laengere
-Zeilen selbst um, und dann steht der Umbruch an einer Stelle, die niemand
-gewaehlt hat. Adressen stehen deshalb auch immer allein auf ihrer Zeile —
-eine umgebrochene URL ist kein Link mehr.
+ZEILENLAENGE: hoechstens etwa 70 Zeichen. Mailprogramme brechen laengere
+Zeilen selbst um, und dann steht der Umbruch, wo ihn niemand gewaehlt hat.
+Adressen deshalb IMMER allein auf ihrer Zeile und nie eingerueckt — eine
+umgebrochene URL ist kein Link mehr, und eine eingerueckte sieht auf einem
+Handy wie ein Fehler aus. 'pnpm mail:test' prueft beides.
 
-Zur Einstiegsliste unten — zwei Regeln, beide teuer erkauft, denn hier
-standen schon einmal Links, die nur auf Startseiten fuehrten:
+DIE FORM DER LISTE UNTEN traegt mehr, als man ihr ansieht: Die letzte Seite
+des PDFs liest dieselbe Datei und macht Spalten daraus. Zwei Regeln, und
+beide gelten fuer Text, den man ohnehin so schreiben wuerde:
+
+  Ein Absatz, auf den eine Adresse folgt, IST ein Eintrag.
+  Ein Absatz, auf den keine folgt, ist die Ueberschrift darueber.
+
+Wo die Liste anfaengt, sagt die Marke weiter unten — ein Kommentar, der nur
+das Wort "liste" enthaelt. Alles davor (Kennzeichnung, Dank, die Adressen)
+bleibt in der Mail, taucht im PDF aber nicht auf. Wer das Muster verlaesst,
+merkt es in der Mail NICHT, haette aber eine leere Seite im PDF; davor bricht
+'pnpm papier:test' ab.
+
+Diese Marke NICHT woertlich in diesen Kommentar schreiben: Ihr Ende beendet
+auch den Kommentar, in dem sie steht. Genau das ist hier schon passiert.
+
+DEN ERSTEN SATZ bitte stehen lassen. Abschnitt 23 des Vortrags erklaert am
+EU AI Act, dass erkennbar sein muss, wenn eine Maschine nach aussen
+kommuniziert. Faellt er weg, widerlegt die Mail die eigene Folie —
+'pnpm mail:test' schlaegt dann an.
+
+ZUR AUSWAHL DER LINKS, zwei Regeln, beide teuer erkauft — hier standen schon
+einmal Adressen, die nur auf Startseiten fuehrten:
 
 1. Jeder Link fuehrt dorthin, wo es losgeht. Nicht auf eine Uebersicht, von
-   der aus der Empfaenger selbst weitersuchen muss. Ein Beleg, den man sich
-   erst suchen muss, ist keiner.
+   der aus der Leser selbst weitersuchen muss. Ein Beleg, den man sich erst
+   suchen muss, ist keiner.
 2. Vier Gruppen, weil vier verschiedene Menschen mitlesen: wer selbst
-   ausprobieren will, wer entscheiden muss, wer es bauen soll, und wer es
+   ausprobieren will, wer es verstehen muss, wer es bauen soll, und wer es
    nicht allein anfangen moechte. Ohne die Gruppen waere es eine Linkliste,
    und eine Linkliste klickt niemand.
 
 Preise nur, wo sie oeffentlich sind. tecRacer nennt zu seinen Einstiegen
 keine — das sagt die Zeile dann auch, statt es offenzulassen.
 
-Die Form der Liste traegt: Die letzte Seite des PDFs liest dieselbe Datei und
-macht Spalten daraus. Eine Gruppe ist eine Zeile am Zeilenanfang mit
-Doppelpunkt, ihre Eintraege sind eingerueckt, je zwei Zeilen — Beschreibung,
-dann Adresse. Wer das Muster verlaesst, verliert die Gruppe im PDF; davor
-warnt 'pnpm papier:test' vor jedem Deployment.
-
 Dieser Kommentar geht nicht mit raus.
 -->
 
 Diese Antwort kommt von einem KI-Agenten, nicht von einem Menschen.
 
-Die Folien als PDF:  https://ecr2026.carstenbkoch.de/vortrag
-Der Quelltext dazu:  https://github.com/cabcookie/ecr-in-motion-2026-talk
+Danke, dass Du dabei gewesen bist. Bleib gerne mit mir in Kontakt:
+https://carstenbkoch.de/
 
-Ihre E-Mail-Adresse wurde nur für diese eine Antwort verwendet und ist
-damit gelöscht.
+Die Folien zur KI-Masterclass beim ECR in Motion 2026 in Bonn:
+https://ecr2026.carstenbkoch.de/vortrag
 
-— — —
+Der Quelltext für Präsentation, Agent und AWS-Infrastruktur — falls
+Du es in Deinem Unternehmen nachbauen willst:
+https://github.com/cabcookie/ecr-in-motion-2026-talk
 
-Wenn Sie selbst anfangen möchten:
+Deine E-Mail-Adresse wurde nur für diese eine Antwort verwendet und
+ist damit gelöscht.
 
-Selbst ausprobieren — ohne AWS-Konto, ohne Kosten:
-  Amazon Quick, Free-Plan — Anmeldung mit Ihrer E-Mail-Adresse
-  https://aws.amazon.com/quick/
-  Die Apps dazu: Mac, Windows, Browser, Outlook, Excel
-  https://aws.amazon.com/quick/desktop/
+<!--liste-->
 
-Einordnen, ohne eine Zeile Code (AWS Skill Builder, kostenlos):
-  Generative AI für Entscheider — drei Kurse, gut drei Stunden
-  https://skillbuilder.aws/learning-plan/STDH6NGPH7/generative-ai-learning-plan-for-decision-makers/MHMHDAWQJY
-  Agenten — das Thema dieses Abends, in einer Stunde
-  https://skillbuilder.aws/learn/DNBD5MT8ZD/introduction-to-agentic-ai-on-aws/WAKAFK6UFY
+Wenn Du selbst anfangen möchtest, KI zu nutzen, oder mehr darüber
+lernen willst, habe ich Dir hier etwas zusammengestellt.
 
-Zum Weiterleiten an die IT:
-  Amazon Bedrock — der Zugang zu den Modellen
-  https://docs.aws.amazon.com/de_de/bedrock/latest/userguide/what-is-bedrock.html
-  Amazon Bedrock AgentCore — was einen Agenten betriebsfähig macht
-  https://aws.amazon.com/bedrock/agentcore/
-  Lernplan für Entwickler, kostenlos
-  https://explore.skillbuilder.aws/learn/public/learning_plan/view/2068/generative-ai-learning-plan-for-developers
+Mit Amazon Quick bekommst Du einen Agenten auf Deinen Computer, der
+Dir bei Deinen täglichen Aufgaben hilft. Fang mit dem kostenlosen
+Plan an — die Anmeldung braucht nur Deine E-Mail-Adresse:
+https://aws.amazon.com/quick/
 
-Mit Begleitung statt allein (AWS-Partner tecRacer, Preise auf Anfrage):
-  Data Readiness Discovery — nach einer Woche wissen Sie, ob Ihre Daten tragen
-  https://www.tecracer.com/loesungen/conversational-generative-ai/
-  GenAI Data-Evaluator — Proof of Concept auf Ihren eigenen Daten
-  https://www.tecracer.com/en/solutions/genai-data-evaluator/
+Und lade Dir die App dazu herunter:
+https://aws.amazon.com/quick/desktop/
+
+Du willst mehr über KI lernen? Dann schau Dir diese kostenlosen
+Kurse an.
+
+Generative AI für Entscheider — drei Kurse, gut drei Stunden:
+https://skillbuilder.aws/learning-plan/STDH6NGPH7/generative-ai-learning-plan-for-decision-makers/MHMHDAWQJY
+
+Agenten — das Thema dieser Masterclass, in einer Stunde:
+https://skillbuilder.aws/learn/DNBD5MT8ZD/introduction-to-agentic-ai-on-aws/WAKAFK6UFY
+
+Wenn Du Unterstützung von Deiner IT brauchst: Diese drei Seiten
+erleichtern ihr den Einstieg in AWS.
+
+Amazon Bedrock — der Zugang zu den Modellen:
+https://docs.aws.amazon.com/de_de/bedrock/latest/userguide/what-is-bedrock.html
+
+Amazon Bedrock AgentCore — was einen Agenten betriebsfähig macht:
+https://aws.amazon.com/bedrock/agentcore/
+
+Lernplan für Entwickler, ebenfalls kostenlos:
+https://explore.skillbuilder.aws/learn/public/learning_plan/view/2068/generative-ai-learning-plan-for-developers
+
+Und wenn Du es nicht allein anfangen willst: Der AWS-Partner tecRacer
+bietet zwei Einstiege an, die Preise gibt es auf Anfrage.
+
+Data Readiness Discovery — nach einer Woche weißt Du, ob Deine Daten
+tragen:
+https://www.tecracer.com/loesungen/conversational-generative-ai/
+
+GenAI Data-Evaluator — ein Proof of Concept auf Deinen eigenen Daten:
+https://www.tecracer.com/en/solutions/genai-data-evaluator/

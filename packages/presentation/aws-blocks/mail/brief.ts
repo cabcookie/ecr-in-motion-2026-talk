@@ -197,15 +197,6 @@ export function baueAntwort(modus: Modus, lauf: Lauf, anhang: string, eingang?: 
   }
 
   /*
-    Die ursprüngliche Nachricht zitiert, wie es jedes Mailprogramm täte. Wer
-    mehrere Anfragen geschickt hat oder Stunden später liest, sieht sonst nicht,
-    worauf sich die Antwort bezieht.
-  */
-  if (eingang?.text?.trim()) {
-    teile.push("", "— — —", "", ...zitat(eingang));
-  }
-
-  /*
     Der feste Teil steht in anhang.md und wird WORTWOERTLICH angehaengt.
 
     Er stand frueher hier als Folge von push()-Zeilen, und das war die falsche
@@ -219,6 +210,20 @@ export function baueAntwort(modus: Modus, lauf: Lauf, anhang: string, eingang?: 
     Laufzeiten holt Dateien anders. Reine Zeichenketten laufen ueberall.
   */
   teile.push("", "— — —", "", anhang);
+
+  /*
+    Das Zitat ganz zum Schluss — nach dem Anhang, nicht davor.
+
+    So macht es jedes Mailprogramm, und es hat einen Grund: Das Zitat ist
+    Gedaechtnisstuetze, nicht Inhalt. Wer die Antwort oeffnet, will die Antwort
+    lesen und danach, was er selbst tun kann; was er vor zwei Stunden selbst
+    geschrieben hat, braucht er hoechstens zum Nachschlagen. Stand es davor,
+    schob es den nuetzlichen Teil unter die eigene alte Mail — und dort sucht
+    ihn niemand.
+  */
+  if (eingang?.text?.trim()) {
+    teile.push("", "— — —", "", ...zitat(eingang));
+  }
 
   return teile.join("\n");
 }
