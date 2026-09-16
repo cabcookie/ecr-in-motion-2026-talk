@@ -634,14 +634,7 @@ export const SECTIONS: Section[] = [
         },
         app: "Chat auf der untersten Stufe: fast kein Prompt, keine Werkzeuge. Der Auftakt ist die Briefing-Mail des jeweiligen Teilnehmers, sichtbar im Verlauf.",
         note: "Worauf zu achten ist: WENN er eine Marge rechnet, rechnet er sie auf den Brutto-Preis. Beim Briefing Morgenrot (EK 0,55 / VK 0,89) nannte er in zwei von drei Läufen rund 38 % — richtig sind 33,9 %, weil Schokolade mit 7 % Mehrwertsteuer läuft und auf den Netto-VK gerechnet wird. Nicht jeder Lauf nennt eine Zahl, und jedes Briefing hat andere Preise; frag also offen „hat jemand eine Marge genannt bekommen?“ statt die 38 % anzukündigen. Wenn eine kommt, ist sie der bessere Beleg als jede Folie: plausibel, sauber hergeleitet und trotzdem falsch. Gemessen am 16.09.",
-        papier: {
-          statt: {
-            t: "statement",
-            text: "Ein Agent, der nichts nachschlagen kann.",
-            after: "Kein Systemprompt, keine Werkzeuge, kein Zugriff auf ein einziges System — nur Trainingsdaten.",
-          },
-          text: "Kein Wissen über das Haus, kein Systemzugriff, nicht einmal eine Anweisung, wer er ist. Er antwortet trotzdem — und genau das ist der Punkt.",
-        },
+        papier: { weg: true },
       },
       {
         at: "18:23",
@@ -651,6 +644,7 @@ export const SECTIONS: Section[] = [
           after: "Er will unbedingt antworten. Er kann es nur nicht.",
         },
         say: "Das dauert jetzt ein paar Minuten — die Mail muss verarbeitet und zurückgeschickt werden. Nutzen wir die Zeit für ein Bild: Stell Dir einen Abiturienten vor. Hochmotiviert, klug, liest schnell. Aber er war noch nie in Deinem Unternehmen. Er kennt Deine Kategorievorgaben nicht, Deine Lieferanten nicht, Deinen Regalplatz nicht. Und trotzdem will er unbedingt eine Antwort geben.",
+        papier: { weg: true },
       },
       {
         at: "18:25",
@@ -674,9 +668,7 @@ export const SECTIONS: Section[] = [
         say: "Schauen wir uns die Antworten an. Wer hat eine bekommen? — Und jetzt der interessante Teil: Vergleicht sie miteinander. Wenn mehrere von Euch sehr unterschiedliche Zahlen bekommen haben, dann habt Ihr gerade eine Halluzination gesehen. Das Modell hat keine Marge geprüft. Es hat eine plausibel klingende erfunden, weil Antworten seine Aufgabe ist.",
         inter:
           "Antworten vergleichen lassen: „Wer hat eine bekommen? Was steht bei Dir für eine Marge drin?“",
-        papier: {
-          text: "Bei EK 0,55 € und VK 0,89 € nannte das Modell rund 38 % Marge. Richtig sind 33,9 % — Schokolade läuft mit 7 % Mehrwertsteuer, gerechnet wird auf den Netto-VK. Sauber hergeleitet und trotzdem falsch.",
-        },
+        papier: { weg: true },
       },
     ],
     n: 14,
