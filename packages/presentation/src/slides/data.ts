@@ -433,6 +433,12 @@ export const SECTIONS: Section[] = [
           cite: "John von Neumann · 1949",
         },
         say: "John von Neumann sagte 1949 ein Jahrzehnt des Ruins voraus. In den sechs Jahren danach stieg die Beschäftigung um vier Millionen.",
+        /*
+          Die Auflösung steht nur im Sprechertext — auf der Folie steht die
+          Prophezeiung allein. Ohne sie zeigte das PDF zwei Untergangszitate
+          ohne Widerlegung, obwohl die Überschrift das Gegenteil behauptet.
+        */
+        papier: { text: "In den sechs Jahren danach stieg die Beschäftigung in den USA um vier Millionen." },
       },
       {
         at: "18:13",
@@ -442,6 +448,7 @@ export const SECTIONS: Section[] = [
           cite: "Jeremy Rifkin · 1995",
         },
         say: 'Jeremy Rifkin veröffentlichte 1995 „Das Ende der Arbeit" — danach fiel die US-Arbeitslosigkeit unter vier Prozent. Dieselbe Sorge, immer wieder, seit der Dampfmaschine.',
+        papier: { text: "Danach fiel die US-Arbeitslosigkeit unter vier Prozent. Dieselbe Sorge, immer wieder, seit der Dampfmaschine." },
       },
     ],
     n: 8,
