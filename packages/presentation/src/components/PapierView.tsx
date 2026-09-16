@@ -2,6 +2,14 @@ import { SECTIONS } from "@/slides/data";
 import type { Panel, Section } from "@/slides/types";
 import { SectionView } from "./SectionView";
 import { Logo } from "./Logo";
+/*
+  Dieselbe Quelle wie die Antwortmail — nicht eine zweite Liste.
+
+  Was hier steht, hat jeder Teilnehmer am Abend auch per Mail bekommen. Zwei
+  gepflegte Fassungen davon waeren eine zu viel: Die eine veraltet, und man
+  merkt es erst, wenn jemand auf einen toten Link klickt.
+*/
+import { CODE_URL, EINSTIEGE, PDF_URL } from "../../aws-blocks/mail/konfig";
 
 
 /** Die Bühne, auf der jede Folie entworfen ist. */
@@ -139,31 +147,79 @@ function Deckblatt() {
         </p>
       </div>
       <p className="m-0 font-mono text-[9pt] text-fg-3">
-        Carsten Koch · Amazon Web Services · ecr2026.carstenbkoch.de
+        Carsten Koch · Amazon Web Services · ecr2026.carstenbkoch.de/vortrag
       </p>
     </section>
   );
 }
 
+/**
+ * Die letzte Seite: was man am naechsten Morgen damit anfangen kann.
+ *
+ * Der Vortrag endet mit einer Adresse auf der Leinwand — die kann man
+ * fotografieren, aber nicht anklicken. Hier stehen die Wege ausgeschrieben,
+ * nach Leserkreis geordnet: wer selbst ausprobieren will, wer entscheiden
+ * muss, wer es bauen soll, und wer es nicht allein anfangen moechte.
+ *
+ * Die Reihenfolge und die Auswahl kommen aus der Antwortmail und werden
+ * NICHT hier gepflegt. Wer einen Link aendert, aendert beide Fassungen.
+ */
 function Schluss() {
   return (
-    <section className="papier-seite flex flex-col justify-between px-[22mm] py-[18mm]">
-      <Markenzeichen />
+    <section className="papier-seite flex flex-col justify-between px-[20mm] py-[14mm]">
       <div>
-      <h2 className="m-0 font-display text-[22pt] font-extrabold">Zum Weiterlesen</h2>
-      <p className="mt-4 mb-0 max-w-[62ch] text-[11pt] leading-relaxed text-fg-2">
-        Der Vortrag zum Mitklicken und der vollständige Quelltext — einschließlich der
-        simulierten Systeme, der Messläufe und aller Prompts:
-      </p>
-      <p className="mt-6 mb-0 font-mono text-[11pt]">
-        ecr2026.carstenbkoch.de
-        <br />
-        github.com/cabcookie/ecr-in-motion-2026-talk
-      </p>
+        <Markenzeichen />
+        <h2 className="mt-[8mm] mb-0 font-display text-[20pt] leading-none font-extrabold">
+          Wie es weitergeht
+        </h2>
+        <p className="mt-2 mb-0 max-w-[92ch] text-[10pt] leading-relaxed text-fg-2">
+          Vier Wege, je nachdem, wer mitliest. Dieselbe Liste steht in der Antwort-Mail,
+          die Sie am Abend von Lisa Berger bekommen haben.
+        </p>
+
+        <div className="mt-[7mm] grid grid-cols-2 gap-x-[12mm] gap-y-[6mm]">
+          {EINSTIEGE.map((block) => (
+            <div key={block.gruppe}>
+              <p className="m-0 font-mono text-[8.5pt] leading-snug tracking-[0.08em] text-fg-3 uppercase">
+                {block.gruppe.replace(/:$/, "")}
+              </p>
+              <ul className="mt-2 mb-0 list-none space-y-[2.5mm] p-0">
+                {block.punkte.map((punkt) => (
+                  <li key={punkt.url}>
+                    <p className="m-0 text-[9.5pt] leading-snug">{punkt.was}</p>
+                    {/*
+                      Die Adresse ausgeschrieben und nicht hinter dem Text
+                      versteckt: Auf Papier ist ein Link, den man nicht lesen
+                      kann, kein Link. `break-all`, weil die Skill-Builder-
+                      Adressen laenger sind als die Spalte breit ist.
+                    */}
+                    <p className="m-0 font-mono text-[7.5pt] leading-snug break-all text-fg-3">
+                      {punkt.url}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
-      <p className="m-0 font-mono text-[9pt] text-fg-3">
-        Carsten Koch · Amazon Web Services
-      </p>
+
+      <div className="mt-[6mm] border-t border-fg-3/25 pt-[4mm]">
+        <p className="m-0 font-mono text-[9pt] leading-relaxed">
+          {/*
+            Die anklickbare Fassung des Vortrags steht hier bewusst NICHT: Sie
+            wird nach dem Abend abgeschaltet, und ein gedrucktes Dokument
+            ueberlebt sie. Eine Adresse, die ins Leere laeuft, ist schlechter
+            als keine.
+          */}
+          Diese Folien als PDF: {PDF_URL}
+          <br />
+          Der Quelltext, die Messläufe und alle Prompts: {CODE_URL}
+        </p>
+        <p className="mt-[3mm] mb-0 font-mono text-[8pt] text-fg-3">
+          Carsten Koch · Amazon Web Services
+        </p>
+      </div>
     </section>
   );
 }

@@ -1299,7 +1299,19 @@ export const SECTIONS: Section[] = [
           t: "statement",
           text: "Komm und hör, was andere schon tun.",
         },
-        say: "Und der letzte Punkt ist der einfachste: Komm morgen früh um acht zum Frühstück. Dort sitzen Entscheider aus anderen Häusern, die genau das gerade ausprobieren. Du hörst, was funktioniert — und vor allem, was nicht funktioniert. Das ist meistens der nützlichere Teil. Vielen Dank.",
+        say: "Und der letzte Punkt ist der einfachste: Komm morgen früh um acht zum Frühstück. Dort sitzen Entscheider aus anderen Häusern, die genau das gerade ausprobieren. Du hörst, was funktioniert — und vor allem, was nicht funktioniert. Das ist meistens der nützlichere Teil.",
+      },
+      {
+        at: "19:00",
+        mock: {
+          t: "statement",
+          text: "ecr2026.carstenbkoch.de/vortrag",
+          after: "Die Folien als PDF. Dieselbe Adresse steht in der Antwort-Mail.",
+        },
+        say: "Und wenn Du heute Abend mitschreiben wolltest: musst Du nicht. Unter dieser Adresse liegen die Folien als PDF — mit den Zahlen, die wir gemessen haben, und den Links, die Dich weiterbringen. Mach einfach ein Foto. Dieselbe Adresse steht auch unten in der Mail, die Du von Lisa bekommen hast. Vielen Dank.",
+        papier: {
+          text: "Diese Seite bleibt am Ende stehen, damit man sie fotografieren kann. Was dahinter liegt, steht auf der letzten Seite dieses Dokuments.",
+        },
       },
     ],
     n: 27,

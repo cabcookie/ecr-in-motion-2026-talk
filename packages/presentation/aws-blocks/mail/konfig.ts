@@ -35,9 +35,22 @@ export function postfachFuer(empfaenger: readonly string[]): Postfach {
   );
 }
 
-/** Adresse des Vortrags — steht in jeder Antwort. */
-export const VORTRAG_URL = "https://ecr2026.carstenbkoch.de";
+/*
+  Hier stand die Adresse der anklickbaren Fassung. Sie ist raus, weil die
+  Fassung nach dem Abend abgeschaltet wird — und eine Adresse, die ins Leere
+  laeuft, ist in einer Mail schlechter als gar keine. Was den Abend ueberlebt,
+  ist das PDF und der Quelltext.
+*/
 export const CODE_URL = "https://github.com/cabcookie/ecr-in-motion-2026-talk";
+/**
+ * Die Folien als PDF.
+ *
+ * Kurz genug, um sie jemandem zuzurufen, und ohne Endung — die Anwendung
+ * faengt den Pfad ab und leitet auf die Datei weiter (siehe src/routen.ts).
+ * Wer am naechsten Morgen nachschlagen will, worueber wir gesprochen haben,
+ * braucht nicht den Klickpfad durch den Vortrag, sondern ein Dokument.
+ */
+export const PDF_URL = "https://ecr2026.carstenbkoch.de/vortrag";
 
 /**
  * Was unter jeder Antwort steht — der Weg, den die Teilnehmer selbst gehen können.

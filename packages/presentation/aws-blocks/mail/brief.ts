@@ -1,5 +1,5 @@
 import PostalMime from "postal-mime";
-import { CODE_URL, EINSTIEGE, VORTRAG_URL, type Modus } from "./konfig";
+import { CODE_URL, EINSTIEGE, PDF_URL, type Modus } from "./konfig";
 import type { Lauf } from "./agent";
 
 /** Was wir aus einer eingegangenen Mail brauchen. */
@@ -211,8 +211,14 @@ export function baueAntwort(modus: Modus, lauf: Lauf, eingang?: Eingang): string
     "",
     "Diese Antwort kommt von einem KI-Agenten, nicht von einem Menschen.",
     "",
-    `Der Vortrag zum Mitklicken:  ${VORTRAG_URL}`,
-    `Der Quelltext dazu:          ${CODE_URL}`,
+    /*
+      Die anklickbare Fassung des Vortrags wird nach dem Abend abgeschaltet.
+      Sie hier zu nennen hiesse, jemandem eine Adresse mitzugeben, die in ein
+      paar Tagen ins Leere laeuft — schlimmer als gar kein Hinweis. Was bleibt,
+      ist das PDF und der Quelltext.
+    */
+    `Die Folien als PDF:  ${PDF_URL}`,
+    `Der Quelltext dazu:  ${CODE_URL}`,
     /*
       Hier standen zwei Belege gegen die Massenarbeitslosigkeit. Sie sind raus:
       Die Links fuehrten nur auf die Startseiten der beiden Aemter, nicht auf
