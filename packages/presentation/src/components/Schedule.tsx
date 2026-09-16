@@ -40,8 +40,9 @@ function ladeVersatz(): number {
  * um 19:00 verschiebt sich nicht mit.
  *
  * Beide Knöpfe öffnen zugleich das Vortragsfenster auf dem Server (siehe
- * aws-blocks/fenster.ts): „Start jetzt" ab sofort, „18:00" heute von 18 bis
- * 20 Uhr. Nur in diesem Fenster nimmt die Anwendung Teilnehmer an. Der
+ * aws-blocks/fenster.ts): „Start jetzt" ab sofort, „18:00" heute von 17:50
+ * bis 19:50 Uhr — zehn Minuten Vorlauf, damit die Handys vor dem Beginn
+ * bereitstehen. Nur in diesem Fenster nimmt die Anwendung Teilnehmer an. Der
  * Versatz für die Anzeige bleibt im Browser; das Fenster steht auf dem
  * Server, weil es alle Geräte betrifft.
  *
@@ -143,7 +144,7 @@ export function Schedule({
               void oeffnen("abend");
             }}
             className={`${knopf} ${versatz ? "text-fg-3" : "text-fg"}`}
-            title="Zurück auf den echten Beginn — die Anwendung ist heute von 18:00 bis 20:00 offen"
+            title="Zurück auf den echten Beginn — die Anwendung ist heute von 17:50 bis 19:50 offen"
           >
             18:00
           </button>
