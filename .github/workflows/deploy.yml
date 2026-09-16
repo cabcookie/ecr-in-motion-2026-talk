@@ -1,0 +1,175 @@
+name: deploy
+
+# Rollt den Vortrag nach ecr2026.carstenbkoch.de aus.
+#
+# Voraussetzung ist der Bootstrap-Stack aus packages/infra: er legt die Rolle an,
+# die dieser Workflow annimmt, und die Hosted Zone, gegen die das Zertifikat
+# geprüft wird. Beides wird einmal von Hand ausgerollt — ein Workflow kann nicht
+# die Rolle anlegen, die er zum Anlegen braucht.
+#
+# Zugangsdaten gibt es nur über OIDC, nicht als Schlüsselpaar im Repository.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/presentation/**"
+      - "packages/infra/config.ts"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # OIDC: die Deploy-Rolle annehmen
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Abhängigkeiten (gesperrt)
+        run: pnpm install --frozen-lockfile
+
+      - name: Typen prüfen
+        run: pnpm --filter @ecr-talk/presentation exec tsc --noEmit
+
+      - name: AWS-Zugangsdaten über OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
+          aws-region: eu-central-1
+
+      - name: Markenmaterial holen
+        # Schrift und Logo gehören Amazon und liegen nicht im Repository. Sie
+        # kommen aus einem privaten Eimer, den der Bootstrap-Stack anlegt und
+        # den diese Rolle lesen darf.
+        #
+        # Das muss NACH den Zugangsdaten und VOR dem Ausrollen stehen: Hosting
+        # baut die Seite während des Synthetisierens, also innerhalb des
+        # nächsten Schritts.
+        run: |
+          set -euo pipefail
+          ziel=packages/presentation/public/brand
+          mkdir -p "$ziel"
+          aws s3 sync "s3://${BRAND_BUCKET}/" "$ziel/"
+          test -f "$ziel/aws-logo.svg" || {
+            echo "::error::Kein Logo im Eimer ${BRAND_BUCKET} — die Seite käme ohne Marke heraus."
+            exit 1
+          }
+          echo "Geholt: $(find "$ziel" -type f | wc -l | tr -d ' ') Dateien"
+        env:
+          BRAND_BUCKET: ecr2026-brand-carstenbkoch-de
+
+      - name: Druckfassung prüfen
+        # Läuft VOR dem Ausrollen, weil er den Deploy aufhalten soll: Er findet
+        # die Folien, die ohne den Saal nichts zeigen — QR-Codes, Live-
+        # Auswertungen, Sprechertexte, die mit dem Raum reden. Fehlt für eine
+        # davon die Angabe `papier`, entstünde eine Seite, die den Leser in die
+        # Irre führt. Das fällt sonst niemandem auf.
+        run: pnpm --filter @ecr-talk/presentation run papier:test
+
+      - name: Browser für den PDF-Bau
+        run: pnpm --filter @ecr-talk/presentation exec playwright install --with-deps chromium
+
+      - name: PDF erzeugen
+        # VOR dem Ausrollen, weil das PDF mitrollen soll.
+        #
+        # Frueher lief dieser Schritt danach und druckte die Live-Seite. Das
+        # klang richtiger, machte das Ergebnis aber zu einem Anhaengsel: Es
+        # lag als Artefakt am Lauf, nicht im Netz, und wer es haben wollte,
+        # brauchte ein GitHub-Konto. Nachtraeglich in den Eimer legen geht
+        # nicht — vor ihm sitzt eine Router-Funktion, die Pfade umschreibt,
+        # und jeder Bau liegt unter einem eigenen builds/<id>/-Praefix.
+        #
+        # Gedruckt wird deshalb ein lokal ausgeliefertes `dist`. Dieselben
+        # Dateien, die gleich hochgeladen werden — das Backend braucht die
+        # Route /papier nicht, sie rendert aus den Folien selbst.
+        run: |
+          set -euo pipefail
+          cd packages/presentation
+          pnpm build
+          pnpm exec vite preview --port 4173 --strictPort > /tmp/vorschau.log 2>&1 &
+          for i in $(seq 1 40); do
+            curl -sf -o /dev/null http://localhost:4173/ && break
+            sleep 0.5
+          done
+          curl -sf -o /dev/null http://localhost:4173/ || {
+            echo "::error::Die Vorschau kam nicht hoch:"; cat /tmp/vorschau.log; exit 1
+          }
+          node scripts/pdf.mjs http://localhost:4173 public/ecr-in-motion-2026.pdf
+
+      - name: Ausrollen
+        env:
+          # Ohne dieses Geheimnis könnte jeder mit der Adresse die Folien
+          # weiterklicken. Es kommt aus den Repository-Secrets und darf NICHT
+          # über backendConfig gesetzt werden — das landet in einer öffentlich
+          # lesbaren config.json.
+          DECK_TOKEN: ${{ secrets.DECK_TOKEN }}
+          # Der Mailempfang liegt im Konto der Domain (siehe packages/mail-infra).
+          # Von dort kommen diese drei Werte zurück. Keine Geheimnisse im engeren
+          # Sinn — eine ARN erlaubt nichts —, aber sie nennen Konto-IDs, und die
+          # muss man nicht veröffentlichen.
+          MAIL_ACCESS_ROLE_ARN: ${{ secrets.MAIL_ACCESS_ROLE_ARN }}
+          MAIL_BUCKET: ${{ secrets.MAIL_BUCKET }}
+          MAIL_TOPIC_ARN: ${{ secrets.MAIL_TOPIC_ARN }}
+        # `pnpm run deploy`, nicht `pnpm deploy`: Letzteres ist ein eingebauter
+        # pnpm-Befehl und verdeckt das Skript aus der package.json.
+        run: pnpm --filter @ecr-talk/presentation run deploy
+
+      - name: Erreichbarkeit prüfen
+        # Nicht nur die Seite, sondern auch Logo und Schrift. Ein Rollout, der
+        # grün meldet und die Marke unterschlägt, ist schlimmer als einer, der
+        # scheitert — er fällt erst am Beamer auf.
+        run: |
+          set -euo pipefail
+          basis=https://ecr2026.carstenbkoch.de
+          pfade="/ /brand/aws-logo.svg /brand/fonts/AmazonEmberDisplay_Rg.woff2 /ecr-in-motion-2026.pdf"
+          for i in $(seq 1 20); do
+            alle=ja
+            for p in $pfade; do
+              code="$(curl -s -o /dev/null -w '%{http_code}' "$basis$p" || true)"
+              [ "$code" = "200" ] || { alle=nein; letzter="$p → HTTP $code"; break; }
+            done
+            if [ "$alle" = "ja" ]; then
+              # Der Typ, nicht nur der Code. Liefert der Eimer das PDF als
+              # octet-stream aus, laedt der Browser es herunter statt es zu
+              # zeigen — HTTP 200 sagt darueber nichts.
+              typ="$(curl -s -o /dev/null -w '%{content_type}' "$basis/ecr-in-motion-2026.pdf" || true)"
+              case "$typ" in
+                application/pdf*) ;;
+                *) echo "::warning::Das PDF kommt als '$typ' statt application/pdf — der Browser laedt es herunter, statt es zu zeigen." ;;
+              esac
+              echo "Seite, Logo, Schrift und PDF antworten mit 200"
+              exit 0
+            fi
+            echo "Versuch $i: $letzter — warte"
+            sleep 15
+          done
+          echo "::error::Nach fünf Minuten nicht vollständig erreichbar: $letzter"
+          exit 1
+
+      - name: PDF aufbewahren
+        # Zusaetzlich zur ausgelieferten Fassung unter /vortrag — wer einen
+        # Lauf nachschlaegt, will sehen, was er hergestellt hat.
+        uses: actions/upload-artifact@v4
+        with:
+          name: vortrag-pdf
+          path: packages/presentation/public/ecr-in-motion-2026.pdf
+          if-no-files-found: error

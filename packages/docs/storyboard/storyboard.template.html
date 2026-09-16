@@ -1,0 +1,805 @@
+<title>ECR Masterclass Storyboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#EFF1F4;
+  --panel:#FFFFFF;
+  --panel-2:#F6F7F9;
+  --ink:#161A21;
+  --ink-2:#39414E;
+  --muted:#606A79;
+  --faint:#8B94A2;
+  --rule:#D7DCE3;
+  --rule-soft:#E6EAEF;
+  --b1:#B3261E;
+  --b2:#8A6A2F;
+  --b3:#1F5C8B;
+  --b4:#2C7A62;
+  --b1-wash:#B3261E14;
+  --b2-wash:#8A6A2F14;
+  --b3-wash:#1F5C8B14;
+  --b4-wash:#2C7A6214;
+  --accent:var(--b1);
+  --accent-wash:var(--b1-wash);
+  --shadow:0 1px 2px rgba(22,26,33,.06),0 8px 24px rgba(22,26,33,.07);
+  --shadow-sm:0 1px 2px rgba(22,26,33,.07);
+  --ok:#2C7A62;
+  --warn:#8A6A2F;
+  --sys-mail:#1F5C8B;
+  --sys-chat:#5B4B8A;
+  --sys-agent:#2C7A62;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1218;
+    --panel:#181C24;
+    --panel-2:#1F242D;
+    --ink:#E8EBF0;
+    --ink-2:#C2C9D4;
+    --muted:#98A2B1;
+    --faint:#6E7887;
+    --rule:#2C323D;
+    --rule-soft:#242932;
+    --b1:#F0705F;
+    --b2:#D6AC5E;
+    --b3:#6BA6D8;
+    --b4:#5EC29C;
+    --b1-wash:#F0705F1F;
+    --b2-wash:#D6AC5E1F;
+    --b3-wash:#6BA6D81F;
+    --b4-wash:#5EC29C1F;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+    --ok:#5EC29C;
+    --warn:#D6AC5E;
+    --sys-mail:#6BA6D8;
+    --sys-chat:#A392D8;
+    --sys-agent:#5EC29C;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1218;
+  --panel:#181C24;
+  --panel-2:#1F242D;
+  --ink:#E8EBF0;
+  --ink-2:#C2C9D4;
+  --muted:#98A2B1;
+  --faint:#6E7887;
+  --rule:#2C323D;
+  --rule-soft:#242932;
+  --b1:#F0705F;
+  --b2:#D6AC5E;
+  --b3:#6BA6D8;
+  --b4:#5EC29C;
+  --b1-wash:#F0705F1F;
+  --b2-wash:#D6AC5E1F;
+  --b3-wash:#6BA6D81F;
+  --b4-wash:#5EC29C1F;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+  --ok:#5EC29C;
+  --warn:#D6AC5E;
+  --sys-mail:#6BA6D8;
+  --sys-chat:#A392D8;
+  --sys-agent:#5EC29C;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:880px;margin:0 auto;padding-inline:16px;padding-block:0 56px}
+h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* ── header ─────────────────────────────────────── */
+.top{
+  position:sticky;top:0;z-index:20;
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--rule);
+  padding-inline:16px;
+}
+.top-inner{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding-block:12px 0}
+.brandrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:16px;letter-spacing:-.01em;margin:0}
+.brand span{color:var(--faint);font-weight:500}
+.meta{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px;margin-bottom:-1px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  appearance:none;border:1px solid transparent;background:transparent;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:500;
+  letter-spacing:.04em;color:var(--muted);cursor:pointer;
+  padding:6px 11px;border-radius:3px;white-space:nowrap;flex:0 0 auto;
+  display:flex;align-items:center;gap:7px;
+}
+.tab:hover{color:var(--ink);background:var(--rule-soft)}
+.tab .dot{width:7px;height:7px;border-radius:50%;background:var(--tc);flex:0 0 auto}
+.tab[aria-selected="true"]{color:var(--tc);background:var(--tw);border-color:color-mix(in srgb,var(--tc) 30%,transparent)}
+.tab:focus-visible,.nav button:focus-visible,.viewbtn:focus-visible,.ov-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.viewbtn{
+  appearance:none;background:transparent;border:1px solid var(--rule);color:var(--muted);
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 10px;border-radius:3px;cursor:pointer;
+}
+.viewbtn:hover{color:var(--ink);border-color:var(--faint)}
+
+/* ── block intro ────────────────────────────────── */
+.blockbar{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:16px 0 18px;border-bottom:1px solid var(--rule-soft);margin-bottom:22px;
+}
+.blocknum{
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:40px;line-height:.85;
+  color:var(--accent);flex:0 0 auto;font-variant-numeric:tabular-nums;
+}
+.blockmeta h2{font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.blockmeta p{margin:5px 0 0;font-size:13.5px;color:var(--muted);max-width:62ch}
+.blockmeta .budget{
+  display:inline-block;margin-top:8px;font-family:"IBM Plex Mono",monospace;font-size:11px;
+  letter-spacing:.05em;color:var(--accent);background:var(--accent-wash);
+  padding:3px 8px;border-radius:3px;
+}
+
+/* ── slide panel ────────────────────────────────── */
+.slide{
+  background:var(--panel);border:1px solid var(--rule);border-radius:3px;
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.slide-head{padding:20px 22px 0}
+.eyebrow{
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:12px;
+}
+.eyebrow .sep{color:var(--rule);font-size:9px}
+.eyebrow .kind{color:var(--faint);letter-spacing:.08em}
+.headline{font-size:clamp(23px,5.4vw,34px);font-weight:700;letter-spacing:-.022em;line-height:1.12}
+.subline{margin:11px 0 0;font-size:15px;color:var(--ink-2);max-width:60ch;line-height:1.5}
+.slide-body{padding:20px 22px 24px}
+.slide-body:empty{display:none}
+
+.panelcard{margin-top:10px}
+.clock{
+  font-family:"IBM Plex Mono",monospace;color:var(--accent);
+  background:var(--accent-wash);border-radius:2px;padding:2px 7px;letter-spacing:.06em;
+}
+.tagp{
+  display:inline-block;margin-left:6px;font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ok);
+  border:1px solid var(--ok);border-radius:2px;padding:1px 5px;
+}
+
+/* ── notes ──────────────────────────────────────── */
+.notes{display:grid;gap:1px;background:var(--rule-soft);border:1px solid var(--rule);border-top:none;border-radius:0 0 3px 3px;overflow:hidden}
+.note{background:var(--panel-2);padding:13px 22px;display:grid;grid-template-columns:106px 1fr;gap:14px;align-items:start}
+.note dt{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--faint);padding-top:2px;
+}
+.note.app dt{color:var(--accent)}
+.note dd{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.55}
+.note.app dd{color:var(--ink)}
+.note.open dt{color:var(--warn)}
+
+/* ── nav ────────────────────────────────────────── */
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px}
+.nav button{
+  appearance:none;background:var(--panel);border:1px solid var(--rule);color:var(--ink);
+  font-family:"IBM Plex Sans",sans-serif;font-size:13.5px;font-weight:500;
+  padding:9px 15px;border-radius:3px;cursor:pointer;box-shadow:var(--shadow-sm);
+}
+.nav button:hover:not(:disabled){border-color:var(--faint)}
+.nav button:disabled{opacity:.35;cursor:default}
+.counter{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+
+/* ── mockup shells ──────────────────────────────── */
+.mock{border:1px solid var(--rule);border-radius:3px;overflow:hidden;background:var(--panel-2)}
+.mock-bar{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:var(--panel);border-bottom:1px solid var(--rule);
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--faint);
+}
+.mock-bar .pip{width:8px;height:8px;border-radius:2px;background:var(--sys);flex:0 0 auto}
+.mock-bar .grow{flex:1}
+
+/* mail */
+.mail-hdr{padding:13px 15px;border-bottom:1px solid var(--rule-soft);display:grid;gap:5px}
+.mail-subject{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:15.5px;line-height:1.3;letter-spacing:-.01em}
+.mail-line{display:flex;gap:8px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.mail-line b{color:var(--ink-2);font-weight:500}
+.mail-time{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint);white-space:nowrap}
+.mail-body{padding:14px 15px;font-size:13.5px;line-height:1.6;color:var(--ink-2);display:grid;gap:9px}
+.mail-body .facts{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:1px;
+  background:var(--rule-soft);border:1px solid var(--rule-soft);border-radius:3px;margin-top:2px;
+}
+.fact{background:var(--panel);padding:9px 11px}
+.fact dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.fact dd{margin:3px 0 0;font-size:14px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* chat */
+.chat{padding:14px 15px;display:grid;gap:11px}
+.bubble{max-width:88%;padding:11px 13px;border-radius:3px;font-size:13.5px;line-height:1.55}
+.bubble.user{justify-self:end;background:var(--b3-wash);border:1px solid color-mix(in srgb,var(--b3) 28%,transparent);color:var(--ink)}
+.bubble.agent{justify-self:start;background:var(--panel);border:1px solid var(--rule);color:var(--ink-2)}
+.bubble .who{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--faint);display:block;margin-bottom:5px;
+}
+.bubble.flat{color:var(--muted);font-style:italic}
+.tools{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 2px}
+.tool{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.03em;
+  border:1px solid color-mix(in srgb,var(--sys-agent) 30%,transparent);
+  background:color-mix(in srgb,var(--sys-agent) 10%,transparent);
+  color:var(--sys-agent);padding:3px 7px;border-radius:3px;white-space:nowrap;
+}
+.diff{display:grid;gap:9px;padding:14px 15px}
+.diff-col{border:1px solid var(--rule);border-radius:3px;background:var(--panel);padding:11px 13px}
+.diff-col h4{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  margin:0 0 7px;font-weight:500;
+}
+.diff-col.before h4{color:var(--b1)}
+.diff-col.after h4{color:var(--ok)}
+.diff-col p{margin:0;font-size:13px;line-height:1.55;color:var(--ink-2)}
+.diff-col .diff-n{font-size:30px;line-height:1;font-weight:800;letter-spacing:-.02em;margin:0 0 2px;font-variant-numeric:tabular-nums}
+.diff-col.before .diff-n{color:var(--b1)}
+.diff-col.after .diff-n{color:var(--ok)}
+.diff-col .diff-sub{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.05em;
+  color:var(--faint);margin:0 0 9px;
+}
+.diff-foot{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.04em;
+  color:var(--faint);margin:0;padding:0 15px 13px;text-align:center;
+}
+
+/* agent run log */
+.run{padding:6px 0}
+.step{
+  display:grid;grid-template-columns:26px 1fr;gap:11px;align-items:start;
+  padding:9px 15px;border-bottom:1px solid var(--rule-soft);
+}
+.step:last-child{border-bottom:none}
+.step .idx{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--faint);
+  padding-top:3px;font-variant-numeric:tabular-nums;
+}
+.step .txt{font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.step .sys{
+  display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--muted);background:var(--rule-soft);
+  border-radius:2px;padding:2px 6px;margin-right:7px;vertical-align:1px;
+}
+.step.key{background:var(--accent-wash)}
+.step.key .txt{color:var(--ink);font-weight:500}
+.step.key .idx{color:var(--accent)}
+.step .out{display:block;margin-top:4px;font-size:12.5px;color:var(--muted)}
+.step .out b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* systems fan-out */
+.fan{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule-soft)}
+.fan-cell{background:var(--panel);padding:13px 14px}
+.fan-cell .sys{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--sys-mail);display:block;margin-bottom:6px;
+}
+.fan-cell .act{font-size:13.5px;line-height:1.45;color:var(--ink)}
+.fan-cell .qty{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted);display:block;margin-top:5px}
+
+/* timeline */
+.tl{display:grid;gap:1px;background:var(--rule-soft)}
+.tl-row{background:var(--panel);padding:11px 15px;display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:baseline}
+.tl-row .yr{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--accent);font-variant-numeric:tabular-nums;font-weight:500}
+.tl-row .ev{font-size:13.5px;color:var(--ink-2)}
+.tl-row .ev b{color:var(--ink);font-weight:600}
+
+/* generic list */
+.plist{display:grid;gap:1px;background:var(--rule-soft)}
+.plist li{background:var(--panel);padding:11px 15px;display:grid;grid-template-columns:22px 1fr;gap:12px;align-items:baseline;list-style:none}
+.plist .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+.plist .t{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.plist .t b{color:var(--ink);font-weight:600}
+ul.plist,ol.plist{margin:0;padding:0}
+
+/* quote / tweet */
+.tweets{padding:14px 15px;display:grid;gap:10px}
+.tw{border:1px solid var(--rule);border-radius:3px;background:var(--panel);padding:12px 14px}
+.tw .handle{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint);margin-bottom:7px;display:block}
+.tw p{margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+.tw.reply{margin-left:18px;border-left:2px solid var(--accent)}
+.tw.reply .handle{color:var(--accent)}
+.bigquote{padding:20px 18px;text-align:center}
+.bigquote p{
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:500;font-style:italic;
+  font-size:clamp(17px,3.6vw,22px);line-height:1.35;color:var(--ink);margin:0;text-wrap:balance;
+}
+.bigquote cite{display:block;margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:11px;font-style:normal;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+
+/* statement */
+.statement{padding:26px 20px;text-align:center;background:var(--accent-wash)}
+.statement p{
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:800;
+  font-size:clamp(20px,4.8vw,30px);line-height:1.15;letter-spacing:-.02em;
+  color:var(--ink);margin:0;text-wrap:balance;
+}
+.statement .after{
+  margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:400;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+}
+
+/* charts */
+.chartbox{padding:16px 15px 12px}
+.chartbox svg{display:block;width:100%;height:auto;max-width:100%}
+.chart-cap{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--faint);
+  margin-top:9px;line-height:1.5;letter-spacing:.02em;
+}
+
+/* interaction flag */
+.inter{
+  display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:11px 13px;
+  border:1px dashed color-mix(in srgb,var(--accent) 40%,transparent);border-radius:3px;
+  background:var(--accent-wash);
+}
+.inter .lbl{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--accent);flex:0 0 auto;padding-top:2px;
+}
+.inter .q{font-size:13.5px;color:var(--ink);line-height:1.5}
+
+/* ── overview ───────────────────────────────────── */
+.ov{display:grid;gap:26px;padding-top:20px}
+.ov-group h3{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 3px;display:flex;align-items:center;gap:8px;
+}
+.ov-group .gt{font-family:"Bricolage Grotesque",sans-serif;font-size:16px;font-weight:700;letter-spacing:-.01em;margin:0 0 12px;color:var(--ink)}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:10px}
+.ov-card{
+  appearance:none;text-align:left;background:var(--panel);border:1px solid var(--rule);
+  border-radius:3px;padding:12px 13px;cursor:pointer;display:grid;gap:7px;
+  box-shadow:var(--shadow-sm);font-family:inherit;color:inherit;
+}
+.ov-card:hover{border-color:var(--accent)}
+.ov-card .num{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;color:var(--accent);display:flex;justify-content:space-between;gap:8px}
+.ov-card .num .kind{color:var(--faint)}
+.ov-card .h{font-family:"Bricolage Grotesque",sans-serif;font-size:13.5px;font-weight:700;line-height:1.25;letter-spacing:-.01em;color:var(--ink)}
+.ov-card.is-current{border-color:var(--accent);background:var(--accent-wash)}
+
+@media (max-width:560px){
+  .note{grid-template-columns:1fr;gap:5px;padding:12px 16px}
+  .slide-head{padding:17px 16px 0}
+  .slide-body{padding:16px 16px 20px}
+  .blocknum{font-size:32px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brandrow">
+      <h1 class="brand">ECR Masterclass <span>· Storyboard</span></h1>
+      <button class="viewbtn" id="viewbtn" type="button">Übersicht</button>
+    </div>
+    <div class="meta" id="topmeta">16. September 2026 · 18:00–19:00 · 60 Minuten</div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="stage"></div>
+  <div id="overview" hidden></div>
+</main>
+
+<script>
+/*__DATA__*/
+
+SECTIONS.forEach((s,i)=>{ s.n = i+1; });
+const TOTAL = SECTIONS.length;
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* ────────────────────────────────────────────────────────────
+   Mockup-Renderer
+   ──────────────────────────────────────────────────────────── */
+function mockBar(label, sysVar){
+  return '<div class="mock-bar" style="--sys:'+(sysVar||"var(--faint)")+'"><span class="pip"></span><span class="grow">'+esc(label)+'</span></div>';
+}
+
+const PIP = { mail:"var(--sys-mail)", chat:"var(--sys-chat)", run:"var(--sys-agent)", fan:"var(--sys-agent)" };
+
+const RENDER = {
+  mail(m){
+    let h = '<div class="mock">' + mockBar(m.app, PIP[m.t]);
+    h += '<div class="mail-hdr">';
+    h += '<div class="mail-subject">'+esc(m.subject)+'</div>';
+    h += '<div class="mail-line"><span><b>'+esc(m.sent?"An":"Von")+':</b> '+esc(m.sent?m.to:m.from)+'</span><span class="mail-time">'+esc(m.time)+'</span></div>';
+    h += '</div><div class="mail-body">';
+    m.body.forEach(p => { h += '<p style="margin:0">'+esc(p)+'</p>'; });
+    if(m.facts){
+      h += '<dl class="facts">';
+      m.facts.forEach(([k,v]) => { h += '<div class="fact"><dt>'+esc(k)+'</dt><dd>'+esc(v)+'</dd></div>'; });
+      h += '</dl>';
+    }
+    h += '</div></div>';
+    return h;
+  },
+  chat(m){
+    let h = '<div class="mock">' + mockBar(m.app, PIP[m.t]) + '<div class="chat">';
+    m.msgs.forEach(x => {
+      h += '<div class="bubble '+x.role+(x.flat?" flat":"")+'"><span class="who">'+esc(x.who)+'</span>';
+      if(x.tools){
+        h += '<div class="tools">';
+        x.tools.forEach(t => { h += '<span class="tool">'+esc(t)+'()</span>'; });
+        h += '</div>';
+      }
+      h += esc(x.text)+'</div>';
+    });
+    h += '</div></div>';
+    return h;
+  },
+  run(m){
+    let h = '<div class="mock">' + mockBar("Agent — Arbeitsprotokoll", "var(--sys-agent)") + '<div class="run">';
+    m.steps.forEach((s,i) => {
+      h += '<div class="step'+(s.key?" key":"")+'"><span class="idx">'+String(i+1).padStart(2,"0")+'</span><div class="txt">';
+      h += '<span class="sys">'+esc(s.sys)+'</span>'+esc(s.txt);
+      if(s.out) h += '<span class="out">'+s.out+'</span>';
+      h += '</div></div>';
+    });
+    h += '</div></div>';
+    return h;
+  },
+  fan(m){
+    let h = '<div class="mock">' + mockBar("Ausgeführt — gleichzeitig", "var(--sys-agent)") + '<div class="fan">';
+    m.cells.forEach(c => {
+      h += '<div class="fan-cell"><span class="sys">'+esc(c.sys)+'</span><div class="act">'+esc(c.act)+'</div><span class="qty">'+esc(c.qty)+'</span></div>';
+    });
+    h += '</div></div>';
+    return h;
+  },
+  timeline(m){
+    let h = '<div class="mock"><div class="tl">';
+    m.rows.forEach(([y,e]) => { h += '<div class="tl-row"><span class="yr">'+esc(y)+'</span><span class="ev">'+e+'</span></div>'; });
+    h += '</div></div>';
+    return h;
+  },
+  list(m){
+    const tag = m.ordered ? "ol" : "ul";
+    let h = '<div class="mock"><'+tag+' class="plist">';
+    m.items.forEach(([a,b],i) => {
+      h += '<li><span class="n">'+(m.ordered?String(i+1).padStart(2,"0"):"—")+'</span><span class="t"><b>'+esc(a)+'</b>'+(b?" — "+esc(b):"")+'</span></li>';
+    });
+    h += '</'+tag+'></div>';
+    return h;
+  },
+  tweets(m){
+    let h = '<div class="mock">' + mockBar("X · 14. Februar 2026", "var(--faint)") + '<div class="tweets">';
+    m.items.forEach(t => {
+      h += '<div class="tw'+(t.reply?" reply":"")+'"><span class="handle">'+esc(t.handle)+'</span><p>'+esc(t.text)+'</p></div>';
+    });
+    h += '</div></div>';
+    return h;
+  },
+  quote(m){
+    return '<div class="mock"><div class="bigquote"><p>„'+esc(m.text)+'“</p><cite>'+esc(m.cite)+'</cite></div></div>';
+  },
+  statement(m){
+    let h = '<div class="mock"><div class="statement"><p>'+esc(m.text)+'</p>';
+    if(m.after) h += '<p class="after">'+esc(m.after)+'</p>';
+    h += '</div></div>';
+    return h;
+  },
+  diff(m){
+    let h = '<div class="mock">' + mockBar("Gesprächsverlauf — dieselbe Frage", "var(--sys-chat)") + '<div class="diff">';
+    const side = (s, cls) => '<div class="diff-col '+cls+'"><h4>'+esc(s.h)+'</h4>'
+      + (s.n ? '<p class="diff-n">'+esc(s.n)+'</p>' : '')
+      + (s.sub ? '<p class="diff-sub">'+esc(s.sub)+'</p>' : '')
+      + '<p>'+esc(s.p)+'</p></div>';
+    h += side(m.before, "before") + side(m.after, "after");
+    h += '</div>';
+    if (m.foot) h += '<p class="diff-foot">'+esc(m.foot)+'</p>';
+    h += '</div>';
+    return h;
+  },
+  chart(m){ return ({agriculture:chartAgriculture, unemployment:chartUnemployment, exposure:chartExposure}[m.which])(); },
+  mailthread(m){
+    return '<div class="thread"><div><span class="steplbl">Schritt 1</span>'+RENDER.mail(m.incoming)+'</div>'
+         + '<div><span class="steplbl">Schritt 2</span>'+RENDER.mail(m.reply)+'</div></div>';
+  },
+  reveal(m){
+    let h='<div class="mock"><div class="statement" style="display:grid;gap:14px">';
+    m.items.forEach((it,i)=>{
+      h += '<div><span class="steplbl">Schritt '+(i+1)+'</span><p'+(it.accent?'':' style="color:var(--ink)"')+'>'+esc(it.text)+'</p>'
+        + (it.sub?'<p class="after">'+esc(it.sub)+'</p>':'') + '</div>';
+    });
+    return h+'</div></div>';
+  },
+  stepped(m){
+    let h='<div class="thread" style="grid-template-columns:1fr">';
+    m.frames.forEach((f,i)=>{
+      h += '<div><span class="steplbl">Schritt '+(i+1)+'</span>'+RENDER[f.t](f)+'</div>';
+    });
+    return h+'</div>';
+  },
+  qr(m){
+    return '<div class="mock">'+mockBar("QR-Code auf die Zuschauersicht","var(--sys-mail)")
+      + '<div class="qrbox"><div class="qrsquare">QR</div><div><b>'+esc(m.caption)+'</b><br>'+esc(m.hint)+'</div></div></div>';
+  },
+  bio(m){
+    return '<div class="mock"><ul class="plist">'
+      + m.stations.map(x=>'<li><span class="n">—</span><span class="t">'+esc(x)+'</span></li>').join('')
+      + '</ul><p class="chart-cap" style="text-align:left;padding:0 15px 12px">'+esc(m.line)+'</p></div>';
+  },
+  tshape(m){
+    const human = m.variant === "human";
+    const grown = m.variant === "grown";
+    const bar = human ? {x:150,y:34,w:420,h:46} : {x:40,y:26,w:590,h:64};
+    const stem = {x: bar.x + bar.w/2 - 26, y: bar.y + bar.h, w:52, h: human ? 120 : 104};
+    const stemFill = human ? "var(--muted)" : "var(--ok)";
+    let g = '<rect x="'+bar.x+'" y="'+bar.y+'" width="'+bar.w+'" height="'+bar.h+'" rx="6" fill="'+(human?"var(--muted)":"var(--accent)")+'"></rect>'
+      + '<text x="'+(bar.x+16)+'" y="'+(bar.y+bar.h/2+6)+'" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="700" fill="var(--panel)">Allgemeinwissen</text>';
+    if (human || grown) {
+      g += '<rect x="'+stem.x+'" y="'+stem.y+'" width="'+stem.w+'" height="'+stem.h+'" rx="6" fill="'+stemFill+'"></rect>';
+    } else {
+      g += '<rect x="'+stem.x+'" y="'+stem.y+'" width="'+stem.w+'" height="'+stem.h+'" rx="6" fill="none" stroke="var(--rule)" stroke-width="2" stroke-dasharray="6 5"></rect>';
+    }
+    g += '<text x="'+(stem.x+stem.w+16)+'" y="'+(stem.y+26)+'" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="700" fill="'+((human||grown)?"var(--ink)":"var(--faint)")+'">Spezialwissen</text>';
+    if (!human && !grown) g += '<text x="'+(stem.x+stem.w+16)+'" y="'+(stem.y+48)+'" font-size="13" fill="var(--faint)">fehlt</text>';
+    (grown && m.capabilities ? m.capabilities : []).forEach((c,i)=>{
+      g += '<text x="'+(stem.x+stem.w+16)+'" y="'+(stem.y+52+i*24)+'" font-size="13" fill="var(--ink-2)">• '+esc(c)+'</text>';
+    });
+    return '<div class="mock"><div class="chartbox">'
+      + '<svg viewBox="0 0 680 200" role="img" aria-label="'+esc(m.alt)+'">'+g+'</svg>'
+      + (m.caption ? '<p class="chart-cap">'+esc(m.caption)+'</p>' : '')
+      + '</div></div>';
+  },
+  results(m){
+    return '<div class="mock">'+mockBar("Live-Auswertung — "+(m.as==="matrix"?"Matrix":"Antworten"),"var(--sys-agent)")
+      + '<div class="chartbox"><p class="chart-cap">Antworten der Teilnehmer zu „'+esc(m.of)+'“'
+      + (m.axes?' · '+esc(m.axes.x)+' × '+esc(m.axes.y):'')+'</p></div></div>';
+  },
+};
+
+function chartAgriculture(){
+  const bars = [
+    {label:"1900", val:41, x:70},
+    {label:"2000", val:2,  x:215},
+  ];
+  const baseY = 168, maxH = 122, w = 340;
+  let bs = "";
+  bars.forEach(b => {
+    const h = Math.max(3, (b.val/41)*maxH);
+    bs += '<rect x="'+b.x+'" y="'+(baseY-h)+'" width="58" height="'+h+'" fill="var(--accent)" rx="1"></rect>';
+    bs += '<text x="'+(b.x+29)+'" y="'+(baseY-h-9)+'" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="16" font-weight="600" fill="var(--ink)">'+b.val+' %</text>';
+    bs += '<text x="'+(b.x+29)+'" y="'+(baseY+17)+'" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">'+b.label+'</text>';
+  });
+  return '<div class="mock"><div class="chartbox">'
+    + '<svg viewBox="0 0 '+w+' 190" role="img" aria-label="Anteil der Landwirtschaft an den US-Beschäftigten: 41 Prozent im Jahr 1900, 2 Prozent im Jahr 2000">'
+    + '<line x1="12" y1="168" x2="328" y2="168" stroke="var(--rule)" stroke-width="1"></line>'
+    + bs
+    + '<text x="12" y="20" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" fill="var(--faint)">ANTEIL AN DEN US-BESCHÄFTIGTEN</text>'
+    + '</svg>'
+    + '<p class="chart-cap">Zwei Belegwerte aus dem Vortragsverlauf. Der Verlauf dazwischen ist bewusst nicht gezeichnet.</p>'
+    + '</div></div>';
+}
+
+function chartExposure(){
+  const x0 = 148, maxW = 168, maxV = 1.0;
+  const rows = [
+    {label:"Stark KI-exponiert", v:0.77, fill:"var(--accent)"},
+    {label:"Kaum KI-exponiert",  v:0.85, fill:"var(--faint)"},
+  ];
+  let bs = "";
+  rows.forEach((r,i) => {
+    const y = 56 + i*44, w = (r.v/maxV)*maxW;
+    bs += '<text x="138" y="'+(y+18)+'" text-anchor="end" font-family="IBM Plex Sans, sans-serif" font-size="12" fill="var(--ink-2)">'+r.label+'</text>';
+    bs += '<rect x="'+x0+'" y="'+y+'" width="'+w+'" height="26" fill="'+r.fill+'" rx="1"></rect>';
+    bs += '<text x="'+(x0+w+8)+'" y="'+(y+18)+'" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="var(--ink)">+'+String(r.v).replace(".",",")+'</text>';
+  });
+  return '<div class="mock"><div class="chartbox">'
+    + '<svg viewBox="0 0 340 156" role="img" aria-label="Anstieg der Arbeitslosigkeit seit 2022 in Prozentpunkten: stark KI-exponierte Berufe plus 0,77, kaum KI-exponierte Berufe plus 0,85">'
+    + '<text x="8" y="22" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" fill="var(--faint)">ANSTIEG DER ARBEITSLOSIGKEIT SEIT 2022</text>'
+    + '<text x="8" y="38" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" fill="var(--faint)">IN PROZENTPUNKTEN</text>'
+    + bs
+    + '<line x1="'+x0+'" y1="48" x2="'+x0+'" y2="140" stroke="var(--rule)" stroke-width="1"></line>'
+    + '</svg>'
+    + '<p class="chart-cap">Die exponierte Gruppe schnitt leicht BESSER ab. Dazu: Firmen mit KI-Einführung beschäftigten zwei Jahre später 10 % mehr Menschen. Ausnahme: Berufseinsteiger, 5,6 % Arbeitslosigkeit (+1,6 Punkte in drei Jahren).</p>'
+    + '</div></div>';
+}
+
+function chartUnemployment(){
+  const x0 = 26, x1 = 314, w = x1 - x0, maxV = 30, y = 96;
+  const px = v => x0 + (v/maxV)*w;
+  const marks = [
+    {v:3.71, label:"Heute", sub:"3,71 %", up:true,  color:"var(--accent)"},
+    {v:6.03, label:"Langzeitschnitt", sub:"6,03 %", up:false, color:"var(--muted)"},
+  ];
+  let ms = "";
+  marks.forEach(m => {
+    const X = px(m.v);
+    ms += '<line x1="'+X+'" y1="'+(y-16)+'" x2="'+X+'" y2="'+(y+16)+'" stroke="'+m.color+'" stroke-width="2"></line>';
+    const ty = m.up ? y-24 : y+30;
+    ms += '<text x="'+X+'" y="'+ty+'" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" fill="'+m.color+'">'+m.sub+'</text>';
+    ms += '<text x="'+X+'" y="'+(m.up? ty-13 : ty+13)+'" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1" fill="var(--faint)">'+m.label.toUpperCase()+'</text>';
+  });
+  return '<div class="mock"><div class="chartbox">'
+    + '<svg viewBox="0 0 340 150" role="img" aria-label="Spannweite der deutschen Arbeitslosenquote über 100 Jahre: Minimum 0,4 Prozent, Maximum 30 Prozent, Langzeitschnitt 6,03 Prozent, heute 3,71 Prozent">'
+    + '<rect x="'+x0+'" y="'+(y-7)+'" width="'+w+'" height="14" fill="var(--rule-soft)" rx="2"></rect>'
+    + '<text x="'+x0+'" y="'+(y+34)+'" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--faint)">0,4 %</text>'
+    + '<text x="'+x1+'" y="'+(y+34)+'" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--faint)">30 %</text>'
+    + ms
+    + '<text x="'+x0+'" y="20" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" fill="var(--faint)">SPANNWEITE 1925–2025 · DEUTSCHLAND</text>'
+    + '</svg>'
+    + '<p class="chart-cap">Platzhalter: nur die vier belegten Eckwerte. Die Zeitreihe fehlt noch — siehe offener Punkt.</p>'
+    + '</div></div>';
+}
+
+/* ────────────────────────────────────────────────────────────
+   Ansicht
+   ──────────────────────────────────────────────────────────── */
+let cur = 0, mode = "stage";
+const stage = document.getElementById("stage");
+const ovEl  = document.getElementById("overview");
+const tabsEl= document.getElementById("tabs");
+const viewBtn = document.getElementById("viewbtn");
+
+function blockOf(n){ return BLOCKS[n-1]; }
+function accentFor(b){ return "var(--b"+b+")"; }
+
+function applyAccent(b){
+  document.documentElement.style.setProperty("--accent", "var(--b"+b+")");
+  document.documentElement.style.setProperty("--accent-wash", "var(--b"+b+"-wash)");
+}
+
+function renderTabs(){
+  tabsEl.innerHTML = BLOCKS.map(b => {
+    const firstIdx = SECTIONS.findIndex(s => s.b === b.n);
+    const on = mode === "stage" && SECTIONS[cur].b === b.n;
+    return '<button class="tab" role="tab" aria-selected="'+on+'" data-go="'+firstIdx+'" '
+      + 'style="--tc:var(--b'+b.n+');--tw:var(--b'+b.n+'-wash)">'
+      + '<span class="dot"></span>'+b.n+' · '+esc(b.tab)+'</button>';
+  }).join("");
+}
+
+function renderStage(){
+  const sec = SECTIONS[cur], b = blockOf(sec.b);
+  applyAccent(sec.b);
+
+  let h = '';
+  h += '<div class="blockbar"><div class="blocknum">'+b.n+'</div><div class="blockmeta">'
+     + '<h2>'+esc(b.title)+'</h2><p>'+esc(b.claim)+'</p>'
+     + '<span class="budget">'+esc(b.budget)+'</span></div></div>';
+
+  h += '<article class="slide"><div class="slide-head">';
+  h += '<div class="eyebrow"><span>Abschnitt '+String(sec.n).padStart(2,"0")+'</span>'
+     + '<span class="sep">◆</span><span class="kind">'+esc(sec.kind)+'</span>'
+     + (sec.panels.length>1 ? '<span class="sep">◆</span><span>'+sec.panels.length+' Panels</span>' : '')
+     + (sec.hero ? '<span class="sep">◆</span><span class="kind">Titel zuerst mittig</span>' : '')
+     + '</div>';
+  h += '<h2 class="headline">'+esc(sec.title)+'</h2>';
+  if(sec.sub) h += '<p class="subline">'+esc(sec.sub)+'</p>';
+  h += '</div></article>';
+
+  sec.panels.forEach((p, i) => {
+    h += '<article class="slide panelcard">';
+    h += '<div class="slide-head"><div class="eyebrow">'
+       + '<span>Panel '+(i+1)+' / '+sec.panels.length+'</span>'
+       + (p.at ? '<span class="sep">◆</span><span class="clock">'+esc(p.at)+'</span>' : '')
+       + '</div></div>';
+    h += '<div class="slide-body">';
+    // Ein unbekannter Mock-Typ darf den Abschnitt nicht verschlucken: vorher
+    // warf der Aufruf, renderStage brach vor dem Schreiben ab, und der alte
+    // Abschnitt blieb stehen — der Klick zählte hoch, das Bild nicht.
+    if(p.mock){
+      const render = RENDER[p.mock.t];
+      h += render
+        ? render(p.mock)
+        : '<div class="mock"><div class="chartbox"><p class="chart-cap">Kein Renderer für Mock-Typ „'+esc(p.mock.t)+'“ — die Folie existiert, nur die Vorschau fehlt hier.</p></div></div>';
+    }
+    if(p.inter) h += '<div class="inter"><span class="lbl">Interaktion</span><span class="q">'+esc(p.inter)+'</span></div>';
+    h += '</div>';
+
+    h += '<dl class="notes">';
+    if(p.say)  h += '<div class="note"><dt>Gesagt</dt><dd>'+esc(p.say)+'</dd></div>';
+    if(p.audience){
+      const a = p.audience;
+      const was = a.kind === "poll" ? a.questions.map(q=>q.text).join(" · ")
+                : a.kind === "text" ? a.prompt
+                : a.kind === "mailto" ? a.label + (a.privacy ? " — " + a.privacy : "")
+                : a.message;
+      h += '<div class="note app"><dt>Auf dem Handy</dt><dd>'+esc(was)
+         + (a.persist ? ' <span class="tagp">bleibt offen'+(a.until?" bis "+esc(a.until):"")+'</span>' : '')
+         + '</dd></div>';
+    }
+    if(p.app)  h += '<div class="note app"><dt>App liefert</dt><dd>'+esc(p.app)+'</dd></div>';
+    if(p.note) h += '<div class="note"><dt>Hinweis</dt><dd>'+esc(p.note)+'</dd></div>';
+    if(p.open) h += '<div class="note open"><dt>Offen</dt><dd>'+esc(p.open)+'</dd></div>';
+    h += '</dl></article>';
+  });
+
+  h += '<div class="nav">'
+     + '<button type="button" id="prev"'+(cur===0?" disabled":"")+'>← Zurück</button>'
+     + '<span class="counter">'+String(sec.n).padStart(2,"0")+' / '+TOTAL+'</span>'
+     + '<button type="button" id="next"'+(cur===TOTAL-1?" disabled":"")+'>Weiter →</button>'
+     + '</div>';
+
+  stage.innerHTML = h;
+  document.getElementById("prev").onclick = () => go(cur-1);
+  document.getElementById("next").onclick = () => go(cur+1);
+  renderTabs();
+}
+
+function renderOverview(){
+  let h = '<div class="ov">';
+  BLOCKS.forEach(b => {
+    const list = SECTIONS.filter(s => s.b === b.n);
+    h += '<section class="ov-group" style="--accent:var(--b'+b.n+');--accent-wash:var(--b'+b.n+'-wash)">';
+    h += '<h3>Block '+b.n+' · '+esc(b.tab)+' · '+list.length+' Abschnitte</h3>';
+    h += '<p class="gt">'+esc(b.title)+'</p><div class="ov-grid">';
+    list.forEach(s => {
+      h += '<button type="button" class="ov-card'+(s.n-1===cur?" is-current":"")+'" data-go="'+(s.n-1)+'">'
+        + '<span class="num"><span>'+String(s.n).padStart(2,"0")+'</span><span class="kind">'+esc(s.panels[0]?.at ?? s.kind)+'</span></span>'
+        + '<span class="h">'+esc(s.title)+'</span></button>';
+    });
+    h += '</div></section>';
+  });
+  h += '</div>';
+  ovEl.innerHTML = h;
+}
+
+function go(i){
+  if(i < 0 || i >= TOTAL) return;
+  cur = i;
+  if(mode !== "stage") setMode("stage");
+  else renderStage();
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+function setMode(m){
+  mode = m;
+  const isOv = m === "overview";
+  ovEl.hidden = !isOv;
+  stage.hidden = isOv;
+  viewBtn.textContent = isOv ? "Folienansicht" : "Übersicht";
+  if(isOv){ renderOverview(); } else { renderStage(); }
+  renderTabs();
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+viewBtn.onclick = () => setMode(mode === "stage" ? "overview" : "stage");
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go]");
+  if(t) go(parseInt(t.dataset.go, 10));
+});
+
+document.addEventListener("keydown", e => {
+  if(e.target.matches("input,textarea")) return;
+  if(e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); go(cur+1); }
+  if(e.key === "ArrowLeft") { e.preventDefault(); go(cur-1); }
+  if(e.key === "Escape") setMode(mode === "stage" ? "overview" : "stage");
+});
+
+let tx = 0, ty = 0;
+document.addEventListener("touchstart", e => { tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY; }, {passive:true});
+document.addEventListener("touchend", e => {
+  if(mode !== "stage") return;
+  const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.8) go(dx < 0 ? cur+1 : cur-1);
+}, {passive:true});
+
+document.getElementById("topmeta").textContent =
+  "16. September 2026 · 18:00–19:00 · " + TOTAL + " Abschnitte in 4 Blöcken";
+
+renderStage();
+</script>

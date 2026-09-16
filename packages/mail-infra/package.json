@@ -1,0 +1,16 @@
+{
+  "name": "@ecr-talk/mail-infra",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "E-Mail-Infrastruktur im Domain-Konto — Vorlage, in diesem Repo bewusst nicht verdrahtet",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "aws-cdk-lib": "2.257.0",
+    "constructs": "10.6.0",
+    "typescript": "5.9.3",
+    "@types/node": "22.20.0"
+  }
+}

@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+/*
+  Amazon Ember — die Hausschrift.
+
+  Die Dateien liegen unter public/brand/fonts/ und NICHT im Repository: sie
+  gehören Amazon. Geholt werden sie mit
+
+      python3 scripts/schriften.py
+
+  aus packages/brand-material. Fehlen sie, laufen diese Regeln ins Leere und
+  der Fallback-Stack unten greift — die Folien sehen dann anders aus, aber sie
+  funktionieren. Das ist Absicht.
+
+  Ausgeliefert als WOFF2, so wie aws.amazon.com es tut.
+*/
+@font-face {
+  font-family: "Amazon Ember Display";
+  src: url("/brand/fonts/AmazonEmberDisplay_Rg.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Amazon Ember Display";
+  src: url("/brand/fonts/AmazonEmberDisplay_Md.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Amazon Ember Display";
+  src: url("/brand/fonts/AmazonEmberDisplay_Bd.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Amazon Ember Mono";
+  src: url("/brand/fonts/AmazonEmberMono_Rg.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Amazon Ember Mono";
+  src: url("/brand/fonts/AmazonEmberMono_Bd.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/*
+  Live-View: dunkle Bühne, helle Applikationsfenster.
+
+  Alle Maße gelten für die Design-Größe 1920 × 1080 und werden per
+  transform: scale() auf den Projektor gerechnet. Deshalb sind die
+  Schriftgrade hier absolute Pixel und keine rem — sie sollen sich
+  ausdrücklich NICHT an die Browsereinstellung anpassen.
+*/
+@theme {
+  /*
+    Bühne — die Graustufen-Rampe von AWS.
+
+    Gray 850 ist laut Designdokumentation der Ankerpunkt der Marke, "our more
+    ownable alternative to black". Er trägt hier die Panels; der Grund liegt
+    eine Stufe tiefer, damit die Panels sich davon abheben.
+  */
+  --color-stage: #0f141a;   /* Gray 950 */
+  --color-stage-2: #161d26; /* Gray 850 — Ankerfarbe */
+  --color-stage-3: #1b232d; /* Gray 800 */
+  --color-hair: #232b37;    /* Gray 750 */
+
+  --color-fg: #f3f3f7;   /* Gray 200 */
+  --color-fg-2: #b4b4bb; /* Gray 400 */
+  --color-fg-3: #8c8c94; /* Gray 500 */
+
+  /*
+    Blockfarben aus der Markenpalette.
+
+    Die Dokumentation verbietet ausdrücklich, Farben selbst zu mischen oder
+    vorhandene in Ton und Sättigung zu verschieben. Alle vier sind deshalb
+    unveränderte Werte der Stufen 300-400 — hell genug, um auf dunklem Grund
+    die geforderten 3:1 für große Elemente zu erreichen.
+  */
+  --color-b1: #ff6a3d; /* Orange 400 */
+  --color-b2: #ffbb45; /* Amber 300 */
+  --color-b3: #42b4ff; /* Blue 400 */
+  --color-b4: #00e582; /* Mint 400 */
+
+  /* Applikationsfenster */
+  --color-win: #ffffff;
+  --color-win-2: #f4f6f8;
+  --color-win-3: #eaedf1;
+  --color-win-ink: #171a20;
+  --color-win-ink-2: #454c58;
+  --color-win-muted: #6a7381;
+  --color-win-faint: #98a1ae;
+  --color-win-rule: #dce0e6;
+
+  /* Systemfarben in den Fenstern */
+  --color-sys-mail: #1f5c8b;
+  --color-sys-chat: #5b4b8a;
+  --color-sys-agent: #1f7a5e;
+
+  /* Hervorgehobener Schritt im Arbeitsprotokoll — die Entdeckung */
+  --color-key-bg: #fff6ed;
+  --color-key-ink: #a8540e;
+  --color-key-chip: #ffe4cc;
+  --color-key-num: #c2610f;
+
+  /* Chat */
+  --color-user-bg: #e8f0f8;
+  --color-user-rule: #c3d6e8;
+  --color-tool-bg: #e9f6f1;
+  --color-tool-rule: #b6dbcc;
+
+  /*
+    Ember Display für alles, Ember Mono für Eyebrows und Zahlen — so sieht es
+    der Typ-Ramp der Designdokumentation vor. Die Ersatzschriften greifen,
+    wenn die Dateien fehlen.
+  */
+  --font-display: "Amazon Ember Display", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Amazon Ember Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  --font-mono: "Amazon Ember Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/*
+  Die Blockfarbe wird als --accent an der Bühne gesetzt und von allen
+  Folienelementen geerbt. So muss keine Komponente wissen, in welchem
+  Block sie steht.
+*/
+[data-block="1"] { --accent: var(--color-b1); }
+[data-block="2"] { --accent: var(--color-b2); }
+[data-block="3"] { --accent: var(--color-b3); }
+[data-block="4"] { --accent: var(--color-b4); }
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-stage);
+  font-family: var(--font-sans);
+  color: var(--color-fg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { height: 100%; }
+
+/* Handy: die Zuschauersicht darf über die Bildschirmhöhe hinauswachsen. */
+body:has(#root > [data-view="audience"]),
+body:has(#root > [data-view="audience"]) #root {
+  height: auto;
+  overflow: auto;
+}
+
+/*
+  Mocks liefern Text mit <b> aus den Foliendaten. Welche Farbe die
+  Hervorhebung bekommt, hängt vom Untergrund ab — der Container setzt
+  --rich-strong, damit dieselbe Regel auf der Bühne und im Fenster passt.
+*/
+.rich b {
+  color: var(--rich-strong, inherit);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/*
+  Die Präsentation scrollt: der alte Abschnitt wandert nach oben weg, der neue
+  kommt von unten. Der Inhalt blendet dabei verzögert ein, damit nichts lesbar
+  ist, bevor es steht.
+*/
+/*
+  Abschnittswechsel.
+
+  Zwei Fassungen waren falsch. Die erste ließ den alten Abschnitt eine volle
+  Bildhöhe weit hinauslaufen, blendete ihn aber schon nach 40 % der Zeit aus,
+  während der neue bis 60 % wartete — dazwischen war der Schirm fast leer.
+  Die zweite kürzte die Strecke auf ein Zehntel und ließ beide lange gemeinsam
+  durchscheinen: dann standen zwei Überschriften übereinander, beide lesbar,
+  beide unlesbar.
+
+  Der Fehler war, Blenden und Bewegung gegeneinander auszuspielen. Über die
+  volle Bildhöhe berühren sich die beiden Abschnitte nie — der eine geht
+  hinaus, während der andere hereinkommt, wie beim Scrollen. Dann braucht es
+  gar keine Überblendung, nur an den Rändern etwas Weichzeichnung, damit der
+  Ein- und Austritt nicht hart abreißt.
+*/
+@keyframes section-enter-from-below {
+  from { transform: translateY(100%); opacity: 0.35; }
+  30%  { opacity: 1; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes section-leave-upward {
+  from { transform: translateY(0); opacity: 1; }
+  70%  { opacity: 1; }
+  to   { transform: translateY(-100%); opacity: 0.35; }
+}
+@keyframes section-enter-from-above {
+  from { transform: translateY(-100%); opacity: 0.35; }
+  30%  { opacity: 1; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes section-leave-downward {
+  from { transform: translateY(0); opacity: 1; }
+  70%  { opacity: 1; }
+  to   { transform: translateY(100%); opacity: 0.35; }
+}
+
+/*
+  will-change hebt die beiden Ebenen auf eigene Compositing-Schichten. Ohne das
+  zeichnet der Browser den ganzen Abschnittsbaum je Bild neu — bei zwei
+  gleichzeitig laufenden Abschnitten auf 1920 × 1080 reicht das für sichtbares
+  Ruckeln.
+*/
+.section-enter-down,
+.section-leave-up,
+.section-enter-up,
+.section-leave-down {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Eine Kurve, die sanft anfährt und lange ausläuft — Scrollen, kein Schnitt. */
+.section-enter-down { animation: section-enter-from-below 820ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.section-leave-up   { animation: section-leave-upward     820ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.section-enter-up   { animation: section-enter-from-above 820ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.section-leave-down { animation: section-leave-downward   820ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+
+/*
+  Der Inhalt eines Hero-Abschnitts kommt von unten herein, während der Titel
+  nach oben wandert. Bewusst nur Versatz und Deckkraft: die Größe bleibt, wie
+  sie ist — ein Inhalt, der beim Erscheinen noch wächst, liest sich als Fehler.
+*/
+@keyframes panel-rise {
+  from { transform: translateY(64px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.panel-rise {
+  animation: panel-rise 700ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  will-change: transform, opacity;
+}
