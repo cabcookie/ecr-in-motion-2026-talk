@@ -212,7 +212,19 @@ export interface ArchitekturMock {
   alt: string;
 }
 
+/**
+ * Der Abspann: was die Teilnehmer mitnehmen koennen.
+ *
+ * Traegt keine eigenen Daten — der Inhalt steht in
+ * aws-blocks/mail/anhang.md und damit an derselben Stelle wie der feste Teil
+ * der Antwortmail und die letzte Seite des PDFs.
+ */
+export interface AbspannMock {
+  t: "abspann";
+}
+
 export type Mock =
+  | AbspannMock
   | BildMock
   | ArchitekturMock
   | TShapeMock

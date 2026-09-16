@@ -17,6 +17,7 @@ import { BioView, MailThreadView, QrView, RevealView } from "./StepMocks";
 import { ResultsView } from "./Results";
 import { TShapeView } from "./TShape";
 import { ArchitekturView } from "./Architektur";
+import { AbspannListe } from "./Abspann";
 
 export function MockView({
   mock,
@@ -29,6 +30,8 @@ export function MockView({
   step?: number;
 }) {
   switch (mock.t) {
+    case "abspann":
+      return <AbspannListe ort="buehne" />;
     case "architektur":
       return <ArchitekturView m={mock} step={step} />;
     case "mail":

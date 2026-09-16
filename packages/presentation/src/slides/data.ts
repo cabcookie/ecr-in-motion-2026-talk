@@ -1308,13 +1308,44 @@ export const SECTIONS: Section[] = [
           text: "ecr2026.carstenbkoch.de/vortrag",
           after: "Die Folien als PDF. Dieselbe Adresse steht in der Antwort-Mail.",
         },
-        say: "Und wenn Du heute Abend mitschreiben wolltest: musst Du nicht. Unter dieser Adresse liegen die Folien als PDF — mit den Zahlen, die wir gemessen haben, und den Links, die Dich weiterbringen. Mach einfach ein Foto. Dieselbe Adresse steht auch unten in der Mail, die Du von Lisa bekommen hast. Vielen Dank.",
+        say: "Und wenn Du heute Abend mitschreiben wolltest: musst Du nicht. Unter dieser Adresse liegen die Folien als PDF — mit den Zahlen, die wir gemessen haben, und den Links, die Dich weiterbringen. Mach einfach ein Foto. Dieselbe Adresse steht auch unten in der Mail, die Du von Lisa bekommen hast.",
         papier: {
-          text: "Diese Seite bleibt am Ende stehen, damit man sie fotografieren kann. Was dahinter liegt, steht auf der letzten Seite dieses Dokuments.",
+          text: "Diese Folie bleibt stehen, damit man sie fotografieren kann.",
         },
       },
     ],
     n: 27,
+  },
+  {
+    b: 4,
+    kind: "Abspann",
+    title: "Damit Du nicht bei null anfängst.",
+    panels: [
+      {
+        at: "19:00",
+        /*
+          Der Abspann traegt keine eigenen Daten: Er liest
+          aws-blocks/mail/anhang.md — dieselbe Datei, aus der die Antwortmail
+          ihren festen Teil nimmt und die letzte Seite des PDFs ihre Liste.
+          Wer einen Link aendert, aendert alle drei.
+
+          Ein eigener Abschnitt und kein weiteres Panel unter „Morgen frueh,
+          8:00 Uhr": Die Ueberschrift steht am ABSCHNITT, und der Abspann haette
+          sonst unter der Einladung zum Fruehstueck gestanden.
+        */
+        mock: { t: "abspann" },
+        say: "Und damit Du nicht bei null anfangen musst, habe ich Dir vier Wege mitgebracht — je nachdem, wer Du bist. Wer selbst ausprobieren will, fängt links oben an: Amazon Quick kostet nichts und braucht kein AWS-Konto. Wer es erst verstehen will, hat rechts zwei kostenlose Kurse. Wer es bauen lassen will, gibt die Links links unten an seine IT weiter. Und wer es nicht allein anfangen möchte, findet rechts unten den Partner dafür. Du musst nichts abschreiben — genau das steht auch in der Mail, die Du von Lisa bekommst. Vielen Dank.",
+        papier: {
+          /*
+            Im PDF waere das die Seite vor der Schlussseite, die dieselbe Liste
+            schon traegt — dort aber mit den vollstaendigen Adressen und dem
+            Satz dazu, den auf einer Leinwand niemand lesen koennte.
+          */
+          weg: true,
+        },
+      },
+    ],
+    n: 28,
   },
 ] as Section[];
 

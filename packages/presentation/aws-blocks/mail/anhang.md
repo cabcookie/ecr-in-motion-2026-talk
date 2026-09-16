@@ -1,36 +1,30 @@
 <!--
-Der feste Teil jeder Antwortmail.
+Der Abspann des Vortrags — eine Datei, drei Auftritte.
 
-Alles unterhalb dieses Kommentars geht WORTWOERTLICH raus — so, wie es hier
-steht. Kein Markdown wird gerendert: Die Mail ist reiner Text, weil sie in
-jedem Programm gleich aussehen soll. Ueberschriften mit # oder Sternchen fuer
-fett kaemen beim Empfaenger als # und Sternchen an.
+  1. Die Antwortmail haengt ihn unter jede Antwort, als reinen Text.
+  2. Die letzte Folie zeigt ihn im Saal.
+  3. Die letzte Seite des PDFs druckt ihn.
 
-Was darueber steht, baut brief.ts zusammen: die Antwort des Agenten und seine
-Schrittfolge. Was DARUNTER steht, ist die zitierte Mail des Empfaengers —
-dieser Anhang kommt davor, weil ein Zitat immer zuletzt kommt.
+Deshalb steht hier MARKDOWN und kein fertiger Mailtext: Eine Folie braucht
+Ueberschriften und Eintraege, die Mail braucht Fliesstext. Wer beides von Hand
+pflegt, pflegt es zweimal — und merkt den Unterschied erst, wenn jemand auf
+einen toten Link klickt.
 
-ZEILENLAENGE: hoechstens etwa 70 Zeichen. Mailprogramme brechen laengere
-Zeilen selbst um, und dann steht der Umbruch, wo ihn niemand gewaehlt hat.
-Adressen deshalb IMMER allein auf ihrer Zeile und nie eingerueckt — eine
-umgebrochene URL ist kein Link mehr, und eine eingerueckte sieht auf einem
-Handy wie ein Fehler aus. 'pnpm mail:test' prueft beides.
+Fuer die Mail wird das Markdown heruntergerechnet: ## faellt weg, aus einem
+Link wird sein Text und darunter die nackte Adresse, Zeilen brechen bei 70
+Zeichen. Adressen stehen dabei IMMER allein auf ihrer Zeile — eine
+umgebrochene URL ist kein Link mehr. 'pnpm mail:test' prueft das.
 
-DIE FORM DER LISTE UNTEN traegt mehr, als man ihr ansieht: Die letzte Seite
-des PDFs liest dieselbe Datei und macht Spalten daraus. Zwei Regeln, und
-beide gelten fuer Text, den man ohnehin so schreiben wuerde:
+WAS DU SCHREIBEN KANNST, und mehr versteht der Leser nicht:
 
-  Ein Absatz, auf den eine Adresse folgt, IST ein Eintrag.
-  Ein Absatz, auf den keine folgt, ist die Ueberschrift darueber.
+  ## Ueberschrift                    beginnt einen Abschnitt
+  Ein Absatz                         die Einleitung dieses Abschnitts
+  - [Titel](adresse) — Beschreibung  ein Eintrag
+  <adresse>                          eine nackte Adresse, allein auf der Zeile
 
-Wo die Liste anfaengt, sagt die Marke weiter unten — ein Kommentar, der nur
-das Wort "liste" enthaelt. Alles davor (Kennzeichnung, Dank, die Adressen)
-bleibt in der Mail, taucht im PDF aber nicht auf. Wer das Muster verlaesst,
-merkt es in der Mail NICHT, haette aber eine leere Seite im PDF; davor bricht
-'pnpm papier:test' ab.
-
-Diese Marke NICHT woertlich in diesen Kommentar schreiben: Ihr Ende beendet
-auch den Kommentar, in dem sie steht. Genau das ist hier schon passiert.
+ALLES VOR DER ERSTEN ## IST NUR FUER DIE MAIL. Der Dank, die drei Adressen und
+der Satz zur geloeschten Mailadresse gehoeren in ein Postfach, nicht auf eine
+Leinwand. Folie und PDF beginnen bei der ersten Ueberschrift.
 
 DEN ERSTEN SATZ bitte stehen lassen. Abschnitt 23 des Vortrags erklaert am
 EU AI Act, dass erkennbar sein muss, wenn eine Maschine nach aussen
@@ -43,13 +37,15 @@ einmal Adressen, die nur auf Startseiten fuehrten:
 1. Jeder Link fuehrt dorthin, wo es losgeht. Nicht auf eine Uebersicht, von
    der aus der Leser selbst weitersuchen muss. Ein Beleg, den man sich erst
    suchen muss, ist keiner.
-2. Vier Gruppen, weil vier verschiedene Menschen mitlesen: wer selbst
+2. Vier Abschnitte, weil vier verschiedene Menschen mitlesen: wer selbst
    ausprobieren will, wer es verstehen muss, wer es bauen soll, und wer es
-   nicht allein anfangen moechte. Ohne die Gruppen waere es eine Linkliste,
-   und eine Linkliste klickt niemand.
+   nicht allein anfangen moechte.
 
 Preise nur, wo sie oeffentlich sind. tecRacer nennt zu seinen Einstiegen
 keine — das sagt die Zeile dann auch, statt es offenzulassen.
+
+Vier Abschnitte passen nebeneinander auf die Folie. Ein fuenfter waere zu
+viel; davor bricht 'pnpm papier:test' ab.
 
 Dieser Kommentar geht nicht mit raus.
 -->
@@ -57,58 +53,43 @@ Dieser Kommentar geht nicht mit raus.
 Diese Antwort kommt von einem KI-Agenten, nicht von einem Menschen.
 
 Danke, dass Du dabei gewesen bist. Bleib gerne mit mir in Kontakt:
-https://carstenbkoch.de/
+<https://carstenbkoch.de/>
 
 Die Folien zur KI-Masterclass beim ECR in Motion 2026 in Bonn:
-https://ecr2026.carstenbkoch.de/vortrag
+<https://ecr2026.carstenbkoch.de/vortrag>
 
 Der Quelltext für Präsentation, Agent und AWS-Infrastruktur — falls
 Du es in Deinem Unternehmen nachbauen willst:
-https://github.com/cabcookie/ecr-in-motion-2026-talk
+<https://github.com/cabcookie/ecr-in-motion-2026-talk>
 
 Deine E-Mail-Adresse wurde nur für diese eine Antwort verwendet und
 ist damit gelöscht.
 
-<!--liste-->
+## Fang einfach an
 
-Wenn Du selbst anfangen möchtest, KI zu nutzen, oder mehr darüber
-lernen willst, habe ich Dir hier etwas zusammengestellt.
+Du brauchst dafür kein AWS-Konto und musst nichts bezahlen.
 
-Mit Amazon Quick bekommst Du einen Agenten auf Deinen Computer, der
-Dir bei Deinen täglichen Aufgaben hilft. Fang mit dem kostenlosen
-Plan an — die Anmeldung braucht nur Deine E-Mail-Adresse:
-https://aws.amazon.com/quick/
+- [Amazon Quick](https://aws.amazon.com/quick/) — ein Agent auf Deinem Computer, der Dir bei Deinen täglichen Aufgaben hilft. Zum Anfangen reicht der kostenlose Plan; die Anmeldung braucht nur Deine E-Mail-Adresse.
+- [Die App dazu](https://aws.amazon.com/quick/desktop/) — für Mac, Windows, Browser, Outlook und Excel.
 
-Und lade Dir die App dazu herunter:
-https://aws.amazon.com/quick/desktop/
+## Lern mehr über KI
 
-Du willst mehr über KI lernen? Dann schau Dir diese kostenlosen
-Kurse an.
+Beide Kurse sind kostenlos und brauchen keine Zeile Code.
 
-Generative AI für Entscheider — drei Kurse, gut drei Stunden:
-https://skillbuilder.aws/learning-plan/STDH6NGPH7/generative-ai-learning-plan-for-decision-makers/MHMHDAWQJY
+- [Generative AI für Entscheider](https://skillbuilder.aws/learning-plan/STDH6NGPH7/generative-ai-learning-plan-for-decision-makers/MHMHDAWQJY) — drei Kurse, gut drei Stunden.
+- [Agenten](https://skillbuilder.aws/learn/DNBD5MT8ZD/introduction-to-agentic-ai-on-aws/WAKAFK6UFY) — das Thema dieser Masterclass, in einer Stunde.
 
-Agenten — das Thema dieser Masterclass, in einer Stunde:
-https://skillbuilder.aws/learn/DNBD5MT8ZD/introduction-to-agentic-ai-on-aws/WAKAFK6UFY
+## Gib es an Deine IT weiter
 
-Wenn Du Unterstützung von Deiner IT brauchst: Diese drei Seiten
-erleichtern ihr den Einstieg in AWS.
+Diese drei Seiten erleichtern ihr den Einstieg in AWS.
 
-Amazon Bedrock — der Zugang zu den Modellen:
-https://docs.aws.amazon.com/de_de/bedrock/latest/userguide/what-is-bedrock.html
+- [Amazon Bedrock](https://docs.aws.amazon.com/de_de/bedrock/latest/userguide/what-is-bedrock.html) — der Zugang zu den Modellen.
+- [Amazon Bedrock AgentCore](https://aws.amazon.com/bedrock/agentcore/) — was einen Agenten betriebsfähig macht.
+- [Lernplan für Entwickler](https://explore.skillbuilder.aws/learn/public/learning_plan/view/2068/generative-ai-learning-plan-for-developers) — ebenfalls kostenlos.
 
-Amazon Bedrock AgentCore — was einen Agenten betriebsfähig macht:
-https://aws.amazon.com/bedrock/agentcore/
+## Fang nicht allein an
 
-Lernplan für Entwickler, ebenfalls kostenlos:
-https://explore.skillbuilder.aws/learn/public/learning_plan/view/2068/generative-ai-learning-plan-for-developers
+Der AWS-Partner tecRacer bietet zwei Einstiege an, die Preise gibt es auf Anfrage.
 
-Und wenn Du es nicht allein anfangen willst: Der AWS-Partner tecRacer
-bietet zwei Einstiege an, die Preise gibt es auf Anfrage.
-
-Data Readiness Discovery — nach einer Woche weißt Du, ob Deine Daten
-tragen:
-https://www.tecracer.com/loesungen/conversational-generative-ai/
-
-GenAI Data-Evaluator — ein Proof of Concept auf Deinen eigenen Daten:
-https://www.tecracer.com/en/solutions/genai-data-evaluator/
+- [Data Readiness Discovery](https://www.tecracer.com/loesungen/conversational-generative-ai/) — nach einer Woche weißt Du, ob Deine Daten tragen.
+- [GenAI Data-Evaluator](https://www.tecracer.com/en/solutions/genai-data-evaluator/) — ein Proof of Concept auf Deinen eigenen Daten.

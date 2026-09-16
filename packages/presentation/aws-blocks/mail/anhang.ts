@@ -1,114 +1,179 @@
 /**
- * Der feste Teil der Antwortmail — gelesen, nicht programmiert.
+ * Der Abspann des Vortrags — eine Datei, drei Auftritte.
  *
- * Der Text steht in anhang.md und ist dort zu bearbeiten. Hier stehen nur die
- * beiden Handgriffe, die ihn benutzbar machen, und beide sind reine
- * Zeichenkettenarbeit: kein Dateizugriff, keine Abhaengigkeit auf Node. Das
- * ist Absicht — dieselben Funktionen laufen im Browser, wo die Druckfassung
- * dieselbe Datei rendert.
+ * Der Text steht in anhang.md und ist dort zu bearbeiten. Hier steht, was ihn
+ * benutzbar macht: `anhangStruktur` liest ihn als Markdown, `anhangText`
+ * rechnet ihn fuer die Mail zu reinem Text herunter.
+ *
+ * Beides ist reine Zeichenkettenarbeit — kein Dateizugriff, keine
+ * Abhaengigkeit auf Node. Das ist Absicht: Dieselben Funktionen laufen im
+ * Browser, wo Folie und Druckfassung dieselbe Datei rendern.
  *
  * Wer die Datei liest, entscheidet jede Aufrufstelle selbst. In der Lambda
  * liegt sie neben dem Bundle, im Browser kommt sie ueber den ?raw-Import von
- * Vite herein, und unter tsx ueber import.meta.url. Drei Laufzeiten, drei
- * Wege — aber nur eine Quelle.
+ * Vite herein, unter tsx ueber import.meta.url. Drei Laufzeiten, drei Wege —
+ * aber nur eine Quelle.
+ *
+ * **Warum ein eigener Leser und keine Bibliothek.** Gebraucht werden vier
+ * Formen: Ueberschrift, Absatz, Eintrag mit Link, nackte Adresse. Ein
+ * Markdown-Paket haette Tabellen, Fussnoten und eingebettetes HTML
+ * mitgebracht — und die Frage offengelassen, was davon auf einer Folie
+ * passiert. Dieser Leser versteht genau das, was die Datei erlaubt.
  */
 
 /** Was zwischen <!-- und --> steht, ist Notiz an den Bearbeiter. */
 const KOMMENTAR = /<!--[\s\S]*?-->/g;
 
-/**
- * Wo die Einstiegsliste beginnt.
- *
- * Eine Marke und keine Heuristik, weil es beides gab und die Heuristik verlor.
- * Der Anfang der Datei sieht aus wie eine Gruppe mit Eintraegen — ein Satz,
- * darunter Absaetze mit Adressen — ist aber keine: Dank, Kontakt und die
- * Adressen zum Vortrag gehoeren in die Mail, nicht in eine Liste mit der
- * Ueberschrift „Wie es weitergeht". Kein Muster trennt das zuverlaessig, also
- * sagt es die Datei selbst.
- *
- * Sie ist ein Kommentar und damit im Postfach unsichtbar.
- */
-const LISTE_AB = /<!--\s*liste\s*-->/;
+/** `- [Titel](adresse) — Beschreibung` */
+const EINTRAG = /^-\s*\[([^\]]+)\]\(([^)]+)\)\s*(?:[—–-]\s*)?([\s\S]*)$/;
+/** `<adresse>` allein auf der Zeile */
+const NACKTE_ADRESSE = /^<(https?:\/\/[^>]+)>$/;
 
-/**
- * Der Text, wie ihn der Empfaenger liest.
- *
- * Wortwoertlich bis auf die Kommentare: Was in anhang.md steht, steht in der
- * Mail. Kein Markdown wird gerendert, weil die Mail reiner Text ist — eine
- * Ueberschrift mit # kaeme beim Empfaenger als # an.
- */
-export function anhangText(roh: string): string {
-  return (
-    roh
-      .replace(KOMMENTAR, "")
-      /*
-        Ein entfernter Kommentar hinterlaesst die Leerzeilen, die ihn umgaben —
-        stand er zwischen zwei Absaetzen, klafft danach eine doppelte Luecke.
-        Im Quelltext sieht man das nicht, im Postfach schon.
-      */
-      .replace(/\n{3,}/g, "\n\n")
-      .trim()
-  );
+/** Ein Link mit dem Satz, der ihn erklaert. */
+export interface Eintrag {
+  readonly was: string;
+  readonly url: string;
+  /** Der Satz hinter dem Gedankenstrich; leer, wenn keiner dastand. */
+  readonly warum: string;
 }
 
-/** Ein Block der Einstiegsliste: fuer wen, und wohin. */
-export interface Einstieg {
-  readonly gruppe: string;
-  readonly punkte: readonly { readonly was: string; readonly url: string }[];
+/** Ein Abschnitt: Ueberschrift, ein Satz dazu, seine Eintraege. */
+export interface Abschnitt {
+  readonly titel: string;
+  readonly einleitung: string;
+  readonly eintraege: readonly Eintrag[];
 }
 
 /**
- * Dieselbe Liste, aber als Daten — fuer die letzte Seite des PDFs.
+ * Der Abspann, zerlegt.
  *
- * Die Mail kippt den Text aus; ein Blatt braucht Spalten, und dafuer muss es
- * wissen, was Ueberschrift und was Eintrag ist. Statt die Liste ein zweites
- * Mal als TypeScript zu fuehren, wird sie hier aus derselben Datei gelesen.
- * Zwei gepflegte Fassungen waeren eine zu viel: Die eine veraltet, und man
- * merkt es erst, wenn jemand auf einen toten Link klickt.
- *
- * Die Regel braucht keine Einrueckung und kein Sonderzeichen. Sie liest die
- * Form, in der so ein Text ohnehin geschrieben wird — Absatz fuer Absatz:
- *
- *   Endet ein Absatz auf einer Adresse, IST er ein Eintrag; was darueber
- *   steht, ist seine Beschreibung.
- *   Endet er nicht auf einer Adresse, ist er die Ueberschrift der Eintraege
- *   darunter.
- *
- * Eine frueher Fassung verlangte eingerueckte Zeilen. Das las sich in der Mail
- * schlecht — Einrueckungen sehen auf einem Handy wie ein Fehler aus —, und ein
- * Format, das den Text verschlechtert, damit ein Programm ihn versteht, hat
- * die Aufgaben vertauscht.
- *
- * Was vor der ersten Ueberschrift steht, faellt heraus: Der Dank, die
- * Adressen zum Vortrag und der Satz zur geloeschten Mailadresse gehoeren in
- * die Mail, aber nicht in eine Liste mit der Ueberschrift „Wie es weitergeht".
- * Dass am Ende ueberhaupt etwas herauskommt, prueft pruefung/papier-test.ts
- * vor jedem Deployment.
+ * `kopf` ist alles vor der ersten Ueberschrift und geht NUR in die Mail: Dank,
+ * die drei Adressen, der Satz zur geloeschten Mailadresse. Das gehoert in ein
+ * Postfach, nicht auf eine Leinwand.
  */
-export function anhangEinstiege(roh: string): Einstieg[] {
-  /* Vor der Marke steht Mailtext, kein Listeneintrag. Ohne Marke: alles. */
-  const ab = roh.split(LISTE_AB);
-  const text = anhangText(ab.length > 1 ? ab.slice(1).join("") : roh);
-  const blocks: { gruppe: string; punkte: { was: string; url: string }[] }[] = [];
+export interface Anhang {
+  readonly kopf: readonly string[];
+  readonly abschnitte: readonly Abschnitt[];
+}
 
-  for (const absatz of text.split(/\n\s*\n/)) {
-    const zeilen = absatz.trim().split("\n").map((z) => z.trim()).filter(Boolean);
-    if (zeilen.length === 0) continue;
+/** Absaetze: durch Leerzeilen getrennt, Zeilen darin bleiben zunaechst stehen. */
+function bloecke(text: string): string[] {
+  return text
+    .split(/\n\s*\n/)
+    .map((b) => b.trim())
+    .filter(Boolean);
+}
 
-    const letzte = zeilen[zeilen.length - 1];
-    if (!/^https?:\/\//.test(letzte)) {
-      /* Eine Ueberschrift ohne Eintraege war keine — sie faellt gleich weg. */
-      if (blocks.length && blocks[blocks.length - 1].punkte.length === 0) blocks.pop();
-      blocks.push({ gruppe: zeilen.join(" ").replace(/:$/, ""), punkte: [] });
+/**
+ * Liest anhang.md.
+ *
+ * Vier Formen, mehr gibt es nicht — sie stehen im Kommentar der Datei selbst.
+ * Was in keine passt, ist Fliesstext: vor der ersten Ueberschrift Kopf, danach
+ * die Einleitung seines Abschnitts.
+ *
+ * Abschnitte ohne Eintraege fallen heraus. Eine Ueberschrift ohne Links ist
+ * auf einer Folie eine leere Spalte, und die faellt mehr auf als ihr Fehlen.
+ */
+export function anhangStruktur(roh: string): Anhang {
+  const kopf: string[] = [];
+  const abschnitte: { titel: string; einleitung: string; eintraege: Eintrag[] }[] = [];
+
+  for (const block of bloecke(roh.replace(KOMMENTAR, ""))) {
+    if (block.startsWith("## ")) {
+      abschnitte.push({ titel: block.slice(3).trim(), einleitung: "", eintraege: [] });
       continue;
     }
 
-    /* Ein Eintrag ohne Ueberschrift darueber gehoert nicht in die Liste. */
-    const offen = blocks[blocks.length - 1];
-    if (!offen) continue;
-    const was = zeilen.slice(0, -1).join(" ").replace(/:$/, "");
-    offen.punkte.push({ was: was || letzte, url: letzte });
+    const offen = abschnitte[abschnitte.length - 1];
+
+    /*
+      Eine Liste ist EIN Absatz mit mehreren Zeilen. Deshalb wird der Block
+      zeilenweise geprueft; nur wenn keine Zeile ein Eintrag ist, gilt er als
+      Fliesstext.
+    */
+    const eintraege = sammleEintraege(block.split("\n"));
+    if (eintraege.length > 0) {
+      if (offen) offen.eintraege.push(...eintraege);
+      continue;
+    }
+
+    if (!offen) kopf.push(block);
+    else if (!offen.einleitung) offen.einleitung = block.replace(/\s*\n\s*/g, " ");
   }
 
-  return blocks.filter((b) => b.punkte.length > 0);
+  return { kopf, abschnitte: abschnitte.filter((a) => a.eintraege.length > 0) };
+}
+
+/**
+ * Die Eintraege eines Blocks.
+ *
+ * Fortsetzungszeilen gehoeren zum Eintrag darueber: Wer eine lange
+ * Beschreibung umbricht, meint einen Eintrag und nicht zwei.
+ */
+function sammleEintraege(zeilen: string[]): Eintrag[] {
+  const raus: { was: string; url: string; warum: string }[] = [];
+  for (const zeile of zeilen) {
+    const treffer = EINTRAG.exec(zeile.trim());
+    if (treffer) {
+      raus.push({ was: treffer[1].trim(), url: treffer[2].trim(), warum: treffer[3].trim() });
+      continue;
+    }
+    const letzter = raus[raus.length - 1];
+    if (letzter) letzter.warum = `${letzter.warum} ${zeile.trim()}`.trim();
+  }
+  return raus;
+}
+
+/** Umbruch an Wortgrenzen — das Mailprogramm soll nicht selbst raten muessen. */
+function umbrich(text: string, breite = 70): string {
+  const zeilen: string[] = [];
+  let aktuell = "";
+  for (const wort of text.split(/\s+/).filter(Boolean)) {
+    if (!aktuell) aktuell = wort;
+    else if (aktuell.length + 1 + wort.length <= breite) aktuell += ` ${wort}`;
+    else {
+      zeilen.push(aktuell);
+      aktuell = wort;
+    }
+  }
+  if (aktuell) zeilen.push(aktuell);
+  return zeilen.join("\n");
+}
+
+/**
+ * Der Text, wie ihn der Empfaenger im Postfach liest.
+ *
+ * Reiner Text, weil die Mail in jedem Programm gleich aussehen soll — ein ##
+ * kaeme beim Empfaenger als ## an und nicht als Ueberschrift. Die Auszeichnung
+ * faellt also weg und wird zu dem, was sie meint: aus einem Link sein Titel,
+ * der Satz dazu, und darunter die nackte Adresse.
+ *
+ * Die Adresse steht IMMER allein auf ihrer Zeile. Die Skill-Builder-Links sind
+ * ueber hundert Zeichen lang; ein Mailprogramm, das eine Zeile umbricht,
+ * zerlegt sie — und einen Link, den man von Hand zusammensetzen muss, klickt
+ * niemand.
+ */
+export function anhangText(roh: string): string {
+  const { kopf, abschnitte } = anhangStruktur(roh);
+  const teile: string[] = [];
+
+  /* Der Kopf ist vom Autor umgebrochen; nur die spitzen Klammern fallen weg. */
+  for (const block of kopf) {
+    teile.push(
+      block
+        .split("\n")
+        .map((z) => z.trim().replace(NACKTE_ADRESSE, "$1"))
+        .join("\n"),
+    );
+  }
+
+  for (const abschnitt of abschnitte) {
+    teile.push(abschnitt.titel);
+    if (abschnitt.einleitung) teile.push(umbrich(abschnitt.einleitung));
+    for (const e of abschnitt.eintraege) {
+      teile.push(`${umbrich(e.warum ? `${e.was} — ${e.warum}` : e.was)}\n${e.url}`);
+    }
+  }
+
+  return teile.join("\n\n").trim();
 }

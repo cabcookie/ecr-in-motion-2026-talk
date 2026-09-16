@@ -16,7 +16,7 @@
  */
 import { readFileSync } from "node:fs";
 import { SECTIONS } from "../src/slides/data";
-import { anhangEinstiege } from "../aws-blocks/mail/anhang";
+import { anhangStruktur } from "../aws-blocks/mail/anhang";
 
 /**
  * Folienarten, die ohne den laufenden Vortrag nichts zeigen.
@@ -69,28 +69,34 @@ for (const abschnitt of SECTIONS) {
 }
 
 /*
-  Die letzte Seite des PDFs liest ihre Liste aus aws-blocks/mail/anhang.md —
-  derselben Datei, aus der die Antwortmail ihren festen Teil nimmt. Das ist
-  gewollt, hat aber eine Kante: Die Mail kippt den Text aus und ueberlebt jede
-  Formatierung, das Blatt braucht Gruppen und erkennt sie an der Einrueckung.
-  Wer beim Bearbeiten das Muster verlaesst, merkt es in der Mail NICHT — und im
-  PDF stuende dann eine leere Seite.
+  Der Abspann steht an drei Stellen — letzte Folie, letzte PDF-Seite,
+  Antwortmail — und kommt aus einer Datei: aws-blocks/mail/anhang.md. Das ist
+  gewollt, hat aber zwei Kanten.
 
-  Deshalb hier: Wir zaehlen, was herauskommt. Vier Gruppen sind es heute; die
-  Schwelle steht bei zwei, damit ein Umbau der Liste nicht sofort anschlaegt,
-  ein zerbrochenes Muster aber schon.
+  Erstens: Die Mail ueberlebt jede Formatierung, Folie und Blatt nicht. Wer
+  beim Bearbeiten das Markdown zerlegt, merkt es in der Mail NICHT und haette
+  eine leere Folie.
+
+  Zweitens: Vier Abschnitte passen nebeneinander. Ein fuenfter wuerde die Folie
+  sprengen — und das faellt erst im Saal auf.
 */
-const einstiege = anhangEinstiege(
+const abspann = anhangStruktur(
   readFileSync(new URL("../aws-blocks/mail/anhang.md", import.meta.url), "utf8"),
 );
-const punkte = einstiege.reduce((n, b) => n + b.punkte.length, 0);
-console.log(`Anhang: ${einstiege.length} Gruppen, ${punkte} Adressen.`);
-if (einstiege.length < 2 || punkte < 4) {
+const eintraege = abspann.abschnitte.reduce((n, a) => n + a.eintraege.length, 0);
+console.log(`Abspann: ${abspann.abschnitte.length} Abschnitte, ${eintraege} Adressen.`);
+if (abspann.abschnitte.length < 2 || eintraege < 4) {
   console.log(
-    "\nDie Einstiegsliste in aws-blocks/mail/anhang.md ist so nicht lesbar.\n" +
-      "Gelesen wird ab der Marke (ein Kommentar, der nur „liste“ enthält).\n" +
-      "Danach gilt je Absatz: endet er auf einer Adresse, ist er ein Eintrag —\n" +
-      "endet er nicht auf einer, ist er die Überschrift der Einträge darunter.",
+    "\nDer Abspann in aws-blocks/mail/anhang.md ist so nicht lesbar.\n" +
+      "Erwartet werden Abschnitte als „## Überschrift“ und darunter Einträge\n" +
+      "als „- [Titel](adresse) — Beschreibung“.",
+  );
+  process.exit(1);
+}
+if (abspann.abschnitte.length > 4) {
+  console.log(
+    `\n${abspann.abschnitte.length} Abschnitte passen nicht auf die letzte Folie.\n` +
+      "Sie steht in zwei Spalten; mehr als vier werden im Saal unleserlich.",
   );
   process.exit(1);
 }

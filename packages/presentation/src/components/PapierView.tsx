@@ -4,20 +4,11 @@ import { SectionView } from "./SectionView";
 import { Logo } from "./Logo";
 import { CODE_URL, PDF_URL } from "../../aws-blocks/mail/konfig";
 /*
-  Dieselbe Datei wie die Antwortmail — nicht eine zweite Liste.
-
-  Was auf der letzten Seite steht, hat jeder Teilnehmer am Abend auch per Mail
-  bekommen. Zwei gepflegte Fassungen davon waeren eine zu viel: Die eine
-  veraltet, und man merkt es erst, wenn jemand auf einen toten Link klickt.
-
-  Die Mail kippt den Text aus, das Blatt braucht Spalten — deshalb liest
-  `anhangEinstiege` die Gruppen aus demselben Text heraus. `?raw` bettet die
-  Datei beim Bauen ein; im Browser gibt es kein Dateisystem.
+  Dieselbe Darstellung wie auf der letzten Folie — und dieselbe Quelle wie die
+  Antwortmail. Drei Auftritte, eine Datei; was sie unterscheidet, steht in
+  Abspann.tsx.
 */
-import anhangRoh from "../../aws-blocks/mail/anhang.md?raw";
-import { anhangEinstiege } from "../../aws-blocks/mail/anhang";
-
-const EINSTIEGE = anhangEinstiege(anhangRoh);
+import { AbspannListe } from "./mocks/Abspann";
 
 
 /** Die Bühne, auf der jede Folie entworfen ist. */
@@ -181,41 +172,12 @@ function Schluss() {
           Wie es weitergeht
         </h2>
         <p className="mt-2 mb-0 max-w-[92ch] text-[10pt] leading-relaxed text-fg-2">
-          Vier Wege, je nachdem, wer mitliest. Dieselbe Liste steht in der Antwort-Mail,
-          die Du am Abend von Lisa Berger bekommen hast.
+          Vier Wege, je nachdem, wer mitliest. Dieselbe Liste stand auf der letzten Folie
+          und steht in der Antwort-Mail, die Du am Abend von Lisa Berger bekommen hast.
         </p>
 
-        <div className="mt-[7mm] grid grid-cols-2 gap-x-[12mm] gap-y-[6mm]">
-          {EINSTIEGE.map((block) => (
-            <div key={block.gruppe}>
-              {/*
-                Ganze Saetze, keine Etiketten — deshalb Satzschrift und keine
-                Versalien. Die Ueberschriften standen hier einmal als kurze
-                Mono-Labels in Grossbuchstaben; seit sie aus der Mail kommen
-                („Wenn Du Unterstuetzung von Deiner IT brauchst ..."), waeren
-                das drei Zeilen Geschrei.
-              */}
-              <p className="m-0 max-w-[46ch] text-[9.5pt] leading-snug font-semibold text-fg">
-                {block.gruppe}
-              </p>
-              <ul className="mt-2 mb-0 list-none space-y-[2.5mm] p-0">
-                {block.punkte.map((punkt) => (
-                  <li key={punkt.url}>
-                    <p className="m-0 text-[9pt] leading-snug text-fg-2">{punkt.was}</p>
-                    {/*
-                      Die Adresse ausgeschrieben und nicht hinter dem Text
-                      versteckt: Auf Papier ist ein Link, den man nicht lesen
-                      kann, kein Link. `break-all`, weil die Skill-Builder-
-                      Adressen laenger sind als die Spalte breit ist.
-                    */}
-                    <p className="m-0 font-mono text-[7.5pt] leading-snug break-all text-fg-3">
-                      {punkt.url}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <div className="mt-[7mm]">
+          <AbspannListe ort="blatt" />
         </div>
       </div>
 

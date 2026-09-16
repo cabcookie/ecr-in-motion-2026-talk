@@ -13,7 +13,7 @@ import { beantworte } from "../aws-blocks/mail/agent";
 import { FRAGE_LISA } from "../aws-blocks/mail/werkzeuge";
 import { baueAntwort, baueRohmail, lies } from "../aws-blocks/mail/brief";
 import { postfachFuer } from "../aws-blocks/mail/konfig";
-import { anhangEinstiege, anhangText } from "../aws-blocks/mail/anhang";
+import { anhangStruktur, anhangText } from "../aws-blocks/mail/anhang";
 
 /*
   Der feste Teil der Mail kommt aus anhang.md. Unter tsx gibt es kein
@@ -22,7 +22,7 @@ import { anhangEinstiege, anhangText } from "../aws-blocks/mail/anhang";
 */
 const ROH = readFileSync(new URL("../aws-blocks/mail/anhang.md", import.meta.url), "utf8");
 const ANHANG = anhangText(ROH);
-const EINSTIEGE = anhangEinstiege(ROH);
+const ABSPANN = anhangStruktur(ROH);
 
 const ROHMAIL = [
   "Return-Path: <andreas.walter@example.com>",
@@ -138,6 +138,12 @@ pruefe(text.includes("Warenwirtschaft — Kategorieentwicklung"), "Schrittfolge 
 pruefe(text.includes("ecr2026.carstenbkoch.de"), "Link zum Vortrag");
 pruefe(text.includes("github.com/cabcookie"), "Link zum Quelltext");
 pruefe(text.includes("von einem KI-Agenten"), "Kennzeichnung als Maschine");
+/*
+  Markdown darf den Empfaenger nie erreichen. Die Datei ist jetzt Markdown,
+  weil Folie und PDF ihre Struktur brauchen — die Mail ist reiner Text, und
+  ein ## kaeme dort als ## an.
+*/
+pruefe(!/^#|^- \[|\]\(http|^</m.test(text), "keine Markdown-Zeichen in der Mail");
 pruefe(text.includes("gelöscht"), "Hinweis zur Adresse");
 pruefe(!baueAntwort("probe", ohne, ANHANG).includes("Was ich dafür abgefragt"), "Probe ohne Systemliste");
 
@@ -147,9 +153,9 @@ pruefe(!baueAntwort("probe", ohne, ANHANG).includes("Was ich dafür abgefragt"),
   für den Hinweis, wie es richtig geht.
 */
 const probe = baueAntwort("probe", ohne, ANHANG);
-for (const block of EINSTIEGE) {
-  for (const p of block.punkte) {
-    pruefe(text.includes(p.url) && probe.includes(p.url), `Einstieg verlinkt: ${p.was}`);
+for (const abschnitt of ABSPANN.abschnitte) {
+  for (const e of abschnitt.eintraege) {
+    pruefe(text.includes(e.url) && probe.includes(e.url), `Einstieg verlinkt: ${e.was}`);
   }
 }
 /*
@@ -161,9 +167,8 @@ for (const block of EINSTIEGE) {
   Die beiden kurzen Zeilen darüber (Vortrag, Quelltext) sind bewusst anders
   gesetzt und ausgenommen: Sie bleiben mit Beschriftung unter siebzig Zeichen.
 */
-const langeZeilen = text
-  .split("\n")
-  .filter((z) => EINSTIEGE.some((b) => b.punkte.some((p) => z.includes(p.url))));
+const alleAdressen = ABSPANN.abschnitte.flatMap((a) => a.eintraege.map((e) => e.url));
+const langeZeilen = text.split("\n").filter((z) => alleAdressen.some((u) => z.includes(u)));
 pruefe(
   langeZeilen.length > 0 && langeZeilen.every((z) => z.trim().startsWith("http")),
   "Jede URL der Einstiege steht allein auf ihrer Zeile",
