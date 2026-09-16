@@ -144,6 +144,35 @@ export function chatAgent(scope: Scope, auswahl: Werkzeugauswahl = {}): Agent<an
 }
 
 /**
+ * Die Stufe dazwischen: Systemprompt ja, Systeme nein (Abschnitt 16).
+ *
+ * Derselbe Prompt wie der volle Agent, aber kein einziges Fachwerkzeug. Er
+ * weiß also, wer er ist, wofür er arbeitet und was er nicht darf — und muss
+ * jede Zahl bei der Person im Chat erfragen. „Die Tools bist Du", sagt das
+ * Handy dazu.
+ *
+ * Ohne diese Stufe lief Abschnitt 16 auf dem vollen Agenten, und der hatte
+ * alle Zahlen schon, bevor jemand gefragt wurde.
+ */
+export function promptChatAgent(scope: Scope): Agent<any> {
+  return new Agent(scope, 'prompt', {
+    ...GEMEINSAM,
+    tools: (tool) => ({
+      antworte_im_chat: antworteImChat(
+        tool,
+        true,
+        'Auf dieser Stufe hast du KEINE Systeme. Die Person im Chat ist deine einzige Quelle: ' +
+          'Frag sie nach jeder Zahl und jeder Vorgabe, die du brauchst — eine konkrete Frage je ' +
+          'Antwort, und sag dazu, welche Art Angabe es ist (Kalkulation, Regalplatz, Fristen, ' +
+          'Freigaben, Ziele). Erfinde keine Systemnamen und rechne keine Kennzahl selbst aus, die ' +
+          'ein System liefern würde — frag danach. Arbeite mit dem, was sie dir nennt. Hast du genug ' +
+          'beisammen, gib deine Empfehlung.',
+      ),
+    }),
+  });
+}
+
+/**
  * Der Agent auf der untersten Stufe: das nackte Modell.
  *
  * Kein Fachprompt, keine Fachwerkzeuge — nur die Trainingsdaten und ein

@@ -51,11 +51,15 @@ if (kat.ok) {
 
 console.log('\nWarenwirtschaft — die drei Ausgänge');
 pruefe('Ein gelisteter Artikel wird gefunden', artikel('Nocturne').ok);
-const fremd = artikel('Kartoffelchips');
+const neu = artikel('Hallbach Crispy Bites');
 pruefe(
-  'Etwas ausserhalb der Kategorie ergibt nicht_zustaendig, nicht nicht_gefunden',
-  !fremd.ok && fremd.grund === 'nicht_zustaendig',
-  fremd.ok ? 'wurde gefunden' : fremd.grund,
+  'Ein neues Produkt ergibt nicht_gefunden, nicht „andere Kategorie zuständig"',
+  !neu.ok && neu.grund === 'nicht_gefunden' && !/nicht zuständig/i.test(neu.hinweis ?? ''),
+  neu.ok ? 'wurde gefunden' : `${neu.grund}: ${neu.hinweis}`,
+);
+pruefe(
+  'Die Meldung nennt ein neues Produkt ausdrücklich als Normalfall',
+  !neu.ok && /Normalfall/.test(neu.hinweis ?? ''),
 );
 const leer = artikel('');
 pruefe('Eine leere Suche ergibt unvollstaendig', !leer.ok && leer.grund === 'unvollstaendig');

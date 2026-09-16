@@ -68,11 +68,15 @@ export function kategorie(): Befund<Kategorieauskunft> {
 /**
  * Ein einzelner Artikel.
  *
- * Drei Ausgänge, und der dritte ist der, auf den es ankommt: Wer nach
- * Kartoffelchips fragt, bekommt nicht „nicht gefunden", sondern „nicht meine
- * Kategorie" — samt der Warengruppen, die es bei Nordkorb sonst noch gibt.
- * Der Unterschied ist für den Agenten der zwischen „das Produkt kennt niemand"
- * und „dafür ist jemand anderes zuständig".
+ * Drei Ausgänge: gefunden, Suche zu kurz, oder nicht im Artikelstamm.
+ *
+ * Der dritte sagt bewusst NICHT „andere Kategorie zuständig". Er kann ein
+ * Produkt einer fremden Warengruppe nicht von einem neuen Produkt
+ * unterscheiden, das jemand gerade listen möchte — und das ist der Normalfall
+ * einer Listungsanfrage. Als „nicht zuständig" gemeldet, schloss der Agent
+ * aus der Hallbach-Mail „Ich kann ihn hier nicht listen". Die übrigen
+ * Warengruppen nennt die Meldung trotzdem, damit er bei Kartoffelchips
+ * selbst auf die richtige Antwort kommt.
  */
 export function artikel(suche: string): Befund<Artikelauskunft> {
   const begriff = suche.trim().toLowerCase();
@@ -90,9 +94,11 @@ export function artikel(suche: string): Befund<Artikelauskunft> {
   }
 
   return fehlschlag(
-    'nicht_zustaendig',
-    `„${suche.trim()}" liegt nicht in ${KATEGORIE}. Nordkorb führt ${KULISSE.length} weitere ` +
-      `Warengruppen; für die ist eine andere Kategorie zuständig. Ein Artikel, den es gar nicht ` +
-      `gibt, sähe hier genauso aus — mehr kann die Warenwirtschaft dieser Kategorie nicht sagen.`,
+    'nicht_gefunden',
+    `„${suche.trim()}" steht nicht im Artikelstamm von ${KATEGORIE} — Nordkorb führt es hier ` +
+      `heute nicht. Für ein neues Produkt, das gelistet werden soll, ist das der Normalfall und ` +
+      `kein Hindernis: Ob es in diese Kategorie gehört, entscheidet seine Warengruppe, nicht dieser ` +
+      `Eintrag. Neben ${KATEGORIE} führt Nordkorb ${KULISSE.length} weitere Warengruppen, für die ` +
+      `andere Kategorien zuständig sind.`,
   );
 }

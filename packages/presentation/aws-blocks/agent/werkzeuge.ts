@@ -148,7 +148,7 @@ export function fachwerkzeuge(
 
     warenwirtschaft_artikel: werkzeug('warenwirtschaft_artikel', {
       description:
-        'Schlägt einen einzelnen Artikel im Artikelstamm nach. Sagt auch, wenn ein Produkt nicht in diese Kategorie gehört.',
+        'Schlägt einen einzelnen Artikel im Artikelstamm nach. Ein Produkt, das noch nicht gelistet ist, steht dort nicht — bei einer Neulistung ist das normal.',
       parameters: z.object({ suche: z.string().describe('Artikel- oder Markenname') }),
       handler: async ({ input }) =>
         ausgabe(artikel(input.suche), (d) => ({

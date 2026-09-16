@@ -1,5 +1,8 @@
 /**
- * Kostenvergleich für Abschnitt 17: sechs Rückfragen gegen eine Nachricht.
+ * Kostenvergleich: sechs Rückfragen gegen eine Nachricht.
+ *
+ * Stand hinter der Folie „Jede Nachricht schickt das ganze Gespräch mit",
+ * die am 16.09. aus dem Vortrag genommen wurde. Die Rechnung gilt weiter.
  *
  *   pnpm --filter @ecr-talk/presentation kosten
  *
@@ -44,7 +47,7 @@ type Modus = 'ohne' | '5m' | '1h';
 
 const M = 1_000_000;
 
-/** Die sechs Angaben, die dem Agenten fehlen — dieselben wie in Abschnitt 18. */
+/** Die sechs Angaben, die dem Agenten fehlen — dieselben, nach denen der Agent im Chat mit Systemprompt fragt. */
 const RUNDEN = [
   {
     frage:
@@ -165,7 +168,7 @@ const roh = eingabeA(false);
 const cached = eingabeA(true);
 
 console.log(`
-Kostenvergleich · Abschnitt 17
+Kostenvergleich · sechs Rückfragen gegen eine Nachricht
 Sechs Rückfragen gegen eine Nachricht — dasselbe Ergebnis, derselbe Text.
 
 Bausteine

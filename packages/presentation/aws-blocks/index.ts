@@ -9,7 +9,7 @@
  * Derselbe Code, kein Unterschied im Frontend.
  */
 import { ApiNamespace, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
-import { chatAgent, postfachAgent, rohChatAgent } from './agent';
+import { chatAgent, postfachAgent, promptChatAgent, rohChatAgent } from './agent';
 import { perMailLambda } from './agent/versand';
 import { fensterstand, heuteAbend, INAKTIV, istAktiv, type Fensterstand } from './fenster';
 import { z } from 'zod';
@@ -101,9 +101,9 @@ const rtReset = new Realtime(scope, 'reset-live', {
  * nicht: eine Mail senden. Dafür antwortet er im Chat. Er bringt alle
  * Fachwerkzeuge mit, einschließlich der Ziele.
  *
- * Auf dem Handy gibt es zwei Stufen: diesen Agenten (`voll`) und das nackte
- * Modell (`roh`, unten). Stufen dazwischen — erst der Prompt, dann Werkzeug
- * für Werkzeug — gibt es nicht.
+ * Auf dem Handy gibt es drei Stufen: das nackte Modell (`roh`, Abschnitt 14),
+ * den Systemprompt ohne Systeme (`prompt`, Abschnitt 16) und diesen Agenten
+ * (`voll`). Werkzeug für Werkzeug dazwischen gibt es nicht.
  *
  * Der Prompt kommt aus den Foliendaten, damit der Agent mit demselben Text
  * läuft, den das Publikum auf dem Handy aufklappen kann.
@@ -122,13 +122,16 @@ const berater = chatAgent(scope);
 */
 const roh = rohChatAgent(scope);
 
+/* Abschnitt 16: der Systemprompt ohne Systeme. */
+const prompt = promptChatAgent(scope);
+
 /** Welche Stufe ein Chat anspricht. */
-const CHATS = { voll: berater, roh } as const;
+const CHATS = { voll: berater, prompt, roh } as const;
 type Chatstufe = keyof typeof CHATS;
 
-/** Die Stufe kommt vom Handy; nur die beiden bekannten gelten. */
+/** Die Stufe kommt vom Handy; nur die bekannten gelten. */
 function chat(stufe: Chatstufe) {
-  if (stufe !== 'voll' && stufe !== 'roh') throw new Error(`Unbekannte Stufe: ${String(stufe)}`);
+  if (!Object.hasOwn(CHATS, stufe)) throw new Error(`Unbekannte Stufe: ${String(stufe)}`);
   return CHATS[stufe];
 }
 

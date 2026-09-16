@@ -1,5 +1,6 @@
 /**
- * Der Gegentest zu den Kategoriezielen — die Messung hinter Abschnitt 17.
+ * Der Gegentest zu den Kategoriezielen — die Messung hinter der Folie
+ * „Sechs Werkzeuge / Sieben Werkzeuge".
  *
  * Dieselbe Mail (Morgenrot, eine Preiseinstiegstafel), dasselbe Modell,
  * derselbe Systemprompt. Einmal mit allen Fachwerkzeugen, einmal ohne

@@ -138,7 +138,7 @@ function heute(): string {
  *
  * Unter der Antwort des Agenten steht, was er dafür getan hat — das ist der
  * Beleg, den Abschnitt 6 verspricht, und zugleich die Nachvollziehbarkeit, die
- * Abschnitt 24 vom EU AI Act her fordert. Dass eine Maschine geantwortet hat,
+ * der Abschnitt zum EU AI Act fordert. Dass eine Maschine geantwortet hat,
  * steht ebenfalls dort und nicht im Kleingedruckten.
  *
  * Der Brief kommt in Teilen vom Werkzeug `antworte_per_mail`, und die

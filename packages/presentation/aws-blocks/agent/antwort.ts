@@ -172,10 +172,13 @@ export function antworteVerMail(
  * Kein `needsApproval`: Am anderen Ende sitzt jemand aus dem eigenen Haus.
  * Eine Antwort dorthin braucht niemandes Freigabe, und Interna sind hier keine
  * — das ist der ganze Unterschied zur Mail nach draußen.
+ *
+ * `zusatz` hängt einen Absatz an die Beschreibung, der nur für eine Stufe gilt
+ * (siehe `promptChatAgent`).
  */
-export function antworteImChat(tool: ToolFactory<Vorgangskontext>, intern = true) {
+export function antworteImChat(tool: ToolFactory<Vorgangskontext>, intern = true, zusatz = '') {
   return tool({
-    description: intern
+    description: (intern
       ? /*
           Was hier steht, hing bis zum 16.09. als Absatz am Systemprompt des
           Chats, und die Formvorgabe fürs Handy stand als Schritt 7 im
@@ -203,7 +206,8 @@ export function antworteImChat(tool: ToolFactory<Vorgangskontext>, intern = true
         */
         'Schickt deine Antwort an den ABSENDER der Nachricht, die du bekommen hast. Er liest ' +
         'sie unmittelbar — schreibe ihn also direkt an, mit Anrede, und nicht über ihn an ' +
-        'jemand anderen. Das ist der einzige Weg, auf dem deine Antwort ihn erreicht.',
+        'jemand anderen. Das ist der einzige Weg, auf dem deine Antwort ihn erreicht.') +
+      (zusatz ? `\n\n${zusatz}` : ''),
     parameters: z.object({
       text: z.string().describe('Die Antwort. Kurz — sie wird auf dem Handy gelesen.'),
     }),

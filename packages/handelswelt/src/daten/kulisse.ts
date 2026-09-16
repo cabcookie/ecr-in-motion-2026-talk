@@ -17,7 +17,7 @@
  * seiner Kategorie ehrlich antworten können („Kartoffelchips liegen bei
  * Knabberartikel, das ist nicht meine Kategorie"). Dass Chips Knabberartikel
  * sind, weiß er selbst; welche Warengruppen es bei Nordkorb gibt, nicht.
- * Das ist der Grund `nicht_zustaendig`.
+ * Die Warenwirtschaft nennt ihre Zahl, wenn ein Artikel nicht im Stamm steht.
  */
 
 export interface Warengruppe {

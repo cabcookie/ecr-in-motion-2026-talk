@@ -39,10 +39,26 @@ function grabArray(src, name) {
   // Der Ausschnitt ist ein reines Datenliteral ohne Aufrufe; ihn als
   // JavaScript auszuwerten ist der kürzeste Weg, der die Quelle so liest, wie
   // sie geschrieben ist.
-  return Function(`"use strict"; return (${src.slice(start, j)});`)();
+  //
+  // Textkonstanten, die das Literal nennt (etwa LISA_PROMPT), werden als
+  // Parameter mitgegeben — sonst bräche die Auswertung an ihrem Namen ab.
+  const namen = Object.keys(KONSTANTEN);
+  return Function(...namen, `"use strict"; return (${src.slice(start, j)});`)(
+    ...namen.map((n) => KONSTANTEN[n]),
+  );
+}
+
+/** `const NAME =\n  "…";` — nur reine Zeichenketten, nichts, was rechnet. */
+function textKonstanten(src) {
+  const out = {};
+  for (const m of src.matchAll(/^const ([A-Z_]+) =\s*("(?:[^"\\]|\\.)*");$/gm)) {
+    out[m[1]] = JSON.parse(m[2]);
+  }
+  return out;
 }
 
 const ts = await readFile(DATA, "utf8");
+const KONSTANTEN = textKonstanten(ts);
 const BLOCKS = grabArray(ts, "BLOCKS");
 const SECTIONS = grabArray(ts, "SECTIONS");
 

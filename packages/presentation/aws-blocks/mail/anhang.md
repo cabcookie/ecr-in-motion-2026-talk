@@ -26,8 +26,8 @@ ALLES VOR DER ERSTEN ## IST NUR FUER DIE MAIL. Der Dank, die drei Adressen und
 der Satz zur Mailadresse gehoeren in ein Postfach, nicht auf eine
 Leinwand. Folie und PDF beginnen bei der ersten Ueberschrift.
 
-DEN ERSTEN SATZ bitte stehen lassen. Abschnitt 23 des Vortrags erklaert am
-EU AI Act, dass erkennbar sein muss, wenn eine Maschine nach aussen
+DEN ERSTEN SATZ bitte stehen lassen. Der Abschnitt zum EU AI Act
+erklaert, dass erkennbar sein muss, wenn eine Maschine nach aussen
 kommuniziert. Faellt er weg, widerlegt die Mail die eigene Folie —
 'pnpm mail:test' schlaegt dann an.
 

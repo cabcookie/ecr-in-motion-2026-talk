@@ -399,7 +399,7 @@ Messordner.
 pnpm --filter @ecr-talk/presentation gegenueberstellung   # Hallbach, mit und ohne Ziele, je fünfmal
 pnpm --filter @ecr-talk/presentation ziele:gegentest      # Morgenrot, mit und ohne Ziele, je dreimal
 pnpm --filter @ecr-talk/presentation szenarien            # alle vierzehn Szenarien einmal
-pnpm --filter @ecr-talk/presentation kosten               # Abschnitt 17: sechs Rückfragen gegen eine Nachricht, offline gerechnet
+pnpm --filter @ecr-talk/presentation kosten               # sechs Rückfragen gegen eine Nachricht, offline gerechnet
 ```
 
 ## Hinweis zum Sortiment

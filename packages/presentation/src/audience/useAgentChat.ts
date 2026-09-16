@@ -53,7 +53,7 @@ function auftaktText(auftakt: "hallbach" | "briefing", teilnehmer: string): stri
 
 export function useAgentChat(
   interactionId: string,
-  { stufe = "voll", auftakt = "hallbach" }: { stufe?: "voll" | "roh"; auftakt?: "hallbach" | "briefing" } = {},
+  { stufe = "voll", auftakt = "hallbach" }: { stufe?: "voll" | "prompt" | "roh"; auftakt?: "hallbach" | "briefing" } = {},
 ) {
   const me = useRef(participantId()).current;
   const [messages, setMessages] = useState<ChatMessage[]>([]);

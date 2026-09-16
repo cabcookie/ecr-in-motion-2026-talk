@@ -38,6 +38,14 @@ export const BLOCKS: Block[] = [
   },
 ] as Block[];
 
+/**
+ * Der Systemprompt des Agenten — derselbe Text, mit dem er läuft
+ * (src/slides/agent.ts liest ihn aus dem Chat in Abschnitt 16). Zwei Chats
+ * zeigen ihn auf dem Handy: der mit Systemprompt und der mit Tools.
+ */
+const LISA_PROMPT =
+  "Du bist Lisa Berger, der KI-Agent für Category Management Schokolade & Pralinen bei der Lebensmittelkette Nordkorb. Du entscheidest selbst, und du zeichnest mit deinem Namen.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann lege die Frage dem Category-Team vor. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.";
+
 export const SECTIONS: Section[] = [
   {
     b: 1,
@@ -438,7 +446,9 @@ export const SECTIONS: Section[] = [
           Prophezeiung allein. Ohne sie zeigte das PDF zwei Untergangszitate
           ohne Widerlegung, obwohl die Überschrift das Gegenteil behauptet.
         */
-        papier: { text: "In den sechs Jahren danach stieg die Beschäftigung in den USA um vier Millionen." },
+        papier: {
+          text: "In den sechs Jahren danach stieg die Beschäftigung in den USA um vier Millionen.",
+        },
       },
       {
         at: "18:13",
@@ -448,7 +458,9 @@ export const SECTIONS: Section[] = [
           cite: "Jeremy Rifkin · 1995",
         },
         say: 'Jeremy Rifkin veröffentlichte 1995 „Das Ende der Arbeit" — danach fiel die US-Arbeitslosigkeit unter vier Prozent. Dieselbe Sorge, immer wieder, seit der Dampfmaschine.',
-        papier: { text: "Danach fiel die US-Arbeitslosigkeit unter vier Prozent. Dieselbe Sorge, immer wieder, seit der Dampfmaschine." },
+        papier: {
+          text: "Danach fiel die US-Arbeitslosigkeit unter vier Prozent. Dieselbe Sorge, immer wieder, seit der Dampfmaschine.",
+        },
       },
     ],
     n: 8,
@@ -624,7 +636,7 @@ export const SECTIONS: Section[] = [
           caption: "Schreib ihm selbst.",
           hint: "Der Agent hat nichts als sein Training. Keine Systeme, keine Daten.",
         },
-        say: "Machen wir die Probe. Auf Deinem Handy kannst Du jetzt einen Chat starten. Erinnerst Du Dich an Dein Briefing von vorhin? Du bist immer noch dieser Lieferant — und genau Deine Anfrage geht jetzt an den Agenten. Du siehst sie oben im Chat stehen, bevor sie rausgeht. Was Du nicht siehst: Dieser Agent hat nichts. Kein Wissen über Nordkorb, keinen Zugriff auf irgendein System, nicht einmal eine Anweisung, wer er ist. Nur sein Training. Er wird trotzdem antworten. Schau Dir gleich genau an, welche Zahlen er nennt.",
+        say: "Lass es uns ausprobieren. Auf Deinem Handy kannst Du jetzt einen Chat starten. Du bist immernoch die gleiche Person vom gleichen Lieferanten. Deine Anfrage geht jetzt an diesen Agenten. Du siehst sie oben im Chat stehen, bevor sie rausgeht. Dieser Agent hat nur ein sehr minimalistisches Systemprompt und ein Tool, um Dir antworten zu können, sonst nichts. Kein Wissen über Nordkorb, keinen Zugriff auf irgendein System, nicht einmal eine Anweisung, wer er ist. Nur sein Training. Er wird trotzdem antworten. Erzählt mal bitte, was Euch auffällt. [Auf Teilnehmer warten]. Ihr habt es gesehen. Er antwortet auf jeden Fall. Und er klingt schon so, als ob er wüsste, was er tut oder? Er verhält sich ein bisschen so, ...",
         audience: {
           kind: "chat",
           id: "roh-chat",
@@ -640,7 +652,6 @@ export const SECTIONS: Section[] = [
             "Du beantwortest die Nachricht, die Dir geschickt wurde, und schreibst dabei AN IHREN ABSENDER — nicht über ihn an jemand anderen. Frag nicht nach; antworte mit dem, was Du hast.\n\nHalte Dich kurz, es wird auf einem Handy gelesen. Reiner Fließtext, kein Markdown.\n\nSchreibe zuerst in zwei, drei Sätzen, wie Du zu Deiner Einschätzung kommst und worauf Du Dich dabei stützt. Deine Antwort gibst Du dann mit dem Werkzeug antworte_dem_absender — ohne sie vorher anzukündigen.",
         },
         app: "Chat auf der untersten Stufe: fast kein Prompt, keine Werkzeuge. Der Auftakt ist die Briefing-Mail des jeweiligen Teilnehmers, sichtbar im Verlauf.",
-        note: "Worauf zu achten ist: WENN er eine Marge rechnet, rechnet er sie auf den Brutto-Preis. Beim Briefing Morgenrot (EK 0,55 / VK 0,89) nannte er in zwei von drei Läufen rund 38 % — richtig sind 33,9 %, weil Schokolade mit 7 % Mehrwertsteuer läuft und auf den Netto-VK gerechnet wird. Nicht jeder Lauf nennt eine Zahl, und jedes Briefing hat andere Preise; frag also offen „hat jemand eine Marge genannt bekommen?“ statt die 38 % anzukündigen. Wenn eine kommt, ist sie der bessere Beleg als jede Folie: plausibel, sauber hergeleitet und trotzdem falsch. Gemessen am 16.09.",
         papier: { weg: true },
       },
       {
@@ -650,7 +661,7 @@ export const SECTIONS: Section[] = [
           text: "Wie ein hochmotivierter Abiturient.",
           after: "Er will unbedingt antworten. Er kann es nur nicht.",
         },
-        say: "Das dauert jetzt ein paar Minuten — die Mail muss verarbeitet und zurückgeschickt werden. Nutzen wir die Zeit für ein Bild: Stell Dir einen Abiturienten vor. Hochmotiviert, klug, liest schnell. Aber er war noch nie in Deinem Unternehmen. Er kennt Deine Kategorievorgaben nicht, Deine Lieferanten nicht, Deinen Regalplatz nicht. Und trotzdem will er unbedingt eine Antwort geben.",
+        say: "... wie ein hochmotivierter Abiturienten. Er ist klug, hat ein breites Wissen und ein Sprachmodell liest und verarbeitet sehr schnell. Aber er war noch nie in Deinem Unternehmen. Er kennt Deine Kategorievorgaben nicht, Deine Lieferanten nicht, Deinen Regalplatz nicht. Und trotzdem will er unbedingt eine Antwort geben. Wir nennen das Haluzinationen. Menschen machen das auch und wir nennen es dann Kreativität, weil es zielgerichtet ist und genau das müssen wir dem Agenten auch geben: Zielrichtung.",
         /*
           Bleibt im PDF, obwohl der ganze Abschnitt sonst wegfällt: Das Bild
           vom Abiturienten braucht keinen Saal. Es erklärt in zwei Zeilen, was
@@ -658,30 +669,6 @@ export const SECTIONS: Section[] = [
           in diesem Unternehmen gewesen.
         */
         papier: { behalten: true },
-      },
-      {
-        at: "18:25",
-        mock: {
-          t: "chat",
-          app: "Agent — nur Trainingsdaten",
-          msgs: [
-            {
-              who: "Hersteller",
-              role: "user",
-              text: "Wir möchten ein neues Produkt listen. Start zum Quartalswechsel.",
-            },
-            {
-              who: "Agent",
-              role: "agent",
-              flat: true,
-              text: "Vielen Dank für Ihre Anfrage. Eine Listung zum Quartalswechsel ist grundsätzlich möglich. Üblicherweise liegt die Marge in dieser Kategorie bei etwa 35 Prozent, und ein Vorlauf von sechs Wochen ist ausreichend. Wir melden uns mit den Konditionen.",
-            },
-          ],
-        },
-        say: "Schauen wir uns die Antworten an. Wer hat eine bekommen? — Und jetzt der interessante Teil: Vergleicht sie miteinander. Wenn mehrere von Euch sehr unterschiedliche Zahlen bekommen haben, dann habt Ihr gerade eine Halluzination gesehen. Das Modell hat keine Marge geprüft. Es hat eine plausibel klingende erfunden, weil Antworten seine Aufgabe ist.",
-        inter:
-          "Antworten vergleichen lassen: „Wer hat eine bekommen? Was steht bei Dir für eine Marge drin?“",
-        papier: { weg: true },
       },
     ],
     n: 14,
@@ -699,7 +686,7 @@ export const SECTIONS: Section[] = [
           bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
           alt: "Unter dem Balken des Modells wächst ein Stamm heraus: breiter als der menschliche, aber flacher",
         },
-        say: "Was fehlt, ist also der Stamm. Und den kann man ihm geben. Schau, was passiert: Er wächst. Zwei Dinge fallen daran auf. Erstens ist er breiter als unserer — ein Agent kann mehr Fälle abdecken als eine einzelne Person, weil er nicht müde wird und nicht in Urlaub fährt. Zweitens ist er flacher. Er reicht nicht so tief wie zehn Jahre Erfahrung in einer Kategorie. Das ist keine Schwäche, die man wegprogrammiert. Das ist der Grund, warum Du gebraucht wirst.",
+        say: "Was fehlt, ist also der Stamm. Und den kann man ihm geben. Wenn wir einen Agent geschickt steuern, dann ist sein Spezialwissen etwas breiter als unseres — ein Agent kann mehr Fälle abdecken als eine einzelne Person, weil er nicht müde wird und nicht in den Urlaub fährt. Aber er ist auch flacher. Er reicht nichts so tief wie zehn Jahre Erfahrung in einer Kategorie. Das ist einer der Gründe, warum wir Menschen immer noch gebraucht werden.",
       },
       {
         mock: {
@@ -717,7 +704,7 @@ export const SECTIONS: Section[] = [
           bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
           alt: "Der zweite Baustein erscheint: Tools",
         },
-        say: "Der zweite sind Tools. Werkzeuge, mit denen der Agent in Deine Systeme sehen kann. Nicht raten, sondern nachschlagen. Das ist der Unterschied zwischen einer plausiblen Zahl und einer belegten.",
+        say: "Der zweite sind Tools. Werkzeuge, mit denen der Agent in Deine Systeme sehen kann. Er sucht jetzt also nach Fakten.",
       },
       {
         mock: {
@@ -783,10 +770,13 @@ export const SECTIONS: Section[] = [
           kind: "chat",
           id: "systemprompt-chat",
           persist: true,
+          /* Endet, wenn der Chat mit Tools beginnt — sonst stünden zwei auf dem Handy. */
+          bisAbschnitt: 16,
+          /* Systemprompt ja, Systeme nein — die Zahlen kommen vom Teilnehmer. */
+          stufe: "prompt",
           label: "Chat starten",
           hint: "Du bekommst die Mail von Hallbach. Der Agent fragt Dich nach den Daten, die ihm fehlen — die Tools bist Du.",
-          systemPrompt:
-            "Du bist Lisa Berger, der KI-Agent für Category Management Schokolade & Pralinen bei der Lebensmittelkette Nordkorb. Du entscheidest selbst, und du zeichnest mit deinem Namen.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann lege die Frage dem Category-Team vor. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
+          systemPrompt: LISA_PROMPT,
           suggestions: [
             "Die Kategorie wächst um 3,2 %",
             "Underperformer ist Nocturne Mini mit −12 %",
@@ -799,7 +789,8 @@ export const SECTIONS: Section[] = [
           statt: {
             t: "statement",
             text: "Die Tools bist Du.",
-            after: "Im Saal führte das Publikum dieses Gespräch auf dem eigenen Handy — mit dem Systemprompt, aber ohne Systemzugriff.",
+            after:
+              "Im Saal führte das Publikum dieses Gespräch auf dem eigenen Handy — mit dem Systemprompt, aber ohne Systemzugriff.",
           },
           text: "Der Agent hat jetzt den Systemprompt, aber keine Werkzeuge. Er weiß, welche Zahlen ihm fehlen und wo sie stünden — also fragt er sein Gegenüber. Im Saal waren das die Teilnehmenden.",
         },
@@ -809,83 +800,55 @@ export const SECTIONS: Section[] = [
   },
   {
     b: 3,
-    kind: "Technik",
-    title: "Jede Nachricht schickt das ganze Gespräch mit.",
-    panels: [
-      {
-        at: "18:36",
-        mock: {
-          t: "list",
-          ordered: false,
-          items: [
-            ["Turn 1", "Systemprompt + Deine Frage"],
-            [
-              "Turn 2",
-              "Systemprompt + Deine Frage + seine Antwort + Deine nächste Frage",
-            ],
-            [
-              "Turn 3",
-              "…und so weiter. Der Verlauf wächst mit jeder Nachricht.",
-            ],
-          ],
-        },
-        say: "Eine Sache, die kaum jemand weiß: Wenn Du mit einem Modell sprichst, geht nicht nur Deine letzte Nachricht hin. Der gesamte bisherige Verlauf wird jedes Mal mitgeschickt — Systemprompt, alle Fragen, alle Antworten. Das Modell hat kein Gedächtnis. Es bekommt bei jedem Aufruf das ganze Gespräch neu vorgelegt.",
-      },
-      {
-        at: "18:38",
-        mock: {
-          t: "diff",
-          before: {
-            h: "Frage für Frage · 7 Aufrufe",
-            n: "4.687",
-            sub: "Eingabe-Token · 2,1 Cent",
-            p: "Sechs Rückfragen, eine Empfehlung. 3.799 Token kommen aus dem Cache — und es bleibt teurer.",
-          },
-          after: {
-            h: "Alles in einer Nachricht · 1 Aufruf",
-            n: "600",
-            sub: "Eingabe-Token · 0,9 Cent",
-            p: "Dieselben Angaben, dieselbe Empfehlung. Nur einmal übertragen.",
-          },
-          foot: "Opus 4.8, mit Caching · 3 Runden 1,6-mal · 6 Runden 2,3-mal · 12 Runden 3,8-mal · 20 Runden 6,0-mal",
-        },
-        say: "Und das hat direkte Folgen. Wir haben beides durchgerechnet, mit genau dem Systemprompt und genau der Mail, die Du eben gesehen hast, auf dem größten Modell. Links: sechs Rückfragen, dann die Empfehlung. Sieben Aufrufe, viertausendsiebenhundert Eingabe-Token. Rechts: alles gleich mitgegeben. Ein Aufruf, sechshundert. Jetzt kommt ein berechtigter Einwand: Es gibt Caching. Was schon einmal durchgelaufen ist, kostet beim nächsten Mal ein Zehntel. Stimmt, und es ist hier eingerechnet — dreitausendachthundert von den viertausendsiebenhundert Token kommen aus dem Cache. Der Abstand schrumpft von vier auf gut zwei. Er verschwindet aber nicht, und der Grund ist der interessante Teil: Gecacht wird nur, was hineingeht. Die sechs Rückfragen selbst sind das, was herauskommt, und Ausgabe wird nie gecacht. Allein die sechs Fragen kosten links mehr als der ganze rechte Lauf.",
-        note: "Zahlen aus packages/presentation/scripts/kostenrechnung.ts — pnpm --filter @ecr-talk/presentation kosten. Claude Opus 4.8 auf Bedrock: 5 Dollar je Million Eingabe, 25 Ausgabe, 0,50 je Million Cache-Treffer. Mit Fünf-Minuten-Caching. Ohne Caching wären es 3,7 gegen 0,9 Cent, also das 4,1-fache. Falls jemand nach der Lebensdauer fragt: der Fünf-Minuten-Cache setzt voraus, dass Lisa binnen fünf Minuten antwortet — tut sie das nicht, ist der Verlauf kalt und es gilt wieder die Rechnung ohne Caching. Die Stundenvariante kostet im Schreiben das Doppelte und landet bei 2,5 Cent. Auf Sonnet 4.6 sind alle Verhältnisse identisch, die Beträge rund 40 Prozent niedriger.",
-      },
-    ],
-    n: 17,
-  },
-  {
-    b: 3,
     kind: "Stufe 2 · Tools",
     title: "Tools",
     panels: [
       {
         at: "18:41",
         mock: {
-          t: "chat",
-          app: "Agent — mit Tools",
-          msgs: [
-            {
-              who: "Lisa",
-              role: "user",
-              text: "Was liegt an?",
-            },
-            {
-              who: "Agent",
-              role: "agent",
-              tools: [
-                "outlook.lies_mails",
-                "warenwirtschaft.kategorie",
-                "marktdaten.segment",
-                "regalplanung.platz",
-                "aktionskalender.zeitraum",
-              ],
-              text: "Kategorie wächst +3,2 %. Underperformer: Nocturne Mini (−12 %). Regalplatz frei, wenn Nocturne Mini geht. Rohertrag 31,1 % — über Vorgabe, aber nur mit gut einem Punkt Luft. Und: Am 22. Oktober werden in 12 Hamburger Märkten Aufsteller frei. Der Entwurf liegt in deinem E-Mail-Postfach.",
-            },
-          ],
+          t: "qr",
+          caption: "Starte den Chat noch einmal.",
+          hint: "Jetzt mit Tools: Der Agent schlägt selbst nach — Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung.",
         },
-        say: "Jetzt bekommt er Werkzeuge. Und ehrlich gesagt hatte er von Anfang an eines: das Lesen Deiner E-Mails. Ohne das hätte er die Mail von Hallbach gar nicht gesehen. Jetzt kommen die Systeme dazu — Warenwirtschaft, Marktdaten, Regalplanung, Aktionskalender. Er fragt nicht mehr Dich. Er schaut selbst nach. Und am Ende sagt er den Satz, auf den es ankommt: Der Entwurf liegt in deinem E-Mail-Postfach.",
+        say: "Jetzt bekommt er Werkzeuge. Starte auf Deinem Handy noch einmal den Chat — wieder mit der Mail von Hallbach. Diesmal sind die Systeme angeschlossen: Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung. Er fragt nicht mehr Dich. Er schaut selbst nach, und Du siehst, welche Systeme er befragt. Was er noch nicht tut: seine Antwort als Entwurf in Dein Postfach legen, sodass Du sie nur noch prüfst und abschickst. Genau da wollen wir hin.",
+        audience: {
+          kind: "chat",
+          id: "tools-chat",
+          persist: true,
+          bisAbschnitt: 18,
+          /* Der volle Agent: Systemprompt und alle Fachwerkzeuge. */
+          stufe: "voll",
+          label: "Chat starten",
+          hint: "Wieder die Mail von Hallbach. Diesmal fragt der Agent Dich nicht — er schlägt selbst in den Systemen nach.",
+          systemPrompt: LISA_PROMPT,
+        },
+        app: "Chat mit Systemprompt und allen Tools. Das Gespräch beginnt wieder mit der Mail von Hallbach; der Agent zeigt, welche Systeme er befragt.",
+        papier: {
+          statt: {
+            t: "chat",
+            app: "Agent — mit Tools",
+            msgs: [
+              {
+                who: "Lisa",
+                role: "user",
+                text: "Was liegt an?",
+              },
+              {
+                who: "Agent",
+                role: "agent",
+                tools: [
+                  "outlook.lies_mails",
+                  "warenwirtschaft.kategorie",
+                  "marktdaten.segment",
+                  "regalplanung.platz",
+                  "aktionskalender.zeitraum",
+                ],
+                text: "Kategorie wächst +3,2 %. Underperformer: Nocturne Mini (−12 %). Regalplatz frei, wenn Nocturne Mini geht. Rohertrag 31,1 % — über Vorgabe, aber nur mit gut einem Punkt Luft. Und: Am 22. Oktober werden in 12 Hamburger Märkten Aufsteller frei.",
+              },
+            ],
+          },
+          text: "Im Saal führte das Publikum dasselbe Gespräch noch einmal — jetzt mit einem Agenten, der selbst in den Systemen nachschlägt.",
+        },
       },
       {
         at: "18:44",
@@ -910,7 +873,7 @@ export const SECTIONS: Section[] = [
         say: "Wie funktioniert das technisch? Ein Tool ist zunächst nichts weiter als eine Beschreibung: wie heißt es, wozu ist es gut, welche Angaben braucht es. Diese Beschreibung wird Teil der Instruktionen, die das Modell bei jedem Aufruf bekommt. Es liest sie und entscheidet selbst, wann ein Zugriff sinnvoll ist. Und MCP — das Model Context Protocol — ist die Steckdose dafür: ein gemeinsames Format, damit jedes System seine Werkzeuge anbieten kann, ohne dass wir den Agenten jedes Mal umbauen.",
       },
     ],
-    n: 18,
+    n: 17,
   },
   {
     b: 3,
@@ -958,7 +921,7 @@ export const SECTIONS: Section[] = [
         },
       },
     ],
-    n: 19,
+    n: 18,
   },
   {
     b: 3,
@@ -1006,7 +969,7 @@ export const SECTIONS: Section[] = [
           "Antworten sammeln. Wenn niemand etwas hat: nach der Halluzination von vorhin fragen.",
       },
     ],
-    n: 20,
+    n: 19,
   },
   {
     b: 3,
@@ -1041,7 +1004,7 @@ export const SECTIONS: Section[] = [
         app: "Stufe 3 — die simulierten Systeme. Vollbild.",
       },
     ],
-    n: 21,
+    n: 20,
   },
   {
     b: 3,
@@ -1091,7 +1054,8 @@ export const SECTIONS: Section[] = [
           statt: {
             t: "statement",
             text: "Angeboten — und trotzdem abgelehnt.",
-            after: "Im Saal wurde gefragt, wem der Agent eine Aktionsfläche angeboten hat und wie seine Antwort insgesamt ausfiel.",
+            after:
+              "Im Saal wurde gefragt, wem der Agent eine Aktionsfläche angeboten hat und wie seine Antwort insgesamt ausfiel.",
           },
           text: "Gefragt wurde im Saal. Die interessante Kombination ist: angeboten und im selben Schreiben abgelehnt — in der Messung vorab sieben von vierzehn Läufen.",
         },
@@ -1174,7 +1138,7 @@ export const SECTIONS: Section[] = [
         say: "Und irgendwann kommst Du an den Punkt, an dem die Mail, die der Agent schicken will, die ist, die Du geschickt hättest. Dann überführst Du das in Software — erst mit einer Bestätigungshürde: Er darf handeln, aber Du klickst. Und wenn das eine Weile gut geht, nimmst Du die Hürde weg. Wichtig: Das gilt immer nur für eine Klasse von Mails. Listungsanfragen zum Beispiel. Dann nimmst Du Dir die nächste Klasse vor. So wächst das, Stück für Stück.",
       },
     ],
-    n: 22,
+    n: 21,
   },
   {
     b: 3,
@@ -1204,7 +1168,7 @@ export const SECTIONS: Section[] = [
         say: "Ein Punkt, den Du im Haus früh klären solltest: der EU AI Act. Er reguliert risikobasiert — es kommt also nicht auf die Technik an, sondern darauf, wofür Du sie einsetzt. Zwei Dinge sind für unser Beispiel relevant. Erstens Transparenz: Wenn ein Agent nach außen kommuniziert, sollte erkennbar sein, dass eine Maschine beteiligt war. Und zweitens Nachvollziehbarkeit — was hat er getan und warum. Das ist genau die Schrittfolge, die Du heute in der Antwort-Mail bekommen hast. Ich bin kein Jurist; hol Dir das früh ins Haus statt am Ende.",
       },
     ],
-    n: 23,
+    n: 22,
   },
   {
     b: 4,
@@ -1221,7 +1185,7 @@ export const SECTIONS: Section[] = [
         say: "Damit sind wir zurück bei der Frage vom Anfang. Braucht man uns dann noch? Meine Antwort ist ja. Aber nicht so wie heute.",
       },
     ],
-    n: 24,
+    n: 23,
   },
   {
     b: 4,
@@ -1246,7 +1210,7 @@ export const SECTIONS: Section[] = [
         say: "Und mach Dir keine Hoffnung, dass dabei Arbeit übrig bleibt. Sobald wir mehr schaffen, wird auch mehr erwartet — von Kunden, von Kollegen, vom eigenen Haus. Die Arbeit wird nicht weniger. Sie wird anders.",
       },
     ],
-    n: 25,
+    n: 24,
   },
   {
     b: 4,
@@ -1285,7 +1249,7 @@ export const SECTIONS: Section[] = [
         note: "Produktnamen vor dem Vortrag gegen den aktuellen Stand prüfen — AWS benennt schnell um.",
       },
     ],
-    n: 26,
+    n: 25,
   },
   {
     b: 4,
@@ -1306,7 +1270,8 @@ export const SECTIONS: Section[] = [
         mock: {
           t: "statement",
           text: "ecr2026.carstenbkoch.de/vortrag",
-          after: "Die Folien als PDF. Dieselbe Adresse steht in der Antwort-Mail.",
+          after:
+            "Die Folien als PDF. Dieselbe Adresse steht in der Antwort-Mail.",
         },
         say: "Und wenn Du heute Abend mitschreiben wolltest: musst Du nicht. Unter dieser Adresse liegen die Folien als PDF — mit den Zahlen, die wir gemessen haben, und den Links, die Dich weiterbringen. Mach einfach ein Foto. Dieselbe Adresse steht auch unten in der Mail, die Du von Lisa bekommen hast.",
         papier: {
@@ -1314,7 +1279,7 @@ export const SECTIONS: Section[] = [
         },
       },
     ],
-    n: 27,
+    n: 26,
   },
   {
     b: 4,
@@ -1345,7 +1310,7 @@ export const SECTIONS: Section[] = [
         },
       },
     ],
-    n: 28,
+    n: 27,
   },
 ] as Section[];
 

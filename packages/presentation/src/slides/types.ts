@@ -345,8 +345,12 @@ export type Interaction = MitZusammenhang &
        * darum geht es in Abschnitt 14: Man soll erleben, wie ein Agent klingt,
        * der nichts nachschlagen kann, bevor man sieht, was ein Systemprompt
        * daraus macht.
+       *
+       * `prompt` ist der Systemprompt ohne Systeme (Abschnitt 16): Der Agent
+       * weiß, wer er ist, und muss jede Zahl im Chat erfragen. Ohne Angabe
+       * antwortet `voll`, der Agent mit allen Fachwerkzeugen.
        */
-      stufe?: "voll" | "roh";
+      stufe?: "voll" | "prompt" | "roh";
       /**
        * Womit das Gespräch beginnt.
        *
