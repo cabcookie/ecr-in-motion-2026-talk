@@ -381,6 +381,16 @@ export type Interaction = MitZusammenhang &
 export interface Papier {
   /** Kommt gar nicht ins PDF. Für alles, was ohne den Raum sinnlos ist. */
   weg?: boolean;
+  /**
+   * Auch dann zeigen, wenn eine Aufbaufolge sonst nur ihren Endstand druckt.
+   *
+   * Eine Folie, die sich über mehrere Klicks aufbaut, braucht auf Papier nur
+   * ihr letztes Bild — dort steht ohnehin alles. Manchmal trägt eine
+   * Zwischenstufe aber etwas, das der Endstand nicht mehr zeigt: eine
+   * Beschriftung, die später zurücktritt, ein Vergleich, der danach nur noch
+   * blass im Hintergrund steht. Die bekommt dieses Kennzeichen.
+   */
+  behalten?: boolean;
   /** Ersetzt die Folie — der QR-Code wird zu dem, was dahinter lag. */
   statt?: Mock;
   /** Was unter der Folie steht. Fehlt er, gilt der Sprechertext. */

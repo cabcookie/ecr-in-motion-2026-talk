@@ -595,6 +595,13 @@ export const SECTIONS: Section[] = [
           alt: "T-Form: ein breiter Balken für Allgemeinwissen, darunter ein tiefer Stamm für Spezialwissen",
         },
         say: "Dafür müssen wir kurz verstehen, wie Wissen grundsätzlich funktioniert. Als Wissensarbeiter bringen wir in der Regel ein breites Allgemeinwissen und ein sehr spezifisches Wissen für unsere Aufgabe mit. Wir nennen das T-Shape. Wir brauchen das breite Wissen, um uns mit Personen aus anderen Abteilungen zu verständigen, mit unseren Kunden, Lieferanten oder Partnern. Damit verstehen wir sie besser und können gemeinsam Lösungen erarbeiten. Dort bringe ich mein Spezialwissen ein. Ein Category Manager versteht also nicht nur die eigene Disziplin, sondern auch wie die Logistik tickt und was eine Zweitplatzierung ist.",
+        /*
+          Bleibt im PDF, obwohl es nur eine Zwischenstufe ist: Hier trägt das
+          menschliche T seine Beschriftung. Im Endstand steht es nur noch blass
+          im Hintergrund, und wer diese Seite nie gesehen hat, weiß nicht, was
+          die graue Form bedeutet.
+        */
+        papier: { behalten: true },
       },
       {
         mock: {

@@ -24,11 +24,36 @@ const BUEHNE_H = 1080;
  * ersetzt `papier.statt`. Welche Panels das brauchen, findet
  * `pruefung/papier-test.ts`, und der Bau bricht ab, wenn eines fehlt.
  */
+/**
+ * Folienarten, die sich über mehrere Klicks aufbauen.
+ *
+ * Auf der Leinwand ist der Aufbau der Vortrag: Jeder Klick bringt ein Stück,
+ * und der Vortragende erklärt es, während es erscheint. Auf Papier ist er
+ * Wiederholung — fünf fast gleiche Bilder hintereinander, von denen nur das
+ * letzte alles zeigt.
+ */
+const AUFBAU = new Set(["tshape", "architektur", "reveal", "stepped"]);
+
+/**
+ * Baut eine Folie auf demselben Bild weiter wie die nächste?
+ *
+ * Dann ist sie im PDF entbehrlich: Was sie zeigt, steht auch im nächsten Bild.
+ * Die Ausnahme steht am Panel selbst — `papier.behalten` für Zwischenstufen,
+ * die etwas tragen, das der Endstand nicht mehr hergibt.
+ */
+function nurZwischenstufe(abschnitt: Section, i: number): boolean {
+  const hier = abschnitt.panels[i];
+  if (hier.papier?.behalten) return false;
+  const art = hier.mock?.t;
+  if (!art || !AUFBAU.has(art)) return false;
+  return abschnitt.panels[i + 1]?.mock?.t === art;
+}
+
 export function PapierView() {
   const seiten = SECTIONS.flatMap((abschnitt, index) =>
     abschnitt.panels
       .map((panel, i) => ({ abschnitt, panel, index, schritt: i }))
-      .filter(({ panel }) => !panel.papier?.weg),
+      .filter(({ panel, schritt }) => !panel.papier?.weg && !nurZwischenstufe(abschnitt, schritt)),
   );
 
   return (
