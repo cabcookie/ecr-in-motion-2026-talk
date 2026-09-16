@@ -124,6 +124,33 @@ function zahlendeckung(antwort: string, belege: readonly Schritt[]): Deckung {
   return { gesamt: inAntwort.length, gedeckt: inAntwort.length - offen.length, offen };
 }
 
+const MONATE =
+  "Januar|Februar|März|Maerz|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember";
+
+/**
+ * Was in der Innenzahl-Prüfung nichts zu suchen hat.
+ *
+ * Zwei Sorten Fehlalarm aus der Messung vom 16.09. (r69d):
+ *
+ *   1. Datumsangaben. „22. Oktober" ist ein angebotener Aktionstermin, keine
+ *      Innenzahl — auch wenn im Kategorieplan zufällig eine 22 steht.
+ *   2. Die Befundzeilen der Fusszeile („→ …"). Die setzt baueRumpf aus festen
+ *      Sätzen zusammen, nicht der Agent; „Kategorieplan 2026/27" ist der Name
+ *      des Plans, kein Wert daraus. Die Begründungen darüber schreibt der
+ *      Agent selbst, die bleiben in der Prüfung.
+ *
+ * Nur für die Innenzahlen. Die Zahlendeckung sieht weiter den ganzen Text:
+ * Dort ist ein Datum aus der Mail gedeckt und stört nicht.
+ */
+function ohneFehlalarme(text: string): string {
+  return text
+    .split("\n")
+    .filter((zeile) => !zeile.trimStart().startsWith("→"))
+    .join("\n")
+    .replace(new RegExp(`\\b\\d{1,2}\\.\\s*(?:${MONATE})(?:\\s+\\d{4})?`, "g"), " ")
+    .replace(/\b\d{1,2}\.\d{1,2}\.(?:\d{2,4})?/g, " ");
+}
+
 /**
  * Innenzahlen, die nach außen gingen.
  *
@@ -154,7 +181,7 @@ function innenzahlen(antwort: string, belege: readonly Schritt[]): number[] {
     }
   }
 
-  const genannt = new Set(zahlen(antwort).flatMap(mitRundungen));
+  const genannt = new Set(zahlen(ohneFehlalarme(antwort)).flatMap(mitRundungen));
   return [...innen].filter((w) => genannt.has(w)).sort((a, b) => a - b);
 }
 
