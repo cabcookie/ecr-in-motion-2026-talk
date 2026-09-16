@@ -1,0 +1,66 @@
+Ich arbeite den Vorgang jetzt Schritt für Schritt ab, bevor ich antworte.
+
+**Schritt 1 – Zusammenfassung**
+Produkt: Hallbach Crispy Bites. EK 2,89 EUR, EVP 4,49 EUR, Mindestabnahme 500 VE, Wunschstart 15. Oktober, Exklusivangebot. Rückmeldung bis Ende nächster Woche erbeten.
+
+**Schritt 2 – Was brauche ich?**
+- Marge prüfen (kann ich selbst rechnen)
+- Regalplatzsituation prüfen → Werkzeug
+- Aktionskalender prüfen → Werkzeug
+- Exklusivfreigabe → muss Lisa / Einkaufsleitung klären
+- Fehlende Produktangaben (Gebindegröße, Artikelnummer, Kategorie-Einordnung) → ggf. beim Lieferanten nachfragen
+
+**Schritt 3 – Angaben beschaffen**
+
+Zunächst die Marge:
+
+(4,49 − 2,89) / 4,49 = 1,60 / 4,49 ≈ **35,6 %** → Kategorievorgabe von 30 % ist erfüllt.
+
+Jetzt die weiteren Prüfungen:
+
+<tool_call>
+{"tool": "pruefe_regalplatz", "kategorie": "Schokolade & Pralinen"}
+</tool_call>
+
+<tool_response>
+Aktuelle Belegung: 97 %. Keine freien Slots. Eine Neulistung erfordert zwingend eine Auslistung.
+</tool_response>
+
+<tool_call>
+{"tool": "pruefe_aktionskalender", "zeitraum": "Oktober", "kategorie": "Schokolade & Pralinen"}
+</tool_call>
+
+<tool_response>
+KW 41 (14.–20. Oktober): Aktionsfläche Schokolade & Pralinen bereits vollständig belegt. Nächster freier Slot: KW 45 (4.–10. November). Vorlaufzeit für Buchung: mindestens 4 Wochen.
+</tool_response>
+
+<tool_call>
+{"tool": "frage_lisa", "frage": "Für Hallbach Crispy Bites (EK 2,89 EUR, EVP 4,49 EUR, Mindestabnahme 500 VE, Wunschstart 15. Oktober) liegt ein Exklusivangebot vor. Die Marge beträgt ca. 35,6 % und erfüllt damit die Kategorievorgabe. Der Regalplatz ist zu 97 % belegt – eine Neulistung würde eine Auslistung erfordern. Welches Produkt käme für eine Auslistung infrage? Außerdem: Soll die Exklusivität an die Einkaufsleitung zur Freigabe weitergegeben werden?"}
+</tool_call>
+
+<tool_response>
+Lisa Berger ist derzeit nicht erreichbar. Bitte fahre so weit fort, wie es deine Berechtigungen erlauben, und lege offene Punkte transparent dar.
+</tool_response>
+
+Gut. Ich kann dem Lieferanten den Sachstand transparent mitteilen, den Wunschtermin kommentieren und die offenen internen Punkte benennen, ohne interne Details preiszugeben.
+
+---
+
+Sehr geehrter Herr Walter,
+
+vielen Dank für Ihre Anfrage zu den Hallbach Crispy Bites. Ich habe Ihr Angebot geprüft und kann Ihnen folgenden Sachstand mitteilen.
+
+Die angebotenen Konditionen mit einem Einkaufspreis von 2,89 EUR und einem empfohlenen Verkaufspreis von 4,49 EUR bewegen sich in einem für uns grundsätzlich interessanten Bereich, sodass die Kalkulation einer näheren Betrachtung standhält.
+
+Zum Wunschtermin 15. Oktober muss ich Sie jedoch auf eine Einschränkung hinweisen: Die Aktionsflächen in der Kategorie Schokolade und Pralinen sind für die Woche ab dem 14. Oktober bereits vollständig verplant. Der nächste verfügbare Slot liegt in der Woche ab dem 4. November. Da wir für Aktionsbuchungen einen Vorlauf von mindestens vier Wochen benötigen, wäre ein Einführungstermin in diesem Slot nur dann realisierbar, wenn wir spätestens Anfang Oktober alle Unterlagen und Konditionen verbindlich vereinbart haben. Ich bitte Sie daher, diesen alternativen Termin zu prüfen und uns mitzuteilen, ob er für Sie in Frage kommt.
+
+Darüber hinaus sind für eine abschließende Entscheidung noch zwei Punkte intern zu klären, zu denen ich Ihnen in Kürze Rückmeldung geben werde. Zum einen betrifft dies die Frage der Regalplatzierung, da wir gegebenenfalls eine Sortimentsanpassung vornehmen müssten. Zum anderen erfordert das von Ihnen angebotene Exklusivmodell eine interne Abstimmung auf Leitungsebene, bevor wir dazu eine verbindliche Aussage treffen können.
+
+Um die Prüfung auf unserer Seite zu beschleunigen, wäre es hilfreich, wenn Sie uns noch folgende Angaben nachreichen könnten: die genaue Gebindegröße je Verkaufseinheit, ein Produktdatenblatt sowie Ihre Artikelnummer. Je vollständiger die Unterlagen vorliegen, desto zügiger können wir den Vorgang abschließen.
+
+Wir bemühen uns, Ihnen innerhalb der von Ihnen genannten Frist eine qualifizierte Rückmeldung zu geben.
+
+Mit freundlichen Grüßen
+
+Assistent von Lisa Berger
+Category Management Schokolade & Pralinen, Nordkorb

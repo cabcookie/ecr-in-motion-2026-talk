@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Runtime / lokale Datenbanken
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.swp
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Große Produktfotos – liegen lokal, nicht im Git (siehe README)
+
+# Screenshots der Live-View — werden per pnpm shots erzeugt
+packages/presentation/shots/
+
+# AWS Blocks: lokale Daten, Sandbox-Zustand, CDK-Synthese
+.bb-data/
+# Der Stackname muss mit ins Repository — sonst legt ein Deployment von einer
+# anderen Maschine einen zweiten Stack an, statt den vorhandenen zu ersetzen.
+**/.blocks/*
+!**/.blocks/config.json
+.blocks-sandbox/
+cdk.out/
+
+# Markenmaterial von AWS — 2,5 GB Originaldateien (Gradienten, Muster, Blocks,
+# das Design-PDF, die PowerPoint-Vorlage). Das gehört nicht in ein Git-Repo.
+packages/brand-material/
+
+# Schrift und Logo von AWS gehören Amazon, nicht uns, und werden deshalb auch
+# in verarbeiteter Form nicht mitversioniert. Geholt werden sie mit
+#   python3 packages/presentation/scripts/markenmaterial.py
+# Wer sie nicht hat, bekommt die Ersatzschrift und keine Logos.
+packages/presentation/public/brand/
+
+# CDK-Zwischenspeicher für Kontext-Lookups. Der Schlüssel enthält die
+# Kontonummer, und dieses Repository wird öffentlich. Die CI schlägt die
+# Hosted Zone bei jedem Lauf selbst nach — sie hat die Rolle dafür.
+packages/presentation/cdk.context.json
+
+# Das PDF entsteht im Bau (Schritt "PDF erzeugen") und liegt danach in public/,
+# damit es mit ausgerollt wird und unter /vortrag abrufbar ist. Es gehoert
+# damit zum Ergebnis, nicht zur Quelle — eine Megabyte-Binaerdatei, die sich
+# bei jeder Folienaenderung komplett aendert, will niemand im Verlauf haben.
+packages/presentation/public/ecr-in-motion-2026.pdf

@@ -1,0 +1,13 @@
+{
+  "name": "ecr-in-motion-2026-talk",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Material und Demos für den ECR in Motion 2026 Talk",
+  "packageManager": "pnpm@12.3.4",
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

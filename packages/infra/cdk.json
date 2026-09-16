@@ -1,0 +1,13 @@
+{
+  "app": "tsx bin/bootstrap.ts",
+  "watch": {
+    "exclude": [
+      "**/*.d.ts",
+      "**/*.js",
+      "cdk.out"
+    ]
+  },
+  "context": {
+    "aws-cdk:enableDiffNoFail": true
+  }
+}
