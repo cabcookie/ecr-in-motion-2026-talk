@@ -9,7 +9,7 @@
  * Derselbe Code, kein Unterschied im Frontend.
  */
 import { ApiNamespace, Scope, KVStore, Realtime } from '@aws-blocks/blocks';
-import { chatAgent, postfachAgent } from './agent';
+import { chatAgent, postfachAgent, rohChatAgent } from './agent';
 import { perSes } from './agent/versand';
 import { z } from 'zod';
 
@@ -113,6 +113,18 @@ const rtReset = new Realtime(scope, 'reset-live', {
  * Streaming, Verlauf und Wiederaufnahme lassen sich damit vollständig prüfen.
  */
 const berater = chatAgent(scope);
+
+/*
+  Die unterste Stufe, für Abschnitt 14: das nackte Modell ohne Systemprompt und
+  ohne Fachwerkzeuge. Ein eigener Agent und kein Schalter am bestehenden —
+  Blocks führt den Verlauf je Agent, und zwei Stufen im selben Gespräch wären
+  nicht zu trennen.
+*/
+const roh = rohChatAgent(scope);
+
+/** Welche Stufe ein Chat anspricht. */
+const CHATS = { voll: berater, roh } as const;
+type Chatstufe = keyof typeof CHATS;
 
 /**
  * Eine Frage, die der Agent Lisa vorgelegt hat und die noch offen ist.
@@ -342,8 +354,8 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
   // müsste man raten.
 
   /** Neues Gespräch beginnen. */
-  async chatStart(participantId: string) {
-    return { conversationId: await berater.createConversationId(participantId) };
+  async chatStart(participantId: string, stufe: Chatstufe = 'voll') {
+    return { conversationId: await CHATS[stufe].createConversationId(participantId) };
   },
 
   /**
@@ -355,8 +367,9 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
     message: string,
     channelId: string,
     participantId: string,
+    stufe: Chatstufe = 'voll',
   ) {
-    await berater.stream(message, {
+    await CHATS[stufe].stream(message, {
       conversationId,
       channelId,
       userId: participantId,
@@ -366,13 +379,13 @@ export const api = new ApiNamespace(scope, 'api', (_context) => ({
   },
 
   /** Verlauf — damit ein gesperrtes Handy sein Gespräch wiederfindet. */
-  async chatHistory(conversationId: string) {
-    return { messages: await berater.getConversation(conversationId) };
+  async chatHistory(conversationId: string, stufe: Chatstufe = 'voll') {
+    return { messages: await CHATS[stufe].getConversation(conversationId) };
   },
 
   /** Kanal, über den die Antwort Stück für Stück hereinkommt. */
-  async chatChannel(channelId: string) {
-    return berater.getChannel(channelId);
+  async chatChannel(channelId: string, stufe: Chatstufe = 'voll') {
+    return CHATS[stufe].getChannel(channelId);
   },
 
   /**

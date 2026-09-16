@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "aws-blocks";
 import { useChat, type ChatInstance, type ChatMessage } from "@aws-blocks/bb-agent/client";
 import { SEED_MESSAGE } from "@/slides/agent";
+import { briefingFuer } from "@/slides/briefing";
 import { participantId } from "./participant";
 
 export type { ChatMessage };
@@ -36,7 +37,24 @@ function writeConversation(id: string, conversationId: string) {
  * Die Kennung des Gesprächs liegt im localStorage: wer sein Handy sperrt und
  * zurückkommt, landet wieder im selben Gespräch statt in einem neuen.
  */
-export function useAgentChat(interactionId: string) {
+/**
+ * Womit das Gespräch beginnt.
+ *
+ * Aus dem Briefing heißt: mit der Mail, die dieser Teilnehmer als Lieferant
+ * schreiben würde. Er bleibt damit die Rolle, die er den ganzen Abend hat, und
+ * die Antwort des Agenten bezieht sich auf SEIN Produkt — nicht auf ein
+ * Beispiel von der Leinwand, das er nur mitliest.
+ */
+function auftaktText(auftakt: "hallbach" | "briefing", teilnehmer: string): string {
+  if (auftakt !== "briefing") return SEED_MESSAGE;
+  const b = briefingFuer(teilnehmer);
+  return [`Betreff: ${b.betreff}`, "", b.text.replace("[Dein Name]", "Ein Lieferant")].join("\n");
+}
+
+export function useAgentChat(
+  interactionId: string,
+  { stufe = "voll", auftakt = "hallbach" }: { stufe?: "voll" | "roh"; auftakt?: "hallbach" | "briefing" } = {},
+) {
   const me = useRef(participantId()).current;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
@@ -52,13 +70,13 @@ export function useAgentChat(interactionId: string) {
      */
     const instance = useChat({
       api: {
-        createConversation: () => api.chatStart(me),
+        createConversation: () => api.chatStart(me, stufe),
         sendMessage: (conversationId, message, channelId) =>
-          api.chatSend(conversationId, message, channelId, me),
-        getConversation: (id) => api.chatHistory(id),
+          api.chatSend(conversationId, message, channelId, me, stufe),
+        getConversation: (id) => api.chatHistory(id, stufe),
       },
       subscribe: async (channelId, handler) => {
-        const channel = await api.chatChannel(channelId);
+        const channel = await api.chatChannel(channelId, stufe);
         return channel.subscribe(handler);
       },
       onMessagesChange: setMessages,
@@ -78,7 +96,7 @@ export function useAgentChat(interactionId: string) {
       instance.destroy();
       chat.current = null;
     };
-  }, [interactionId, me]);
+  }, [interactionId, me, stufe]);
 
   /** Nach jedem Senden die Gesprächskennung sichern — sie entsteht erst dabei. */
   const remember = useCallback(() => {
@@ -102,12 +120,14 @@ export function useAgentChat(interactionId: string) {
     [remember],
   );
 
+  const seed = auftaktText(auftakt, me);
+
   /** Beginnt das Gespräch mit der eingehenden Mail. */
   const start = useCallback(async () => {
     if (started) return;
     setStarted(true);
-    await send(SEED_MESSAGE);
-  }, [send, started]);
+    await send(seed);
+  }, [send, started, seed]);
 
-  return { messages, loading, error, started, start, send, seed: SEED_MESSAGE };
+  return { messages, loading, error, started, start, send, seed };
 }

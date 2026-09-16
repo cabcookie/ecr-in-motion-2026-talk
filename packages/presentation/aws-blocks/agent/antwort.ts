@@ -105,12 +105,20 @@ export function antworteVerMail(
  * Eine Antwort dorthin braucht niemandes Freigabe, und Interna sind hier keine
  * — das ist der ganze Unterschied zur Mail nach draußen.
  */
-export function antworteImChat(tool: ToolFactory<Vorgangskontext>) {
+export function antworteImChat(tool: ToolFactory<Vorgangskontext>, intern = true) {
   return tool({
-    description:
-      'Antwortet der Person, die gerade mit dir chattet. Sie gehört zum Category-Team, ' +
-      'also zum eigenen Haus — ihr gegenüber sind Zahlen aus unseren Systemen keine Interna, ' +
-      'sondern genau das, wofür sie dich fragt. Nenne sie mit Quelle und Stand.',
+    description: intern
+      ? 'Antwortet der Person, die gerade mit dir chattet. Sie gehört zum Category-Team, ' +
+        'also zum eigenen Haus — ihr gegenüber sind Zahlen aus unseren Systemen keine Interna, ' +
+        'sondern genau das, wofür sie dich fragt. Nenne sie mit Quelle und Stand.'
+      : /*
+          Die unterste Stufe weiss nichts von einem Haus, einem Team oder
+          Interna. Bekäme sie die obige Beschreibung, hielte sie ihr Gegenüber
+          für eine Kollegin und schriebe eine interne Einschätzung — obwohl
+          dort der Lieferant sitzt, der gerade geschrieben hat.
+        */
+        'Antwortet der Person, die dir geschrieben hat. Das ist der einzige Weg, auf dem ' +
+        'deine Antwort sie erreicht.',
     parameters: z.object({
       text: z.string().describe('Die Antwort. Kurz — sie wird auf dem Handy gelesen.'),
     }),

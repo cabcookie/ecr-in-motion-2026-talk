@@ -251,6 +251,18 @@ export interface PollQuestion {
  */
 interface MitZusammenhang {
   message?: string;
+  /**
+   * Letzter Abschnitt, in dem etwas auf dem Handy noch erscheint.
+   *
+   * Verlässlicher als `until`: Eine Uhrzeit trifft nur zu, wenn der Vortrag im
+   * Plan liegt, eine Abschnittsnummer immer. Ab dem Abschnitt danach ist das
+   * Handy wieder frei für das, was gerade dran ist — eine Seite, auf der drei
+   * alte Angebote stehen, lenkt von dem einen ab, das zählt.
+   *
+   * Steht hier und nicht an einzelnen Arten, weil es für jede gilt, die
+   * `persist` trägt.
+   */
+  bisAbschnitt?: number;
 }
 
 /**
@@ -295,16 +307,6 @@ export type Interaction = MitZusammenhang &
       /** Bis wann der Knopf angeboten wird, als HH:MM Ortszeit. */
       until?: string;
       /**
-       * Letzter Abschnitt, in dem der Knopf noch erscheint.
-       *
-       * Verlässlicher als `until`: Eine Uhrzeit trifft nur zu, wenn der Vortrag
-       * im Plan liegt. Eine Abschnittsnummer trifft immer zu. Ab dem Abschnitt
-       * danach ist das Handy wieder frei für das, was gerade dran ist — und
-       * genau darum geht es: Eine Seite, auf der drei alte Angebote stehen,
-       * lenkt von dem einen ab, das zählt.
-       */
-      bisAbschnitt?: number;
-      /**
        * Jedem Teilnehmer eine Rolle zuteilen und den Entwurf dazu vorfüllen.
        *
        * Ohne das schreibt jeder ins Blaue: Man weiß weder, für welche Marke man
@@ -324,6 +326,25 @@ export type Interaction = MitZusammenhang &
       label: string;
       hint: string;
       systemPrompt: string;
+      /**
+       * Welche Stufe antwortet.
+       *
+       * `roh` ist das nackte Modell — kein Systemprompt, keine Werkzeuge. Genau
+       * darum geht es in Abschnitt 14: Man soll erleben, wie ein Agent klingt,
+       * der nichts nachschlagen kann, bevor man sieht, was ein Systemprompt
+       * daraus macht.
+       */
+      stufe?: "voll" | "roh";
+      /**
+       * Womit das Gespräch beginnt.
+       *
+       * `briefing` nimmt die Mail aus dem eigenen Briefing — der Teilnehmer
+       * schreibt also als der Lieferant, der er den ganzen Abend ist.
+       * `hallbach` nimmt die Mail von der Leinwand.
+       */
+      auftakt?: "hallbach" | "briefing";
+      /** Zeigt die erste Nachricht an, statt sie stumm zu schicken. */
+      auftaktZeigen?: boolean;
       /** Vorgeschlagene Antworten, damit niemand lange tippen muss */
       suggestions?: string[];
       persist?: boolean;

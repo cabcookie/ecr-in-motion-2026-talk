@@ -118,4 +118,44 @@ export function chatAgent(scope: Scope): Agent<any> {
   });
 }
 
+/**
+ * Der Agent auf der untersten Stufe: das nackte Modell.
+ *
+ * Kein Systemprompt, keine Fachwerkzeuge — nur die Trainingsdaten. Das ist der
+ * hochmotivierte Abiturient aus Abschnitt 14: klug, schnell, hilfsbereit, und
+ * er war noch nie in diesem Unternehmen. Er wird trotzdem antworten, und die
+ * Zahlen darin wird er erfinden.
+ *
+ * Und er bekommt GAR KEIN Werkzeug, auch keines zum Antworten. Sein Text ist
+ * die Antwort, unmittelbar. Mit einem Antwortwerkzeug schrieb er den Brief
+ * hinein und danach noch einen Satz darüber — und im Chat erschien nicht der
+ * Brief, sondern „Ich habe dem Lieferanten geantwortet: …". Dieselbe Falle wie
+ * im Mailweg, hier aber ohne Nutzen: Es gibt nichts zu trennen, wenn alles, was
+ * er sagt, ohnehin direkt beim Gegenüber landet.
+ */
+export function rohChatAgent(scope: Scope): Agent<any> {
+  return new Agent(scope, 'roh', {
+    ...GEMEINSAM,
+    /*
+      Derselbe Prompt, mit dem der Probe-Mailweg gemessen wurde.
+
+      „Du bist ein hilfsbereiter Assistent" reichte nicht: Opus 4.8 antwortete
+      damit ehrlich — „Ich bin ein KI-Assistent und habe keinen Zugriff" — und
+      genau das ist NICHT die Vorführung. Der Abschnitt will zeigen, was
+      passiert, wenn ein Modell trotzdem antwortet. Der Satz „Frage auch nicht
+      nach" ist deshalb kein Beiwerk, sondern der Auslöser.
+
+      Das ist eine ehrliche Vorführung und kein Trick: Genau so verhalten sich
+      Assistenten, die man ohne Werkzeuge in einen Arbeitsablauf hängt und zum
+      Antworten verpflichtet.
+    */
+    systemPrompt:
+      'Du beantwortest die Anfrage eines Lebensmittelherstellers an eine Handelskette. ' +
+      'Du hast keinen Zugriff auf Systeme, Daten oder Dokumente. Frage auch nicht nach — ' +
+      'beantworte die Anfrage mit dem, was du hast. Antworte als E-Mail in reinem Fliesstext, ' +
+      'mit Anrede und Grussformel. Halte dich kurz, es wird auf einem Handy gelesen.',
+    tools: () => ({}),
+  });
+}
+
 export { vorgangskontext, type Fragenablage, type Versand } from './antwort';

@@ -353,7 +353,10 @@ function MailTo({ interaction }: { interaction: Extract<Interaction, { kind: "ma
  * Lerninhalt, und es ist derselbe Text, mit dem der Agent tatsächlich läuft.
  */
 function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat" }> }) {
-  const { messages, loading, error, started, start, send, seed } = useAgentChat(interaction.id);
+  const { messages, loading, error, started, start, send, seed } = useAgentChat(
+    interaction.id,
+    { stufe: interaction.stufe, auftakt: interaction.auftakt },
+  );
   const [draft, setDraft] = useState("");
   const bottom = useRef<HTMLDivElement>(null);
 
@@ -384,7 +387,11 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
         </button>
       ) : (
         <div className="grid gap-3">
-          <SeedMail />
+          {interaction.auftakt === "briefing" ? (
+            <EigeneAnfrage text={seed} />
+          ) : (
+            <SeedMail />
+          )}
 
           {thread.map((m) => (
             <div
@@ -458,6 +465,30 @@ function Chat({ interaction }: { interaction: Extract<Interaction, { kind: "chat
 }
 
 /** Die eingegangene Mail als Auftakt des Gesprächs — so, wie sie auf der Folie stand. */
+/**
+ * Die eigene Anfrage aus dem Briefing, so wie sie an den Agenten ging.
+ *
+ * Sichtbar und nicht stumm: Wer gleich eine Antwort liest, soll wissen, worauf
+ * sie sich bezieht — und dass es SEIN Produkt war, nicht ein Beispiel von der
+ * Leinwand.
+ */
+function EigeneAnfrage({ text }: { text: string }) {
+  const [kopf, ...rest] = text.split("\n");
+  return (
+    <div className="rounded-2xl border border-[color:var(--accent)]/40 bg-stage p-4">
+      <p className="m-0 font-mono text-[10px] tracking-[0.14em] text-[color:var(--accent)] uppercase">
+        Von Dir gesendet
+      </p>
+      <p className="m-0 mt-2 text-base font-semibold text-balance text-fg">
+        {kopf.replace(/^Betreff:\s*/, "")}
+      </p>
+      <p className="m-0 mt-2 text-sm leading-relaxed whitespace-pre-wrap text-fg-2">
+        {rest.join("\n").trim()}
+      </p>
+    </div>
+  );
+}
+
 function SeedMail() {
   return (
     <div className="rounded-2xl border border-hair bg-stage p-4">

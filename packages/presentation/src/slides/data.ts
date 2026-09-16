@@ -561,7 +561,7 @@ export const SECTIONS: Section[] = [
           stufe: 1,
           alt: "Dasselbe T, nun blass im Hintergrund — als Vergleichsmaß für das, was gleich darüberkommt",
         },
-        say: "So sieht es bei uns aus. Und jetzt die Frage, um die es heute Abend geht: Wie sieht das eigentlich bei einem Sprachmodell aus? Wo ist es breit, wo ist es tief — und wo ist da nichts? Ich lasse unser T stehen, damit wir etwas zum Vergleichen haben.",
+        say: "So sieht es bei uns aus. Wie sieht das nun bei einem Sprachmodell aus?",
       },
       {
         at: "18:19",
@@ -570,7 +570,7 @@ export const SECTIONS: Section[] = [
           stufe: 2,
           alt: "Über dem menschlichen T liegt der deutlich breitere und dickere Balken des Modells, durchscheinend",
         },
-        say: "Das breite Wissen über viele Themen hinweg ist gut dokumentiert und über das Internet abrufbar. Genau das steckt in den Trainingsdaten heutiger Modelle. Und deshalb wissen sie in der Regel mehr als wir — sowohl in der Breite als auch in der Tiefe. Sie können Ihnen etwas über Logistik erzählen, über Lebensmittelrecht, über Preispsychologie. Sehen Sie, wie weit der Balken über unseren hinausragt? Aber schauen Sie jetzt nach unten. Da ist nichts. Das Spezialwissen einer Category Managerin hat das Modell nicht — und schon gar nicht das Wissen Ihres Hauses: Ihre Konditionen, Ihre Regale, Ihre Lieferanten, Ihre Erfahrungen aus zehn Jahren. Der Agent kann also brillant reden und Ihre Aufgabe trotzdem nicht erledigen.",
+        say: "Ein Sprachmodell hat in der Regel ein breiteres und leicht tieferes Allgemeinwissen. Es bezieht das Wissen aus frei zugänglichen Informationen zum Beispiel über das Internet. All diese Informationen landen in den Trainingsdaten der Modelle. Und deshalb können sie etwas über Logistik erzählen, über Lebensmittelrecht, über Preispsychologie und auch über Category Management. Aber das Modell hat nicht das Spezialwissen einer Category Managerin, um diesen Job ausführen zu können — und schon gar nicht das Wissen Eures Hauses: Konditionen, Regale, Lieferanten, Erfahrungen aus zehn Jahren. Der Agent kann also brillant reden und Deine Aufgabe trotzdem nicht erledigen.",
       },
     ],
     n: 13,
@@ -584,24 +584,24 @@ export const SECTIONS: Section[] = [
         at: "18:21",
         mock: {
           t: "qr",
-          caption: "Schick die Mail — diesmal unverändert.",
-          hint: "Der erste, der eine Antwort bekommt, meldet sich bitte.",
+          caption: "Schreib ihm selbst.",
+          hint: "Der Agent hat nichts als sein Training. Keine Systeme, keine Daten.",
         },
-        say: "Machen wir die Probe. Auf Deinem Handy liegt wieder ein Link. Schick die Mail bitte ab — diesmal kannst Du den Text so lassen, wie er ist. Antworten wird ein Agent, der ausschließlich auf seine Trainingsdaten zugreifen kann. Keine Systeme, keine Daten. Der erste, der eine Antwort bekommt, meldet sich bitte.",
+        say: "Machen wir die Probe. Auf Deinem Handy kannst Du jetzt einen Chat starten. Erinnerst Du Dich an Dein Briefing von vorhin? Du bist immer noch dieser Lieferant — und genau Deine Anfrage geht jetzt an den Agenten. Du siehst sie oben im Chat stehen, bevor sie rausgeht. Was Du nicht siehst: Dieser Agent hat nichts. Kein Wissen über Nordkorb, keinen Zugriff auf irgendein System, nicht einmal eine Anweisung, wer er ist. Nur sein Training. Er wird trotzdem antworten. Schau Dir gleich genau an, welche Zahlen er nennt.",
         audience: {
-          kind: "mailto",
-          id: "lisa-blank",
+          kind: "chat",
+          id: "roh-chat",
           persist: true,
-          until: "20:00",
-          label: "Mail abschicken (Text unverändert)",
-          to: "ecr2026-probe@carstenbkoch.de",
-          subject: "Listungsanfrage",
-          body: "Guten Tag Frau Berger,\n\nwir möchten ein neues Produkt bei Ihnen listen und schlagen einen Start zum kommenden Quartalswechsel vor. Über eine Rückmeldung würden wir uns freuen.\n\nMit freundlichen Grüßen",
-          hint: "Diesmal bitte nichts ändern — wir wollen sehen, was ein Agent ohne Systemzugriff daraus macht.",
-          privacy:
-            "Ich speichere Deine E-Mail-Adresse nur, bis die Antwort versendet ist. Ich hebe sie nicht auf.",
+          bisAbschnitt: 15,
+          stufe: "roh",
+          auftakt: "briefing",
+          auftaktZeigen: true,
+          label: "Chat starten",
+          hint: "Deine Anfrage aus dem Briefing geht an einen Agenten, der nichts nachschlagen kann. Mal sehen, was er daraus macht.",
+          systemPrompt:
+            "Du beantwortest die Anfrage eines Lebensmittelherstellers an eine Handelskette.\n\nDu hast keinen Zugriff auf Systeme, Daten oder Dokumente. Frage auch nicht nach — beantworte die Anfrage mit dem, was du hast.\n\nHalte Dich kurz, es wird auf einem Handy gelesen.",
         },
-        app: "Agent ohne Tools und ohne Systemprompt-Kontext. Die Antwort enthält nur das Ergebnis plus die Schrittfolge, wie er dorthin kam.",
+        app: "Chat auf der untersten Stufe: kein Systemprompt, keine Werkzeuge. Der Auftakt ist die Briefing-Mail des jeweiligen Teilnehmers, sichtbar im Verlauf.",
       },
       {
         at: "18:23",
@@ -651,7 +651,7 @@ export const SECTIONS: Section[] = [
           bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
           alt: "Unter dem Balken des Modells wächst ein Stamm heraus: breiter als der menschliche, aber flacher",
         },
-        say: "Was fehlt, ist also der Stamm. Und den kann man ihm geben. Schauen Sie, was passiert: Er wächst. Zwei Dinge fallen daran auf. Erstens ist er breiter als unserer — ein Agent kann mehr Fälle abdecken als eine einzelne Person, weil er nicht müde wird und nicht in Urlaub fährt. Zweitens ist er flacher. Er reicht nicht so tief wie zehn Jahre Erfahrung in einer Kategorie. Das ist keine Schwäche, die man wegprogrammiert. Das ist der Grund, warum Sie gebraucht werden.",
+        say: "Was fehlt, ist also der Stamm. Und den kann man ihm geben. Schau, was passiert: Er wächst. Zwei Dinge fallen daran auf. Erstens ist er breiter als unserer — ein Agent kann mehr Fälle abdecken als eine einzelne Person, weil er nicht müde wird und nicht in Urlaub fährt. Zweitens ist er flacher. Er reicht nicht so tief wie zehn Jahre Erfahrung in einer Kategorie. Das ist keine Schwäche, die man wegprogrammiert. Das ist der Grund, warum Du gebraucht wirst.",
       },
       {
         mock: {
@@ -669,7 +669,7 @@ export const SECTIONS: Section[] = [
           bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
           alt: "Der zweite Baustein erscheint: Tools",
         },
-        say: "Der zweite sind Tools. Werkzeuge, mit denen der Agent in Ihre Systeme sehen kann. Nicht raten, sondern nachschlagen. Das ist der Unterschied zwischen einer plausiblen Zahl und einer belegten.",
+        say: "Der zweite sind Tools. Werkzeuge, mit denen der Agent in Deine Systeme sehen kann. Nicht raten, sondern nachschlagen. Das ist der Unterschied zwischen einer plausiblen Zahl und einer belegten.",
       },
       {
         mock: {
@@ -678,7 +678,7 @@ export const SECTIONS: Section[] = [
           bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
           alt: "Der dritte Baustein erscheint: Memory",
         },
-        say: "Der dritte ist Memory. Ein Gedächtnis über einzelne Vorgänge hinaus. Was Sie ihm einmal korrigiert haben, soll er beim nächsten Mal schon wissen. Und — darauf kommen wir später noch einmal zurück — er soll sich auch merken, was er beim letzten Mal beiseitegelegt hat.",
+        say: "Der dritte ist Memory. Ein Gedächtnis über einzelne Vorgänge hinaus. Was Du ihm einmal korrigiert hast, soll er beim nächsten Mal schon wissen. Und — darauf kommen wir später noch einmal zurück — er soll sich auch merken, was er beim letzten Mal beiseitegelegt hat.",
       },
       {
         mock: {
