@@ -33,7 +33,8 @@ const KOPF_MS = 820;
  * dann in Ruhe und hängt nur die neuen ein — und nur die animieren.
  */
 function istStehend(section: Section): boolean {
-  return section.panels.every((p) => p.mock?.t === "architektur");
+  const arten = new Set(section.panels.map((p) => p.mock?.t));
+  return arten.size === 1 && (arten.has("architektur") || arten.has("tshape"));
 }
 
 /** Panels ohne Anwendungsfenster stehen mittig — die Aussage ist der Inhalt. */

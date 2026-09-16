@@ -487,6 +487,11 @@ export const SECTIONS: Section[] = [
           id: "abgegeben",
           persist: true,
           mehrfach: true,
+          /*
+            Bis Abschnitt 12 nachreichbar, danach nicht mehr. Ab 13 geht es um
+            das Modell selbst; eine Frage von vorhin stünde dort nur im Weg.
+          */
+          bisAbschnitt: 12,
           prompt: "Welche Aufgaben hast Du heute schon an KI abgegeben?",
           placeholder: "Zum Beispiel: Protokolle zusammenfassen",
           examples: [
@@ -545,19 +550,27 @@ export const SECTIONS: Section[] = [
         at: "18:17",
         mock: {
           t: "tshape",
-          variant: "human",
+          stufe: 0,
           alt: "T-Form: ein breiter Balken für Allgemeinwissen, darunter ein tiefer Stamm für Spezialwissen",
         },
         say: "Dafür müssen wir kurz verstehen, wie Wissen grundsätzlich funktioniert. Als Wissensarbeiter bringen wir in der Regel ein breites Allgemeinwissen und ein sehr spezifisches Wissen für unsere Aufgabe mit. Wir nennen das T-Shape. Wir brauchen das breite Wissen, um uns mit Personen aus anderen Abteilungen zu verständigen, mit unseren Kunden, Lieferanten oder Partnern. Damit verstehen wir sie besser und können gemeinsam Lösungen erarbeiten. Dort bringe ich mein Spezialwissen ein. Ein Category Manager versteht also nicht nur die eigene Disziplin, sondern auch wie die Logistik tickt und was eine Zweitplatzierung ist.",
       },
       {
+        mock: {
+          t: "tshape",
+          stufe: 1,
+          alt: "Dasselbe T, nun blass im Hintergrund — als Vergleichsmaß für das, was gleich darüberkommt",
+        },
+        say: "So sieht es bei uns aus. Und jetzt die Frage, um die es heute Abend geht: Wie sieht das eigentlich bei einem Sprachmodell aus? Wo ist es breit, wo ist es tief — und wo ist da nichts? Ich lasse unser T stehen, damit wir etwas zum Vergleichen haben.",
+      },
+      {
         at: "18:19",
         mock: {
           t: "tshape",
-          variant: "llm",
-          alt: "Das Modell hat einen viel breiteren und dickeren Balken an Allgemeinwissen, aber keinen Stamm an Spezialwissen",
+          stufe: 2,
+          alt: "Über dem menschlichen T liegt der deutlich breitere und dickere Balken des Modells, durchscheinend",
         },
-        say: "Das breite wissen über mehrere Kategorien hinweg ist in der Regel gut dokumentiert und über das Internet abrufbar. Es ist also gut möglich, dass es bei heutigen KI-Modellen in den Trainingsdaten enthalten ist. Und die Modelle wissen in der Regel mehr als wir, sowohl in der Breite als auch in der Tiefe; das gilt aber nur für das Allgemeinwissen. Das Spezialwissen eines Category Managers hat das Sprachmodell in der Regel nicht und schon gar nicht das firmeneigene Wissen oder die Erfahrungen.",
+        say: "Das breite Wissen über viele Themen hinweg ist gut dokumentiert und über das Internet abrufbar. Genau das steckt in den Trainingsdaten heutiger Modelle. Und deshalb wissen sie in der Regel mehr als wir — sowohl in der Breite als auch in der Tiefe. Sie können Ihnen etwas über Logistik erzählen, über Lebensmittelrecht, über Preispsychologie. Sehen Sie, wie weit der Balken über unseren hinausragt? Aber schauen Sie jetzt nach unten. Da ist nichts. Das Spezialwissen einer Category Managerin hat das Modell nicht — und schon gar nicht das Wissen Ihres Hauses: Ihre Konditionen, Ihre Regale, Ihre Lieferanten, Ihre Erfahrungen aus zehn Jahren. Der Agent kann also brillant reden und Ihre Aufgabe trotzdem nicht erledigen.",
       },
     ],
     n: 13,
@@ -634,15 +647,47 @@ export const SECTIONS: Section[] = [
         at: "18:28",
         mock: {
           t: "tshape",
-          variant: "grown",
-          capabilities: [
-            "Systemprompt — wer bin ich, was gilt hier",
-            "Tools und Memory — woher kommen die Daten",
-            "Autonomie — was darf ich selbst tun",
-          ],
-          alt: "Derselbe breite Balken, und der Stamm wächst zurück: Systemprompt, Tools und Memory, Autonomie",
+          stufe: 3,
+          bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
+          alt: "Unter dem Balken des Modells wächst ein Stamm heraus: breiter als der menschliche, aber flacher",
         },
-        say: "Was braucht er also? Drei Dinge. Erstens einen Systemprompt: wer bin ich, für wen arbeite ich, welche Regeln gelten hier. Zweitens Tools und Memory: einen Weg, an die Daten zu kommen — und einen Weg, sich zu merken, was er dabei gelernt hat. Und drittens Autonomie: die Berechtigung, Dinge nicht nur vorzuschlagen, sondern zu tun. Aus dem Rechteck wird wieder ein T. Die drei gehen wir jetzt einzeln durch.",
+        say: "Was fehlt, ist also der Stamm. Und den kann man ihm geben. Schauen Sie, was passiert: Er wächst. Zwei Dinge fallen daran auf. Erstens ist er breiter als unserer — ein Agent kann mehr Fälle abdecken als eine einzelne Person, weil er nicht müde wird und nicht in Urlaub fährt. Zweitens ist er flacher. Er reicht nicht so tief wie zehn Jahre Erfahrung in einer Kategorie. Das ist keine Schwäche, die man wegprogrammiert. Das ist der Grund, warum Sie gebraucht werden.",
+      },
+      {
+        mock: {
+          t: "tshape",
+          stufe: 4,
+          bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
+          alt: "Der erste Baustein erscheint: Systemprompt",
+        },
+        say: "Vier Bausteine machen diesen Stamm. Der erste ist der Systemprompt. Das ist die Einarbeitung: Wer bin ich, für wen arbeite ich, welche Regeln gelten in diesem Haus, und was darf ich nicht. Ein Satz Text — und er verändert alles, wie wir gleich sehen werden.",
+      },
+      {
+        mock: {
+          t: "tshape",
+          stufe: 5,
+          bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
+          alt: "Der zweite Baustein erscheint: Tools",
+        },
+        say: "Der zweite sind Tools. Werkzeuge, mit denen der Agent in Ihre Systeme sehen kann. Nicht raten, sondern nachschlagen. Das ist der Unterschied zwischen einer plausiblen Zahl und einer belegten.",
+      },
+      {
+        mock: {
+          t: "tshape",
+          stufe: 6,
+          bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
+          alt: "Der dritte Baustein erscheint: Memory",
+        },
+        say: "Der dritte ist Memory. Ein Gedächtnis über einzelne Vorgänge hinaus. Was Sie ihm einmal korrigiert haben, soll er beim nächsten Mal schon wissen. Und — darauf kommen wir später noch einmal zurück — er soll sich auch merken, was er beim letzten Mal beiseitegelegt hat.",
+      },
+      {
+        mock: {
+          t: "tshape",
+          stufe: 7,
+          bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
+          alt: "Der vierte Baustein erscheint: Autonomie",
+        },
+        say: "Und der vierte ist Autonomie: die Berechtigung, Dinge nicht nur vorzuschlagen, sondern zu tun. Das ist der Baustein, bei dem es den meisten von uns mulmig wird — und zu Recht. Deshalb ist es auch kein Schalter, sondern ein Regler. Die vier gehen wir jetzt einzeln durch.",
       },
     ],
     n: 15,
@@ -1027,12 +1072,8 @@ export const SECTIONS: Section[] = [
         at: "18:53",
         mock: {
           t: "tshape",
-          variant: "grown",
-          capabilities: [
-            "Systemprompt — bleibt gleich",
-            "Tools — bleiben gleich",
-            "Memory — wächst mit jeder Korrektur",
-          ],
+          stufe: 7,
+          bausteine: ["Systemprompt", "Tools", "Memory", "Autonomie"],
           alt: "Der Stamm des T wächst weiter: Memory kommt neben Systemprompt und Tools dazu",
         },
         say: "Hier kommt Memory ins Spiel. Neben dem Systemprompt, den Du schreibst, und den Tools, die Du anschließt, sammelt der Agent zusätzliches Wissen: was Du korrigiert hast, worauf Du Wert legst, welche Formulierung durchgeht und welche nicht. Der Systemprompt ist das, was Du ihm sagst. Memory ist das, was er aus der Zusammenarbeit mitnimmt.",

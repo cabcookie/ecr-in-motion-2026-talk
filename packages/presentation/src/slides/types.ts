@@ -109,18 +109,26 @@ export interface ChartMock {
 }
 
 /**
- * Wissen als T-Form.
+ * Wissen als T — in Stufen aufgebaut.
  *
- * `human` — mäßig breiter Balken, tiefer Stamm.
- * `llm` — deutlich breiterer und dickerer Balken, aber kein Stamm.
- * `grown` — derselbe Balken, und der Stamm wächst zurück, beschriftet mit den
- * Wegen, über die das Spezialwissen hereinkommt.
+ * Das menschliche T steht zuerst allein und beschriftet. Danach tritt es
+ * zurück und dient als Vergleich, während sich das Modell darüberlegt: erst
+ * sein breiterer Balken, dann sein Stamm, dann die Bausteine einzeln.
+ *
+ * Eine Stufe je Klick, damit der Vortragende jeden Schritt erklären kann,
+ * während er erscheint:
+ *
+ *   0  das menschliche T, voll beschriftet
+ *   1  dasselbe, blass und ohne Beschriftung — „und ein Sprachmodell?"
+ *   2  dazu der Balken des Modells, durchscheinend über dem menschlichen
+ *   3  dazu der Stamm des Modells — er wächst herunter
+ *   4+ dazu je ein Baustein, einer je Stufe
  */
 export interface TShapeMock {
   t: "tshape";
-  variant: "human" | "llm" | "grown";
-  capabilities?: string[];
-  caption?: string;
+  stufe: number;
+  /** Die Bausteine, die ab Stufe 4 einzeln erscheinen. Nur Wörter, keine Sätze. */
+  bausteine?: string[];
   /** Beschreibung für Screenreader */
   alt: string;
 }

@@ -9,240 +9,308 @@ const HOEHE = 560;
 /** Waagerechte Mitte. Alles richtet sich daran aus, statt an gesetzten Zahlen. */
 const MITTE = BREITE / 2;
 
+/** Der Mensch: schmaler Balken, tiefer Stamm. */
+const MENSCH = {
+  balken: { w: 760, h: 104, y: 92 },
+  stamm: { w: 124, h: 286 },
+};
+
 /**
- * Wissen als T.
+ * Das Modell: breiterer und dickerer Balken, dazu ein Stamm, der BREITER ist als
+ * der menschliche und trotzdem flacher.
  *
- * Ein breiter Balken für das Allgemeinwissen, darunter ein tiefer Stamm für das
- * Spezialwissen.
+ * Genau das ist die Aussage: Was ein Agent an Spezialwissen bekommt, deckt mehr
+ * Fälle ab als das, was ein Einzelner mitbringt — reicht aber nicht so tief.
+ */
+const MODELL = {
+  balken: { w: 1180, h: 156, y: 78 },
+  stamm: { w: 208, h: 188 },
+};
+
+const MIT_BALKEN = 2;
+const MIT_STAMM = 3;
+const ERSTER_BAUSTEIN = 4;
+
+/**
+ * Wissen als T, in Stufen aufgebaut.
  *
- * **Eine Form, kein Bausatz.** Vorher waren es zwei Rechtecke mit je eigenen
- * runden Ecken. An der Stoßkante trafen die Rundungen des Stamms auf die gerade
- * Unterkante des Balkens, und das las sich als zwei aneinandergeklebte Blöcke
- * statt als ein T. Jetzt ist es ein einziger Pfad mit ausgerundeten
- * Innenecken — die Kehle zwischen Balken und Stamm ist das, was ein T zu einem
- * T macht.
+ * **Eine Form, kein Bausatz.** Balken und Stamm sind ein Pfad mit ausgerundeten
+ * Innenecken. Als zwei Rechtecke mit je eigenen runden Ecken trafen an der
+ * Stoßkante Rundung und Gerade aufeinander — das las sich als zwei
+ * aneinandergeklebte Blöcke statt als ein T.
  *
- * Die Beschriftung steht waagerecht neben den Formen statt gedreht darin —
- * gedrehte Schrift ist das, was solche Diagramme unlesbar macht.
+ * **Der Mensch bleibt stehen.** Ab Stufe 1 tritt er zurück, verschwindet aber
+ * nicht: Ohne ihn wäre der Balken des Modells nur breit, mit ihm ist er
+ * breiter. Der Vergleich ist die Aussage.
  */
 export function TShapeView({ m }: { m: TShapeMock }) {
-  const isHuman = m.variant === "human";
-  const isGrown = m.variant === "grown";
+  const stufe = m.stufe;
+  const zeigtModellBalken = stufe >= MIT_BALKEN;
+  const zeigtModellStamm = stufe >= MIT_STAMM;
+  /* Nur auf der ersten Stufe steht der Mensch für sich — dort wird er erklärt. */
+  const menschImVordergrund = stufe === 0;
+
+  const mStammOben = MODELL.balken.y + MODELL.balken.h;
+  const mStammX = MITTE - MODELL.stamm.w / 2;
+  /** Die Linie, auf der „WIE TIEF" und „Spezialwissen" gemeinsam sitzen. */
+  const linieMensch = MENSCH.balken.y + MENSCH.balken.h + MENSCH.stamm.h / 2;
+  const linieModell = mStammOben + MODELL.stamm.h / 2;
 
   /*
-    Der Balken des Modells ist breiter UND dicker: mehr Themen, mehr Tiefe je
-    Thema. Beide sind um MITTE herum gebaut, nicht an gesetzten x-Werten — der
-    alte Balken saß 90 Punkte links der Mitte, und auf der Leinwand sah das aus,
-    als stünde die Folie schief.
+    Der Umriss des Modells — mit Stamm, sobald er da ist.
+
+    Er dient doppelt: als gefüllte Silhouette und als Schablone für den
+    andersfarbigen Stamm. Deshalb wächst dort keine zweite Form heran, sondern
+    eine Farbfläche innerhalb dieser einen. Vorher lag der Stamm obendrauf, und
+    seine ausgerundeten Schultern standen als grüne Flügel auf dem blauen
+    Balken.
   */
-  const balken = isHuman
-    ? { w: 760, h: 104, y: 92 }
-    : { w: 1180, h: 156, y: 78 };
-
-  const stamm = { w: 124, h: isHuman ? 286 : 250 };
-
-  const bx = MITTE - balken.w / 2;
-  const sx = MITTE - stamm.w / 2;
-  const balkenUnten = balken.y + balken.h;
-  const stammUnten = balkenUnten + stamm.h;
-
-  const hatStamm = isHuman || isGrown;
-
-  /*
-    Eine gemeinsame Linie auf halber Stammhöhe.
-
-    Links steht „WIE TIEF", rechts „Spezialwissen" — beide beziehen sich auf den
-    Stamm, also gehören sie auf dieselbe Höhe. Direkt unter dem Balken las sich
-    „Spezialwissen" wie eine zweite Zeile zum Balken.
-
-    Die Grundlinien liegen unterschiedlich weit darunter, weil die Schriftgrade
-    verschieden sind: Eine gemeinsame Grundlinie ergäbe optisch zwei Höhen.
-    Ausgerichtet wird an der Mitte der Zeichen, nicht an ihrem Fuß.
-  */
-  const linie = balkenUnten + stamm.h / 2;
+  const modellUmriss = zeigtModellStamm
+    ? ganzesT(MODELL.balken, MODELL.stamm)
+    : nurBalken(MODELL.balken);
 
   return (
     <div className="w-full">
+      <style>{CSS}</style>
       <svg viewBox={`0 0 ${BREITE} ${HOEHE}`} role="img" aria-label={m.alt}>
-        <defs>
-          <clipPath id="tshape-umriss">
-            <path d={umriss(bx, balken, sx, stamm, balkenUnten, stammUnten, hatStamm)} />
-          </clipPath>
-        </defs>
-
-        {/* Die Silhouette: ein Pfad, eine Farbe. */}
+        {/* Der Mensch — ab Stufe 1 nur noch als Vergleichsmaß */}
         <path
-          d={umriss(bx, balken, sx, stamm, balkenUnten, stammUnten, hatStamm)}
-          fill={isHuman ? "var(--color-fg-3)" : "var(--accent)"}
+          d={ganzesT(MENSCH.balken, MENSCH.stamm)}
+          fill="var(--color-fg-3)"
+          opacity={menschImVordergrund ? 1 : 0.22}
+          style={{ transition: "opacity 700ms ease" }}
         />
 
+        {menschImVordergrund && (
+          <>
+            <text
+              x={MITTE}
+              y={MENSCH.balken.y + MENSCH.balken.h / 2 + 13}
+              textAnchor="middle"
+              fontFamily={DISPLAY}
+              fontSize="40"
+              fontWeight="700"
+              fill="var(--color-stage)"
+            >
+              Allgemeinwissen
+            </text>
+            <text
+              x={MITTE + MENSCH.stamm.w / 2 + 40}
+              y={linieMensch + 14}
+              fontFamily={DISPLAY}
+              fontSize="40"
+              fontWeight="700"
+              fill="var(--color-fg)"
+            >
+              Spezialwissen
+            </text>
+            <text
+              x={MITTE - MENSCH.balken.w / 2}
+              y={MENSCH.balken.y - 20}
+              fontFamily={MONO}
+              fontSize="22"
+              letterSpacing="2.5"
+              fill="var(--color-fg-3)"
+            >
+              WIE VIELE THEMEN
+            </text>
+            <text
+              x={MITTE - MENSCH.stamm.w / 2 - 34}
+              y={linieMensch + 8}
+              textAnchor="end"
+              fontFamily={MONO}
+              fontSize="22"
+              letterSpacing="2.5"
+              fill="var(--color-fg-3)"
+            >
+              WIE TIEF
+            </text>
+          </>
+        )}
+
         {/*
-          Beim gewachsenen T ist der Stamm das Neue und deshalb anders eingefärbt.
-          Er wird in den Umriss GECLIPPT statt danebengelegt: So bleibt die Kehle
-          erhalten und der Farbwechsel liest sich als Zone einer Form, nicht als
-          zweites Bauteil.
+          Das Modell legt sich DARÜBER, nicht daneben — und durchscheinend, damit
+          der Mensch darunter sichtbar bleibt. Ein deckender Balken hätte ihn
+          verborgen, und dann wäre „breiter" eine Behauptung statt eines Bildes.
         */}
-        {isGrown && (
+        {zeigtModellBalken && (
+          <>
+            <defs>
+              <clipPath id="modell-umriss">
+                <path d={modellUmriss} />
+              </clipPath>
+            </defs>
+            <path
+              key="modell-balken"
+              className="t-el"
+              d={modellUmriss}
+              fill="var(--accent)"
+              fillOpacity="0.78"
+            />
+          </>
+        )}
+
+        {/*
+          Der Stamm wächst nach unten heraus. `transform-box: fill-box` mit
+          `transform-origin: top` hält ihn dabei oben am Balken, statt ihn aus
+          der Mitte aufploppen zu lassen.
+        */}
+        {zeigtModellStamm && (
           <rect
-            x={sx - 40}
-            y={balkenUnten}
-            width={stamm.w + 80}
-            height={stamm.h}
+            key="modell-stamm"
+            className="t-wachs"
+            x={mStammX - 60}
+            y={mStammOben}
+            width={MODELL.stamm.w + 120}
+            height={MODELL.stamm.h}
             fill="var(--color-b4)"
-            clipPath="url(#tshape-umriss)"
+            fillOpacity="0.92"
+            clipPath="url(#modell-umriss)"
           />
         )}
 
-        {/* Beim reinen Modell fehlt der Stamm — als Leerstelle, nicht als Fläche. */}
-        {!hatStamm && (
-          <rect
-            x={sx}
-            y={balkenUnten + 14}
-            width={stamm.w}
-            height={stamm.h - 14}
-            rx="14"
-            fill="none"
-            stroke="var(--color-hair)"
-            strokeWidth="3"
-            strokeDasharray="14 12"
-          />
-        )}
-
-        <text
-          x={MITTE}
-          y={balken.y + balken.h / 2 + 13}
-          textAnchor="middle"
-          fontFamily={DISPLAY}
-          fontSize="40"
-          fontWeight="700"
-          fill="var(--color-stage)"
-        >
-          Allgemeinwissen
-        </text>
-
-        <text
-          x={sx + stamm.w + 40}
-          y={linie + 14}
-          fontFamily={DISPLAY}
-          fontSize="40"
-          fontWeight="700"
-          fill={hatStamm ? "var(--color-fg)" : "var(--color-fg-3)"}
-        >
-          Spezialwissen
-        </text>
-
-        {!hatStamm && (
+        {zeigtModellBalken && (
           <text
-            x={sx + stamm.w + 40}
-            y={linie + 62}
-            fontFamily={SANS}
-            fontSize="30"
-            fill="var(--color-fg-3)"
+            key="modell-label"
+            className="t-el"
+            x={MITTE}
+            y={MODELL.balken.y + MODELL.balken.h / 2 + 13}
+            textAnchor="middle"
+            fontFamily={DISPLAY}
+            fontSize="40"
+            fontWeight="700"
+            fill="var(--color-stage)"
           >
-            fehlt
+            Allgemeinwissen
           </text>
         )}
 
-        {/* Die Wege, auf denen das Spezialwissen hereinkommt */}
-        {isGrown &&
-          m.capabilities?.map((cap, i) => (
-            <g key={cap}>
+        {zeigtModellStamm && (
+          <text
+            key="modell-spezial"
+            className="t-el"
+            x={mStammX + MODELL.stamm.w + 44}
+            y={linieModell + 14}
+            fontFamily={DISPLAY}
+            fontSize="40"
+            fontWeight="700"
+            fill="var(--color-fg)"
+          >
+            Spezialwissen
+          </text>
+        )}
+
+        {/*
+          Die Bausteine — einer je Stufe, nur das Wort.
+
+          Zeilenabstand 48 und nicht 54: Bei vier Bausteinen fiel der letzte
+          („Autonomie") sonst unten aus dem Zeichenfeld. Gemessen, nicht
+          geschätzt — im Bild sah es aus, als wäre einfach nichts da.
+        */}
+        {m.bausteine?.map((wort, i) =>
+          stufe >= ERSTER_BAUSTEIN + i ? (
+            <g key={wort} className="t-el">
               <circle
-                cx={sx + stamm.w + 52}
-                cy={linie + 66 + i * 54}
-                r="7"
+                cx={mStammX + MODELL.stamm.w + 62}
+                cy={linieModell + 60 + i * 48}
+                r="8"
                 fill="var(--color-b4)"
               />
               <text
-                x={sx + stamm.w + 74}
-                y={linie + 76 + i * 54}
+                x={mStammX + MODELL.stamm.w + 90}
+                y={linieModell + 71 + i * 48}
                 fontFamily={SANS}
-                /*
-                  25 statt 32: Diese Spalte beginnt rechts des Stamms, und der
-                  Balken der breiten Fassung ist 1180 Punkte breit. Bei 32 liefen
-                  „Memory — wächst mit jeder Korrektur" und „Tools und Memory —
-                  woher kommen die Daten" rechts aus dem Bild.
-                */
-                fontSize="25"
+                fontSize="32"
                 fill="var(--color-fg-2)"
               >
-                {cap}
+                {wort}
               </text>
             </g>
-          ))}
-
-        {/*
-          Achsenhinweise. „Wie viele Themen" steht innerhalb des Feldes und nicht
-          darüber: Oberhalb des Balkens wurde die Zeile abgeschnitten, sobald die
-          Folie das Bild verkleinerte.
-        */}
-        <text
-          x={bx}
-          y={balken.y - 20}
-          fontFamily={MONO}
-          fontSize="22"
-          letterSpacing="2.5"
-          fill="var(--color-fg-3)"
-        >
-          WIE VIELE THEMEN
-        </text>
-        <text
-          x={sx - 34}
-          y={linie + 8}
-          textAnchor="end"
-          fontFamily={MONO}
-          fontSize="22"
-          letterSpacing="2.5"
-          fill="var(--color-fg-3)"
-        >
-          WIE TIEF
-        </text>
+          ) : null,
+        )}
       </svg>
     </div>
   );
 }
 
+/*
+  Angehalten, bis die Folie sichtbar ist.
+
+  Alle Panels liegen im Baum; ohne das liefe die Animation im Verborgenen ab und
+  wäre vorbei, bevor jemand hinsieht. `aria-hidden` setzt die Folienansicht
+  ohnehin — dasselbe Muster wie beim Architekturbild.
+*/
+const CSS = `
+.t-el, .t-wachs {
+  transform-box: fill-box;
+  animation-play-state: paused;
+}
+.t-el {
+  transform-origin: center;
+  animation: t-auf 620ms cubic-bezier(.2,.8,.25,1) backwards;
+}
+.t-wachs {
+  transform-origin: top center;
+  animation: t-wachsen 820ms cubic-bezier(.22,.9,.28,1) backwards;
+}
+[aria-hidden="false"] .t-el,
+[aria-hidden="false"] .t-wachs { animation-play-state: running; }
+@keyframes t-auf {
+  from { opacity: 0; transform: translateY(-14px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes t-wachsen {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-el, .t-wachs { animation: none; }
+}
+`;
+
+const R = 16;
+const K = 26;
+
+/** Nur der Balken, als abgerundetes Rechteck. */
+function nurBalken(b: { w: number; h: number; y: number }): string {
+  const x = MITTE - b.w / 2;
+  const x2 = x + b.w;
+  const unten = b.y + b.h;
+  return [
+    `M ${x + R} ${b.y}`,
+    `H ${x2 - R}`,
+    `A ${R} ${R} 0 0 1 ${x2} ${b.y + R}`,
+    `V ${unten - R}`,
+    `A ${R} ${R} 0 0 1 ${x2 - R} ${unten}`,
+    `H ${x + R}`,
+    `A ${R} ${R} 0 0 1 ${x} ${unten - R}`,
+    `V ${b.y + R}`,
+    `A ${R} ${R} 0 0 1 ${x + R} ${b.y}`,
+    "Z",
+  ].join(" ");
+}
+
 /**
- * Der Umriss des T als ein Pfad, im Uhrzeigersinn.
+ * Das ganze T als ein Pfad, im Uhrzeigersinn.
  *
  * `R` rundet die Aussenecken, `K` die beiden Innenecken — die Kehle. Ohne sie
  * stossen zwei Kanten rechtwinklig aufeinander, und das Auge liest zwei Teile.
- * Ohne Stamm bleibt es beim Balken allein.
  */
-function umriss(
-  bx: number,
-  balken: { w: number; h: number; y: number },
-  sx: number,
-  stamm: { w: number; h: number },
-  balkenUnten: number,
-  stammUnten: number,
-  hatStamm: boolean,
+function ganzesT(
+  b: { w: number; h: number; y: number },
+  st: { w: number; h: number },
 ): string {
-  const R = 16;
-  const K = 26;
-  const bx2 = bx + balken.w;
-  const sx2 = sx + stamm.w;
-  const by = balken.y;
-
-  if (!hatStamm) {
-    return [
-      `M ${bx + R} ${by}`,
-      `H ${bx2 - R}`,
-      `A ${R} ${R} 0 0 1 ${bx2} ${by + R}`,
-      `V ${balkenUnten - R}`,
-      `A ${R} ${R} 0 0 1 ${bx2 - R} ${balkenUnten}`,
-      `H ${bx + R}`,
-      `A ${R} ${R} 0 0 1 ${bx} ${balkenUnten - R}`,
-      `V ${by + R}`,
-      `A ${R} ${R} 0 0 1 ${bx + R} ${by}`,
-      "Z",
-    ].join(" ");
-  }
+  const bx = MITTE - b.w / 2;
+  const bx2 = bx + b.w;
+  const sx = MITTE - st.w / 2;
+  const sx2 = sx + st.w;
+  const balkenUnten = b.y + b.h;
+  const stammUnten = balkenUnten + st.h;
 
   return [
-    `M ${bx + R} ${by}`,
+    `M ${bx + R} ${b.y}`,
     `H ${bx2 - R}`,
-    `A ${R} ${R} 0 0 1 ${bx2} ${by + R}`,
+    `A ${R} ${R} 0 0 1 ${bx2} ${b.y + R}`,
     `V ${balkenUnten - R}`,
     `A ${R} ${R} 0 0 1 ${bx2 - R} ${balkenUnten}`,
     /* rechte Kehle: nach innen gerundet, deshalb Sweep 0 */
@@ -253,12 +321,11 @@ function umriss(
     `H ${sx + R}`,
     `A ${R} ${R} 0 0 1 ${sx} ${stammUnten - R}`,
     `V ${balkenUnten + K}`,
-    /* linke Kehle */
     `A ${K} ${K} 0 0 0 ${sx - K} ${balkenUnten}`,
     `H ${bx + R}`,
     `A ${R} ${R} 0 0 1 ${bx} ${balkenUnten - R}`,
-    `V ${by + R}`,
-    `A ${R} ${R} 0 0 1 ${bx + R} ${by}`,
+    `V ${b.y + R}`,
+    `A ${R} ${R} 0 0 1 ${bx + R} ${b.y}`,
     "Z",
   ].join(" ");
 }
