@@ -1,6 +1,6 @@
 # Warum Dein KI-Agent noch keine Aufgaben für Dich übernimmt
 
-**…und wie Du dahin kommst.** — Vortrag auf der ECR in Motion 2026, Hamburg,
+**…und wie Du dahin kommst.** — Vortrag auf der ECR in Motion 2026, Bonn,
 16. September 2026.
 
 Lisa Berger ist Category Managerin für Schokolade & Pralinen bei einer
@@ -27,18 +27,32 @@ Vier Dinge, und sie hängen zusammen:
 | | Wo | Was |
 |---|---|---|
 | **Die Präsentation** | `packages/presentation/src/` | Die Folien als Web-App — Live-View für den Beamer, Operator-View für den zweiten Bildschirm, Teilnehmersicht fürs Handy. Die Foliendaten in `src/slides/data.ts` sind die Quelle der Wahrheit, auch fürs Storyboard. |
-| **Der Agent** | `packages/presentation/aws-blocks/agent/` | Eine Definition, zwei Eingangswege. `werkzeuge.ts` die Fachwerkzeuge, `antwort.ts` die Antwortwerkzeuge samt Rückfrage an den Menschen, `index.ts` die gemeinsame Konfiguration. |
-| **Die simulierten Systeme** | `packages/handelswelt/` | Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung — jedes hinter einem Port, der einen `Befund` liefert statt zu werfen. Dazu 81 Artikel Sortiment und das Zeitmodell. |
+| **Die Agenten** | `packages/presentation/aws-blocks/mail/` und `.../agent/` | Zwei Wege, noch zwei Codepfade: `mail/` bedient das Postfach mit einer eigenen Werkzeugschleife, `agent/` den Chat auf dem Handy über Bedrock AgentCore. Sie teilen Modell und Fachwerkzeuge, aber noch nicht die Konfiguration — siehe [Wie es gebaut ist](#wie-es-gebaut-ist). |
+| **Die simulierten Systeme** | `packages/handelswelt/` | Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung und die Kategorieziele — jedes hinter einem Port, der einen `Befund` liefert statt zu werfen. Dazu 81 Artikel Sortiment und das Zeitmodell. |
 | **Die AWS-Infrastruktur** | `packages/infra/`, `packages/presentation/aws-blocks/index.cdk.ts` | Bootstrap (OIDC-Rolle für den Deploy, Hosted Zone, Marken-Eimer) und die CDK-Schicht des Vortrags. Die E-Mail-Infrastruktur liegt daneben in `packages/mail-infra/` und ist hier **nicht** verdrahtet. |
 
 Dazu: `packages/docs/` mit dem Storyboard und den **Messungen** —
 was der Agent in 85 echten Läufen tatsächlich geantwortet hat, mit Zahlen.
 
+Und eine Datei, die an drei Stellen gleichzeitig auftritt:
+`packages/presentation/aws-blocks/mail/anhang.md`. Sie ist der Abspann des
+Vortrags — die letzte Folie zeigt ihn, die letzte Seite des PDFs druckt ihn,
+und unter jeder Antwortmail steht er als reiner Text. Wer dort einen Link
+ändert, ändert alle drei.
+
 ## Wie es gebaut ist
 
-Ein Agent, zwei Eingänge. Was ihn im Postfach von dem im Chat unterscheidet, ist
-nicht, wer er ist — sondern **womit er antworten kann**. Modell, Systemprompt
-und die sieben Fachwerkzeuge sind geteilt.
+Zwei Eingänge, ein Modell, dieselben **acht** Fachwerkzeuge. Was den Agenten im
+Postfach von dem im Chat unterscheidet, ist vor allem, **womit er antworten
+kann** — das Antwortwerkzeug entscheidet über den Kanal und damit darüber, was
+er sagen darf.
+
+> **Stand heute sind es noch zwei Codepfade**, nicht einer: `aws-blocks/mail/`
+> mit einer selbstgeschriebenen Werkzeugschleife für das Postfach,
+> `aws-blocks/agent/` auf Bedrock AgentCore für den Chat. Die gemeinsame
+> Definition in `agent/` ist gebaut, aber die CDK-Schicht hängt den Mailweg
+> weiterhin an `mail/handler.ts`. Das Diagramm zeigt, was läuft — nicht, was
+> geplant ist.
 
 ```mermaid
 flowchart TB
@@ -46,18 +60,15 @@ flowchart TB
   CHAT["Chat auf dem Handy<br/>Lisa fragt ihren Assistenten"]
 
   MAIL --> SES["E-Mail-Infrastruktur<br/>eigenes Konto · packages/mail-infra"]
-  SES --> AGENT
-  CHAT --> AGENT
+  SES --> AM["Postfach-Agent<br/>aws-blocks/mail/<br/>eigene Werkzeugschleife"]
+  CHAT --> AC["Chat-Agent<br/>aws-blocks/agent/<br/>Bedrock AgentCore"]
 
-  AGENT["<br/>Ein Agent<br/>Claude Opus 4.8 · Bedrock AgentCore<br/>ein Systemprompt, eine Konfiguration<br/>"]
+  AM --> WM["antworte_per_mail"]
+  AM --> WL["frage_das_team<br/>vermerkt die Rückfrage"]
+  AC --> WC["antworte_im_chat"]
 
-  AGENT --> WM["antworte_per_mail<br/>nur im Mailweg"]
-  AGENT --> WC["antworte_im_chat<br/>nur im Chat"]
-  AGENT --> WL["frage_lisa<br/>hält an, bis geantwortet ist"]
-  WL -.-> MENSCH["Der Mensch antwortet live"]
-  MENSCH -.-> AGENT
-
-  AGENT --> SYS
+  AM --> SYS
+  AC --> SYS
 
   subgraph SYS ["Simulierte Systeme · packages/handelswelt"]
     direction LR
@@ -67,8 +78,12 @@ flowchart TB
     S4[Kalkulation]
     S5[Aktionskalender]
     S6[Listung]
+    S7[Kategorieziele]
   end
 ```
+
+Beide laufen auf `global.anthropic.claude-opus-4-8` und auf denselben acht
+Fachwerkzeugen aus `packages/handelswelt`.
 
 **Die Systeme sind simuliert. Die Arbeit des Agenten ist es nicht.** Welches
 System er befragt, in welcher Reihenfolge und was er aus den Antworten schließt,
@@ -84,9 +99,15 @@ Drei Eigenschaften, die nicht zufällig so sind:
   nicht für den Agenten, sondern für den Kanal: Eine Mail geht an einen
   Außenstehenden, eine Chatnachricht an Lisa selbst. Wer das Werkzeug nicht hat,
   kann die Regel nicht verletzen.
-- **`frage_lisa` hält den Agenten an.** Mitten im Vorgang, bis ein Mensch
-  geantwortet hat — und diese Antwort wird zum Werkzeugergebnis, mit dem er
-  weiterrechnet.
+- **`frage_das_team` trennt die Adressaten.** Was der Agent intern klären muss,
+  verlässt den Lauf auf einem eigenen Weg: Der Absender erfährt, *dass* eine
+  Rückfrage läuft, nie ihren Wortlaut. Ohne diese Trennung fragte der Agent den
+  Lieferanten nach den eigenen Zahlen — genau das ist passiert.
+
+  Im Postfach-Agenten hält das den Vorgang heute **nicht** an; die Frage wird
+  vermerkt, die Antwort geht trotzdem raus. Die Fassung, die mit `interrupt()`
+  wartet, bis ein Mensch geantwortet hat, liegt in `aws-blocks/agent/` und ist
+  noch nicht verdrahtet.
 
 ## Lokal laufen lassen
 
@@ -100,9 +121,18 @@ pnpm --filter @ecr-talk/presentation dev
 
 | Fenster | Adresse | Zweck |
 |---|---|---|
-| **Live-View** | `localhost:5180` | Auf den Beamer. Feste Bühne 1920×1080, skaliert sich auf jedes Bild. |
-| **Operator-View** | `localhost:5180/?operator` | Auf den zweiten Bildschirm. Vorschau der aktuellen und nächsten Folie, Sprechernotizen, Uhr, Foliensprung. |
-| **Teilnehmersicht** | `localhost:5180/` | Was das Publikum auf dem Handy sieht. |
+| **Teilnehmersicht** | `localhost:5180/` | Was das Publikum auf dem Handy sieht. Die Wurzel gehört ihnen: Wer die Adresse zugerufen bekommt, landet hier und nicht auf der Leinwand. |
+| **Live-View** | `localhost:5180/audience` | Auf den Beamer. Feste Bühne 1920×1080, skaliert sich auf jedes Bild. |
+| **Operator-View** | `localhost:5180/operator` | Auf den zweiten Bildschirm. Vorschau der aktuellen und nächsten Folie, Sprechernotizen, Uhr, Foliensprung. |
+| **Druckfassung** | `localhost:5180/papier` | Der ganze Vortrag als Dokument — daraus entsteht das PDF. Nicht verlinkt; nur der Bauprozess ruft sie auf. |
+
+Zwei Parameter, die an jeder dieser Adressen gelten:
+
+- `?slide=13.1` steuert eine Folie direkt an — Abschnitt und Panel, beide ab 1
+  gezählt. Vom Steuerpult aufgerufen nimmt es Leinwand und Handys mit.
+- `?local` zwingt Leinwand und Steuerpult auf den `BroadcastChannel`, falls am
+  Vortragsabend das Netz ausfällt. Die Teilnehmer sind dann außen vor, der
+  Vortrag läuft weiter.
 
 Beide Fenster halten sich über einen `BroadcastChannel` synchron — kein Server
 nötig, solange sie im selben Browser laufen. Wer klickt, ist egal.
@@ -118,8 +148,12 @@ Die Folien laufen ohne alles. Der Agent nicht — er braucht drei Dinge:
 **1. Das Blocks-Backend**, denn dort lebt er:
 
 ```bash
-pnpm --filter @ecr-talk/presentation dev:blocks     # Port 3000
+pnpm --filter @ecr-talk/presentation dev:blocks
 ```
+
+Das startet Backend **und** Oberfläche neu — die Oberfläche dann auf
+`localhost:3100`, nicht auf 5180. Der `pnpm dev` von oben wird dafür nicht
+gebraucht.
 
 **2. AWS-Zugangsdaten in der Umgebung dieses Servers.** Ohne sie scheitert
 Bedrock still und AWS Blocks fällt auf seinen eingebauten Attrappen-Provider
@@ -213,6 +247,16 @@ DECK_TOKEN="..." AWS_PROFILE=ecrtag pnpm --filter @ecr-talk/presentation run dep
 Das stellt CloudFront und S3 für die App bereit, AppSync Events für die
 Fernsteuerung und den Agenten auf Bedrock AgentCore.
 
+Der Deploy-Workflow (`.github/workflows/deploy.yml`) tut dabei mehr als
+ausrollen, und die Reihenfolge ist jedes Mal teuer erkauft worden:
+
+1. Er holt Schrift und Logo aus dem privaten Eimer und **bricht ab**, wenn das
+   Logo fehlt — eine Seite ohne Marke fällt sonst erst am Beamer auf.
+2. Er prüft die Druckfassung, **bevor** er ausrollt.
+3. Er baut das PDF aus einem lokal ausgelieferten `dist` und rollt es mit aus.
+   Es liegt danach unter **`/vortrag`**, nicht nur als Artefakt am Lauf.
+4. Er prüft danach Seite, Logo, Schrift und PDF auf HTTP 200.
+
 **`DECK_TOKEN` nicht vergessen** — ohne das Geheimnis kann jeder mit der Adresse
 die Folien weiterklicken. Die CDK-Schicht warnt beim Synthetisieren, und die
 Operator-View zeigt im Kopf, ob die Steuerung geschützt ist.
@@ -257,8 +301,15 @@ pnpm --filter @ecr-talk/handelswelt run marken:test     # keine echten Marken in
 pnpm --filter @ecr-talk/presentation run buendel:test   # bündelt der Handler?
 pnpm --filter @ecr-talk/presentation run mail:test      # der Mailweg, gegen eine Attrappe
 pnpm --filter @ecr-talk/presentation run buehne:test    # sitzt die Bühne auf jedem Format?
+pnpm --filter @ecr-talk/presentation run papier:test    # trägt jede Folie auch im PDF?
+pnpm --filter @ecr-talk/presentation run sperr:test     # die Sperrliste selbst
 AWS_PROFILE=… pnpm --filter @ecr-talk/presentation run modell:test   # echter Bedrock-Aufruf
 ```
+
+`papier:test` läuft im Deploy **vor** dem Ausrollen: Er findet die Folien, die
+ohne Publikum nichts zeigen — QR-Codes, Live-Auswertungen, Sprechertexte, die
+mit dem Raum reden. Fehlt für eine davon die Angabe `papier`, entstünde eine
+Seite, die den Leser in die Irre führt, und das fällt sonst niemandem auf.
 
 Der letzte ist der einzige, der Geld kostet, und der einzige, der findet, wenn
 ein Modell die Konfiguration nicht mehr annimmt. Die anderen laufen gegen
@@ -270,9 +321,17 @@ genau so passiert, beim Wechsel von Sonnet auf Opus.
 ```bash
 pnpm --filter @ecr-talk/docs storyboard                 # aus den Foliendaten erzeugt
 pnpm --filter @ecr-talk/presentation shots              # alle Folien als PNG
+pnpm --filter @ecr-talk/presentation pdf                # der Vortrag als Dokument
 ```
 
 `shots` meldet auch, welche Folien zu voll für die Bühne sind.
+
+`pdf` druckt die Route `/papier` — echter Text, keine Screenshots, also
+durchsuchbar und vorlesbar. Es erwartet eine laufende Seite als erstes
+Argument (`node scripts/pdf.mjs http://localhost:5180 dist/vortrag.pdf`) und
+bricht ab, wenn eine Seite überliefe; ein Überlauf im PDF schneidet sonst
+stillschweigend ab. Folien, die sich über mehrere Klicks aufbauen, erscheinen
+darin nur in ihrem Endstand.
 
 ## Hinweis zum Sortiment
 
