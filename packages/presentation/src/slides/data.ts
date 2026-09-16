@@ -602,7 +602,7 @@ export const SECTIONS: Section[] = [
             "Du beantwortest Anfragen. Frag nicht nach — beantworte die Anfrage mit dem, was du hast.\n\nHalte Dich kurz, es wird auf einem Handy gelesen. Reiner Fließtext, kein Markdown.\n\nSchreibe zuerst in zwei, drei Sätzen, wie Du zu Deiner Einschätzung kommst und worauf Du Dich dabei stützt. Setze dann in eine eigene Zeile ===ANTWORT=== und darunter Deine Antwort.",
         },
         app: "Chat auf der untersten Stufe: fast kein Prompt, keine Werkzeuge. Der Auftakt ist die Briefing-Mail des jeweiligen Teilnehmers, sichtbar im Verlauf.",
-        note: "Worauf zu achten ist, wenn die Antworten kommen: Er rechnet die Marge auf den BRUTTO-Preis. Bei EK 0,55 / VK 0,89 nennt er rund 38 % — richtig sind 33,9 %, weil Schokolade mit 7 % Mehrwertsteuer läuft und auf den Netto-VK gerechnet wird. Die Zahl klingt plausibel, ist sauber hergeleitet und trotzdem falsch. Genau das ist der Unterschied, den Werkzeuge machen. Gemessen am 16.09. in drei Läufen.",
+        note: "Worauf zu achten ist: WENN er eine Marge rechnet, rechnet er sie auf den Brutto-Preis. Beim Briefing Morgenrot (EK 0,55 / VK 0,89) nannte er in zwei von drei Läufen rund 38 % — richtig sind 33,9 %, weil Schokolade mit 7 % Mehrwertsteuer läuft und auf den Netto-VK gerechnet wird. Nicht jeder Lauf nennt eine Zahl, und jedes Briefing hat andere Preise; frag also offen „hat jemand eine Marge genannt bekommen?“ statt die 38 % anzukündigen. Wenn eine kommt, ist sie der bessere Beleg als jede Folie: plausibel, sauber hergeleitet und trotzdem falsch. Gemessen am 16.09.",
       },
       {
         at: "18:23",
