@@ -136,15 +136,17 @@ const ELEMENTE: Element[] = [
 
   { id: "agent", stufe: 0, art: "agent", x: 390, y: AGENT_Y, w: 420 },
 
-  /* Stufe 1 — womit er antworten darf, und was ihn anhält */
+  /* Stufe 1 — womit er antworten darf */
   /* Jeder Pfeil endet auf der MITTE seines Kastens, nicht irgendwo dazwischen. */
-  { id: "p-w1", stufe: 1, art: "pfeil", x: 500, y: AGENT_Y + 104, x2: 310, y2: WERKZEUG_Y - 2 },
-  { id: "p-w2", stufe: 1, art: "pfeil", x: 600, y: AGENT_Y + 104, x2: 600, y2: WERKZEUG_Y - 2 },
-  { id: "p-w3", stufe: 1, art: "pfeil", x: 700, y: AGENT_Y + 104, x2: 900, y2: WERKZEUG_Y - 2 },
-  { id: "w-mail", stufe: 1, art: "werkzeug", x: 170, y: WERKZEUG_Y, w: 280, titel: "antworte_per_mail", unter: "nur im Mailweg" },
-  { id: "w-chat", stufe: 1, art: "werkzeug", x: 470, y: WERKZEUG_Y, w: 260, titel: "antworte_im_chat", unter: "nur im Chat" },
-  { id: "w-lisa", stufe: 1, art: "werkzeug", x: 750, y: WERKZEUG_Y, w: 300, titel: "frage_das_team", unter: "hält an, bis geantwortet ist" },
-  { id: "n-operator", stufe: 1, art: "notiz", x: 1050, y: WERKZEUG_Y - 14, text: "der Mensch antwortet live  ↓", farbe: "var(--color-b2)" },
+  { id: "p-w1", stufe: 1, art: "pfeil", x: 540, y: AGENT_Y + 104, x2: 440, y2: WERKZEUG_Y - 2 },
+  { id: "p-w2", stufe: 1, art: "pfeil", x: 660, y: AGENT_Y + 104, x2: 760, y2: WERKZEUG_Y - 2 },
+  { id: "w-mail", stufe: 1, art: "werkzeug", x: 300, y: WERKZEUG_Y, w: 280, titel: "antworte_per_mail", unter: "nur im Mailweg" },
+  { id: "w-chat", stufe: 1, art: "werkzeug", x: 630, y: WERKZEUG_Y, w: 260, titel: "antworte_im_chat", unter: "nur im Chat" },
+  /*
+    frage_das_team steht hier bewusst nicht. Der Vortrag erwähnt es sonst
+    nirgends, und ein Werkzeug, das nur auf diesem Bild auftaucht, verwirrt
+    mehr, als es erklärt.
+  */
 
   /* Stufe 2 — die Systeme, in denen er nachschlägt */
   /*

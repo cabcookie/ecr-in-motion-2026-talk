@@ -215,6 +215,33 @@ export function antworteImChat(tool: ToolFactory<Vorgangskontext>, intern = true
   });
 }
 
+/**
+ * Der Entwurf der Antwortmail, im Chat gezeigt statt verschickt.
+ *
+ * Für den Chat mit Tools (Abschnitt 17): Der Agent hat jetzt alles, um dem
+ * Hersteller zu antworten — also schreibt er den Brief, und Lisa sieht ihn
+ * auf dem Handy. Es geht nichts hinaus. Die Vertraulichkeitsregel ist
+ * dieselbe wie beim Versand, denn gelesen wird der Brief am Ende draußen.
+ */
+export function entwurfZeigen(tool: ToolFactory<Vorgangskontext>) {
+  return tool({
+    description:
+      'Zeigt Lisa den Entwurf deiner Antwortmail an den ABSENDER der eingegangenen E-Mail. Das ' +
+      'ist der EINZIGE Weg, auf dem deine Antwort ankommt; gib sie hier, ohne sie vorher ' +
+      'anzukündigen. Was du daneben schreibst, ist dein Arbeitsweg — schreib ruhig mit, was du ' +
+      'gerade prüfst, das wird getrennt angezeigt.\n\n' +
+      'Schreibe den Brief so, wie er hinausginge: erste Zeile „Betreff: …", dann die Anrede an ' +
+      'den Absender, der Brief in kurzen Absätzen, die Grußformel und „Lisa Berger". Reiner ' +
+      'Fließtext, kein Markdown. Keine Einschätzung für Lisa und keine Zusammenfassung dessen, was ' +
+      'du geprüft hast — nur der Brief.\n\n' +
+      VERTRAULICHKEIT,
+    parameters: z.object({
+      text: z.string().describe('Der vollständige Entwurf, von „Betreff:" bis zur Unterschrift.'),
+    }),
+    handler: async ({ input }) => ({ angezeigt: true, text: input.text }),
+  });
+}
+
 /** Wohin eine offene Frage geschrieben wird, damit das Team sie findet. */
 export interface Fragenablage {
   (frage: {

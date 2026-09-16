@@ -129,8 +129,10 @@ const prompt = promptChatAgent(scope);
   Abschnitt 17: alle Systeme, aber ohne die Ziele der Kategorie. Abschnitt 18
   zeigt danach, dass ein Agent ohne Ziele zwar prüft, ob etwas geht, aber
   nicht entscheidet, ob es gewollt ist — mit Zielen nähme der Chat das vorweg.
+  Er antwortet mit dem Entwurf der Mail an den Hersteller, nicht mit einer
+  Einschätzung.
 */
-const werkzeuge = chatAgent(scope, { ohne: ['kategorie_ziele'] }, 'werkzeuge');
+const werkzeuge = chatAgent(scope, { ohne: ['kategorie_ziele'] }, 'werkzeuge', true);
 
 /** Welche Stufe ein Chat anspricht. */
 const CHATS = { voll: berater, werkzeuge, prompt, roh } as const;

@@ -22,6 +22,7 @@ import { SYSTEM_PROMPT } from '../../src/slides/agent';
 import {
   antworteImChat,
   antworteVerMail,
+  entwurfZeigen,
   frageLisa,
   vorgangskontext,
   type Fragenablage,
@@ -136,17 +137,23 @@ export function postfachAgent(
  * `kennung` unterscheidet Stufen mit anderer Werkzeugauswahl: Blocks verlangt
  * je Agent eine eigene, und daraus entsteht auch sein Bucketname (höchstens
  * 63 Zeichen samt Stackname — kurz halten).
+ *
+ * `entwurf`: Statt einer Einschätzung für Lisa zeigt er den Entwurf der
+ * Antwortmail an den Hersteller (Abschnitt 17).
  */
 export function chatAgent(
   scope: Scope,
   auswahl: Werkzeugauswahl = {},
   kennung = 'berater',
+  entwurf = false,
 ): Agent<any> {
   return new Agent(scope, kennung, {
     ...GEMEINSAM,
     tools: (tool) => ({
       ...fachwerkzeuge(tool, auswahl.ohne),
-      antworte_im_chat: antworteImChat(tool),
+      ...(entwurf
+        ? { zeige_antwortentwurf: entwurfZeigen(tool) }
+        : { antworte_im_chat: antworteImChat(tool) }),
     }),
   });
 }

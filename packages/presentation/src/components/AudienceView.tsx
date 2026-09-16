@@ -96,6 +96,12 @@ export function AudienceView() {
   const wartet = vorDemStart(index, step);
   const current = section.panels[step]?.audience ?? null;
   /*
+    Die letzte Folie darf auf großen Bildschirmen aussehen wie auf der
+    Leinwand: breit, mit großem Titel und der Adresse darunter. Auf dem Handy
+    bleibt alles, wie es ist.
+  */
+  const breit = current?.kind === "abspann";
+  /*
     Eine Uhr im Minutentakt. Ohne sie bliebe ein abgelaufenes Angebot stehen,
     bis die nächste Folie kommt — und wenn der Vortrag gerade dort verweilt,
     hiesse "Bis 20:00 möglich" um 20:15 immer noch dasselbe.
@@ -130,7 +136,9 @@ export function AudienceView() {
         </div>
       ) : (
       <div
-        className="mx-auto flex max-w-lg flex-col gap-6 px-4 pb-16"
+        className={`mx-auto flex max-w-lg flex-col gap-6 px-4 pb-16 ${
+          breit ? "md:max-w-6xl md:gap-8 md:px-12 md:pt-12" : ""
+        }`}
         style={{ paddingBottom: "max(4rem, env(safe-area-inset-bottom))" }}
       >
         {/*
@@ -138,7 +146,11 @@ export function AudienceView() {
           den Hintergrund über die volle Breite, sonst schöbe sich der Inhalt
           seitlich daran vorbei.
         */}
-        <header className="sticky top-0 z-10 -mx-4 flex items-center justify-between gap-3 border-b border-hair bg-stage px-4 py-4">
+        <header
+          className={`sticky top-0 z-10 -mx-4 flex items-center justify-between gap-3 border-b border-hair bg-stage px-4 py-4 ${
+            breit ? "md:hidden" : ""
+          }`}
+        >
           <span className="flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-fg-3 uppercase">
             <span className="size-2 rounded-full" style={{ background: "var(--accent)" }} />
             {block.n} · {block.tab}
@@ -152,12 +164,25 @@ export function AudienceView() {
           </span>
         </header>
 
-        <h1 className="m-0 font-display text-3xl leading-tight font-extrabold tracking-tight text-balance">
+        <h1
+          className={`m-0 font-display text-3xl leading-tight font-extrabold tracking-tight text-balance ${
+            breit ? "md:text-6xl" : ""
+          }`}
+        >
           {section.title}
         </h1>
+        {breit && section.sub && (
+          <p className="m-0 -mt-4 hidden text-2xl text-fg-2 md:block">{section.sub}</p>
+        )}
 
         {current ? (
+          /*
+            Der key ist Pflicht. Ohne ihn behält React beim Wechsel von einem
+            Chat zum nächsten dieselbe Komponente — mitsamt Verlauf und
+            „gestartet": Der Chat mit Tools zeigte das Gespräch ohne Tools.
+          */
           <InteractionView
+            key={current.id}
             interaction={current}
             answers={answers}
             onAnswer={submit}
@@ -172,7 +197,8 @@ export function AudienceView() {
           </div>
         )}
 
-        {stillOpen.length > 0 && (
+        {/* Auf der letzten Seite zählt nur das Material. */}
+        {!breit && stillOpen.length > 0 && (
           <section className="grid gap-3">
             <h2 className="m-0 font-mono text-[11px] tracking-[0.14em] text-fg-3 uppercase">
               Weiterhin möglich

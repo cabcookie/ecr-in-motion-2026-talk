@@ -376,7 +376,9 @@ export type Interaction = MitZusammenhang &
       persist?: boolean;
     }
     /** Zwischen zwei Interaktionen — hier IST der Zusammenhang der ganze Inhalt. */
-    | { kind: "wait"; id: string; message: string; persist?: boolean });
+    | { kind: "wait"; id: string; message: string; persist?: boolean }
+    /** Das PDF und alle Links aus anhang.md, wie auf der Abschlussseite. */
+    | { kind: "abspann"; id: string; persist?: boolean });
 
 /**
  * Wie ein Panel auf Papier landet.
@@ -410,7 +412,7 @@ export interface Papier {
   behalten?: boolean;
   /** Ersetzt die Folie — der QR-Code wird zu dem, was dahinter lag. */
   statt?: Mock;
-  /** Was unter der Folie steht. Fehlt er, gilt der Sprechertext. */
+  /** Was unter der Folie steht. Fehlt er, steht dort nichts — der Sprechertext kommt nicht ins PDF. */
   text?: string;
 }
 

@@ -3,6 +3,8 @@ import type { Interaction } from "@/slides/types";
 import { SEED_MAIL } from "@/slides/agent";
 import { briefingFuer, gruppenName, type Briefing } from "@/slides/briefing";
 import { participantId } from "./participant";
+import { AbspannMaterial } from "@/components/Abschlussseite";
+import { Markdown } from "./Markdown";
 import { useAgentChat } from "./useAgentChat";
 
 const CARD = "rounded-2xl border border-hair bg-stage-2 p-5";
@@ -540,15 +542,20 @@ function Agentenzug({
             {offen ? "▲ Gedankengang" : "▼ Gedankengang"}
           </button>
           {offen && (
-            <div className="rounded-2xl border border-dashed border-hair px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap text-fg-3">
-              {weg}
+            <div className="rounded-2xl border border-dashed border-hair px-4 py-3 text-sm leading-relaxed text-fg-3">
+              <Markdown text={weg} />
             </div>
           )}
         </>
       )}
       {zeigt !== undefined && (
-        <div className="rounded-2xl rounded-bl-sm border border-hair bg-stage px-4 py-3 text-base leading-relaxed whitespace-pre-wrap text-fg">
-          {zeigt}
+        <div
+          className={`rounded-2xl rounded-bl-sm border border-hair bg-stage px-4 py-3 text-base leading-relaxed text-fg ${
+            fehlgeschlagen ? "" : "whitespace-pre-wrap"
+          }`}
+        >
+          {/* Ersatzweise der Gedankengang — dann auch als Markdown. Der Brief bleibt wörtlich. */}
+          {fehlgeschlagen ? <Markdown text={zeigt} /> : zeigt}
         </div>
       )}
     </div>
@@ -685,5 +692,11 @@ function Koerper({
       return <Chat interaction={interaction} />;
     case "wait":
       return <Wait interaction={interaction} />;
+    case "abspann":
+      return (
+        <div className="grid gap-8">
+          <AbspannMaterial breit />
+        </div>
+      );
   }
 }

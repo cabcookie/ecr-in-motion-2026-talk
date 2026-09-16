@@ -33,41 +33,9 @@ export function Abschlussseite() {
             Hier ist die Präsentation zum Nachlesen, und darunter alles, womit Du weitermachen
             kannst.
           </p>
-          <a
-            href={PDF_DATEI}
-            className="mt-2 inline-flex w-fit items-center rounded-full border border-[color:var(--accent)] px-5 py-3 font-bold text-fg no-underline"
-          >
-            Präsentation als PDF
-          </a>
         </header>
 
-        {ABSPANN.abschnitte.map((abschnitt) => (
-          <section key={abschnitt.titel} className="grid gap-3">
-            <h2 className="m-0 font-display text-xl leading-tight font-extrabold text-[color:var(--accent)]">
-              {abschnitt.titel}
-            </h2>
-            {abschnitt.einleitung && (
-              <p className="m-0 text-sm leading-relaxed text-fg-2">{abschnitt.einleitung}</p>
-            )}
-            <ul className="m-0 grid list-none gap-3 p-0">
-              {abschnitt.eintraege.map((e) => (
-                <li key={e.url}>
-                  <a
-                    href={e.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block rounded-2xl border border-hair px-4 py-3 text-fg no-underline"
-                  >
-                    <b className="font-bold">{e.was}</b>
-                    {e.warum && (
-                      <span className="mt-1 block text-sm leading-snug text-fg-2">{e.warum}</span>
-                    )}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        <AbspannMaterial />
 
         <p className="m-0 text-sm leading-relaxed text-fg-3">
           Lisa ist im Moment nicht aktiv. Wenn Du sie noch einmal erleben möchtest, frag gerne eine
@@ -78,5 +46,87 @@ export function Abschlussseite() {
         </p>
       </div>
     </div>
+  );
+}
+
+/** Die Adresse verkürzt, wie auf der Leinwand — niemand liest "https://". */
+function knapp(url: string): string {
+  return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+}
+
+/**
+ * Das Material selbst: das PDF und die Abschnitte aus anhang.md.
+ *
+ * Steht zweimal: auf der Abschlussseite außerhalb des Vortragsfensters und auf
+ * dem Handy bei der letzten Folie.
+ *
+ * `breit` macht es responsiv für die letzte Folie: Schmal bleiben es Karten
+ * mit Erklärung zum Antippen. Ab Tablet-Breite steht es wie auf der Leinwand —
+ * vier Abschnitte in zwei Spalten, je Eintrag Name und kurze Adresse, und
+ * trotzdem anklickbar.
+ */
+export function AbspannMaterial({ breit = false }: { breit?: boolean }) {
+  return (
+    <>
+      <a
+        href={PDF_DATEI}
+        className="inline-flex w-fit items-center rounded-full border border-[color:var(--accent)] px-5 py-3 font-bold text-fg no-underline"
+      >
+        Präsentation als PDF
+      </a>
+
+      <div
+        className={
+          breit
+            ? "grid gap-8 md:grid-cols-2 md:gap-x-20 md:gap-y-12"
+            : "grid gap-8"
+        }
+      >
+        {ABSPANN.abschnitte.map((abschnitt) => (
+          <section key={abschnitt.titel} className={breit ? "grid content-start gap-3" : "grid gap-3"}>
+            <h2
+              className={`m-0 font-display text-xl leading-tight font-extrabold text-[color:var(--accent)] ${
+                breit ? "md:text-3xl" : ""
+              }`}
+            >
+              {abschnitt.titel}
+            </h2>
+            {abschnitt.einleitung && (
+              <p className={`m-0 text-sm leading-relaxed text-fg-2 ${breit ? "md:hidden" : ""}`}>
+                {abschnitt.einleitung}
+              </p>
+            )}
+            <ul className={`m-0 grid list-none gap-3 p-0 ${breit ? "md:gap-4" : ""}`}>
+              {abschnitt.eintraege.map((e) => (
+                <li key={e.url}>
+                  <a
+                    href={e.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block rounded-2xl border border-hair px-4 py-3 text-fg no-underline ${
+                      breit ? "md:rounded-none md:border-0 md:p-0 md:hover:underline" : ""
+                    }`}
+                  >
+                    <b className={`font-bold ${breit ? "md:text-xl" : ""}`}>{e.was}</b>
+                    {e.warum && (
+                      <span
+                        className={`mt-1 block text-sm leading-snug text-fg-2 ${breit ? "md:hidden" : ""}`}
+                      >
+                        {e.warum}
+                      </span>
+                    )}
+                    {breit && (
+                      <span className="hidden font-mono text-sm leading-snug break-all text-fg-3 md:block">
+                        {knapp(e.url)}
+                      </span>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </>
   );
 }

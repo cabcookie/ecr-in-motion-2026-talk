@@ -62,6 +62,9 @@ export const SEED_MESSAGE = [
  * Category-Team. Der Name ist für das Modell die wichtigste Angabe darüber, an
  * wen es schreibt — deutlicher als jede Beschreibung darunter.
  *
- * Die App horcht auf beide: Was durch eines davon geht, ist die Antwort.
+ * `zeige_antwortentwurf` ist der Chat mit Tools: Dort zeigt der Agent den
+ * Brief an den Hersteller, statt ihn zu senden.
+ *
+ * Die App horcht auf alle drei: Was durch eines davon geht, ist die Antwort.
  */
-export const ANTWORT_WERKZEUGE = ["antworte_im_chat", "antworte_dem_absender"];
+export const ANTWORT_WERKZEUGE = ["antworte_im_chat", "antworte_dem_absender", "zeige_antwortentwurf"];

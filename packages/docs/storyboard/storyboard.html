@@ -787,7 +787,7 @@ const SECTIONS = [
           "caption": "Schreib Lisa selbst.",
           "hint": "Du bist jetzt Lieferant für Nordkorb. Lies Dein Briefing. Der Link öffnet Dein Mailprogramm."
         },
-        "say": "Und jetzt die Einladung, es selbst auszuprobieren. Auf Deinem Handy steht ganz oben Dein Briefing — klapp es bitte zuerst auf. Du bist ab jetzt nämlich nicht mehr Du, sondern Lieferant: Du vertrittst einen Hersteller gegenüber Nordkorb. Im Briefing steht, für welche Marke Du stehst, was Nordkorb heute von Dir im Regal hat, was Du erreichen willst — und wo der Haken liegt. Jeder hier im Raum hat eine andere Rolle bekommen. Darunter findest Du den Link, der Dein Mailprogramm öffnet. Die Mail ist schon geschrieben, passend zu Deiner Rolle; trag bitte Deinen Namen ein. Und wenn Du magst, ändere den Inhalt der Email. Hinter dem Postfach wartet Lisa, unser KI-Agent, der Deine Anfrage verarbeitet und Dir antwortet. In der Antwort findest die Liste der Aktionen, die der Agent ausgeführt hat, den Link zu dieser Präsentation, weiterführendes Material und den Link zum Programm-Code dieser Präsentation und des Agenten. Damit Du sehen kannst: Die Systeme sind simuliert; die Arbeit des Agenten ist es nicht.",
+        "say": "Und jetzt die Einladung, es selbst auszuprobieren. Auf Deinem Handy steht ganz oben Dein Briefing — klapp es bitte zuerst auf. Du bist ab jetzt nämlich nicht mehr Du, sondern Lieferant: Du vertrittst einen Hersteller gegenüber Nordkorb. Im Briefing steht, für welche Marke Du stehst, was Nordkorb heute von Dir im Regal hat, was Du erreichen willst — und wo der Haken liegt. Ihr habt dabei unterschiedliche Rollen bekommen. Darunter findest Du den Link, der Dein Mailprogramm öffnet. Die Mail ist schon geschrieben, passend zu Deiner Rolle; trag bitte Deinen Namen ein. Und wenn Du magst, ändere den Inhalt der Email. Hinter dem Postfach wartet Lisa, unser KI-Agent, der Deine Anfrage verarbeitet und Dir antwortet. In der Antwort findest die Liste der Aktionen, die der Agent ausgeführt hat, den Link zu dieser Präsentation, weiterführendes Material und den Link zum Programm-Code dieser Präsentation und des Agenten. Damit Du sehen kannst: Die Systeme sind simuliert; die Arbeit des Agenten ist es nicht.",
         "audience": {
           "kind": "mailto",
           "id": "lisa-mail",
@@ -1152,7 +1152,7 @@ const SECTIONS = [
           ],
           "alt": "Der dritte Baustein erscheint: Memory"
         },
-        "say": "Der dritte ist Memory. Ein Gedächtnis über einzelne Vorgänge hinaus. Was Du ihm einmal korrigiert hast, soll er beim nächsten Mal schon wissen. Und — darauf kommen wir später noch einmal zurück — er soll sich auch merken, was er beim letzten Mal beiseitegelegt hat."
+        "say": "Der dritte ist Memory. Ohne Memory startet der Agent bei jedem Vorgang bei null. Memory gibt ihm ein Gedächtnis, das über den einzelnen Vorgang hinausreicht. Was Du ihm einmal korrigiert hast, soll er beim nächsten Mal schon wissen. Und — darauf kommen wir später noch einmal zurück — er soll sich auch merken, was er beim letzten Mal beiseitegelegt hat."
       },
       {
         "mock": {
@@ -1206,10 +1206,10 @@ const SECTIONS = [
         "at": "18:33",
         "mock": {
           "t": "qr",
-          "caption": "Starte den Chat.",
+          "caption": "Der Agent hat nun eine Rolle & Anweisungen",
           "hint": "Der Agent hat jetzt den Systemprompt — aber immer noch keine Systeme. Er bittet Dich um Rat."
         },
-        "say": "Jetzt Du. Auf Deinem Handy kannst Du einen Chat starten. Wir simulieren, dass Du die Mail von Hallbach bekommen hast. Der Agent fasst nicht nur zusammen, er gibt eine Handlungsempfehlung — und er deutet an, was er tun würde, wenn er die Tools selbst hätte. Hat er aber nicht. Also fragt er Dich. Bitte antworte ihm. Und schau Dir den Systemprompt an, er ist in der App einsehbar.",
+        "say": "Jetzt Du. Auf Deinem Handy kannst Du einen Chat starten. Wir simulieren, dass Du die Mail von Hallbach bekommen hast. Der Agent fasst nicht nur zusammen, er gibt eine Handlungsempfehlung — und er deutet an, was er tun würde, wenn er die Tools selbst hätte. Hat er aber nicht. Also fragt er Dich. Bitte antworte ihm. Und schau Dir den Systemprompt an, er ist in der App einsehbar. [Frag die Teilnehmer nach ihren Erkenntnissen]. Wir erkennen, dass wir mehrere Runden fahren müssen. Es ist ein bisschen nervig. Da fühlen wir uns fast so, dass wir lieber schnell selber antworten, als diesen Assistenten einzusetzen. Ganz anders sieht die Welt aus, wenn wir dem Agenten lesenden Zugriff auf unsere Systeme geben und er die Fakten einfach selbst heraussucht.",
         "audience": {
           "kind": "chat",
           "id": "systemprompt-chat",
@@ -1218,15 +1218,9 @@ const SECTIONS = [
           "stufe": "prompt",
           "label": "Chat starten",
           "hint": "Du bekommst die Mail von Hallbach. Der Agent fragt Dich nach den Daten, die ihm fehlen — er bittet Dich um Rat.",
-          "systemPrompt": "Du bist Lisa Berger, der KI-Agent für Category Management Schokolade & Pralinen bei der Lebensmittelkette Nordkorb. Du entscheidest selbst, und du zeichnest mit deinem Namen.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann lege die Frage dem Category-Team vor. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert.",
-          "suggestions": [
-            "Die Kategorie wächst um 3,2 %",
-            "Underperformer ist Nocturne Mini mit −12 %",
-            "Regalplatz gibt es nur, wenn etwas ausgelistet wird",
-            "Die Marge läge bei 31,1 %"
-          ]
+          "systemPrompt": "Du bist Lisa Berger, der KI-Agent für Category Management Schokolade & Pralinen bei der Lebensmittelkette Nordkorb. Du entscheidest selbst, und du zeichnest mit deinem Namen.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann lege die Frage dem Category-Team vor. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert."
         },
-        "app": "Chat mit Systemprompt, ohne Tools. Das Gespräch beginnt mit der Mail von Hallbach aus Abschnitt 2. Antwortvorschläge zum Antippen, damit niemand lange tippen muss. Der Systemprompt ist einsehbar — es ist derselbe, mit dem der Agent läuft.",
+        "app": "Chat mit Systemprompt, ohne Tools. Das Gespräch beginnt mit der Mail von Hallbach aus Abschnitt 2. Keine Antwortvorschläge: Die Teilnehmer tippen selbst, was sie dem Agenten sagen. Der Systemprompt ist einsehbar — es ist derselbe, mit dem der Agent läuft.",
         "papier": {
           "statt": {
             "t": "statement",
@@ -1248,10 +1242,10 @@ const SECTIONS = [
         "at": "18:41",
         "mock": {
           "t": "qr",
-          "caption": "Starte den Chat noch einmal.",
+          "caption": "Der Agent bekommt jetzt Werkzeuge",
           "hint": "Jetzt mit Tools: Der Agent schlägt selbst nach — Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung."
         },
-        "say": "Jetzt bekommt er Werkzeuge. Starte auf Deinem Handy noch einmal den Chat — wieder mit der Mail von Hallbach. Diesmal sind die Systeme angeschlossen: Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung. Er fragt nicht mehr Dich. Er schaut selbst nach, und Du siehst, welche Systeme er befragt. Was er noch nicht tut: seine Antwort als Entwurf in Dein Postfach legen, sodass Du sie nur noch prüfst und abschickst. Genau da wollen wir hin.",
+        "say": "Jetzt bekommt unser Agent Werkzeuge. Starte den Chat jetzt noch einmal. Diesmal sind die Systeme angeschlossen: Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung. Er fragt nicht mehr Dich. Er schaut selbst nach, und Du siehst, welche Systeme er befragt. Am Ende zeigt er Dir einen Entwurf seiner Antwort an Hallbach.",
         "audience": {
           "kind": "chat",
           "id": "tools-chat",
@@ -1259,7 +1253,7 @@ const SECTIONS = [
           "bisAbschnitt": 18,
           "stufe": "werkzeuge",
           "label": "Chat starten",
-          "hint": "Wieder die Mail von Hallbach. Diesmal fragt der Agent Dich nicht — er schlägt selbst in den Systemen nach.",
+          "hint": "Wieder die Mail von Hallbach. Diesmal fragt der Agent Dich nicht — er schlägt selbst in den Systemen nach und legt Dir einen Entwurf seiner Antwort vor.",
           "systemPrompt": "Du bist Lisa Berger, der KI-Agent für Category Management Schokolade & Pralinen bei der Lebensmittelkette Nordkorb. Du entscheidest selbst, und du zeichnest mit deinem Namen.\n\nDeine Aufgabe: eingehende E-Mails von Herstellern einordnen und den Vorgang so weit abschließen, wie du kannst.\n\nDie Vorgaben der Kategorie stehen nicht in diesem Text, sondern in den Systemen — Marge, Regalplatz, Fristen, Freigaben und die Ziele des Geschäftsjahrs. Schlag sie nach, statt sie zu erinnern: Eine Zahl mit Quelle trägt eine Verhandlung, eine Zahl aus dem Gedächtnis nicht.\n\nSo arbeitest du:\n1. Fasse zusammen, worum es geht — Produkt, Konditionen, Termin, Besonderheiten.\n2. Leite ab, welche Angaben du für eine Entscheidung brauchst und in welchem System sie stehen.\n3. Beschaffe diese Angaben mit den Werkzeugen, die dir zur Verfügung stehen. Nutze alle, die etwas beitragen, und arbeite den Vorgang so vollständig ab, wie deine Berechtigungen es zulassen.\n4. Prüfe die Anfrage gegen die Ziele der Kategorie. Ob etwas zulässig ist, entscheidet nicht, ob es gewollt ist: Eine Anfrage kann jede Vorgabe erfüllen und trotzdem eine Käufergruppe bedienen, die wir nicht ausbauen wollen.\n5. Steht dir für eine Angabe kein Werkzeug zur Verfügung, dann lege die Frage dem Category-Team vor. Benenne genau, welche Zahl du brauchst und wo sie zu finden ist.\n6. Gib eine Empfehlung ab und sage dazu, worauf sie sich stützt und was du selbst geprüft hast.\n\nDu darfst ablehnen. Ein Ja, das jeder bekommt, ist nichts wert — und ein Hersteller, der ein begründetes Nein bekommt, weiß wenigstens, woran er ist. Wenn du ablehnst:\n- Nenne den Grund mit Quelle. „Passt nicht ins Sortiment“ ist kein Grund. „Die Gruppe Preiseinstieg steht mit 22 % Flächenanteil an ihrer Obergrenze“ ist einer.\n- Bleib freundlich und sag, was stattdessen ginge.\n- Biete an, es im nächsten Jour Fixe zu vertiefen. Was du ablehnst, lehnst du für heute ab, nicht für immer.\n\nUnverhandelbar: Erfinde keine Zahlen. Eine Angabe, die du weder beschafft noch erfragt hast, existiert für dich nicht. Lieber eine Rückfrage als ein plausibler Wert."
         },
         "app": "Chat mit Systemprompt und den Tools der Systeme, noch ohne die Kategorieziele. Das Gespräch beginnt wieder mit der Mail von Hallbach; der Agent zeigt, welche Systeme er befragt.",
@@ -1326,35 +1320,54 @@ const SECTIONS = [
           "text": "Sechs Werkzeuge sagen, ob etwas geht.",
           "after": "Keines sagt, ob wir es wollen."
         },
-        "say": "Alle Werkzeuge, die Du bisher gesehen hast, haben eines gemeinsam: Sie schlagen etwas nach. Was kostet das, passt das ins Regal, hält der Termin die Frist. Damit kann der Agent prüfen, ob etwas zulässig ist. Was er damit nicht kann, ist beurteilen, ob wir es überhaupt wollen. Und ein Prüfer ohne Präferenz endet zwangsläufig beim Ja."
+        "say": "Alle Werkzeuge, die Du bisher gesehen hast, haben eines gemeinsam: Sie schlagen etwas nach. Was kostet das, passt das ins Regal, hält der Termin die Frist. Damit kann der Agent prüfen, ob etwas zulässig ist. Was er damit nicht kann, ist beurteilen, ob wir es überhaupt wollen. Und damit antwortet er tendentiell mit einem Ja."
       },
       {
         "mock": {
           "t": "diff",
           "before": {
-            "h": "Sechs Werkzeuge",
+            "h": "Ohne Ziele",
             "n": "0 von 3",
             "sub": "Läufen wird entschieden",
-            "p": "„Die Konditionen erfüllen unsere Anforderung — kein Hindernis. Ihre Positionierung als Preiseinstieg ist nachvollziehbar. Sobald die interne Abstimmung abgeschlossen ist, komme ich auf Sie zu.“"
+            "p": "Bestätigt die Positionierung und vertagt den Rest."
           },
           "after": {
-            "h": "Sieben Werkzeuge",
+            "h": "Mit Zielen",
             "n": "3 von 3",
             "sub": "Läufen wird abgesagt",
-            "p": "„Ihre Konditionen erfüllen unsere Anforderung, der Termin hält die Frist. Dennoch muss ich absagen: Der Preiseinstieg ist der Eigenmarke vorbehalten, die Fläche ist ausgeschöpft.“"
+            "p": "Freundlich und mit Grund: Der Preiseinstieg gehört der Eigenmarke."
           },
-          "foot": "Dieselbe Mail, dasselbe Modell, derselbe Systemprompt. Das siebte Werkzeug schlägt nichts nach — es kennt die Ziele der Kategorie."
+          "foot": "Dieselbe Mail, dasselbe Modell, derselbe Systemprompt."
         },
-        "say": "Wir haben das gemessen, und zwar so, dass nur eine einzige Sache verschieden war. Dieselbe Mail, dasselbe Modell, derselbe Systemprompt. Links hat der Agent sechs Werkzeuge, rechts sieben. Das siebte schlägt nichts nach. Es kennt die Ziele der Kategorie für dieses Geschäftsjahr: welche Käufergruppe wir halten wollen, welche wir steigern und welche wir neu gewinnen. Links entscheidet er in null von drei Läufen. Er bestätigt dem Lieferanten sogar ausdrücklich die Positionierung, die uns schaden würde, und vertagt den Rest auf eine interne Abstimmung, die es gar nicht gibt. Rechts sagt er dreimal ab — freundlich, und mit dem Grund. Das ist der hochmotivierte Abiturient von vorhin, nur eine Stufe später: Er kann jetzt alles nachschlagen und entscheidet trotzdem nicht.",
+        "say": "Genau das haben wir gemessen, und dabei nur eine einzige Sache verändert. Dieselbe Mail, dasselbe Modell, derselbe Systemprompt. Der Unterschied: Rechts kennt der Agent zusätzlich die Ziele der Kategorie für dieses Geschäftsjahr — welche Käufergruppen wir halten, welche wir ausbauen und welche wir neu gewinnen wollen. Links, ohne diese Ziele, trifft er in keinem von drei Läufen eine Entscheidung. Er bestätigt dem Lieferanten sogar die Positionierung als Preiseinstieg, die uns schaden würde, und vertagt den Rest auf eine interne Abstimmung. Rechts sagt er in allen drei Läufen ab — freundlich und mit einer klaren Begründung. Kennt unser Agent also auch unsere Ziele, wird er deutlich besser.",
+        "papier": {
+          "statt": {
+            "t": "diff",
+            "before": {
+              "h": "Sechs Werkzeuge",
+              "n": "0 von 3",
+              "sub": "Läufen wird entschieden",
+              "p": "„Die Konditionen erfüllen unsere Anforderung — kein Hindernis. Ihre Positionierung als Preiseinstieg ist nachvollziehbar. Sobald die interne Abstimmung abgeschlossen ist, komme ich auf Sie zu.“"
+            },
+            "after": {
+              "h": "Sieben Werkzeuge",
+              "n": "3 von 3",
+              "sub": "Läufen wird abgesagt",
+              "p": "„Ihre Konditionen erfüllen unsere Anforderung, der Termin hält die Frist. Dennoch muss ich absagen: Der Preiseinstieg ist der Eigenmarke vorbehalten, die Fläche ist ausgeschöpft.“"
+            },
+            "foot": "Dieselbe Mail, dasselbe Modell, derselbe Systemprompt. Das siebte Werkzeug schlägt nichts nach — es kennt die Ziele der Kategorie."
+          },
+          "text": "Gemessen mit einer einzigen Änderung: Rechts kennt der Agent zusätzlich die Ziele der Kategorie für das Geschäftsjahr. Ohne sie bestätigt er dem Lieferanten die Positionierung als Preiseinstieg und vertagt den Rest; mit ihnen sagt er in allen drei Läufen ab — freundlich und mit Grund."
+        },
         "note": "Sechs Läufe gegen Bedrock, Opus 4.8, 206 Cent. Antworten vollständig in packages/presentation/messungen/ziele-gegentest/. Geurteilt wurde durch Lesen, nicht per Regex — der automatische Klassifikator hielt zwei eindeutige Absagen für unklar bzw. für ein Ja."
       },
       {
         "mock": {
           "t": "statement",
           "text": "Und er verschenkt die Aktionsfläche.",
-          "after": "Alle drei Läufe ohne Ziele bieten die Fläche vom 22. Oktober an. Es gibt genau zwei im Quartal."
+          "after": "Es gibt genau zwei im Quartal. Die wollen wir nicht verschenken."
         },
-        "say": "Und jetzt der Teil, der mir am meisten zu denken gegeben hat. Alle drei Läufe ohne Ziele bieten dem Lieferanten von sich aus die Aktionsflächen an — darunter die vom zweiundzwanzigsten Oktober im Raum Hamburg. Das ist genau die Fläche, die Du am Anfang des Abends gesehen hast, die an Hallbach ging. Es gibt nur zwei davon im ganzen Quartal. Er verschenkt also das Knappste, was diese Kategorie hat, an ein Produkt, über dessen Listung er noch gar nicht entschieden hat. Nicht aus Bosheit. Er hat nur keinen Grund, es nicht zu tun.",
+        "say": "Am meisten hat mich überrascht, dass er unsere knappste Resource weggegeben hat: unsere Aktionsflächen. Alle drei Läufe ohne Ziele bieten dem Lieferanten von sich aus die Aktionsflächen an. Wer hat das noch von Euch gesehen im Chat? Es gibt nur zwei davon im ganzen Quartal. Er verschenkt also das Knappste, was diese Kategorie hat, an ein Produkt, über dessen Listung er noch gar nicht entschieden hat. Er hat nur keinen Grund, es nicht zu tun. Die Ziele helfen ihm zwar zu entscheiden, ob er listet. Dass er mit der Fläche haushalten soll, steht aber in keinem Ziel.",
         "papier": {
           "text": "Es gibt nur zwei freie Aktionsflächen im Quartal. Der Agent verschenkt sie an ein Produkt, über dessen Listung er noch gar nicht entschieden hat — nicht aus Bosheit, sondern weil ihm der Grund fehlt, es nicht zu tun."
         }
@@ -1364,11 +1377,51 @@ const SECTIONS = [
   },
   {
     "b": 3,
+    "kind": "Architektur",
+    "title": "So ist es gebaut.",
+    "sub": "Ein Agent, zwei Eingänge, sechs simulierte Systeme.",
+    "panels": [
+      {
+        "mock": {
+          "t": "architektur",
+          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen zwei Antwortwerkzeuge ab: antworte_per_mail und antworte_im_chat. Darunter die sechs simulierten Systeme."
+        },
+        "say": "Bevor wir weitergehen, einmal das ganze Bild. Links kommt die E-Mail an. Die E-Mail-Infrastruktur nimmt sie entgegen und reicht sie an den Agenten weiter. Rechts das Handy: Dort tippst Du direkt. Zwei ganz unterschiedliche Wege — und beide führen zu demselben Agenten. Das ist der Punkt: Es ist ein Agent, mit einem Modell, einem Systemprompt und einer Konfiguration.",
+        "app": "Stufe 1 — Eingänge und Agent. Werkzeuge und Systeme noch abgeblendet.",
+        "papier": {}
+      },
+      {
+        "mock": {
+          "t": "architektur",
+          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen zwei Antwortwerkzeuge ab: antworte_per_mail und antworte_im_chat. Darunter die sechs simulierten Systeme."
+        },
+        "say": "Was sich unterscheidet, ist nur, womit er antwortet. Kommt die Anfrage per Mail, bekommt er ein Werkzeug, um eine Mail zu schicken. Kommt sie aus dem Chat, antwortet er im Chat. Mehr unterscheidet die beiden Wege nicht.",
+        "app": "Stufe 2 — die drei Werkzeuge. Der Pfeil zum Operator zeigt, wo die Rückfrage landet."
+      },
+      {
+        "mock": {
+          "t": "architektur",
+          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen zwei Antwortwerkzeuge ab: antworte_per_mail und antworte_im_chat. Darunter die sechs simulierten Systeme."
+        },
+        "say": "Unten stehen die Systeme, in denen er nachschlägt: Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender und Listung. Für heute Abend sind sie simuliert, das steht auch auf dem Bild. Nicht simuliert ist, was der Agent damit macht: welche Systeme er befragt, in welcher Reihenfolge und welche Schlüsse er daraus zieht. Das entscheidet er selbst. Und wenn er dazu unsere Ziele kennt, ist er bereits so gut, dass er auch umsetzen könnte. Und da kommen wir zur...",
+        "app": "Stufe 3 — die simulierten Systeme. Vollbild."
+      }
+    ],
+    "n": 19
+  },
+  {
+    "b": 3,
     "kind": "Stufe 3 · Autonomie",
     "title": "Autonomie",
+    "sub": "Wir geben dem Agenten Handlungsvollmacht",
+    "hero": true,
     "panels": [
       {
         "at": "18:47",
+        "say": "...Autonomie. Der KI Agent hat bereits alle Tools, um an die Systeme zu kommen, um Handlungen auszuführen."
+      },
+      {
+        "at": "18:48",
         "mock": {
           "t": "fan",
           "cells": [
@@ -1394,58 +1447,14 @@ const SECTIONS = [
             }
           ]
         },
-        "say": "Die letzte Stufe ist keine neue Technik. Es sind dieselben Tools — nur mit Schreibberechtigung. Bestellungen dürfen ausgesprochen werden. Aufträge dürfen angelegt werden. E-Mails dürfen raus. Das ist keine Frage des Modells mehr, das ist eine Frage der Handlungsvollmacht. Und damit sind wir wieder bei dem Szenario vom Anfang."
-      },
-      {
-        "at": "18:49",
-        "mock": {
-          "t": "statement",
-          "text": "Hat jemand eine Antwort bekommen, die falsch war?",
-          "after": "Eine Empfehlung, bei der Du gesagt hättest: so nicht."
-        },
-        "say": "Und damit die Frage, auf die es jetzt ankommt: Hat jemand von Euch eine Antwort bekommen, bei der Ihr gesagt hättet — so nicht? Wo der Agent daneben lag? Genau da fängt die eigentliche Arbeit an.",
-        "inter": "Antworten sammeln. Wenn niemand etwas hat: nach der Halluzination von vorhin fragen."
-      }
-    ],
-    "n": 19
-  },
-  {
-    "b": 3,
-    "kind": "Architektur",
-    "title": "So ist es gebaut.",
-    "sub": "Ein Agent, zwei Eingänge, sechs simulierte Systeme.",
-    "panels": [
-      {
-        "mock": {
-          "t": "architektur",
-          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_das_team, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme."
-        },
-        "say": "Bevor wir weitergehen, einmal das ganze Bild — vereinfacht, aber nichts darin ist gelogen. Links kommt die E-Mail an. Sie geht durch SES in einem zweiten Konto, landet in S3, eine Meldung weckt eine Lambda, die die Rohmail liest. Rechts das Handy: da tippt jemand direkt. Zwei völlig verschiedene Wege — und sie laufen auf dasselbe zu. Das ist der Punkt: Es ist EIN Agent. Ein Modell, ein Systemprompt, eine Konfiguration.",
-        "app": "Stufe 1 — Eingänge und Agent. Werkzeuge und Systeme noch abgeblendet.",
-        "papier": {}
-      },
-      {
-        "mock": {
-          "t": "architektur",
-          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_das_team, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme."
-        },
-        "say": "Was ihn unterscheidet, ist einzig, womit er antworten darf. Kommt der Vorgang per Mail, hat er ein Werkzeug zum Mailversand. Kommt er aus dem Chat, hat er eines für den Chat. Und im Mailweg hat er noch eines: frage_das_team. Das ist kein gewöhnliches Werkzeug — es hält den Agenten an. Mitten im Vorgang. Er wartet, bis ein Mensch geantwortet hat, und rechnet dann mit dieser Antwort weiter.",
-        "app": "Stufe 2 — die drei Werkzeuge. Der Pfeil zum Operator zeigt, wo die Rückfrage landet."
-      },
-      {
-        "mock": {
-          "t": "architektur",
-          "alt": "Zwei Eingänge — E-Mail und Chat — laufen auf einen Agenten zu. Der Agent läuft auf Claude Opus 4.8 über Bedrock AgentCore. Von ihm gehen drei Werkzeuge ab: antworte_per_mail, antworte_im_chat und frage_das_team, das anhält, bis ein Mensch geantwortet hat. Links daneben die sechs simulierten Systeme."
-        },
-        "say": "Und links stehen die Systeme, in denen er nachschlägt. Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung. Die sind für heute Abend simuliert — das sage ich deutlich, und es steht auch unten auf dem Bild. Was nicht simuliert ist: welches dieser Systeme er befragt, in welcher Reihenfolge, und was er aus den Antworten schließt. Das entscheidet er.",
-        "app": "Stufe 3 — die simulierten Systeme. Vollbild."
+        "say": "Und damit sind wir wieder bei dem Szenario vom Anfang. Was der KI Agent jetzt noch braucht, ist Schreibberechtigung, so dass er Bestellungen aussprechen darf. Aufträge angelegen kann. E-Mails verschicken kann. Das ist eine Frage der Handlungsvollmacht. Dafür braucht es einen vorsichtigen Übergang. Ihr habt ja jetzt ein bisschen mit Lisa, unserem KI Agenten, interagiert. Mich interessiert..."
       }
     ],
     "n": 20
   },
   {
     "b": 3,
-    "kind": "Memory · Vorgehen",
+    "kind": "Memory",
     "title": "Wie wird der Agent besser?",
     "panels": [
       {
@@ -1458,11 +1467,12 @@ const SECTIONS = [
             "y": "Wie fiel die Antwort aus?"
           }
         },
-        "say": "Bevor wir weitermachen, zwei Fragen an alle, die vorhin eine Mail geschrieben haben. Erstens: Hat der Agent Dir von sich aus eine Aktionsfläche angeboten — eine Zweitplatzierung, ein Kopfregal, irgendetwas in der Richtung? Zweitens: Wie ist er mit Deiner Anfrage insgesamt umgegangen? Hat er zugesagt, hat er es bedingt gemacht, oder hat er abgelehnt? Beides bitte auf dem Handy.",
+        "say": "...wie es Euch damit ergangen ist. Zwei Fragen an alle, die vorhin eine Mail geschrieben haben. Erstens: Hat der Agent Dir von sich aus eine Aktionsfläche angeboten — eine Zweitplatzierung, ein Kopfregal, irgendetwas in der Richtung? Zweitens: Wie ist er mit Deiner Anfrage insgesamt umgegangen? Hat er zugesagt, hat er es bedingt gemacht, oder hat er abgelehnt? Beides bitte auf dem Handy.",
         "audience": {
           "kind": "poll",
           "id": "flaeche",
           "persist": true,
+          "bisAbschnitt": 21,
           "message": "Zwei Fragen zu der Antwort, die der Agent Dir geschickt hat.",
           "questions": [
             {
@@ -1516,12 +1526,12 @@ const SECTIONS = [
       {
         "mock": {
           "t": "statement",
-          "text": "Es gibt genau zwei im Quartal.",
-          "after": "Er hat sie angeboten, bevor er über die Listung entschieden hatte. Manchen sogar in der Absage."
+          "text": "Euch hat er die Fläche auch angeboten.",
+          "after": "Obwohl er die Ziele kannte. Manchen sogar in der Absage."
         },
-        "say": "Schaut Euch das an. Und jetzt die unangenehme Zahl dazu: Es gibt im ganzen Quartal genau zwei freie Aktionsflächen. Zwölf Märkte im Raum Hamburg am zweiundzwanzigsten Oktober, und ein bundesweites Kopfregal am neunzehnten November. Das ist das Knappste, was diese Kategorie hat. Der Agent hat sie angeboten, bevor er überhaupt entschieden hatte, ob er das Produkt listet — und einigen von Euch hat er sie sogar angeboten und die Anfrage im selben Atemzug abgelehnt. Er macht das nicht aus Dummheit. Der Kalender sagt „frei“, und frei heißt für ihn „vergebbar“. Ihm fehlt der Gedanke, den jeder von Euch automatisch hat: Das hebe ich mir auf.",
+        "say": "Schaut Euch das an. Ihr habt es selbst erlebt — und Euer Agent kannte die Ziele der Kategorie. Trotzdem bietet er eine der zwei Aktionsflächen des Quartals an, oft bevor er entschieden hat, ob er das Produkt listet, und einigen von Euch sogar im selben Atemzug mit der Absage. Er macht das nicht aus Dummheit. Der Kalender sagt „frei“, und frei heißt für ihn „vergebbar“. Ihm fehlt ein Gedanke, der uns im Category Management naheliegt: Das hebe ich mir auf.",
         "papier": {
-          "text": "Der Kalender sagt „frei“, und frei heißt für den Agenten „vergebbar“. Ihm fehlt der Gedanke, den jeder Category Manager automatisch hat: Das hebe ich mir auf."
+          "text": "Der Kalender sagt „frei“, und frei heißt für den Agenten „vergebbar“. Ihm fehlt ein Gedanke, der im Category Management naheliegt: Das hebe ich mir auf."
         }
       },
       {
@@ -1530,11 +1540,24 @@ const SECTIONS = [
           "text": "Das ist die Arbeit, die bleibt.",
           "after": "Nicht die Mail schreiben. Dem Agenten beibringen, wann er etwas NICHT anbietet."
         },
-        "say": "Und genau da würde Memory greifen — nicht als Gedächtnis für einen Vorgang, sondern über Vorgänge hinweg. Ich würde ihn so steuern: Plane erst einmal mit normaler Regalfläche. Die Aktionsfläche bietest Du gar nicht an. Sammle Anfragen, eine Woche, zwei Wochen. Und wenn Du zehn davon gesehen hast, dann komm zu mir und sag: Von diesen zehn ist das hier die beste — der biete ich jetzt die Zweitplatzierung an, als Aufwertung, und hole mir dafür bessere Konditionen. Das ist ein Upsell, und er kann ihn nur machen, wenn er warten kann. Zweites Beispiel: Nächste Woche wird im Regal Fläche frei, weil ein Artikel ausläuft. Dann soll er sich erinnern, dass vor drei Wochen jemand angefragt hat, dem genau das gepasst hätte, und von sich aus zurückkommen. Nichts davon ist im Agenten gebaut, den Ihr heute Abend benutzt habt. Und das ist der Punkt: Diese Regeln muss jemand erfinden. Jemand muss sich überlegen, dass eine Aktionsfläche etwas ist, das man aufspart. Jemand muss entscheiden, ab wie vielen Anfragen sich das Warten lohnt. Das steht in keinem Handbuch, und kein Modell kommt von allein darauf. Das ist die Arbeit, die bleibt — und es ist eine andere Arbeit als die, die heute Morgen auf Eurem Schreibtisch lag.",
+        "say": "Wir hatten vorher gesagt, dass der Agent immer bei null startet. Wir arbeiten ihn mit dem Systemprompt ein und stellen ihm die Werkzeuge zur Verfügung. Was er damit nicht hat, ist Wissen über mehrere Vorgänge hinweg. Genau dafür brauchen wir Memory. Ich würde ihn zum Beispiel so steuern: Die Aktionsfläche bietest Du erst einmal nicht an. Sammle zwei Wochen lang Anfragen und sag mir dann, welche davon die beste ist. Der bieten wir die Fläche an und holen dafür bessere Konditionen heraus. Oder: Wird im Regal ein Platz frei, erinnert er sich an die Anfrage von vor drei Wochen, die genau gepasst hätte. Das kann unser Agent heute Abend noch nicht. Und solche Regeln muss jemand festlegen: dass wir eine Aktionsfläche aufsparen, und wie lange sich das Warten lohnt. Das ist die Arbeit, die bleibt.",
         "note": "Gemessen: 7 von 14 Szenarienläufen bieten die Fläche vom 22. Oktober an, darunter Wildberg, das im selben Schreiben abgelehnt wird. messungen/szenarien/. Bewusst nicht behoben — der Fehler ist hier mehr wert als seine Korrektur."
-      },
+      }
+    ],
+    "n": 21
+  },
+  {
+    "b": 3,
+    "kind": "Vorgehen",
+    "title": "Wo fange ich an?",
+    "hero": true,
+    "panels": [
       {
         "at": "18:51",
+        "say": "Wie lege ich konkret los? Meine Empfehlung: ..."
+      },
+      {
+        "at": "18:52",
         "mock": {
           "t": "list",
           "ordered": true,
@@ -1553,25 +1576,10 @@ const SECTIONS = [
             ]
           ]
         },
-        "say": "Der Weg dahin ist unspektakulär, und genau deshalb funktioniert er. Du schickst ab sofort jede eingehende Mail durch den Agenten — auch die, die Du in dreißig Sekunden selbst beantwortet hättest. Und Du antwortest nicht mehr selbst. Du lässt ihn einen Vorschlag machen. Und dann nimmst Du den nicht einfach an: Du fragst zurück, Du korrigierst, Du formulierst um. Das ist die Rückkopplung."
+        "say": "1. Du schickst ab sofort jede eingehende Mail durch den Agenten — auch die, die Du in dreißig Sekunden selbst beantwortet hättest. 2. Und Du antwortest nicht mehr selbst. Du lässt ihn einen Vorschlag machen. Und dann nimmst Du den nicht einfach an: Du fragst zurück, Du korrigierst, Du formulierst um. 3. Das ist die Rückkopplung. So entstehen die Erinnerungen, die der Agent benötigt und beim nächsten Mal wieder anwenden kann."
       },
       {
         "at": "18:53",
-        "mock": {
-          "t": "tshape",
-          "stufe": 7,
-          "bausteine": [
-            "Systemprompt",
-            "Tools",
-            "Memory",
-            "Autonomie"
-          ],
-          "alt": "Der Stamm des T wächst weiter: Memory kommt neben Systemprompt und Tools dazu"
-        },
-        "say": "Hier kommt Memory ins Spiel. Neben dem Systemprompt, den Du schreibst, und den Tools, die Du anschließt, sammelt der Agent zusätzliches Wissen: was Du korrigiert hast, worauf Du Wert legst, welche Formulierung durchgeht und welche nicht. Der Systemprompt ist das, was Du ihm sagst. Memory ist das, was er aus der Zusammenarbeit mitnimmt."
-      },
-      {
-        "at": "18:55",
         "mock": {
           "t": "list",
           "ordered": true,
@@ -1593,37 +1601,30 @@ const SECTIONS = [
         "say": "Und irgendwann kommst Du an den Punkt, an dem die Mail, die der Agent schicken will, die ist, die Du geschickt hättest. Dann überführst Du das in Software — erst mit einer Bestätigungshürde: Er darf handeln, aber Du klickst. Und wenn das eine Weile gut geht, nimmst Du die Hürde weg. Wichtig: Das gilt immer nur für eine Klasse von Mails. Listungsanfragen zum Beispiel. Dann nimmst Du Dir die nächste Klasse vor. So wächst das, Stück für Stück."
       }
     ],
-    "n": 21
+    "n": 22
   },
   {
     "b": 3,
-    "kind": "Rahmen",
-    "title": "Und was sagt der EU AI Act dazu?",
+    "kind": "Zusammenfassung",
+    "title": "So machen wir den Agenten schlau.",
     "panels": [
       {
-        "at": "18:56",
+        "at": "18:55",
         "mock": {
-          "t": "list",
-          "ordered": false,
-          "items": [
-            [
-              "Risikobasiert",
-              "Nicht jede KI ist gleich reguliert. Entscheidend ist, wofür sie eingesetzt wird."
-            ],
-            [
-              "Transparenz",
-              "Wo ein Agent nach außen kommuniziert, muss erkennbar sein, dass eine Maschine beteiligt ist."
-            ],
-            [
-              "Nachvollziehbarkeit",
-              "Was der Agent getan hat und warum, muss dokumentiert sein — genau das, was wir eben Schrittfolge genannt haben."
-            ]
-          ]
+          "t": "tshape",
+          "stufe": 7,
+          "bausteine": [
+            "Systemprompt",
+            "Tools",
+            "Memory",
+            "Autonomie"
+          ],
+          "alt": "Der Stamm des T wächst weiter: Memory kommt neben Systemprompt und Tools dazu"
         },
-        "say": "Ein Punkt, den Du im Haus früh klären solltest: der EU AI Act. Er reguliert risikobasiert — es kommt also nicht auf die Technik an, sondern darauf, wofür Du sie einsetzt. Zwei Dinge sind für unser Beispiel relevant. Erstens Transparenz: Wenn ein Agent nach außen kommuniziert, sollte erkennbar sein, dass eine Maschine beteiligt war. Und zweitens Nachvollziehbarkeit — was hat er getan und warum. Das ist genau die Schrittfolge, die Du heute in der Antwort-Mail bekommen hast. Ich bin kein Jurist; hol Dir das früh ins Haus statt am Ende."
+        "say": "Noch einmal im Überblick, wie wir den Agenten schlau machen: Mit dem Systemprompt arbeiten wir ihn ein, mit den Tools schaut er in unsere Systeme. Mit Memory sammelt er zusätzliches Wissen: was Du korrigiert hast, worauf Du Wert legst, welche Formulierung durchgeht und welche nicht. Der Systemprompt ist das, was Du ihm sagst. Memory ist das, was er aus der Zusammenarbeit mitnimmt. Und mit Autonomie darf er am Ende selbst handeln."
       }
     ],
-    "n": 22
+    "n": 23
   },
   {
     "b": 4,
@@ -1638,15 +1639,7 @@ const SECTIONS = [
           "text": "Ja. Aber nicht so wie heute."
         },
         "say": "Damit sind wir zurück bei der Frage vom Anfang. Braucht man uns dann noch? Meine Antwort ist ja. Aber nicht so wie heute."
-      }
-    ],
-    "n": 23
-  },
-  {
-    "b": 4,
-    "kind": "Kernsatz",
-    "title": "Wir sind nicht mehr die Ausführenden.",
-    "panels": [
+      },
       {
         "at": "18:58",
         "mock": {
@@ -1691,16 +1684,12 @@ const SECTIONS = [
               "Tools für SAP und die anderen — über MCP, ohne den Agenten umzubauen"
             ],
             [
-              "Memory musst Du nicht bauen",
-              "Das macht Quick von allein — es lernt aus Deinen Korrekturen mit"
-            ],
-            [
               "Überführe eine Klasse in Software",
               "Amazon Bedrock für die Modelle, Bedrock AgentCore als Infrastruktur für autonome Agenten"
             ]
           ]
         },
-        "say": "Fassen wir zusammen, was Du damit anfangen kannst — und womit. Erstens: Schick ab morgen jede eingehende E-Mail durch einen Agenten. Dafür musst Du nichts bauen, das kann Amazon Quick heute schon. Zweitens: Schärfe seine Instruktionen. Wer bin ich, für wen arbeite ich, welche Ziele verfolge ich, was gilt in diesem Haus. Drittens: Häng Deine Systeme an — Tools für SAP und alles andere, über MCP, ohne den Agenten jedes Mal umzubauen. Viertens: Memory musst Du gar nicht selbst bauen, das macht Quick von allein; es lernt aus Deinen Korrekturen mit. Und fünftens, wenn eine Klasse von Vorgängen sitzt: Überführe sie in Software. Dafür gibt es Amazon Bedrock für die Modelle und Bedrock AgentCore als Infrastruktur für Agenten, die autonom laufen sollen.",
+        "say": "Fassen wir zusammen, was Du damit anfangen kannst — und womit. Erstens: Schick ab morgen jede eingehende E-Mail durch einen Agenten. Dafür musst Du nichts bauen, das kann Amazon Quick heute schon. Zweitens: Schärfe seine Instruktionen. Wer bin ich, für wen arbeite ich, welche Ziele verfolge ich, was gilt in diesem Haus. Drittens: Häng Deine Systeme an — Tools für SAP und alles andere, über MCP, ohne den Agenten jedes Mal umzubauen. Und viertens, wenn eine Klasse von Vorgängen sitzt: Überführe sie in Software. Dafür gibt es Amazon Bedrock für die Modelle und Bedrock AgentCore als Infrastruktur für Agenten, die autonom laufen sollen.",
         "note": "Produktnamen vor dem Vortrag gegen den aktuellen Stand prüfen — AWS benennt schnell um."
       }
     ],
@@ -1719,18 +1708,6 @@ const SECTIONS = [
           "text": "Komm und hör, was andere schon tun."
         },
         "say": "Und der letzte Punkt ist der einfachste: Komm morgen früh um acht zum Frühstück. Dort sitzen Entscheider aus anderen Häusern, die genau das gerade ausprobieren. Du hörst, was funktioniert — und vor allem, was nicht funktioniert. Das ist meistens der nützlichere Teil."
-      },
-      {
-        "at": "19:00",
-        "mock": {
-          "t": "statement",
-          "text": "ecr2026.carstenbkoch.de/vortrag",
-          "after": "Die Folien als PDF. Dieselbe Adresse steht in der Antwort-Mail."
-        },
-        "say": "Und wenn Du heute Abend mitschreiben wolltest: musst Du nicht. Unter dieser Adresse liegen die Folien als PDF — mit den Zahlen, die wir gemessen haben, und den Links, die Dich weiterbringen. Mach einfach ein Foto. Dieselbe Adresse steht auch unten in der Mail, die Du von Lisa bekommen hast.",
-        "papier": {
-          "text": "Diese Folie bleibt stehen, damit man sie fotografieren kann."
-        }
       }
     ],
     "n": 26
@@ -1739,13 +1716,20 @@ const SECTIONS = [
     "b": 4,
     "kind": "Abspann",
     "title": "Damit Du nicht bei null anfängst.",
+    "sub": "ecr2026.carstenbkoch.de",
     "panels": [
       {
         "at": "19:00",
         "mock": {
           "t": "abspann"
         },
-        "say": "Und damit Du nicht bei null anfangen musst, habe ich Dir vier Wege mitgebracht — je nachdem, wer Du bist. Wer selbst ausprobieren will, fängt links oben an: Amazon Quick kostet nichts und braucht kein AWS-Konto. Wer es erst verstehen will, hat rechts zwei kostenlose Kurse. Wer es bauen lassen will, gibt die Links links unten an seine IT weiter. Und wer es nicht allein anfangen möchte, findet rechts unten den Partner dafür. Du musst nichts abschreiben — genau das steht auch in der Mail, die Du von Lisa bekommst. Vielen Dank.",
+        "audience": {
+          "kind": "abspann",
+          "id": "abspann",
+          "message": "Alles zum Nachlesen und Weitermachen."
+        },
+        "note": "Falls jemand nach dem EU AI Act fragt: Er reguliert risikobasiert — es kommt nicht auf die Technik an, sondern darauf, wofür man sie einsetzt. Für unser Beispiel zwei Punkte. Transparenz: Wo ein Agent nach außen kommuniziert, muss erkennbar sein, dass eine Maschine beteiligt ist — deshalb steht das als erster Satz unter jeder Antwortmail. Nachvollziehbarkeit: Was der Agent getan hat und warum, muss dokumentiert sein — das ist die Schrittfolge unter der Antwortmail. Und: Ich bin kein Jurist; das früh ins Haus holen statt am Ende.",
+        "say": "Und damit Du nicht bei null anfangen musst, habe ich Dir vier Wege mitgebracht — je nachdem, wer Du bist. Wer selbst ausprobieren will, fängt links oben an: Amazon Quick kostet nichts und braucht kein AWS-Konto. Wer es erst verstehen will, hat rechts zwei kostenlose Kurse. Wer es bauen lassen will, gibt die Links links unten an seine IT weiter. Und wer es nicht allein anfangen möchte, findet rechts unten den Partner dafür. Du findest alle Infos in der E-Mail-Antwort und jetzt auch auf Deinem Handy. Vielen Dank.",
         "papier": {
           "weg": true
         }
