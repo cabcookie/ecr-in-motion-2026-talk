@@ -33,7 +33,13 @@ function grabArray(src, name) {
       }
     }
   }
-  return JSON.parse(src.slice(start, j));
+  // Kein JSON.parse: Das hier ist ein TypeScript-Literal, also mit unquotierten
+  // Schlüsseln, einfachen Anführungszeichen und Kommentaren. JSON.parse brach
+  // daran ab ("Expected property name at position 10" — das war `n: 1`).
+  // Der Ausschnitt ist ein reines Datenliteral ohne Aufrufe; ihn als
+  // JavaScript auszuwerten ist der kürzeste Weg, der die Quelle so liest, wie
+  // sie geschrieben ist.
+  return Function(`"use strict"; return (${src.slice(start, j)});`)();
 }
 
 const ts = await readFile(DATA, "utf8");
