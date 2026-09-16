@@ -9,7 +9,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "marken:test": "tsx pruefung/marken-test.ts",
+    "daten:test": "tsx pruefung/daten-test.ts",
     "ports:test": "tsx pruefung/ports-test.ts"
   },
   "devDependencies": {

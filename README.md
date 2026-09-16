@@ -297,12 +297,12 @@ wäre schlimmer als gar keiner.
 
 ```bash
 pnpm --filter @ecr-talk/handelswelt run ports:test      # die Systeme gegen die Folien
-pnpm --filter @ecr-talk/handelswelt run marken:test     # keine echten Marken in den Daten
+pnpm --filter @ecr-talk/handelswelt run daten:test      # tragen die Daten die Zahlen der Folien?
 pnpm --filter @ecr-talk/presentation run buendel:test   # bündelt der Handler?
 pnpm --filter @ecr-talk/presentation run mail:test      # der Mailweg, gegen eine Attrappe
 pnpm --filter @ecr-talk/presentation run buehne:test    # sitzt die Bühne auf jedem Format?
 pnpm --filter @ecr-talk/presentation run papier:test    # trägt jede Folie auch im PDF?
-pnpm --filter @ecr-talk/presentation run sperr:test     # die Sperrliste selbst
+pnpm --filter @ecr-talk/presentation run sperr:test     # folgt das Handy nach dem Sperren wieder?
 AWS_PROFILE=… pnpm --filter @ecr-talk/presentation run modell:test   # echter Bedrock-Aufruf
 ```
 
@@ -338,6 +338,5 @@ darin nur in ihrem Endstand.
 `packages/handelswelt/src/daten/sortiment.ts` ist erzeugt, nicht von Hand
 gepflegt. Vorlage, Zuordnungsliste und Erzeuger liegen **ausserhalb** dieses
 Repos; hier steht nur das Ergebnis — 81 Artikel mit echten Warengruppen, Größen
-und Preislagen, aber ohne einen einzigen echten Markennamen. Geprüft wird das
-mit `marken:test`, gegen eine Sperrliste, die als Hashes vorliegt: Eine lesbare
-Liste verriete durch ihre Zusammensetzung, was in der Vorlage stand.
+und Preislagen, aber ohne einen einzigen echten Markennamen. Was die Folien
+aus diesen Daten behaupten, prüft `daten:test`.
