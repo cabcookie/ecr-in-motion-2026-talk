@@ -6,6 +6,8 @@ import { join } from "node:path";
 import { anhangText } from "./anhang";
 import { baueRohmail, lies, mitAnhang } from "./brief";
 import { POSTFAECHER, postfachFuer, type Sendeauftrag } from "./konfig";
+import { ruheRumpf } from "./ruhe";
+import type { Fensterstand } from "../fenster";
 
 /**
  * Die Mail-Lambda — Ein- und Ausgang des Postfachs, aber nicht mehr der Agent.
@@ -16,7 +18,9 @@ import { POSTFAECHER, postfachFuer, type Sendeauftrag } from "./konfig";
  *
  *   1. EINGANG. Ausgelöst über SNS aus dem Konto, in dem die Domain liegt. SES
  *      hat die Mail dort in S3 abgelegt; die Lambda liest sie und übergibt sie
- *      über die API `mailEingang` an den Agenten.
+ *      über die API `mailEingang` an den Agenten — aber nur im
+ *      Vortragsfenster. Außerhalb sendet sie selbst eine feste Antwort
+ *      (siehe ruhe.ts), und kein Modell läuft an.
  *
  *   2. AUSGANG. Der Agent ruft sie mit einem `Sendeauftrag` auf, und sie sendet
  *      als die verifizierte Identität.
@@ -126,40 +130,59 @@ async function uebergib(meldung: SesMeldung): Promise<void> {
   console.log(`[${postfach.adresse}] von ${eingang.absender}: ${eingang.betreff}`);
 
   /*
-    JSON-RPC, so wie der generierte Client im Browser auch aufruft. Die Antwort
-    kommt sofort: Der Agent läuft danach in AgentCore weiter, und das Senden
-    ist sein eigenes Werkzeug.
+    Erst das Fenster. Ist es zu, antwortet die Lambda selbst und fest — ohne
+    Agent und ohne Zitat. Scheitert schon diese Frage, geht gar nichts raus:
+    Dann stünde auch der Agent nicht zur Verfügung.
   */
+  const fenster = await rufe<Fensterstand>("api.vortragsfenster", []);
+  if (!fenster.aktiv) {
+    await sende({
+      art: "senden",
+      postfach: postfach.adresse,
+      an: eingang.absender,
+      betreff: eingang.betreff,
+      rumpf: ruheRumpf(),
+      inAntwortAuf: eingang.messageId,
+    });
+    console.log(`[${postfach.adresse}] außerhalb des Vortragsfensters fest beantwortet.`);
+    return;
+  }
+
+  /*
+    Die Antwort kommt sofort: Der Agent läuft danach in AgentCore weiter, und
+    das Senden ist sein eigenes Werkzeug.
+  */
+  const ergebnis = await rufe<{ kanal?: string }>("api.mailEingang", [
+    TOKEN,
+    {
+      absender: eingang.absender,
+      absenderName: eingang.absenderName,
+      betreff: eingang.betreff,
+      text: eingang.text,
+      nachrichtId: eingang.messageId,
+      postfach: postfach.adresse,
+    },
+  ]);
+  console.log(`[${postfach.adresse}] an den Agenten übergeben, Kanal ${ergebnis.kanal}`);
+}
+
+/** JSON-RPC, so wie der generierte Client im Browser auch aufruft. */
+async function rufe<T>(methode: string, parameter: unknown[]): Promise<T> {
   const antwort = await fetch(API_URL, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "api.mailEingang",
-      params: [
-        TOKEN,
-        {
-          absender: eingang.absender,
-          absenderName: eingang.absenderName,
-          betreff: eingang.betreff,
-          text: eingang.text,
-          nachrichtId: eingang.messageId,
-          postfach: postfach.adresse,
-        },
-      ],
-    }),
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: methode, params: parameter }),
   });
   const ergebnis = (await antwort.json().catch(() => ({}))) as {
-    result?: { kanal?: string };
+    result?: T;
     error?: { message?: string };
   };
-  if (!antwort.ok || ergebnis.error) {
+  if (!antwort.ok || ergebnis.error || ergebnis.result === undefined) {
     throw new Error(
-      `mailEingang abgelehnt (${antwort.status}): ${ergebnis.error?.message ?? "ohne Grund"}`,
+      `${methode} abgelehnt (${antwort.status}): ${ergebnis.error?.message ?? "ohne Grund"}`,
     );
   }
-  console.log(`[${postfach.adresse}] an den Agenten übergeben, Kanal ${ergebnis.result?.kanal}`);
+  return ergebnis.result;
 }
 
 async function sende(auftrag: Sendeauftrag): Promise<void> {

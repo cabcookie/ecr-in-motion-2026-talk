@@ -16,6 +16,7 @@
     "destroy": "tsx aws-blocks/scripts/destroy.ts",
     "kosten": "tsx scripts/kostenrechnung.ts",
     "mail:test": "tsx scripts/mail-test.ts",
+    "fenster:test": "tsx scripts/fenster-test.ts",
     "buendel:test": "tsx scripts/buendel-test.ts",
     "sperr:test": "node scripts/sperr-test.mjs",
     "buehne:test": "node scripts/buehne-test.mjs",

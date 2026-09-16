@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
+import { api } from "aws-blocks";
+import { token } from "@/sync/token";
+import { useVortragsfenster } from "@/sync/useVortragsfenster";
 
 /** Der Vortrag beginnt um 18:00 — darauf sind alle Zeiten in den Foliendaten bezogen. */
 const START_SOLL = 18 * 60;
@@ -36,6 +39,12 @@ function ladeVersatz(): number {
  * 18:00, und zwar auch dann, wenn es ein paar Minuten später losgeht: das Ende
  * um 19:00 verschiebt sich nicht mit.
  *
+ * Beide Knöpfe öffnen zugleich das Vortragsfenster auf dem Server (siehe
+ * aws-blocks/fenster.ts): „Start jetzt" ab sofort, „18:00" heute von 18 bis
+ * 20 Uhr. Nur in diesem Fenster nimmt die Anwendung Teilnehmer an. Der
+ * Versatz für die Anzeige bleibt im Browser; das Fenster steht auf dem
+ * Server, weil es alle Geräte betrifft.
+ *
  * `geprobt` heißt: Die Soll-Uhrzeit links stammt aus einer aufgezeichneten
  * Probe, nicht aus den Schätzungen in den Foliendaten. Das gehört sichtbar
  * gemacht — sonst weiß man auf der Bühne nicht, gegen was man gerade misst.
@@ -52,6 +61,20 @@ export function Schedule({
   const [now, setNow] = useState(() => new Date());
   const [versatz, setVersatz] = useState(ladeVersatz);
   const [fragt, setFragt] = useState(false);
+  const { stand: fenster, setStand: setFenster } = useVortragsfenster();
+  const [fensterFehler, setFensterFehler] = useState<string | null>(null);
+
+  const oeffnen = useCallback(
+    async (art: "jetzt" | "abend") => {
+      setFensterFehler(null);
+      try {
+        setFenster(await api.fensterOeffnen(art, token()));
+      } catch (err) {
+        setFensterFehler(String((err as Error)?.message ?? err));
+      }
+    },
+    [setFenster],
+  );
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
@@ -104,17 +127,23 @@ export function Schedule({
         <div className="flex gap-1">
           <button
             type="button"
-            onClick={() => setzen(jetzt - START_SOLL)}
+            onClick={() => {
+              setzen(jetzt - START_SOLL);
+              void oeffnen("jetzt");
+            }}
             className={`${knopf} ${versatz ? "text-fg" : "text-fg-3"}`}
-            title="Beginn auf die aktuelle Uhrzeit legen — zum Durchspielen"
+            title="Beginn auf die aktuelle Uhrzeit legen und die Anwendung zwei Stunden lang öffnen"
           >
             Start jetzt
           </button>
           <button
             type="button"
-            onClick={() => setzen(0)}
+            onClick={() => {
+              setzen(0);
+              void oeffnen("abend");
+            }}
             className={`${knopf} ${versatz ? "text-fg-3" : "text-fg"}`}
-            title="Zurück auf den echten Beginn um 18:00"
+            title="Zurück auf den echten Beginn — die Anwendung ist heute von 18:00 bis 20:00 offen"
           >
             18:00
           </button>
@@ -147,7 +176,37 @@ export function Schedule({
               </button>
             ))}
         </span>
+        <FensterZeile stand={fenster} fehler={fensterFehler} jetzt={now.getTime()} />
       </div>
     </div>
   );
+}
+
+function uhrzeit(ms: number): string {
+  return new Date(ms).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+}
+
+/** Ob die Teilnehmer gerade hineinkommen — sonst merkt man es erst im Saal. */
+function FensterZeile({
+  stand,
+  fehler,
+  jetzt,
+}: {
+  stand: { aktiv: boolean; start: number | null; ende: number | null } | null;
+  fehler: string | null;
+  jetzt: number;
+}) {
+  const zeile = "font-mono text-[10px] tracking-[0.1em] uppercase";
+  if (fehler) return <span className={`${zeile} text-b1`}>Fenster: {fehler}</span>;
+  if (!stand) return <span className={`${zeile} text-fg-3`}>Fenster: …</span>;
+  if (stand.start !== null && stand.ende !== null && jetzt < stand.ende) {
+    return jetzt < stand.start ? (
+      <span className={`${zeile} text-b2`}>
+        Gesperrt · öffnet {uhrzeit(stand.start)} bis {uhrzeit(stand.ende)}
+      </span>
+    ) : (
+      <span className={`${zeile} text-b4`}>Offen bis {uhrzeit(stand.ende)}</span>
+    );
+  }
+  return <span className={`${zeile} text-b1`}>Gesperrt · Teilnehmer sehen die Abschlussseite</span>;
 }
