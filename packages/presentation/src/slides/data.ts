@@ -54,6 +54,13 @@ export const SECTIONS: Section[] = [
           after: "Global Account Manager Retail · Amazon Web Services",
         },
         say: "Guten Abend. Schön, dass Du hier bist. Ich will nicht lange um den heißen Brei herumreden.",
+        /*
+          Nicht ins PDF: Die Deckseite sagt schon dasselbe — Titel, Untertitel,
+          Logo. Zwei identische Seiten hintereinander lesen sich wie ein
+          Druckfehler. Auf der Leinwand ist diese Folie richtig, dort gibt es
+          keine Deckseite davor.
+        */
+        papier: { weg: true },
       },
     ],
     n: 1,

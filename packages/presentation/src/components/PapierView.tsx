@@ -90,7 +90,8 @@ function Markenzeichen() {
     <img
       src="/brand/aws-logo.svg"
       alt="Amazon Web Services"
-      className="h-[14mm] w-auto"
+      /* `self-start`, sonst zieht der Flex-Container das Bild in die Mitte. */
+      className="h-[14mm] w-auto self-start"
       onError={(e) => {
         (e.currentTarget as HTMLImageElement).style.display = "none";
       }}
