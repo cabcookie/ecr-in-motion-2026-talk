@@ -362,6 +362,32 @@ export type Interaction = MitZusammenhang &
     | { kind: "wait"; id: string; message: string; persist?: boolean });
 
 /**
+ * Wie ein Panel auf Papier landet.
+ *
+ * Ein PDF wird allein gelesen, später, ohne Vortragenden und ohne den Saal. Was
+ * live trägt, trägt dort oft nicht: Ein QR-Code führt ins Leere, eine
+ * Live-Auswertung zeigt null Antworten, und ein Sprechertext, der „schau auf
+ * Dein Handy" sagt, redet mit niemandem.
+ *
+ * Alle drei Angaben sind freiwillig. Ohne sie gilt: Folie übernehmen,
+ * Sprechertext darunter. Das trägt bei drei Vierteln der Panels — der
+ * Sprechertext dieses Vortrags besteht aus ganzen Sätzen.
+ *
+ * Verlassen sollte man sich darauf trotzdem nicht: `pruefung/papier-test.ts`
+ * findet die Panels, bei denen das PDF lügen würde, und bricht ab, wenn eines
+ * davon keine Angabe hat. Das eigentliche Problem ist nicht, eine Folie zu
+ * vergessen, sondern dass es niemandem auffällt.
+ */
+export interface Papier {
+  /** Kommt gar nicht ins PDF. Für alles, was ohne den Raum sinnlos ist. */
+  weg?: boolean;
+  /** Ersetzt die Folie — der QR-Code wird zu dem, was dahinter lag. */
+  statt?: Mock;
+  /** Was unter der Folie steht. Fehlt er, gilt der Sprechertext. */
+  text?: string;
+}
+
+/**
  * Eine Stufe innerhalb eines Abschnitts.
  *
  * Panels scrollen horizontal: das vorige wandert nach links unter ein Overlay
@@ -382,6 +408,8 @@ export interface Panel {
   open?: string;
   /** Interaktion mit dem Publikum, die der Vortragende moderiert */
   inter?: string;
+  /** Wie dieses Panel im PDF erscheint. Fehlt es, gilt die Folie unverändert. */
+  papier?: Papier;
 }
 
 /**

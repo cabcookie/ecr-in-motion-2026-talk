@@ -114,6 +114,8 @@ export const SECTIONS: Section[] = [
           ],
         },
         say: "Wir können listen — aber nicht zum 15. Oktober, sondern eine Woche später, am 22. In zwölf Märkten im Raum Hamburg werden an diesem Tag Zweitplatzierungsflächen frei, die sich für eine Einführungsaktion nutzen lassen. Lisa erwartet aber fünfzehn Prozent Einführungsrabatt für die ersten vier Wochen. Und jetzt das Besondere: Kein Mensch war beteiligt. Auch Lisa nicht — denn Lisa ist kein Mensch. Lisa ist ein KI-Agent. Sie hat die E-Mail analysiert, sich einen Plan gemacht, Daten aus den Systemen geholt, sie gegeneinandergestellt, ausgewertet, Entscheidungen getroffen, die Antwort formuliert und abgeschickt. Alles innerhalb von sieben Minuten und mit unter einem Euro Kosten. Zwei Stunden später bestätigt Hallbach.",
+        /* „Im Raum Hamburg“ meint die Region, nicht das Publikum. */
+        papier: {},
       },
       {
         at: "18:04",
@@ -217,6 +219,8 @@ export const SECTIONS: Section[] = [
       {
         at: "18:07",
         say: "...wurde kein Mensch gefragt. Alle wurden nur informiert. Und damit steht die Frage klar im Raum:",
+        /* „Die Frage steht im Raum“ ist eine Redewendung, kein Saalbezug. */
+        papier: {},
       },
       {
         at: "18:07",
@@ -249,6 +253,8 @@ export const SECTIONS: Section[] = [
           id: "willkommen",
           message: "Gleich geht es los. Lass diese Seite offen.",
         },
+        /* Die Wartekachel auf dem Handy hat auf Papier keine Entsprechung — und fehlt dort auch nicht. */
+        papier: {},
       },
     ],
     n: 5,
@@ -270,6 +276,14 @@ export const SECTIONS: Section[] = [
           kind: "wait",
           id: "bereit",
           message: "Schön, dass Du da bist. Gleich kommen zwei Fragen.",
+        },
+        papier: {
+          statt: {
+            t: "statement",
+            text: "Das hier ist keine PowerPoint.",
+            after: "Sondern eine Webanwendung — das Publikum war auf dem eigenen Handy dabei.",
+          },
+          text: "Der Vortrag lief als Webanwendung. Wer im Saal saß, rief sie auf dem eigenen Handy auf und sah dort nicht die Folie, sondern das, was an dieser Stelle zu tun war: eine Frage, ein Gespräch mit dem Agenten, eine vorbereitete Mail. Der Quelltext dazu ist offen.",
         },
       },
       {
@@ -330,6 +344,17 @@ export const SECTIONS: Section[] = [
           ],
         },
         app: "Live-Matrix aus den Antworten. Beide Fragen laufen gleichzeitig, die Matrix füllt sich sukzessive.",
+        papier: {
+          statt: {
+            t: "list",
+            ordered: false,
+            items: [
+              ["Beunruhigt Dich dieses Beispiel?", "Ja · Ein wenig · Nein"],
+              ["Freust Du Dich darauf, dass es Realität wird?", "Ja · Ein wenig · Nein"],
+            ],
+          },
+          text: "Zwei Fragen, beide gleichzeitig — denn sie schließen sich nicht aus. Man kann beunruhigt sein und sich trotzdem freuen. Im Saal erschienen die Antworten als Matrix auf der Leinwand, und die interessanten Felder waren die, in denen beides zusammenfiel.",
+        },
       },
       {
         at: "18:09",
@@ -361,6 +386,14 @@ export const SECTIONS: Section[] = [
           hint: "Lies zuerst Dein Briefing — Du vertrittst einen Hersteller. Der Entwurf ist schon geschrieben; trag Deinen Namen ein und ändere, was Du willst. Der Agent antwortet Dir mit dem, was er getan hat, und den Belegen dazu.",
           privacy:
             "Ich speichere Deine E-Mail-Adresse nur, bis die Antwort versendet ist. Ich hebe sie nicht auf.",
+        },
+        papier: {
+          statt: {
+            t: "statement",
+            text: "Du bist jetzt Lieferant.",
+            after: "Jede Teilnehmerin und jeder Teilnehmer bekam ein eigenes Briefing — eine Marke, ihr Bestand bei Nordkorb, ein Ziel und ein Haken.",
+          },
+          text: "An dieser Stelle wechselte das Publikum die Seite. Wer im Saal saß, vertrat ab hier einen Hersteller gegenüber Nordkorb: mit einer eigenen Marke, den echten Zahlen dieser Marke aus dem simulierten Sortiment, einem konkreten Anliegen — und einem Haken, den der Agent finden würde. Vierzehn verschiedene Rollen, zufällig zugeteilt. Die vorbereitete Mail ging von dort an den Agenten, der darauf mit Belegen antwortete.",
         },
       },
     ],
@@ -504,6 +537,14 @@ export const SECTIONS: Section[] = [
           ],
         },
         app: "Freitext vom Handy, Antworten erscheinen live auf der Leinwand.",
+        papier: {
+          statt: {
+            t: "statement",
+            text: "Welche Aufgaben hast Du heute schon an KI abgegeben?",
+            after: "Die Antworten aus dem Saal erschienen live auf der Leinwand.",
+          },
+          text: "Fast jeder im Raum konnte etwas nennen: Texte zusammenfassen, E-Mails formulieren, recherchieren, Tabellen auswerten, übersetzen, Code schreiben. Aufgaben, die vor drei Jahren noch selbstverständlich von Hand erledigt wurden.",
+        },
       },
     ],
     n: 11,
@@ -604,6 +645,14 @@ export const SECTIONS: Section[] = [
         },
         app: "Chat auf der untersten Stufe: fast kein Prompt, keine Werkzeuge. Der Auftakt ist die Briefing-Mail des jeweiligen Teilnehmers, sichtbar im Verlauf.",
         note: "Worauf zu achten ist: WENN er eine Marge rechnet, rechnet er sie auf den Brutto-Preis. Beim Briefing Morgenrot (EK 0,55 / VK 0,89) nannte er in zwei von drei Läufen rund 38 % — richtig sind 33,9 %, weil Schokolade mit 7 % Mehrwertsteuer läuft und auf den Netto-VK gerechnet wird. Nicht jeder Lauf nennt eine Zahl, und jedes Briefing hat andere Preise; frag also offen „hat jemand eine Marge genannt bekommen?“ statt die 38 % anzukündigen. Wenn eine kommt, ist sie der bessere Beleg als jede Folie: plausibel, sauber hergeleitet und trotzdem falsch. Gemessen am 16.09.",
+        papier: {
+          statt: {
+            t: "statement",
+            text: "Ein Agent, der nichts nachschlagen kann.",
+            after: "Kein Systemprompt, keine Werkzeuge, kein Zugriff auf ein einziges System — nur Trainingsdaten.",
+          },
+          text: "Im Saal schickte jede Teilnehmerin und jeder Teilnehmer die eigene Anfrage aus dem Briefing an diesen Agenten. Er hat nichts als sein Training: kein Wissen über das Haus, keinen Zugriff auf ein System, nicht einmal eine Anweisung, wer er ist. Er antwortet trotzdem — und genau das ist der Punkt.",
+        },
       },
       {
         at: "18:23",
@@ -636,6 +685,9 @@ export const SECTIONS: Section[] = [
         say: "Schauen wir uns die Antworten an. Wer hat eine bekommen? — Und jetzt der interessante Teil: Vergleicht sie miteinander. Wenn mehrere von Euch sehr unterschiedliche Zahlen bekommen haben, dann habt Ihr gerade eine Halluzination gesehen. Das Modell hat keine Marge geprüft. Es hat eine plausibel klingende erfunden, weil Antworten seine Aufgabe ist.",
         inter:
           "Antworten vergleichen lassen: „Wer hat eine bekommen? Was steht bei Dir für eine Marge drin?“",
+        papier: {
+          text: "Das Ergebnis ließ sich im Saal vergleichen: Wer mehrere Antworten nebeneinanderlegte, fand unterschiedliche Zahlen für dieselbe Frage. Das Modell hat keine Marge geprüft — es hat eine plausibel klingende erfunden, weil Antworten seine Aufgabe ist. In unseren Messläufen nannte es für ein Produkt mit EK 0,55 € und VK 0,89 € rund 38 % Marge. Richtig sind 33,9 %: Schokolade läuft mit 7 % Mehrwertsteuer, gerechnet wird auf den Netto-Verkaufspreis. Die Zahl ist sauber hergeleitet und trotzdem falsch.",
+        },
       },
     ],
     n: 14,
@@ -749,6 +801,14 @@ export const SECTIONS: Section[] = [
           ],
         },
         app: "Chat mit Systemprompt, ohne Tools. Das Gespräch beginnt mit der Mail von Hallbach aus Abschnitt 2. Antwortvorschläge zum Antippen, damit niemand lange tippen muss. Der Systemprompt ist einsehbar — es ist derselbe, mit dem der Agent läuft.",
+        papier: {
+          statt: {
+            t: "statement",
+            text: "Die Tools bist Du.",
+            after: "Im Saal führte das Publikum dieses Gespräch auf dem eigenen Handy — mit dem Systemprompt, aber ohne Systemzugriff.",
+          },
+          text: "Auf dieser Stufe hat der Agent den Systemprompt, aber keine Werkzeuge. Er fasst die Anfrage nicht nur zusammen, sondern gibt eine Handlungsempfehlung und benennt, was er tun würde, wenn er die Systeme selbst befragen könnte. Da er es nicht kann, fragt er sein Gegenüber — im Saal also die Teilnehmenden. Der vollständige Systemprompt steht auf der vorigen Seite.",
+        },
       },
     ],
     n: 16,
@@ -899,6 +959,9 @@ export const SECTIONS: Section[] = [
             "Alle drei Läufe ohne Ziele bieten die Fläche vom 22. Oktober an. Es gibt genau zwei im Quartal.",
         },
         say: "Und jetzt der Teil, der mir am meisten zu denken gegeben hat. Alle drei Läufe ohne Ziele bieten dem Lieferanten von sich aus die Aktionsflächen an — darunter die vom zweiundzwanzigsten Oktober im Raum Hamburg. Das ist genau die Fläche, die Du am Anfang des Abends gesehen hast, die an Hallbach ging. Es gibt nur zwei davon im ganzen Quartal. Er verschenkt also das Knappste, was diese Kategorie hat, an ein Produkt, über dessen Listung er noch gar nicht entschieden hat. Nicht aus Bosheit. Er hat nur keinen Grund, es nicht zu tun.",
+        papier: {
+          text: "Alle drei Läufe ohne das Zielwerkzeug bieten dem Lieferanten von sich aus die Aktionsflächen an — darunter die vom 22. Oktober im Raum Hamburg. Es gibt nur zwei davon im ganzen Quartal. Der Agent verschenkt damit das Knappste, was die Kategorie hat, an ein Produkt, über dessen Listung er noch gar nicht entschieden hat. Nicht aus Bosheit: Er hat schlicht keinen Grund, es nicht zu tun.",
+        },
       },
     ],
     n: 19,
@@ -964,6 +1027,8 @@ export const SECTIONS: Section[] = [
         },
         say: "Bevor wir weitergehen, einmal das ganze Bild — vereinfacht, aber nichts darin ist gelogen. Links kommt die E-Mail an. Sie geht durch SES in einem zweiten Konto, landet in S3, eine Meldung weckt eine Lambda, die die Rohmail liest. Rechts das Handy: da tippt jemand direkt. Zwei völlig verschiedene Wege — und sie laufen auf dasselbe zu. Das ist der Punkt: Es ist EIN Agent. Ein Modell, ein Systemprompt, eine Konfiguration.",
         app: "Stufe 1 — Eingänge und Agent. Werkzeuge und Systeme noch abgeblendet.",
+        /* Der Sprechertext beschreibt das Bild und trägt deshalb auch ohne Vortragenden. */
+        papier: {},
       },
       {
         mock: {
@@ -1028,6 +1093,14 @@ export const SECTIONS: Section[] = [
           ],
         },
         app: "Live-Matrix. Interessant ist die Spalte links unten: Aktionsfläche angeboten, Anfrage trotzdem abgelehnt.",
+        papier: {
+          statt: {
+            t: "statement",
+            text: "Angeboten — und trotzdem abgelehnt.",
+            after: "Im Saal wurde gefragt, wem der Agent eine Aktionsfläche angeboten hat und wie seine Antwort insgesamt ausfiel.",
+          },
+          text: "Die Frage an das Publikum lautete: Hat der Agent Dir von sich aus eine Aktionsfläche angeboten, und wie ist er mit Deiner Anfrage umgegangen? Interessant ist die Kombination aus beidem — angeboten und im selben Schreiben abgelehnt. In der Messung vorab traf das auf sieben von vierzehn Läufen zu.",
+        },
       },
       {
         mock: {
@@ -1037,6 +1110,10 @@ export const SECTIONS: Section[] = [
             "Er hat sie angeboten, bevor er über die Listung entschieden hatte. Manchen sogar in der Absage.",
         },
         say: "Schaut Euch das an. Und jetzt die unangenehme Zahl dazu: Es gibt im ganzen Quartal genau zwei freie Aktionsflächen. Zwölf Märkte im Raum Hamburg am zweiundzwanzigsten Oktober, und ein bundesweites Kopfregal am neunzehnten November. Das ist das Knappste, was diese Kategorie hat. Der Agent hat sie angeboten, bevor er überhaupt entschieden hatte, ob er das Produkt listet — und einigen von Euch hat er sie sogar angeboten und die Anfrage im selben Atemzug abgelehnt. Er macht das nicht aus Dummheit. Der Kalender sagt „frei“, und frei heißt für ihn „vergebbar“. Ihm fehlt der Gedanke, den jeder von Euch automatisch hat: Das hebe ich mir auf.",
+        /* Der Sprechertext trägt fast unverändert — nur die Ansprache an den Saal fällt weg. */
+        papier: {
+          text: "Es gibt im ganzen Quartal genau zwei freie Aktionsflächen: zwölf Märkte im Raum Hamburg am 22. Oktober und ein bundesweites Kopfregal am 19. November. Das ist das Knappste, was diese Kategorie hat. Der Agent hat sie angeboten, bevor er über die Listung entschieden hatte — in einem Lauf sogar in derselben Mail, in der er die Anfrage ablehnte. Nicht aus Dummheit: Der Kalender sagt „frei“, und frei heißt für ihn „vergebbar“. Ihm fehlt der Gedanke, den jeder Category Manager automatisch hat: Das hebe ich mir auf.",
+        },
       },
       {
         mock: {

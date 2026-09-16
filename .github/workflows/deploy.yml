@@ -77,6 +77,14 @@ jobs:
         env:
           BRAND_BUCKET: ecr2026-brand-carstenbkoch-de
 
+      - name: Druckfassung prüfen
+        # Läuft VOR dem Ausrollen, weil er den Deploy aufhalten soll: Er findet
+        # die Folien, die ohne den Saal nichts zeigen — QR-Codes, Live-
+        # Auswertungen, Sprechertexte, die mit dem Raum reden. Fehlt für eine
+        # davon die Angabe `papier`, entstünde eine Seite, die den Leser in die
+        # Irre führt. Das fällt sonst niemandem auf.
+        run: pnpm --filter @ecr-talk/presentation run papier:test
+
       - name: Ausrollen
         env:
           # Ohne dieses Geheimnis könnte jeder mit der Adresse die Folien
@@ -116,3 +124,25 @@ jobs:
           done
           echo "::error::Nach fünf Minuten nicht vollständig erreichbar: $letzter"
           exit 1
+
+      - name: Browser für den PDF-Bau
+        run: pnpm --filter @ecr-talk/presentation exec playwright install --with-deps chromium
+
+      - name: PDF erzeugen
+        # Gedruckt wird die ausgelieferte Seite, nicht ein lokaler Bau — so ist
+        # im PDF genau das, was auch online steht. Der Schritt läuft nach der
+        # Erreichbarkeitsprüfung: Vorher gäbe es nichts zu drucken.
+        #
+        # Das Skript bricht ab, wenn eine Seite überliefe. Ein Überlauf im PDF
+        # schneidet ab, ohne dass irgendwo etwas rot wird.
+        run: |
+          pnpm --filter @ecr-talk/presentation exec node scripts/pdf.mjs \
+            https://ecr2026.carstenbkoch.de \
+            packages/presentation/dist/ecr-in-motion-2026.pdf
+
+      - name: PDF aufbewahren
+        uses: actions/upload-artifact@v4
+        with:
+          name: vortrag-pdf
+          path: packages/presentation/dist/ecr-in-motion-2026.pdf
+          if-no-files-found: error

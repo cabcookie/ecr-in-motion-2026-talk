@@ -21,7 +21,9 @@
     "buehne:test": "node scripts/buehne-test.mjs",
     "gegenueberstellung": "tsx scripts/gegenueberstellung.ts",
     "modell:test": "tsx scripts/modell-test.ts",
-    "szenarien": "tsx scripts/szenarien-lauf.ts"
+    "szenarien": "tsx scripts/szenarien-lauf.ts",
+    "papier:test": "tsx pruefung/papier-test.ts",
+    "pdf": "node scripts/pdf.mjs"
   },
   "dependencies": {
     "@aws-blocks/blocks": "0.5.0",

@@ -1,6 +1,7 @@
 import { LiveView } from "./components/LiveView";
 import { OperatorView } from "./components/OperatorView";
 import { AudienceView } from "./components/AudienceView";
+import { PapierView } from "./components/PapierView";
 import { ansicht } from "./routen";
 
 /**
@@ -12,6 +13,8 @@ export default function App() {
       return <LiveView />;
     case "operator":
       return <OperatorView />;
+    case "papier":
+      return <PapierView />;
     default:
       return <AudienceView />;
   }

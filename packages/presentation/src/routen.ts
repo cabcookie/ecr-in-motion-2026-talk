@@ -8,18 +8,21 @@
  *   /            Handy der Teilnehmer
  *   /audience    Anzeige im Raum, also der Beamer
  *   /operator    Steuerpult des Vortragenden
+ *   /papier      Druckfassung, aus der das PDF entsteht
  *
  * Das ist kein Schutz im Sinne von Sicherheit — der liegt beim Steuerungs-
  * geheimnis, ohne das niemand eine Folie weiterschalten kann. Es verhindert
  * nur Versehen.
  */
-export type Ansicht = "teilnehmer" | "leinwand" | "operator";
+export type Ansicht = "teilnehmer" | "leinwand" | "operator" | "papier";
 
 const pfad = location.pathname.replace(/\/+$/, "").toLowerCase();
 
 export function ansicht(): Ansicht {
   if (pfad === "/audience") return "leinwand";
   if (pfad === "/operator") return "operator";
+  /* Die Druckfassung. Nur der Bauprozess ruft sie auf; sie ist nicht verlinkt. */
+  if (pfad === "/papier") return "papier";
   return "teilnehmer";
 }
 
