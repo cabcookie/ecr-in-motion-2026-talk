@@ -3,6 +3,7 @@ import type { Panel, Section } from "@/slides/types";
 import { SectionView } from "./SectionView";
 import { Logo } from "./Logo";
 
+
 /** Die Bühne, auf der jede Folie entworfen ist. */
 const BUEHNE_B = 1920;
 const BUEHNE_H = 1080;
@@ -74,11 +75,34 @@ export function PapierView() {
   );
 }
 
+/**
+ * Das Logo für Deck- und Schlussseite — im Fluss, nicht auf der Bühne.
+ *
+ * Das Bühnenlogo sitzt absolut auf Bühnenkoordinaten; unten links heißt dort
+ * `top: 998`, und das liegt jenseits der Seitenhöhe. Ohne positionierten
+ * Vorfahren landete es auf der NÄCHSTEN Seite, die dadurch zwei Logos trug.
+ *
+ * Fehlt die Datei — sie liegt nicht im Repository —, verschwindet das Bild,
+ * statt als kaputtes Symbol dazustehen.
+ */
+function Markenzeichen() {
+  return (
+    <img
+      src="/brand/aws-logo.svg"
+      alt="Amazon Web Services"
+      className="h-[14mm] w-auto"
+      onError={(e) => {
+        (e.currentTarget as HTMLImageElement).style.display = "none";
+      }}
+    />
+  );
+}
+
 function Deckblatt() {
   const titel = SECTIONS[0];
   return (
     <section className="papier-seite flex flex-col justify-between px-[22mm] py-[18mm]">
-      <Logo />
+      <Markenzeichen />
       <div>
         <p className="m-0 font-mono text-[11pt] tracking-[0.2em] text-fg-3 uppercase">
           ECR in Motion 2026 · Masterclass
@@ -103,7 +127,9 @@ function Deckblatt() {
 
 function Schluss() {
   return (
-    <section className="papier-seite flex flex-col justify-center px-[22mm] py-[18mm]">
+    <section className="papier-seite flex flex-col justify-between px-[22mm] py-[18mm]">
+      <Markenzeichen />
+      <div>
       <h2 className="m-0 font-display text-[22pt] font-extrabold">Zum Weiterlesen</h2>
       <p className="mt-4 mb-0 max-w-[62ch] text-[11pt] leading-relaxed text-fg-2">
         Der Vortrag zum Mitklicken und der vollständige Quelltext — einschließlich der
@@ -113,6 +139,10 @@ function Schluss() {
         ecr2026.carstenbkoch.de
         <br />
         github.com/cabcookie/ecr-in-motion-2026-talk
+      </p>
+      </div>
+      <p className="m-0 font-mono text-[9pt] text-fg-3">
+        Carsten Koch · Amazon Web Services
       </p>
     </section>
   );
