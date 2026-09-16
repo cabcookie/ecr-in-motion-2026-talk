@@ -31,7 +31,7 @@ Vier Dinge, und sie hängen zusammen:
 | **Die simulierten Systeme** | `packages/handelswelt/` | Warenwirtschaft, Marktdaten, Regalplanung, Kalkulation, Aktionskalender, Listung — jedes hinter einem Port, der einen `Befund` liefert statt zu werfen. Dazu 81 Artikel Sortiment und das Zeitmodell. |
 | **Die AWS-Infrastruktur** | `packages/infra/`, `packages/presentation/aws-blocks/index.cdk.ts` | Bootstrap (OIDC-Rolle für den Deploy, Hosted Zone, Marken-Eimer) und die CDK-Schicht des Vortrags. Die E-Mail-Infrastruktur liegt daneben in `packages/mail-infra/` und ist hier **nicht** verdrahtet. |
 
-Dazu: `packages/docs/` mit Vortragsverlauf, Storyboard und den **Messungen** —
+Dazu: `packages/docs/` mit dem Storyboard und den **Messungen** —
 was der Agent in 85 echten Läufen tatsächlich geantwortet hat, mit Zahlen.
 
 ## Wie es gebaut ist

@@ -2,7 +2,7 @@
   "name": "@ecr-talk/docs",
   "version": "0.0.0",
   "private": true,
-  "description": "Vortragsunterlagen, Briefings, Demo-Material und Sample-Daten",
+  "description": "Storyboard des Vortrags und die Messungen dahinter",
   "scripts": {
     "storyboard": "node storyboard/build-storyboard.mjs"
   }
